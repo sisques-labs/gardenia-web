@@ -1,0 +1,126 @@
+body.palette-dark {
+  --paper: oklch(0.20 0.018 80);
+  --paper-2: oklch(0.24 0.022 80);
+  --paper-3: oklch(0.28 0.025 80);
+  --ink: oklch(0.94 0.018 80);
+  --ink-2: oklch(0.78 0.022 80);
+  --ink-3: oklch(0.60 0.02 70);
+  --rule: oklch(0.40 0.025 70);
+  --forest: oklch(0.72 0.10 145);
+  --forest-2: oklch(0.78 0.08 145);
+  --forest-3: oklch(0.55 0.07 145);
+  --forest-bg: oklch(0.30 0.04 140);
+  --honey: oklch(0.80 0.13 75);
+  --honey-2: oklch(0.86 0.13 65);
+  --terracotta: oklch(0.76 0.13 35);
+  --sage: oklch(0.62 0.04 130);
+  background: oklch(0.18 0.018 80) !important;
+}
+
+body.palette-dark .paper-grain {
+  background-color: oklch(0.20 0.018 80);
+  background-image:
+    radial-gradient(rgba(255, 235, 200, 0.04) 1px, transparent 1px),
+    radial-gradient(rgba(255, 220, 170, 0.025) 1px, transparent 1px);
+  background-size: 3px 3px, 7px 7px;
+  background-position: 0 0, 1px 2px;
+}
+
+body.palette-dark .card {
+  background: var(--paper-2);
+  border-color: oklch(0.35 0.025 70);
+  box-shadow:
+    0 1px 0 oklch(0.16 0.018 80),
+    0 8px 24px -16px rgba(0, 0, 0, 0.6);
+}
+
+body.palette-dark .placeholder-img {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    oklch(0.32 0.03 70), oklch(0.32 0.03 70) 6px,
+    oklch(0.28 0.03 70) 6px, oklch(0.28 0.03 70) 12px
+  );
+  color: oklch(0.80 0.04 70);
+}
+
+body.palette-dark .placeholder-img.leaf {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    oklch(0.34 0.06 140) 0 6px,
+    oklch(0.30 0.06 140) 6px 12px
+  );
+  color: oklch(0.85 0.07 140);
+}
+
+body.palette-dark .chip {
+  background: oklch(0.28 0.025 70);
+  border-color: oklch(0.36 0.03 70);
+}
+
+body.palette-dark .chip.forest {
+  background: oklch(0.30 0.05 140);
+  border-color: oklch(0.40 0.06 140);
+}
+
+body.palette-dark .chip.honey {
+  background: oklch(0.30 0.07 70);
+  border-color: oklch(0.40 0.08 70);
+}
+
+body.palette-dark .chip.terra {
+  background: oklch(0.30 0.06 35);
+  border-color: oklch(0.40 0.07 35);
+}
+
+body.palette-dark .chip.sage {
+  background: oklch(0.30 0.03 130);
+  border-color: oklch(0.40 0.04 130);
+}
+
+body.palette-pastel {
+  --paper: oklch(0.97 0.025 95);
+  --paper-2: oklch(0.94 0.03 95);
+  --paper-3: oklch(0.90 0.035 95);
+  --ink: oklch(0.30 0.04 340);
+  --ink-2: oklch(0.46 0.04 340);
+  --ink-3: oklch(0.62 0.03 340);
+  --rule: oklch(0.82 0.04 95);
+  --forest: oklch(0.58 0.08 155);
+  --forest-2: oklch(0.68 0.08 155);
+  --forest-3: oklch(0.80 0.07 155);
+  --forest-bg: oklch(0.94 0.05 150);
+  --honey: oklch(0.82 0.11 60);
+  --honey-2: oklch(0.72 0.12 50);
+  --terracotta: oklch(0.70 0.12 20);
+  --sage: oklch(0.85 0.05 145);
+  --plum: oklch(0.62 0.08 340);
+  --sky: oklch(0.78 0.07 220);
+  background: oklch(0.96 0.03 95) !important;
+}
+
+body.palette-pastel .paper-grain {
+  background-color: oklch(0.97 0.025 95);
+  background-image:
+    radial-gradient(rgba(180, 120, 160, 0.05) 1px, transparent 1px),
+    radial-gradient(rgba(140, 100, 150, 0.035) 1px, transparent 1px);
+  background-size: 3px 3px, 7px 7px;
+  background-position: 0 0, 1px 2px;
+}
+
+body.palette-pastel .placeholder-img {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    oklch(0.92 0.06 320) 0 6px,
+    oklch(0.88 0.06 320) 6px 12px
+  );
+  color: oklch(0.45 0.06 320);
+}
+
+body.palette-pastel .placeholder-img.leaf {
+  background-image: repeating-linear-gradient(
+    -45deg,
+    oklch(0.88 0.09 155) 0 6px,
+    oklch(0.82 0.09 155) 6px 12px
+  );
+  color: oklch(0.38 0.08 155);
+}
