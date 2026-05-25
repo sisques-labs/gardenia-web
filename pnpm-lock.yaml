@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@angular/cdk':
+        specifier: ^20.2.14
+        version: 20.2.14(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2)
       '@angular/common':
         specifier: ^20.1.0
         version: 20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2)
@@ -26,6 +29,9 @@ importers:
       '@angular/router':
         specifier: ^20.1.0
         version: 20.3.21(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(@angular/platform-browser@20.3.21(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)))(rxjs@7.8.2)
+      '@lucide/angular':
+        specifier: ^1.16.0
+        version: 1.16.0(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))
       rxjs:
         specifier: ~7.8.0
         version: 7.8.2
@@ -278,6 +284,13 @@ packages:
         optional: true
       vitest:
         optional: true
+
+  '@angular/cdk@20.2.14':
+    resolution: {integrity: sha512-7bZxc01URbiPiIBWThQ69XwOxVduqEKN4PhpbF2AAyfMc/W8Hcr4VoIJOwL0O1Nkq5beS8pCAqoOeIgFyXd/kg==}
+    peerDependencies:
+      '@angular/common': ^20.0.0 || ^21.0.0
+      '@angular/core': ^20.0.0 || ^21.0.0
+      rxjs: ^6.5.3 || ^7.4.0
 
   '@angular/cli@20.3.26':
     resolution: {integrity: sha512-HCQrlr0N3ym50ayzBj7x8auokS9C7/Yvn6Iqz4zC4isljIu9uz0pSEesE6pM4WYjmsLt6Jo8OgeGqoniUagqRQ==}
@@ -1019,6 +1032,12 @@ packages:
     resolution: {integrity: sha512-IY+r3bxKW6Q6sIPiMC0L533DEfRJSXibjSI3Ft/w9Q8KQBNqEIvUFXt+09wV8S5BRk0a8uSF19YWxuRwEfI90g==}
     cpu: [x64]
     os: [win32]
+
+  '@lucide/angular@1.16.0':
+    resolution: {integrity: sha512-jszfiRHn8uuESXHT0aGExBWtGRr35L3nj+dovP05gvrwV8Mnk4jEU45v2kVvcrNe5GBcrKiFJWyoFX2qFfW0nA==}
+    peerDependencies:
+      '@angular/common': 17.x - 21.x
+      '@angular/core': 17.x - 21.x
 
   '@modelcontextprotocol/sdk@1.26.0':
     resolution: {integrity: sha512-Y5RmPncpiDtTXDbLKswIJzTqu2hyBKxTNsgKqKclDbhIgg1wgtf1fRuvxgTnRfcnxtvvgbIEcqUOzZrJ6iSReg==}
@@ -3788,6 +3807,14 @@ snapshots:
       - tsx
       - yaml
 
+  '@angular/cdk@20.2.14(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2)':
+    dependencies:
+      '@angular/common': 20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2)
+      '@angular/core': 20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)
+      parse5: 8.0.1
+      rxjs: 7.8.2
+      tslib: 2.8.1
+
   '@angular/cli@20.3.26(@types/node@25.9.1)(chokidar@4.0.3)':
     dependencies:
       '@angular-devkit/architect': 0.2003.26(chokidar@4.0.3)
@@ -4417,6 +4444,12 @@ snapshots:
 
   '@lmdb/lmdb-win32-x64@3.4.2':
     optional: true
+
+  '@lucide/angular@1.16.0(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))':
+    dependencies:
+      '@angular/common': 20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2)
+      '@angular/core': 20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)
+      tslib: 2.8.1
 
   '@modelcontextprotocol/sdk@1.26.0(zod@4.1.13)':
     dependencies:
