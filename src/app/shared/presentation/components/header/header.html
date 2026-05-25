@@ -1,1 +1,51 @@
-<p>header works!</p>
+<header role="banner" class="app-header">
+  <div class="app-header__inner">
+    <!-- Logo -->
+    <a href="/" class="app-header__logo" aria-label="Gardenia home">
+      Gardenia
+    </a>
+
+    <!-- Desktop nav -->
+    <nav class="app-header__nav" aria-label="Main navigation">
+      @for (link of navLinks(); track link.href) {
+        <a [href]="link.href" class="app-header__nav-link">{{ link.label }}</a>
+      }
+    </nav>
+
+    <!-- Desktop CTA -->
+    @if (ctaLabel()) {
+      <div class="app-header__cta">
+        <app-button variant="primary" size="md">{{ ctaLabel() }}</app-button>
+      </div>
+    }
+
+    <!-- Mobile hamburger -->
+    <button
+      class="app-header__hamburger btn-reset"
+      type="button"
+      [attr.aria-expanded]="mobileMenuOpen()"
+      aria-label="Toggle navigation menu"
+      (click)="toggleMobileMenu()"
+    >
+      @if (mobileMenuOpen()) {
+        <app-icon [name]="closeIcon" [size]="22" />
+      } @else {
+        <app-icon [name]="menuIcon" [size]="22" />
+      }
+    </button>
+  </div>
+
+  <!-- Mobile nav drawer -->
+  @if (mobileMenuOpen()) {
+    <nav class="app-header__mobile-nav" aria-label="Mobile navigation">
+      @for (link of navLinks(); track link.href) {
+        <a [href]="link.href" class="app-header__mobile-nav-link">{{ link.label }}</a>
+      }
+      @if (ctaLabel()) {
+        <app-button variant="primary" size="md" class="app-header__mobile-cta">
+          {{ ctaLabel() }}
+        </app-button>
+      }
+    </nav>
+  }
+</header>
