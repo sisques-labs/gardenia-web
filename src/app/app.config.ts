@@ -6,6 +6,7 @@ import { authInterceptor } from '@/core/auth/infrastructure/interceptors/auth.in
 import { API_URL } from '@/core/auth/infrastructure/tokens/api-url.token';
 import { AUTH_REPOSITORY } from '@/core/auth/domain/ports/auth.repository.port';
 import { AuthHttpRepository } from '@/core/auth/infrastructure/repositories/auth-http.repository';
+import { environment } from '../environments/environment';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -13,7 +14,7 @@ export const appConfig: ApplicationConfig = {
     provideZonelessChangeDetection(),
     provideRouter(routes),
     provideHttpClient(withInterceptors([authInterceptor])),
-    { provide: API_URL, useValue: 'http://localhost:3000' },
+    { provide: API_URL, useValue: environment.apiUrl },
     { provide: AUTH_REPOSITORY, useExisting: AuthHttpRepository },
   ],
 };
