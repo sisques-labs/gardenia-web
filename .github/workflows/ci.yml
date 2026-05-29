@@ -21,10 +21,7 @@ jobs:
           node_version: "24"
 
       - name: Install dependencies
-        uses: sisques-labs/workflows/.github/actions/install@main
-        with:
-          app_path: "."
-          frozen_lockfile: "true"
+        run: pnpm install --frozen-lockfile --ignore-scripts && pnpm rebuild
 
       - name: Lint code
         run: pnpm lint
