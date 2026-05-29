@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable, tap } from 'rxjs';
 import { AccountUser } from '@/core/auth/domain/models/account-user.model';
 import { AUTH_REPOSITORY, IAuthRepository } from '@/core/auth/domain/ports/auth.repository.port';
-import { AuthStateService } from '@/core/auth/application/auth-state/services/auth-state.service';
+import { AuthStateService } from '@/core/auth/application/services/auth-state/auth-state.service';
 
 @Injectable({ providedIn: 'root' })
 export class MeService {

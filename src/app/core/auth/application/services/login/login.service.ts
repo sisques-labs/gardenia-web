@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, switchMap, tap, throwError } from 'rxjs';
 import { AUTH_REPOSITORY, IAuthRepository } from '@/core/auth/domain/ports/auth.repository.port';
-import { AuthStateService } from '@/core/auth/application/auth-state/services/auth-state.service';
-import { MeService } from '@/core/auth/application/me/services/me.service';
+import { AuthStateService } from '@/core/auth/application/services/auth-state/auth-state.service';
+import { MeService } from '@/core/auth/application/services/me/me.service';
 
 @Injectable({ providedIn: 'root' })
 export class LoginService {
