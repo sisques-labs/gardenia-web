@@ -9,7 +9,7 @@
     "url": "https://github.com/sisques-labs/gardenia-web.git"
   },
   "version": "0.0.0",
-  "packageManager": "pnpm@11.3.0",
+  "packageManager": "pnpm@9.15.4",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
