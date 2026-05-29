@@ -33,9 +33,6 @@
       }
     ]
   },
-  "pnpm": {
-    "onlyBuiltDependencies": ["@parcel/watcher", "esbuild", "lmdb", "msgpackr-extract"]
-  },
   "private": true,
   "dependencies": {
     "@angular/cdk": "^20.2.14",
