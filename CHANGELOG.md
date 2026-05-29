@@ -1,10 +1,15 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.1.2-alpha.0] - 2026-05-29
+
+### Chore
+- **tooling:** Add OpenSpec for spec-driven development workflow (e5ae59e)
 ## [0.1.1-alpha.0] - 2026-05-29
 
 ### Chore
 - **changelog:** Add git-cliff config (86b9c70)
+- Release v0.1.1-alpha.0 (2e136e1)
 ## [0.1.0-alpha.0] - 2026-05-29
 
 ### Bug Fixes
