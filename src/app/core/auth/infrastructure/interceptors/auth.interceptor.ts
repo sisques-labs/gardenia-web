@@ -1,7 +1,8 @@
 import { HttpErrorResponse, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Observable, Subject, catchError, filter, switchMap, take, throwError } from 'rxjs';
-import { AuthService } from '@/core/auth/application/services/auth.service';
+import { AuthStateService } from '@/core/auth/application/auth-state/auth-state.service';
+import { RefreshService } from '@/core/auth/application/refresh/refresh.service';
 
 // Module-level mutex — single instance per app, safe under zoneless.
 let isRefreshing = false;
@@ -20,8 +21,9 @@ function withBearer(req: HttpRequest<unknown>, token: string): HttpRequest<unkno
 }
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const auth = inject(AuthService);
-  const token = auth.accessToken();
+  const state = inject(AuthStateService);
+  const refreshSvc = inject(RefreshService);
+  const token = state.accessToken();
 
   const initial = !shouldSkipAuth(req) && token ? withBearer(req, token) : req;
 
@@ -33,7 +35,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
       // If the failing request was /auth/refresh itself → hard logout, no retry.
       if (isRefreshUrl(req)) {
-        auth.clearSession();
+        state.clearSession();
         return throwError(() => err);
       }
 
@@ -48,7 +50,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
       // Start a new refresh cycle.
       isRefreshing = true;
-      return auth.refresh().pipe(
+      return refreshSvc.refresh().pipe(
         switchMap(newToken => {
           isRefreshing = false;
           refreshed$.next(newToken);
@@ -57,7 +59,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         catchError(refreshErr => {
           isRefreshing = false;
           refreshed$.next(null);
-          auth.clearSession();
+          state.clearSession();
           return throwError(() => refreshErr);
         }),
       ) as Observable<never>;

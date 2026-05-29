@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import { Card } from '@/shared/presentation/components/ui/card/card';
 import { Input } from '@/shared/presentation/components/ui/input/input';
-import { AuthService } from '@/core/auth/application/services/auth.service';
+import { LoginService } from '@/core/auth/application/login/login.service';
 
 @Component({
   selector: 'app-login-page',
@@ -16,7 +16,7 @@ import { AuthService } from '@/core/auth/application/services/auth.service';
 })
 export class LoginPage {
   private readonly fb = inject(FormBuilder);
-  private readonly auth = inject(AuthService);
+  private readonly loginSvc = inject(LoginService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
 
@@ -33,7 +33,7 @@ export class LoginPage {
     const { email, password } = this.form.getRawValue();
     this.loading.set(true);
     this.error.set(null);
-    this.auth.login(email, password).subscribe({
+    this.loginSvc.login(email, password).subscribe({
       next: () => {
         this.loading.set(false);
         const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl') ?? '/';

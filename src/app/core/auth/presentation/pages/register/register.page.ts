@@ -5,7 +5,8 @@ import { switchMap } from 'rxjs';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import { Card } from '@/shared/presentation/components/ui/card/card';
 import { Input } from '@/shared/presentation/components/ui/input/input';
-import { AuthService } from '@/core/auth/application/services/auth.service';
+import { LoginService } from '@/core/auth/application/login/login.service';
+import { RegisterService } from '@/core/auth/application/register/register.service';
 
 @Component({
   selector: 'app-register-page',
@@ -17,7 +18,8 @@ import { AuthService } from '@/core/auth/application/services/auth.service';
 })
 export class RegisterPage {
   private readonly fb = inject(FormBuilder);
-  private readonly auth = inject(AuthService);
+  private readonly registerSvc = inject(RegisterService);
+  private readonly loginSvc = inject(LoginService);
   private readonly router = inject(Router);
 
   readonly loading = signal(false);
@@ -33,9 +35,9 @@ export class RegisterPage {
     const { email, password } = this.form.getRawValue();
     this.loading.set(true);
     this.error.set(null);
-    this.auth
+    this.registerSvc
       .register(email, password)
-      .pipe(switchMap(() => this.auth.login(email, password)))
+      .pipe(switchMap(() => this.loginSvc.login(email, password)))
       .subscribe({
         next: () => {
           this.loading.set(false);
