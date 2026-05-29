@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AUTH_REPOSITORY, IAuthRepository } from '@/core/auth/domain/ports/auth.repository.port';
+import { AUTH_REPOSITORY, IAuthRepository } from '@/core/auth/application/ports/auth.repository.port';
 
 @Injectable({ providedIn: 'root' })
 export class RegisterService {

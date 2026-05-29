@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
-import { AUTH_REPOSITORY } from '@/core/auth/domain/ports/auth.repository.port';
+import { AUTH_REPOSITORY } from '@/core/auth/application/ports/auth.repository.port';
 import { AuthStateService } from '@/core/auth/application/services/auth-state/auth-state.service';
 import { MeService } from '@/core/auth/application/services/me/me.service';
 import { LoginService } from './login.service';

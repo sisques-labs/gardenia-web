@@ -1,6 +1,6 @@
 import { TestBed } from '@angular/core/testing';
 import { of, throwError } from 'rxjs';
-import { AUTH_REPOSITORY } from '@/core/auth/domain/ports/auth.repository.port';
+import { AUTH_REPOSITORY } from '@/core/auth/application/ports/auth.repository.port';
 import { RegisterService } from './register.service';
 
 const mockRepo = { register: jasmine.createSpy('register') };

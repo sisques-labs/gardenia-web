@@ -4,7 +4,7 @@ import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { routes } from './app.routes';
 import { authInterceptor } from '@/core/auth/infrastructure/interceptors/auth.interceptor';
 import { API_URL } from '@/core/auth/infrastructure/tokens/api-url.token';
-import { AUTH_REPOSITORY } from '@/core/auth/domain/ports/auth.repository.port';
+import { AUTH_REPOSITORY } from '@/core/auth/application/ports/auth.repository.port';
 import { AuthHttpRepository } from '@/core/auth/infrastructure/repositories/auth-http.repository';
 import { environment } from '../environments/environment';
 

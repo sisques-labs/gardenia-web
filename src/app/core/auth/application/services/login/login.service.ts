@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, switchMap, tap, throwError } from 'rxjs';
-import { AUTH_REPOSITORY, IAuthRepository } from '@/core/auth/domain/ports/auth.repository.port';
+import { AUTH_REPOSITORY, IAuthRepository } from '@/core/auth/application/ports/auth.repository.port';
 import { AuthStateService } from '@/core/auth/application/services/auth-state/auth-state.service';
 import { MeService } from '@/core/auth/application/services/me/me.service';
 

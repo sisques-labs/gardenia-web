@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AccountUser } from '../../domain/models/account-user.model';
 import { AuthResponse } from '../../domain/interfaces/auth-response.interface';
-import { IAuthRepository } from '../../domain/ports/auth.repository.port';
+import { IAuthRepository } from '@/core/auth/application/ports/auth.repository.port';
 import { API_URL } from '../tokens/api-url.token';
 
 @Injectable({ providedIn: 'root' })

@@ -1,7 +1,7 @@
 import { InjectionToken } from '@angular/core';
 import { Observable } from 'rxjs';
-import { AccountUser } from '../models/account-user.model';
-import { AuthResponse } from '../interfaces/auth-response.interface';
+import { AccountUser } from '@/core/auth/domain/models/account-user.model';
+import { AuthResponse } from '@/core/auth/domain/interfaces/auth-response.interface';
 
 export interface IAuthRepository {
   login(email: string, password: string): Observable<AuthResponse>;
