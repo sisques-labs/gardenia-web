@@ -30,8 +30,8 @@ importers:
         specifier: ^20.1.0
         version: 20.3.21(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(@angular/platform-browser@20.3.21(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)))(rxjs@7.8.2)
       '@lucide/angular':
-        specifier: ^1.16.0
-        version: 1.16.0(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))
+        specifier: ^1.17.0
+        version: 1.17.0(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))
       rxjs:
         specifier: ~7.8.0
         version: 7.8.2
@@ -1033,8 +1033,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@lucide/angular@1.16.0':
-    resolution: {integrity: sha512-jszfiRHn8uuESXHT0aGExBWtGRr35L3nj+dovP05gvrwV8Mnk4jEU45v2kVvcrNe5GBcrKiFJWyoFX2qFfW0nA==}
+  '@lucide/angular@1.17.0':
+    resolution: {integrity: sha512-wakfICt3X8IBsNeHncu+n/3P36OvxcleOre6/D5rSUL/dEmvhVganlv7tEz2KHsTWeeGGtsTATEKYeuxmWQKWg==}
     peerDependencies:
       '@angular/common': 17.x - 21.x
       '@angular/core': 17.x - 21.x
@@ -4479,7 +4479,7 @@ snapshots:
   '@lmdb/lmdb-win32-x64@3.4.2':
     optional: true
 
-  '@lucide/angular@1.16.0(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))':
+  '@lucide/angular@1.17.0(@angular/common@20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2))(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))':
     dependencies:
       '@angular/common': 20.3.21(@angular/core@20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2))(rxjs@7.8.2)
       '@angular/core': 20.3.21(@angular/compiler@20.3.21)(rxjs@7.8.2)
