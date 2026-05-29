@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { Observable, finalize } from 'rxjs';
-import { AUTH_REPOSITORY, IAuthRepository } from '../../../domain/ports/auth.repository.port';
-import { AuthStateService } from '../auth-state/services/auth-state.service';
+import { AUTH_REPOSITORY, IAuthRepository } from '@/core/auth/domain/ports/auth.repository.port';
+import { AuthStateService } from '@/core/auth/application/auth-state/services/auth-state.service';
 
 @Injectable({ providedIn: 'root' })
 export class LogoutService {
