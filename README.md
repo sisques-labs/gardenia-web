@@ -2,6 +2,17 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.0.
 
+## Environment setup
+
+This project uses Angular environment files for configuration:
+
+| File | Purpose | Committed |
+|------|---------|-----------|
+| `src/environments/environment.ts` | Production values | Yes |
+| `src/environments/environment.development.ts` | Local dev values (`localhost:3000`) | Yes |
+
+Both files are committed and work out of the box. Update `environment.ts` with the real production API URL before deploying.
+
 ## Development server
 
 To start a local development server, run:

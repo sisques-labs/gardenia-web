@@ -1,6 +1,15 @@
 {
-  "name": "gardenia",
+  "name": "sisques-labs/gardenia-web",
+  "description": "Gardenia web application",
+  "author": "Sisques Labs <info@sisques.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/sisques-labs/gardenia-web",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sisques-labs/gardenia-web.git"
+  },
   "version": "0.0.0",
+  "packageManager": "pnpm@11.3.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -26,12 +35,14 @@
   },
   "private": true,
   "dependencies": {
+    "@angular/cdk": "^20.2.14",
     "@angular/common": "^20.1.0",
     "@angular/compiler": "^20.1.0",
     "@angular/core": "^20.1.0",
     "@angular/forms": "^20.1.0",
     "@angular/platform-browser": "^20.1.0",
     "@angular/router": "^20.1.0",
+    "@lucide/angular": "^1.16.0",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
     "uuid": "^14.0.0"

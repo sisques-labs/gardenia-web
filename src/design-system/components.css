@@ -95,6 +95,9 @@
   .chip.honey  { background: oklch(0.94 0.07 80);  color: var(--honey-2); border-color: oklch(0.84 0.08 80); }
   .chip.terra  { background: oklch(0.93 0.05 35);  color: var(--terracotta); border-color: oklch(0.84 0.06 35); }
   .chip.sage   { background: oklch(0.92 0.03 130); color: oklch(0.36 0.04 130); border-color: oklch(0.82 0.04 130); }
+  .chip.sky     { background: oklch(0.92 0.04 230); color: var(--sky);  border-color: oklch(0.82 0.05 230); }
+  .chip.plum    { background: oklch(0.93 0.04 340); color: var(--plum); border-color: oklch(0.83 0.05 340); }
+  .chip.ink     { background: oklch(0.25 0.025 60); color: oklch(0.95 0.01 80); border-color: oklch(0.32 0.025 60); }
   .chip.outline { background: transparent; }
 
   .tnum { font-variant-numeric: tabular-nums; }
