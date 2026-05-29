@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { of, throwError } from 'rxjs';
 import { AUTH_REPOSITORY } from '@/core/auth/application/ports/auth.repository.port';
 import { RegisterService } from './register.service';
@@ -11,7 +12,8 @@ describe('RegisterService', () => {
   beforeEach(() => {
     mockRepo.register.calls.reset();
     TestBed.configureTestingModule({
-      providers: [RegisterService, { provide: AUTH_REPOSITORY, useValue: mockRepo }],
+      providers: [
+        provideZonelessChangeDetection(),RegisterService, { provide: AUTH_REPOSITORY, useValue: mockRepo }],
     });
     service = TestBed.inject(RegisterService);
   });

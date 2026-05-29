@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthStateService } from './auth-state.service';
 
@@ -9,7 +10,8 @@ describe('AuthStateService', () => {
   beforeEach(() => {
     router = jasmine.createSpyObj('Router', ['navigateByUrl']);
     TestBed.configureTestingModule({
-      providers: [AuthStateService, { provide: Router, useValue: router }],
+      providers: [
+        provideZonelessChangeDetection(),AuthStateService, { provide: Router, useValue: router }],
     });
     service = TestBed.inject(AuthStateService);
   });

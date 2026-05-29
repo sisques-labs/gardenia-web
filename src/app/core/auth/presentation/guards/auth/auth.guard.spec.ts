@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { AuthStateService } from '@/core/auth/application/services/auth-state/auth-state.service';
 import { authGuard } from './auth.guard';
@@ -15,6 +16,7 @@ describe('authGuard', () => {
     authState = jasmine.createSpyObj('AuthStateService', ['isAuthenticated']);
     TestBed.configureTestingModule({
       providers: [
+        provideZonelessChangeDetection(),
         { provide: Router, useValue: router },
         { provide: AuthStateService, useValue: authState },
       ],

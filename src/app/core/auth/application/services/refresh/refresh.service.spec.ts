@@ -1,4 +1,5 @@
 import { TestBed } from '@angular/core/testing';
+import { provideZonelessChangeDetection } from '@angular/core';
 import { of } from 'rxjs';
 import { AUTH_REPOSITORY } from '@/core/auth/application/ports/auth.repository.port';
 import { AuthStateService } from '@/core/auth/application/services/auth-state/auth-state.service';
@@ -14,6 +15,7 @@ describe('RefreshService', () => {
     mockRepo.refresh.calls.reset();
     TestBed.configureTestingModule({
       providers: [
+        provideZonelessChangeDetection(),
         RefreshService,
         { provide: AUTH_REPOSITORY, useValue: mockRepo },
         { provide: AuthStateService, useValue: mockState },
