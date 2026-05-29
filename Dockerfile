@@ -4,11 +4,10 @@ FROM node:24-bookworm-slim AS builder
 WORKDIR /app
 
 ENV HUSKY=0
-RUN corepack enable && corepack prepare pnpm@11.3.0 --activate
+RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
 
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
-RUN pnpm install --frozen-lockfile --ignore-scripts
-RUN pnpm rebuild
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
 
 COPY . .
 RUN pnpm build
