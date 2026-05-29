@@ -4,7 +4,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import { Card } from '@/shared/presentation/components/ui/card/card';
 import { Input } from '@/shared/presentation/components/ui/input/input';
-import { LoginService } from '@/core/auth/application/login/login.service';
+import { LoginService } from '@/core/auth/application/login/services/login.service';
 
 @Component({
   selector: 'app-login-page',

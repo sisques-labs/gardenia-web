@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { AUTH_REPOSITORY } from '../../domain/ports/auth.repository.port';
-import { AuthStateService } from '../auth-state/auth-state.service';
+import { AUTH_REPOSITORY } from '../../../domain/ports/auth.repository.port';
+import { AuthStateService } from '../auth-state/services/auth-state.service';
 import { RefreshService } from './refresh.service';
 
 const mockRepo = { refresh: jasmine.createSpy('refresh') };

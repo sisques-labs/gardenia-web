@@ -5,8 +5,8 @@ import { switchMap } from 'rxjs';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import { Card } from '@/shared/presentation/components/ui/card/card';
 import { Input } from '@/shared/presentation/components/ui/input/input';
-import { LoginService } from '@/core/auth/application/login/login.service';
-import { RegisterService } from '@/core/auth/application/register/register.service';
+import { LoginService } from '@/core/auth/application/login/services/login.service';
+import { RegisterService } from '@/core/auth/application/register/services/register.service';
 
 @Component({
   selector: 'app-register-page',

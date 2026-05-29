@@ -1,8 +1,8 @@
 import { TestBed } from '@angular/core/testing';
 import { of } from 'rxjs';
-import { AccountUser } from '../../domain/models/account-user.model';
-import { AUTH_REPOSITORY } from '../../domain/ports/auth.repository.port';
-import { AuthStateService } from '../auth-state/auth-state.service';
+import { AccountUser } from '../../../domain/models/account-user.model';
+import { AUTH_REPOSITORY } from '../../../domain/ports/auth.repository.port';
+import { AuthStateService } from '../auth-state/services/auth-state.service';
 import { MeService } from './me.service';
 
 const mockUser: AccountUser = { id: '1', email: 'a@b.com' };

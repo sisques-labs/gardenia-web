@@ -1,6 +1,6 @@
 import { Injectable, computed, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
-import { AccountUser } from '../../domain/models/account-user.model';
+import { AccountUser } from '../../../domain/models/account-user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthStateService {

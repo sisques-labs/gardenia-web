@@ -1,8 +1,8 @@
 import { HttpErrorResponse, HttpInterceptorFn, HttpRequest } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { Observable, Subject, catchError, filter, switchMap, take, throwError } from 'rxjs';
-import { AuthStateService } from '@/core/auth/application/auth-state/auth-state.service';
-import { RefreshService } from '@/core/auth/application/refresh/refresh.service';
+import { AuthStateService } from '@/core/auth/application/auth-state/services/auth-state.service';
+import { RefreshService } from '@/core/auth/application/refresh/services/refresh.service';
 
 // Module-level mutex — single instance per app, safe under zoneless.
 let isRefreshing = false;
