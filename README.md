@@ -2,6 +2,25 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.1.0.
 
+## Environment setup
+
+This project uses Angular environment files for configuration. `src/environments/environment.ts` (production) is gitignored — you must create it manually before running a production build.
+
+```bash
+cp src/environments/environment.ts.example src/environments/environment.ts
+```
+
+Then edit `environment.ts` with the real values:
+
+```typescript
+export const environment = {
+  production: true,
+  apiUrl: 'https://your-api-host/api',
+};
+```
+
+For local development, `src/environments/environment.development.ts` is committed and works out of the box — no setup needed.
+
 ## Development server
 
 To start a local development server, run:
