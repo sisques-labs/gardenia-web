@@ -1,7 +1,18 @@
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { of } from 'rxjs';
+import { SpacesStateService } from '@/core/spaces/application/services/spaces-state/spaces-state.service';
 import { Header, NavLink } from './header';
 import { createTestBed } from '../ui/_testing/test-host';
+
+const spacesStateStub = {
+  currentSpace: signal(null),
+  availableSpaces: signal([]),
+  isLoading: signal(false),
+  isResolved: signal(false),
+  loadSpaces: () => of(undefined),
+  setActiveSpace: (_id: string) => { void _id; },
+};
 
 // ---------------------------------------------------------------------------
 // Test hosts
@@ -39,7 +50,9 @@ describe('Header', () => {
   let el: HTMLElement;
 
   beforeEach(async () => {
-    await createTestBed(HeaderHost);
+    await createTestBed(HeaderHost, {
+      providers: [{ provide: SpacesStateService, useValue: spacesStateStub }],
+    });
     fixture = TestBed.createComponent(HeaderHost);
     host = fixture.componentInstance;
     // Do NOT call detectChanges here — set state in each test first, then detect

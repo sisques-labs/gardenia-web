@@ -3,6 +3,7 @@ import { inject } from '@angular/core';
 import { Observable, Subject, catchError, filter, switchMap, take, throwError } from 'rxjs';
 import { AuthStateService } from '@/core/auth/application/services/auth-state/auth-state.service';
 import { RefreshService } from '@/core/auth/application/services/refresh/refresh.service';
+import { SpacesStateService } from '@/core/spaces/application/services/spaces-state/spaces-state.service';
 
 // Module-level mutex — single instance per app, safe under zoneless.
 let isRefreshing = false;
@@ -10,6 +11,10 @@ const refreshed$ = new Subject<string | null>();
 
 function shouldSkipAuth(req: HttpRequest<unknown>): boolean {
   return req.url.endsWith('/auth/login') || req.url.endsWith('/auth/register');
+}
+
+function shouldSkipSpace(req: HttpRequest<unknown>): boolean {
+  return req.url.includes('/auth/');
 }
 
 function isRefreshUrl(req: HttpRequest<unknown>): boolean {
@@ -23,9 +28,17 @@ function withBearer(req: HttpRequest<unknown>, token: string): HttpRequest<unkno
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const state = inject(AuthStateService);
   const refreshSvc = inject(RefreshService);
+  const spacesState = inject(SpacesStateService);
   const token = state.accessToken();
 
-  const initial = !shouldSkipAuth(req) && token ? withBearer(req, token) : req;
+  let initial = !shouldSkipAuth(req) && token ? withBearer(req, token) : req;
+
+  if (!shouldSkipSpace(req)) {
+    const space = spacesState.currentSpace();
+    if (space !== null) {
+      initial = initial.clone({ setHeaders: { 'X-Space-ID': space.id } });
+    }
+  }
 
   return next(initial).pipe(
     catchError((err: unknown): Observable<never> => {
