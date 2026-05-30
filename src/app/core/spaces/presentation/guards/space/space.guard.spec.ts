@@ -1,4 +1,4 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection, signal } from '@angular/core';
 import { ActivatedRouteSnapshot, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
 import { Observable, of } from 'rxjs';
@@ -52,7 +52,7 @@ describe('spaceGuard', () => {
     expect(result).toBe(tree);
   });
 
-  it('calls loadSpaces() when isResolved is false and returns true when space exists', fakeAsync(() => {
+  it('calls loadSpaces() when isResolved is false and returns true when space exists', () => {
     const mock = makeSpacesStateMock({ isResolved: false, currentSpace: mockSpace });
     setup(mock);
 
@@ -61,13 +61,12 @@ describe('spaceGuard', () => {
       const guard$ = spaceGuard(mockRoute, mockState) as Observable<boolean | UrlTree>;
       guard$.subscribe((v: boolean | UrlTree) => (result = v));
     });
-    tick();
 
     expect(mock.loadSpaces).toHaveBeenCalled();
     expect(result).toBeTrue();
-  }));
+  });
 
-  it('redirects to /spaces/new when loadSpaces resolves with no space', fakeAsync(() => {
+  it('redirects to /spaces/new when loadSpaces resolves with no space', () => {
     const mock = makeSpacesStateMock({ isResolved: false, currentSpace: null });
     setup(mock);
     const tree = {} as UrlTree;
@@ -78,9 +77,8 @@ describe('spaceGuard', () => {
       const guard$ = spaceGuard(mockRoute, mockState) as Observable<boolean | UrlTree>;
       guard$.subscribe((v: boolean | UrlTree) => (result = v));
     });
-    tick();
 
     expect(router.createUrlTree).toHaveBeenCalledWith(['/spaces/new']);
     expect(result).toBe(tree);
-  }));
+  });
 });
