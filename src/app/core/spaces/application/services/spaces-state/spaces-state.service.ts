@@ -53,6 +53,7 @@ export class SpacesStateService {
   }
 
   resolveFromStorage(spaces: Space[]): void {
+    this._availableSpaces.set(spaces);
     const storedId = this.storage.get();
     if (storedId && spaces.some((s) => s.id === storedId)) {
       this._currentSpaceId.set(storedId);
