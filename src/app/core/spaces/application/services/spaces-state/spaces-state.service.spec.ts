@@ -1,4 +1,4 @@
-import { TestBed, fakeAsync, tick } from '@angular/core/testing';
+import { TestBed } from '@angular/core/testing';
 import { provideZonelessChangeDetection } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { Space } from '@/core/spaces/domain/interfaces/space.interface';
@@ -51,58 +51,52 @@ describe('SpacesStateService', () => {
   });
 
   describe('loadSpaces()', () => {
-    it('sets availableSpaces and marks isResolved after load', fakeAsync(() => {
+    it('sets availableSpaces and marks isResolved after load', () => {
       mockRepo.getSpacesByUser.and.returnValue(of([SPACE_A, SPACE_B]));
       service.loadSpaces().subscribe();
-      tick();
       expect(service.availableSpaces()).toEqual([SPACE_A, SPACE_B]);
       expect(service.isResolved()).toBeTrue();
       expect(service.isLoading()).toBeFalse();
-    }));
+    });
 
-    it('picks first space when no storage entry', fakeAsync(() => {
+    it('picks first space when no storage entry', () => {
       mockStorage.get.and.returnValue(null);
       mockRepo.getSpacesByUser.and.returnValue(of([SPACE_A, SPACE_B]));
       service.loadSpaces().subscribe();
-      tick();
       expect(service.currentSpace()).toEqual(SPACE_A);
       expect(mockStorage.set).toHaveBeenCalledWith(SPACE_A.id);
-    }));
+    });
 
-    it('restores from storage when stored id is valid', fakeAsync(() => {
+    it('restores from storage when stored id is valid', () => {
       mockStorage.get.and.returnValue(SPACE_B.id);
       mockRepo.getSpacesByUser.and.returnValue(of([SPACE_A, SPACE_B]));
       service.loadSpaces().subscribe();
-      tick();
       expect(service.currentSpace()).toEqual(SPACE_B);
-    }));
+    });
 
-    it('falls back to first space when stored id is stale', fakeAsync(() => {
+    it('falls back to first space when stored id is stale', () => {
       mockStorage.get.and.returnValue('stale-id');
       mockRepo.getSpacesByUser.and.returnValue(of([SPACE_A, SPACE_B]));
       service.loadSpaces().subscribe();
-      tick();
       expect(service.currentSpace()).toEqual(SPACE_A);
       expect(mockStorage.set).toHaveBeenCalledWith(SPACE_A.id);
-    }));
+    });
 
-    it('sets currentSpace to null when no spaces returned', fakeAsync(() => {
+    it('sets currentSpace to null when no spaces returned', () => {
       mockRepo.getSpacesByUser.and.returnValue(of([]));
       service.loadSpaces().subscribe();
-      tick();
       expect(service.currentSpace()).toBeNull();
-    }));
+    });
   });
 
   describe('setActiveSpace()', () => {
-    it('updates currentSpace and persists to storage', fakeAsync(() => {
+    it('updates currentSpace and persists to storage', () => {
       mockRepo.getSpacesByUser.and.returnValue(of([SPACE_A, SPACE_B]));
       service.loadSpaces().subscribe();
-      tick();
       service.setActiveSpace(SPACE_B.id);
       expect(service.currentSpace()).toEqual(SPACE_B);
       expect(mockStorage.set).toHaveBeenCalledWith(SPACE_B.id);
-    }));
+    });
   });
 
   describe('resolveFromStorage()', () => {
@@ -126,18 +120,16 @@ describe('SpacesStateService', () => {
   });
 
   describe('UserRegisteredEvent subscription', () => {
-    it('calls setActiveSpace when UserRegisteredEvent is published', fakeAsync(() => {
+    it('calls setActiveSpace when UserRegisteredEvent is published', () => {
       mockRepo.getSpacesByUser.and.returnValue(of([SPACE_A, SPACE_B]));
       service.loadSpaces().subscribe();
-      tick();
 
       const evt: UserRegisteredEvent = { type: 'auth.user_registered', occurredAt: new Date(), spaceId: SPACE_B.id };
       eventBus.publish(evt);
-      tick();
 
       expect(service.currentSpace()).toEqual(SPACE_B);
       expect(mockStorage.set).toHaveBeenCalledWith(SPACE_B.id);
-    }));
+    });
   });
 });
 
@@ -169,16 +161,14 @@ describe('SpacesStateService (integration)', () => {
     localStorage.clear();
   });
 
-  it('register event published → SpacesStateService reacts → localStorage has gardenia.activeSpaceId', fakeAsync(() => {
+  it('register event published → SpacesStateService reacts → localStorage has gardenia.activeSpaceId', () => {
     mockRepo.getSpacesByUser.and.returnValue(of([SPACE_A, SPACE_B]));
     service.loadSpaces().subscribe();
-    tick();
 
     const evt: UserRegisteredEvent = { type: 'auth.user_registered', occurredAt: new Date(), spaceId: SPACE_B.id };
     eventBus.publish(evt);
-    tick();
 
     expect(localStorage.getItem('gardenia.activeSpaceId')).toBe(SPACE_B.id);
     expect(service.currentSpace()).toEqual(SPACE_B);
-  }));
+  });
 });
