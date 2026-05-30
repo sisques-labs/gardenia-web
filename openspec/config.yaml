@@ -1,0 +1,85 @@
+schema: spec-driven
+
+context: |
+  Tech stack: Angular 20, TypeScript (strict), zoneless, standalone components, signals-based state, pnpm
+  Architecture: DDD + Hexagonal (Screaming Architecture). Bounded contexts: auth, users, spaces, shared. Layers: domain / application / infrastructure / presentation
+  Testing: Karma + Jasmine unit (co-located .spec.ts) + TestBed integration (HttpClientTestingModule) + Playwright e2e. Coverage: pnpm test:ci
+  Style: Prettier + ESLint, Husky + lint-staged. Conventional Commits (free scope). No AI attribution in commits.
+
+testing:
+  strict_tdd: true
+  test_command: "pnpm test"
+  coverage_command: "pnpm test:ci"
+  e2e_command: "pnpm e2e"
+  integration_command: "pnpm test:integration"
+  detected: "2026-05-30"
+  layers:
+    unit: { available: true, tool: "karma + jasmine" }
+    integration: { available: false, tool: "testbed + httpclienttestingmodule", note: "pending implementation" }
+    e2e: { available: false, tool: "playwright", note: "pending implementation" }
+  coverage: { available: true, command: "pnpm test:ci" }
+  quality:
+    linter: { available: true, command: "pnpm lint" }
+    type_checker: { available: true, command: "tsc --noEmit" }
+    formatter: { available: true, command: "pnpm format" }
+
+conventions:
+  naming:
+    services: "{name}.service.ts"
+    repository_ports: "{name}.repository.port.ts"
+    repositories: "{name}-http.repository.ts"
+    interceptors: "{name}.interceptor.ts"
+    guards: "{name}.guard.ts"
+    models: "{name}.model.ts"
+    interfaces: "{name}.interface.ts"
+    pages: "{name}.page.ts"
+    value_objects: "{name}.vo.ts"
+    di_tokens: "{name}.token.ts"
+    entities: "{name}.entity.ts"
+    components: "{name}.ts (no suffix — design system atoms/molecules are self-describing)"
+  architecture:
+    pattern: "DDD + Hexagonal per bounded context under src/app/core/{context}/"
+    layers: [domain, application, infrastructure, presentation]
+    shared_ui: "src/app/shared/presentation/components — atomic design, no suffix"
+    cross_layer: "domain must never import from infrastructure or presentation"
+
+git:
+  base_branch: main
+  strategy: "feature branches → PR → main (develop branch planned for later)"
+  commits: "Conventional Commits, free scope"
+  pr_size_limit: 400
+
+rules:
+  proposal:
+    - Identify all bounded contexts impacted
+    - Include rollback plan for risky changes
+  specs:
+    - Use Given/When/Then for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+  design:
+    - Respect DDD + Hexagonal layering — no cross-layer violations
+    - Document architecture decisions with rationale
+    - Include sequence diagrams for complex flows
+  tasks:
+    - Group by phase, use hierarchical numbering
+    - Keep tasks completable in one session
+    - PRs must stay under 400 lines — split into chained PRs if needed
+  apply:
+    - Follow DDD + Hexagonal patterns per bounded context (domain / application / infrastructure / presentation)
+    - Services live in application/services/{use-case}/; one file per use case
+    - Repository interfaces live in domain/ports/; implementations in infrastructure/repositories/
+    - DI tokens in infrastructure/tokens/
+    - Guards and interceptors in presentation/guards/ and infrastructure/interceptors/
+    - Pages in presentation/pages/{name}/; one folder per page with .ts + .html + .css
+    - Shared atomic components in shared/presentation/components/ — no suffix, no business logic
+    - Value objects in domain/value-objects/ using {name}.vo.ts
+    - When adding or changing a feature, include unit tests (.spec.ts co-located). Add integration or e2e tests when those layers are available.
+    - No barrel index.ts files unless the module explicitly needs a public API surface
+    - Signals for all state — no BehaviorSubject, no NgRx
+  verify:
+    test_command: "pnpm test"
+    e2e_command: "pnpm e2e"
+    build_command: "pnpm build"
+    coverage_threshold: 80
+  archive:
+    - Warn before merging destructive deltas
