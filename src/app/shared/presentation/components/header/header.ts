@@ -1,7 +1,8 @@
-import { Component, input, signal } from '@angular/core';
+import { Component, inject, input, signal } from '@angular/core';
 import { LucideMenu, LucideX } from '@lucide/angular';
 import { Button } from '../ui/button/button';
 import { Icon } from '../ui/icon/icon';
+import { SpacesStateService } from '@/core/spaces/application/services/spaces-state/spaces-state.service';
 
 export interface NavLink {
   label: string;
@@ -19,6 +20,7 @@ export class Header {
   readonly navLinks = input<NavLink[]>([]);
   readonly ctaLabel = input<string>('');
 
+  protected readonly spacesState = inject(SpacesStateService);
   protected readonly mobileMenuOpen = signal(false);
 
   protected readonly menuIcon = LucideMenu.icon;

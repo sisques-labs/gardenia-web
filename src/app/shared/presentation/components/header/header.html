@@ -12,6 +12,13 @@
       }
     </nav>
 
+    <!-- Active space indicator -->
+    @if (spacesState.currentSpace(); as space) {
+      <span class="app-header__space-name" aria-label="Active space: {{ space.name }}">
+        {{ space.name }}
+      </span>
+    }
+
     <!-- Desktop CTA -->
     @if (ctaLabel()) {
       <div class="app-header__cta">
