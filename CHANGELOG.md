@@ -1,10 +1,27 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.2.0-alpha.0] - 2026-05-31
+
+### Bug Fixes
+- **spaces:** Replace fakeAsync with sync tests and fix resolveFromStorage signal update (8845458)
+- **spaces:** Replace fakeAsync with sync tests and fix resolveFromStorage signal update (b9e4210)
+- **tests:** Mock SpacesStateService in app.spec and remove fakeAsync from guard spec (e2a1016)
+- **tests:** Provide SpacesStateService mock in header spec (9dd5015)
+
+### Chore
+- **sdd:** Archive multitenant-frontend change (b8af549)
+- **openspec:** Add project conventions config (aac55bf)
+
+### Features
+- **spaces:** Add EventBus infrastructure and fix auth register response (58b89c4)
+- **spaces:** Add spaces DDD domain, application layer and infrastructure stubs (741c1d0)
+- **spaces:** Add interceptor, space guard, shell routing and presentation pages (cd5f5da)
 ## [0.1.2-alpha.0] - 2026-05-29
 
 ### Chore
 - **tooling:** Add OpenSpec for spec-driven development workflow (e5ae59e)
+- Release v0.1.2-alpha.0 (6f93623)
 ## [0.1.1-alpha.0] - 2026-05-29
 
 ### Chore
