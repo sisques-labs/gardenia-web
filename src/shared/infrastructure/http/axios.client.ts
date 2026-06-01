@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { refreshTokenOnce } from '@/core/auth/infrastructure/http/refresh-mutex';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
+import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 const AUTH_SKIP = ['/auth/login', '/auth/register'];
@@ -30,7 +31,7 @@ http.interceptors.request.use((config) => {
     if (token) config.headers.set('Authorization', `Bearer ${token}`);
   }
   if (!path.startsWith(SPACE_SKIP)) {
-    const spaceId = (globalThis as Record<string, unknown>).__activeSpaceId as string | undefined;
+    const spaceId = useSpacesStore.getState().currentSpaceId;
     if (spaceId) config.headers.set('X-Space-ID', spaceId);
   }
   return config;

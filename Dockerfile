@@ -7,6 +7,10 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
+ARG NEXT_PUBLIC_API_URL=http://localhost:3000/api
+ARG NEXT_PUBLIC_GRAPHQL_URL=http://localhost:3000/graphql
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_GRAPHQL_URL=$NEXT_PUBLIC_GRAPHQL_URL
 RUN pnpm build
 
 FROM node:24-bookworm-slim AS runner
