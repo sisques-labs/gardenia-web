@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect } from 'react';
-import { RefreshService } from '@/core/auth/application/services/refresh/refresh.service';
-import { MeService } from '@/core/auth/application/services/me/me.service';
+import { RefreshService } from '@/core/auth/application/use-cases/refresh/refresh.service';
+import { MeService } from '@/core/auth/application/use-cases/me/me.service';
 import { authHttpRepository } from '@/core/auth/infrastructure/repositories/auth-http.repository';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 
