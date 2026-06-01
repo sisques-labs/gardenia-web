@@ -1,5 +1,5 @@
-import { RegisterPage } from '@/core/auth/presentation/screens/register/register.screen';
+import { RegisterScreen } from '@/core/auth/presentation/screens/register/register.screen';
 
 export default function Page() {
-  return <RegisterPage />;
+  return <RegisterScreen />;
 }

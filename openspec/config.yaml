@@ -32,7 +32,7 @@ conventions:
     use_cases: "{name}.service.ts (class) inside application/use-cases/{name}/"
     repository_ports: "{name}.repository.port.ts"
     repositories: "{name}-http.repository.ts"
-    screens: "{name}.screen.tsx (React, 'use client' when needed)"
+    screens: "{name}.screen.tsx — file name; component exported as {Name}Screen (PascalCase)"
     hooks: "use-{name}.ts"
     providers: "{context}.providers.tsx"
     models: "{name}.model.ts"

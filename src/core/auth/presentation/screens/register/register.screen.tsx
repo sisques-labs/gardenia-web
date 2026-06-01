@@ -20,7 +20,7 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export function RegisterPage() {
+export function RegisterScreen() {
   const router = useRouter();
   const { mutate: register, isPending, error } = useRegister();
 
