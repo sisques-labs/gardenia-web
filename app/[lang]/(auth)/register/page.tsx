@@ -1,5 +1,5 @@
-import { isLocale, DEFAULT_LOCALE } from '@/shared/i18n/locale';
-import { getDictionary } from '@/shared/i18n/get-dictionary';
+import { isLocale, DEFAULT_LOCALE } from '@/shared/presentation/i18n/locale';
+import { getDictionary } from '@/shared/presentation/i18n/get-dictionary';
 import { RegisterScreen } from '@/core/auth/presentation/screens/register/register.screen';
 
 export default async function Page({ params }: { params: Promise<{ lang: string }> }) {

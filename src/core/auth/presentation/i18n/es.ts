@@ -1,5 +1,5 @@
 import type { AuthDict } from './en';
-import type { WidenStringLiterals } from '@/shared/i18n/widen-literals';
+import type { WidenStringLiterals } from '@/shared/presentation/i18n/widen-literals';
 
 type AuthDictTranslated = WidenStringLiterals<AuthDict>;
 

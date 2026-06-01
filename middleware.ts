@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { DEFAULT_LOCALE, isLocale, SUPPORTED_LOCALES } from '@/shared/i18n/locale';
+import { DEFAULT_LOCALE, isLocale, SUPPORTED_LOCALES } from '@/shared/presentation/i18n/locale';
 
 const REFRESH_COOKIE = 'refreshToken'; // TODO: confirm exact name with backend
 const PUBLIC_PATHS = ['/login', '/register'];

@@ -8,7 +8,7 @@ import { Input } from '@/shared/presentation/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/presentation/components/ui/card';
 import { useRegister } from '@/core/auth/presentation/hooks/use-register/useRegister.hook';
 import { registerSchema, type RegisterFormValues } from '@/core/auth/presentation/schemas/register.schema';
-import type { AppDict } from '@/shared/i18n/get-dictionary';
+import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = { dict: AppDict['auth']['register'] };
 

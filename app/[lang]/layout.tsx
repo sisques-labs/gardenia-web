@@ -1,5 +1,5 @@
 import { redirect } from 'next/navigation';
-import { isLocale, DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/shared/i18n/locale';
+import { isLocale, DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/shared/presentation/i18n/locale';
 import { Providers } from '@/shared/presentation/providers/providers';
 
 export function generateStaticParams() {

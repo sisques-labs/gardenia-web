@@ -8,7 +8,7 @@ import { Input } from '@/shared/presentation/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/presentation/components/ui/card';
 import { useLogin } from '@/core/auth/presentation/hooks/use-login/useLogin.hook';
 import { loginSchema, type LoginFormValues } from '@/core/auth/presentation/schemas/login.schema';
-import type { AppDict } from '@/shared/i18n/get-dictionary';
+import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = { dict: AppDict['auth']['login'] };
 
