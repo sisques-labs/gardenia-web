@@ -1,6 +1,40 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.3.0-alpha.0] - 2026-06-01
+
+### Bug Fixes
+- **tsconfig:** Add node to types for process.env resolution (3a6e55c)
+- **husky:** Update pre-push hook to use tsconfig.json instead of tsconfig.app.json (8fca2d7)
+- **tsconfig:** Add vitest/globals and jest-dom types for test files (0ccb3d0)
+- **build:** Wrap LoginScreen in Suspense for useSearchParams, rename middleware to proxy (8658243)
+- **build:** Revert proxy.ts to middleware.ts — proxy convention is canary only (04d3bdd)
+- **docker:** Add .gitkeep to public/ so Docker COPY doesn't fail on empty dir (65836c9)
+
+### Chore
+- Remove Angular source and PR1 scaffold — fresh Next.js start (c74d252)
+- Remove Angular source and PR1 scaffold — fresh Next.js start (8040688)
+- **i18n:** Use Castilian Spanish (es-ES) in auth translations, add variant convention (bdfed7b)
+
+### Features
+- **scaffold:** Migrate to Next.js 15 with shadcn/ui, Vitest, and Node server Dockerfile (7c5c0ff)
+- Initialize Next.js 16 project with create-next-app (a2d4f51)
+- **deps:** Add TanStack Query v5 and Apollo Client v4 for GraphQL (ed0203a)
+- **providers:** Add DDD provider structure with TanStack Query and Apollo (911562a)
+- **providers:** Add DDD provider structure with TanStack Query and Apollo (a8b52c2)
+- **base:** Add shadcn/ui components, Vitest setup, and DDD provider pattern (f327c4c)
+- **auth:** Add auth module with DDD structure, refresh mutex, and React Hook Form pages (97a2459)
+- **auth:** Add auth module with DDD structure, refresh mutex, and React Hook Form pages (ba7b290)
+- **i18n:** Add per-module TypeScript dictionaries with [lang] routing and parity tests (59742b9)
+
+### Refactor
+- **auth:** Rename pages to screens, replace ky with axios, fix Dockerfile with standalone output (40632cd)
+- **auth:** Rename services to use-cases, replace ky with axios, update openspec conventions (e627db4)
+- **auth:** Rename LoginPage/RegisterPage components to LoginScreen/RegisterScreen (4c6099e)
+- **auth:** Extract schemas to presentation/schemas/, reorganize hooks to hooks/{name}/{name}.hook.ts (3ae5beb)
+- **auth:** Rename service files and classes to use-case convention (3e9270b)
+- **i18n:** Move i18n into presentation/i18n per module, update conventions (5ad541a)
+- **i18n:** Move shared/i18n into shared/presentation/i18n, update all imports and conventions (1d1eee4)
 ## [0.2.0-alpha.0] - 2026-05-31
 
 ### Bug Fixes
@@ -12,6 +46,7 @@ All notable changes to this project will be documented in this file.
 ### Chore
 - **sdd:** Archive multitenant-frontend change (b8af549)
 - **openspec:** Add project conventions config (aac55bf)
+- Release v0.2.0-alpha.0 (5e3af12)
 
 ### Features
 - **spaces:** Add EventBus infrastructure and fix auth register response (58b89c4)
