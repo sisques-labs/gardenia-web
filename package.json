@@ -11,67 +11,52 @@
   "version": "0.2.0-alpha.0",
   "packageManager": "pnpm@9.15.4",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development",
-    "test": "ng test --no-watch --no-progress --browsers=ChromeHeadlessCI",
-    "test:watch": "ng test",
-    "test:ci": "ng test --no-watch --no-progress --browsers=ChromeHeadlessCI",
-    "lint": "ng lint",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "prepare": "husky"
   },
   "lint-staged": {
-    "**/*.{ts,html}": "eslint --fix"
-  },
-  "prettier": {
-    "overrides": [
-      {
-        "files": "*.html",
-        "options": {
-          "parser": "angular"
-        }
-      }
-    ]
+    "**/*.{ts,tsx}": "eslint --fix"
   },
   "private": true,
   "dependencies": {
-    "@angular/cdk": "^20.2.14",
-    "@angular/common": "^20.1.0",
-    "@angular/compiler": "^20.1.0",
-    "@angular/core": "^20.1.0",
-    "@angular/forms": "^20.1.0",
-    "@angular/platform-browser": "^20.1.0",
-    "@angular/router": "^20.1.0",
-    "@lucide/angular": "^1.16.0",
-    "rxjs": "~7.8.0",
+    "@hookform/resolvers": "^5.0.1",
+    "@radix-ui/react-slot": "^1.2.3",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "ky": "^1.8.1",
+    "lucide-react": "^0.513.0",
+    "next": "^15.3.3",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-hook-form": "^7.57.0",
+    "tailwind-merge": "^3.3.0",
     "tslib": "^2.3.0",
-    "uuid": "^14.0.0"
+    "uuid": "^14.0.0",
+    "zustand": "^5.0.5"
   },
   "devDependencies": {
-    "@angular-eslint/builder": "^20.7.0",
-    "@angular-eslint/eslint-plugin": "^20.7.0",
-    "@angular-eslint/eslint-plugin-template": "^20.7.0",
-    "@angular-eslint/schematics": "^20.7.0",
-    "@angular-eslint/template-parser": "^20.7.0",
-    "@angular/build": "^20.1.0",
-    "@angular/cli": "^20.1.0",
-    "@angular/compiler-cli": "^20.1.0",
+    "@eslint/eslintrc": "^3.3.1",
     "@eslint/js": "^9.39.4",
     "@tailwindcss/postcss": "^4.3.0",
-    "@types/jasmine": "~5.1.0",
-    "angular-eslint": "^20.7.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.5.2",
+    "@types/node": "^22.15.29",
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.5",
+    "@vitejs/plugin-react": "^4.5.2",
     "eslint": "^9.39.4",
+    "eslint-config-next": "^15.3.3",
     "husky": "^9.1.7",
-    "jasmine-core": "~5.8.0",
-    "karma": "~6.4.0",
-    "karma-chrome-launcher": "~3.2.0",
-    "karma-coverage": "~2.2.0",
-    "karma-jasmine": "~5.1.0",
-    "karma-jasmine-html-reporter": "~2.1.0",
+    "jsdom": "^26.1.0",
     "lint-staged": "^17.0.5",
     "tailwindcss": "^4.3.0",
     "typescript": "~5.8.2",
-    "typescript-eslint": "^8.59.4"
+    "vitest": "^3.2.3"
   }
 }

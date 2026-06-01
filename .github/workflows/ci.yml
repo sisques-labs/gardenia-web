@@ -29,8 +29,11 @@ jobs:
       - name: Lint code
         run: pnpm lint
 
+      - name: Type check
+        run: pnpm exec tsc --noEmit
+
       - name: Run unit tests
-        run: pnpm test:ci
+        run: pnpm test
 
       - name: Build the app
         run: pnpm build
