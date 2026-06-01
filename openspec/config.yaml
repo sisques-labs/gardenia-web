@@ -29,7 +29,7 @@ testing:
 
 conventions:
   naming:
-    use_cases: "{name}.service.ts (class) inside application/use-cases/{name}/"
+    use_cases: "{name}.use-case.ts — file; class exported as {Name}UseCase. Lives in application/use-cases/{name}/."
     repository_ports: "{name}.repository.port.ts"
     repositories: "{name}-http.repository.ts"
     screens: "{name}.screen.tsx — file name; component exported as {Name}Screen (PascalCase). No schemas, no business logic inline — import from schemas/ and hooks/."
@@ -58,6 +58,7 @@ conventions:
       - use-cases/{name}/ — one folder per use case
       - ports/ — repository interfaces
       - Use-case classes take repository via constructor; exported as module singletons
+      - Class name: {Name}UseCase. File name: {name}.use-case.ts
       - No framework imports (no React, no Zustand direct) — reads/writes store via getState()
     infrastructure:
       - repositories/ — axios-based implementations of ports

@@ -1,9 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
-import { RegisterService } from '@/core/auth/application/use-cases/register/register.service';
+import { RegisterUseCase } from '@/core/auth/application/use-cases/register/register.use-case';
 import { authHttpRepository } from '@/core/auth/infrastructure/repositories/auth-http.repository';
 import type { RegisterData } from '@/core/auth/domain/interfaces/register-data.interface';
 
-const registerService = new RegisterService(authHttpRepository);
+const registerService = new RegisterUseCase(authHttpRepository);
 
 export function useRegister() {
   return useMutation({

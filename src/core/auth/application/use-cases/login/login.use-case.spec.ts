@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { LoginService } from './login.service';
+import { LoginUseCase } from './login.use-case';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import type { IAuthRepository } from '@/core/auth/application/ports/auth.repository.port';
 
@@ -11,7 +11,7 @@ const mockRepository: IAuthRepository = {
   refresh: vi.fn(),
 };
 
-describe('LoginService', () => {
+describe('LoginUseCase', () => {
   beforeEach(() => {
     useAuthStore.getState().clearAuth();
     vi.clearAllMocks();
@@ -19,7 +19,7 @@ describe('LoginService', () => {
 
   it('stores access token on successful login', async () => {
     vi.mocked(mockRepository.login).mockResolvedValue({ accessToken: 'tok-123' });
-    const service = new LoginService(mockRepository);
+    const service = new LoginUseCase(mockRepository);
 
     await service.login({ email: 'a@b.com', password: '123456' });
 
@@ -28,7 +28,7 @@ describe('LoginService', () => {
 
   it('propagates repository errors', async () => {
     vi.mocked(mockRepository.login).mockRejectedValue(new Error('Invalid credentials'));
-    const service = new LoginService(mockRepository);
+    const service = new LoginUseCase(mockRepository);
 
     await expect(service.login({ email: 'a@b.com', password: 'wrong' })).rejects.toThrow('Invalid credentials');
   });

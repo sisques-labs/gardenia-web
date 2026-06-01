@@ -1,12 +1,11 @@
 import type { IAuthRepository } from '@/core/auth/application/ports/auth.repository.port';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 
-export class RefreshService {
+export class LogoutUseCase {
   constructor(private readonly authRepository: IAuthRepository) {}
 
-  async refresh(): Promise<string> {
-    const response = await this.authRepository.refresh();
-    useAuthStore.getState().setAccessToken(response.accessToken);
-    return response.accessToken;
+  async logout(): Promise<void> {
+    await this.authRepository.logout();
+    useAuthStore.getState().clearAuth();
   }
 }

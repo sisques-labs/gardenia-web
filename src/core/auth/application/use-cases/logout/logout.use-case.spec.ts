@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { LogoutService } from './logout.service';
+import { LogoutUseCase } from './logout.use-case';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import type { IAuthRepository } from '@/core/auth/application/ports/auth.repository.port';
 
@@ -11,7 +11,7 @@ const mockRepository: IAuthRepository = {
   refresh: vi.fn(),
 };
 
-describe('LogoutService', () => {
+describe('LogoutUseCase', () => {
   beforeEach(() => {
     useAuthStore.setState({ accessToken: 'tok', currentUser: { id: '1', email: 'a@b.com' } });
     vi.clearAllMocks();
@@ -19,7 +19,7 @@ describe('LogoutService', () => {
 
   it('clears auth state after logout', async () => {
     vi.mocked(mockRepository.logout).mockResolvedValue(undefined);
-    const service = new LogoutService(mockRepository);
+    const service = new LogoutUseCase(mockRepository);
 
     await service.logout();
 

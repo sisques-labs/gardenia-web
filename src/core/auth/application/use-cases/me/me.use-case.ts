@@ -2,7 +2,7 @@ import type { IAuthRepository } from '@/core/auth/application/ports/auth.reposit
 import type { AccountUser } from '@/core/auth/domain/models/account-user.model';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 
-export class MeService {
+export class MeUseCase {
   constructor(private readonly authRepository: IAuthRepository) {}
 
   async me(): Promise<AccountUser> {

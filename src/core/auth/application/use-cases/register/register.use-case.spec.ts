@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { RegisterService } from './register.service';
+import { RegisterUseCase } from './register.use-case';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import type { IAuthRepository } from '@/core/auth/application/ports/auth.repository.port';
 
@@ -11,7 +11,7 @@ const mockRepository: IAuthRepository = {
   refresh: vi.fn(),
 };
 
-describe('RegisterService', () => {
+describe('RegisterUseCase', () => {
   beforeEach(() => {
     useAuthStore.getState().clearAuth();
     vi.clearAllMocks();
@@ -19,7 +19,7 @@ describe('RegisterService', () => {
 
   it('stores access token and returns spaceId on success', async () => {
     vi.mocked(mockRepository.register).mockResolvedValue({ accessToken: 'tok-abc', spaceId: 'space-1' });
-    const service = new RegisterService(mockRepository);
+    const service = new RegisterUseCase(mockRepository);
 
     const result = await service.register({ email: 'a@b.com', password: '123456' });
 
@@ -29,7 +29,7 @@ describe('RegisterService', () => {
 
   it('does not swallow spaceId from response', async () => {
     vi.mocked(mockRepository.register).mockResolvedValue({ accessToken: 'tok-xyz', spaceId: 'space-2' });
-    const service = new RegisterService(mockRepository);
+    const service = new RegisterUseCase(mockRepository);
 
     const result = await service.register({ email: 'x@y.com', password: 'pass' });
 
