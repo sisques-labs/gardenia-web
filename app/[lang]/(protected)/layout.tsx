@@ -1,5 +1,5 @@
-import { isLocale, DEFAULT_LOCALE } from '@/shared/presentation/i18n/locale';
-import { SpacesProviders } from '@/core/spaces/presentation/providers/spaces.providers';
+import { DEFAULT_LOCALE, isLocale } from "@/shared/presentation/i18n/locale";
+import { ProtectedProviders } from "@/shared/presentation/providers/protected.providers";
 
 export default async function ProtectedLayout({
   children,
@@ -11,5 +11,5 @@ export default async function ProtectedLayout({
   const { lang } = await params;
   const locale = isLocale(lang) ? lang : DEFAULT_LOCALE;
 
-  return <SpacesProviders lang={locale}>{children}</SpacesProviders>;
+  return <ProtectedProviders lang={locale}>{children}</ProtectedProviders>;
 }
