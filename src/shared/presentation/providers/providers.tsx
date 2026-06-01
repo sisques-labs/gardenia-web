@@ -4,7 +4,7 @@ import { ApolloClientProvider } from './apollo.provider';
 import { ReactQueryProvider } from './query.provider';
 
 import { AuthProviders } from '@/core/auth/presentation/providers/auth.providers';
-// import { SpacesProviders } from '@/core/spaces/presentation/providers/spaces.providers';
+// SpacesProviders lives in app/[lang]/(protected)/layout.tsx — needs lang prop
 
 interface ProvidersProps {
   children: React.ReactNode;
