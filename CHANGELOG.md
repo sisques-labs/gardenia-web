@@ -1,6 +1,14 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.4.0-alpha.0] - 2026-06-01
+
+### Chore
+- **env:** Document Next.js public URLs and bake them in Docker builds (2ed6ee3)
+
+### Features
+- **spaces:** Add spaces module with full DDD structure, i18n, and shell layout (77b4e1f)
+- **protected:** Extract ProtectedProviders for protected route composition (63d6607)
 ## [0.3.0-alpha.0] - 2026-06-01
 
 ### Bug Fixes
@@ -15,6 +23,7 @@ All notable changes to this project will be documented in this file.
 - Remove Angular source and PR1 scaffold — fresh Next.js start (c74d252)
 - Remove Angular source and PR1 scaffold — fresh Next.js start (8040688)
 - **i18n:** Use Castilian Spanish (es-ES) in auth translations, add variant convention (bdfed7b)
+- Release v0.3.0-alpha.0 (e6b4853)
 
 ### Features
 - **scaffold:** Migrate to Next.js 15 with shadcn/ui, Vitest, and Node server Dockerfile (7c5c0ff)
