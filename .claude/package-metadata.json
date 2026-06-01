@@ -1,0 +1,14 @@
+{
+  "name": "sisques-labs/gardenia-web",
+  "description": "Gardenia web application",
+  "author": "Sisques Labs <info@sisques.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/sisques-labs/gardenia-web",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sisques-labs/gardenia-web.git"
+  },
+  "version": "0.1.2-alpha.0",
+  "packageManager": "pnpm@9.15.4",
+  "private": true
+}
