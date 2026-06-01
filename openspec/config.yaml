@@ -117,3 +117,24 @@ rules:
     typecheck_command: "pnpm tsc --noEmit"
   archive:
     - Warn before merging destructive deltas
+
+i18n:
+  strategy: "Custom TypeScript — no external library"
+  format: "TypeScript files with 'as const' (not JSON)"
+  locales: [en, es]
+  default_locale: en
+  routing: "app/[lang]/ — URL-based locale segment"
+  structure_per_module: "src/core/{module}/i18n/en.ts + es.ts"
+  aggregator: "src/shared/i18n/get-dictionary.ts — imports all module dicts, exports getDictionary(locale)"
+  passing: "Server component calls getDictionary(locale), passes dict slice as prop to client screen"
+  naming:
+    file: "en.ts / es.ts per module"
+    keys: "camelCase, nested by screen/context"
+    type: "{Module}Dict exported from en.ts; es.ts uses 'satisfies WidenStringLiterals<{Module}Dict>'"
+  testing: "i18n-parity.test.ts per module — validates every key exists in both locales"
+  adding_module: |
+    1. Create src/core/{module}/i18n/en.ts (as const + export type {Module}Dict)
+    2. Create src/core/{module}/i18n/es.ts (satisfies WidenStringLiterals<{Module}Dict>)
+    3. Create src/core/{module}/i18n/i18n-parity.test.ts
+    4. Add import + entry in src/shared/i18n/get-dictionary.ts
+    5. Pass dict slice as prop in app/[lang]/...page.tsx

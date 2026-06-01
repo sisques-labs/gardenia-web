@@ -8,8 +8,11 @@ import { Input } from '@/shared/presentation/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/presentation/components/ui/card';
 import { useRegister } from '@/core/auth/presentation/hooks/use-register/useRegister.hook';
 import { registerSchema, type RegisterFormValues } from '@/core/auth/presentation/schemas/register.schema';
+import type { AppDict } from '@/shared/i18n/get-dictionary';
 
-export function RegisterScreen() {
+type Props = { dict: AppDict['auth']['register'] };
+
+export function RegisterScreen({ dict }: Props) {
   const router = useRouter();
   const { mutate: register, isPending, error } = useRegister();
 
@@ -29,25 +32,25 @@ export function RegisterScreen() {
     <div className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle>Crear cuenta</CardTitle>
+          <CardTitle>{dict.title}</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
-              <Input type="email" placeholder="Email" {...field('email')} />
-              {errors.email && <span className="text-destructive text-xs">{errors.email.message}</span>}
+              <Input type="email" placeholder={dict.emailPlaceholder} {...field('email')} />
+              {errors.email && <span className="text-destructive text-xs">{dict.emailInvalid}</span>}
             </div>
             <div className="flex flex-col gap-1">
-              <Input type="password" placeholder="Contraseña" {...field('password')} />
-              {errors.password && <span className="text-destructive text-xs">{errors.password.message}</span>}
+              <Input type="password" placeholder={dict.passwordPlaceholder} {...field('password')} />
+              {errors.password && <span className="text-destructive text-xs">{dict.passwordMin}</span>}
             </div>
             <div className="flex flex-col gap-1">
-              <Input type="password" placeholder="Confirmar contraseña" {...field('confirmPassword')} />
-              {errors.confirmPassword && <span className="text-destructive text-xs">{errors.confirmPassword.message}</span>}
+              <Input type="password" placeholder={dict.confirmPasswordPlaceholder} {...field('confirmPassword')} />
+              {errors.confirmPassword && <span className="text-destructive text-xs">{dict.passwordsMismatch}</span>}
             </div>
-            {error && <span className="text-destructive text-xs">Error al crear la cuenta</span>}
+            {error && <span className="text-destructive text-xs">{dict.error}</span>}
             <Button type="submit" disabled={isPending}>
-              {isPending ? 'Creando cuenta...' : 'Crear cuenta'}
+              {isPending ? dict.submitting : dict.submit}
             </Button>
           </form>
         </CardContent>
