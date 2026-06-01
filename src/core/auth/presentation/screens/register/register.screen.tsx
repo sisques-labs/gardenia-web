@@ -2,33 +2,22 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/shared/presentation/components/ui/button';
 import { Input } from '@/shared/presentation/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/presentation/components/ui/card';
-import { useRegister } from '@/core/auth/presentation/hooks/use-register';
-
-const schema = z.object({
-  email: z.string().email('Email inválido'),
-  password: z.string().min(6, 'Mínimo 6 caracteres'),
-  confirmPassword: z.string(),
-}).refine((d) => d.password === d.confirmPassword, {
-  message: 'Las contraseñas no coinciden',
-  path: ['confirmPassword'],
-});
-
-type FormValues = z.infer<typeof schema>;
+import { useRegister } from '@/core/auth/presentation/hooks/use-register/useRegister.hook';
+import { registerSchema, type RegisterFormValues } from '@/core/auth/presentation/schemas/register.schema';
 
 export function RegisterScreen() {
   const router = useRouter();
   const { mutate: register, isPending, error } = useRegister();
 
-  const { register: field, handleSubmit, formState: { errors } } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+  const { register: field, handleSubmit, formState: { errors } } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerSchema),
   });
 
-  const onSubmit = ({ email, password }: FormValues) => {
+  const onSubmit = ({ email, password }: RegisterFormValues) => {
     register({ email, password }, {
       onSuccess: ({ spaceId }) => {
         router.replace(spaceId ? '/' : '/spaces/new');

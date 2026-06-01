@@ -2,35 +2,25 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/shared/presentation/components/ui/button';
 import { Input } from '@/shared/presentation/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/presentation/components/ui/card';
-import { useLogin } from '@/core/auth/presentation/hooks/use-login';
-
-const schema = z.object({
-  email: z.string().email('Email inválido'),
-  password: z.string().min(6, 'Mínimo 6 caracteres'),
-});
-
-type FormValues = z.infer<typeof schema>;
+import { useLogin } from '@/core/auth/presentation/hooks/use-login/useLogin.hook';
+import { loginSchema, type LoginFormValues } from '@/core/auth/presentation/schemas/login.schema';
 
 export function LoginScreen() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { mutate: login, isPending, error } = useLogin();
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+  const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
+    resolver: zodResolver(loginSchema),
   });
 
-  const onSubmit = (data: FormValues) => {
+  const onSubmit = (data: LoginFormValues) => {
     login(data, {
-      onSuccess: () => {
-        const returnUrl = searchParams.get('returnUrl') ?? '/';
-        router.replace(returnUrl);
-      },
+      onSuccess: () => router.replace(searchParams.get('returnUrl') ?? '/'),
     });
   };
 
