@@ -131,6 +131,7 @@ i18n:
     file: "en.ts / es.ts per module"
     keys: "camelCase, nested by screen/context"
     type: "{Module}Dict exported from en.ts; es.ts uses 'satisfies WidenStringLiterals<{Module}Dict>'"
+  spanish_variant: "Castellano de España — tuteo (tú/usted), vocabulario peninsular. No usar voseo ni regionalismos latinoamericanos."
   testing: "i18n-parity.test.ts per module — validates every key exists in both locales"
   adding_module: |
     1. Create src/core/{module}/presentation/i18n/en.ts (as const + export type {Module}Dict)
