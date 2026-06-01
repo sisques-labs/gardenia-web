@@ -1,53 +1,90 @@
 schema: spec-driven
 
 context: |
-  Tech stack: Angular 20, TypeScript (strict), zoneless, standalone components, signals-based state, pnpm
-  Architecture: DDD + Hexagonal (Screaming Architecture). Bounded contexts: auth, users, spaces, shared. Layers: domain / application / infrastructure / presentation
-  Testing: Karma + Jasmine unit (co-located .spec.ts) + TestBed integration (HttpClientTestingModule) + Playwright e2e. Coverage: pnpm test:ci
-  Style: Prettier + ESLint, Husky + lint-staged. Conventional Commits (free scope). No AI attribution in commits.
+  Tech stack: Next.js 16 (App Router, Node server mode), React 19, TypeScript (strict), pnpm@9.15.4
+  State: Zustand (in-memory, no persistence except activeSpaceId)
+  HTTP: Axios (interceptors for Bearer token + X-Space-ID + 401 refresh mutex)
+  GraphQL: Apollo Client v4 (@apollo/client/react)
+  Server state / caching: TanStack Query v5
+  Forms: React Hook Form + Zod
+  UI: shadcn/ui (Radix UI + Tailwind v4) in src/shared/presentation/components/ui/
+  Icons: lucide-react
+  Architecture: DDD + Hexagonal (Screaming Architecture). Bounded contexts: auth, spaces, shared.
+  Layers per context: domain / application / infrastructure / presentation
+  Providers: each module owns src/core/{context}/presentation/providers/{context}.providers.tsx;
+             shared/presentation/providers/providers.tsx aggregates all module providers.
 
 testing:
   strict_tdd: true
   test_command: "pnpm test"
   coverage_command: "pnpm test:ci"
   e2e_command: "pnpm e2e"
-  integration_command: "pnpm test:integration"
-  detected: "2026-05-30"
   layers:
-    unit: { available: true, tool: "karma + jasmine" }
-    integration: { available: false, tool: "testbed + httpclienttestingmodule", note: "pending implementation" }
+    unit: { available: true, tool: "vitest + react testing library" }
+    integration: { available: false, note: "pending implementation" }
     e2e: { available: false, tool: "playwright", note: "pending implementation" }
-  coverage: { available: true, command: "pnpm test:ci" }
   quality:
     linter: { available: true, command: "pnpm lint" }
-    type_checker: { available: true, command: "tsc --noEmit" }
-    formatter: { available: true, command: "pnpm format" }
+    type_checker: { available: true, command: "pnpm tsc --noEmit" }
 
 conventions:
   naming:
-    services: "{name}.service.ts"
+    use_cases: "{name}.use-case.ts — file; class exported as {Name}UseCase. Lives in application/use-cases/{name}/."
     repository_ports: "{name}.repository.port.ts"
     repositories: "{name}-http.repository.ts"
-    interceptors: "{name}.interceptor.ts"
-    guards: "{name}.guard.ts"
+    screens: "{name}.screen.tsx — file name; component exported as {Name}Screen (PascalCase). No schemas, no business logic inline — import from schemas/ and hooks/."
+    schemas: "{name}.schema.ts — Zod schema + inferred type. Lives in presentation/schemas/."
+    hooks: "hooks/{hook-name}/{hookName}.hook.ts — one folder per hook; exported function named use{Name}"
+    providers: "{context}.providers.tsx"
     models: "{name}.model.ts"
     interfaces: "{name}.interface.ts"
-    pages: "{name}.page.ts"
     value_objects: "{name}.vo.ts"
-    di_tokens: "{name}.token.ts"
+    stores: "{name}.store.ts (Zustand, in infrastructure/store/)"
     entities: "{name}.entity.ts"
-    components: "{name}.ts (no suffix — design system atoms/molecules are self-describing)"
-  architecture:
-    pattern: "DDD + Hexagonal per bounded context under src/app/core/{context}/"
-    layers: [domain, application, infrastructure, presentation]
-    shared_ui: "src/app/shared/presentation/components — atomic design, no suffix"
-    cross_layer: "domain must never import from infrastructure or presentation"
+    components: "{name}.tsx (no suffix — shadcn atoms are self-describing)"
+  structure:
+    app_router: "app/ — Next.js App Router ONLY (pages, layouts, route groups)"
+    domain_code: "src/core/{context}/ — DDD layers"
+    shared_ui: "src/shared/presentation/components/ui/ — shadcn components"
+    shared_lib: "src/shared/lib/ — cn() and other pure utilities"
+    shared_http: "src/shared/infrastructure/http/ — axios client"
+    shared_providers: "src/shared/presentation/providers/ — provider aggregator"
+  layers:
+    domain:
+      - Pure TypeScript — zero framework imports
+      - interfaces/ for DTOs and contracts
+      - models/ for domain models
+    application:
+      - use-cases/{name}/ — one folder per use case
+      - ports/ — repository interfaces
+      - Use-case classes take repository via constructor; exported as module singletons
+      - Class name: {Name}UseCase. File name: {name}.use-case.ts
+      - No framework imports (no React, no Zustand direct) — reads/writes store via getState()
+    infrastructure:
+      - repositories/ — axios-based implementations of ports
+      - store/ — Zustand stores (framework-coupled, lives here not in application)
+      - http/ — axios interceptor utilities (refresh mutex, etc.)
+    presentation:
+      - screens/ — React page components ('use client', React Hook Form)
+      - hooks/ — TanStack Query useMutation/useQuery wrappers
+      - providers/ — React context providers for the module
+  cross_layer_rules:
+    - domain must never import from application, infrastructure, or presentation
+    - application use-cases may import domain + infrastructure/store (via getState only)
+    - infrastructure may import domain + shared http
+    - presentation may import application use-cases, infrastructure/store, domain interfaces
 
 git:
   base_branch: main
-  strategy: "feature branches → PR → main (develop branch planned for later)"
-  commits: "Conventional Commits, free scope"
+  strategy: "feature branches → PR → main"
+  commits: "Conventional Commits, free scope. No AI attribution."
   pr_size_limit: 400
+
+docker:
+  strategy: "2-stage build — node:24-bookworm-slim builder → node:24-bookworm-slim runner"
+  output: "Next.js standalone (output: 'standalone' in next.config.ts)"
+  runner_cmd: "node server.js (no pnpm, no next start — standalone includes its own server)"
+  port: 3000
 
 rules:
   proposal:
@@ -59,27 +96,24 @@ rules:
   design:
     - Respect DDD + Hexagonal layering — no cross-layer violations
     - Document architecture decisions with rationale
-    - Include sequence diagrams for complex flows
   tasks:
     - Group by phase, use hierarchical numbering
     - Keep tasks completable in one session
     - PRs must stay under 400 lines — split into chained PRs if needed
   apply:
-    - Follow DDD + Hexagonal patterns per bounded context (domain / application / infrastructure / presentation)
-    - Services live in application/services/{use-case}/; one file per use case
-    - Repository interfaces live in domain/ports/; implementations in infrastructure/repositories/
-    - DI tokens in infrastructure/tokens/
-    - Guards and interceptors in presentation/guards/ and infrastructure/interceptors/
-    - Pages in presentation/pages/{name}/; one folder per page with .ts + .html + .css
-    - Shared atomic components in shared/presentation/components/ — no suffix, no business logic
+    - Follow DDD + Hexagonal patterns per bounded context
+    - Use-cases live in application/use-cases/{name}/; one class per use case
+    - Repository interfaces (ports) in application/ports/; implementations in infrastructure/repositories/
+    - Zustand stores in infrastructure/store/ (not application — they're framework-coupled)
+    - Screens in presentation/screens/{name}/; React + React Hook Form + Zod
+    - Hooks in presentation/hooks/; wrap TanStack Query mutations/queries
+    - Shared atomic components in src/shared/presentation/components/ui/ — shadcn pattern
     - Value objects in domain/value-objects/ using {name}.vo.ts
-    - When adding or changing a feature, include unit tests (.spec.ts co-located). Add integration or e2e tests when those layers are available.
+    - Tests co-located (.spec.ts next to source file). Write RED first, then GREEN.
     - No barrel index.ts files unless the module explicitly needs a public API surface
-    - Signals for all state — no BehaviorSubject, no NgRx
   verify:
     test_command: "pnpm test"
-    e2e_command: "pnpm e2e"
     build_command: "pnpm build"
-    coverage_threshold: 80
+    typecheck_command: "pnpm tsc --noEmit"
   archive:
     - Warn before merging destructive deltas
