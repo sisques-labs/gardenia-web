@@ -1,1 +1,1 @@
-[ -f package.json ] && pnpm tsc --noEmit || true
+pnpm tsc --noEmit
