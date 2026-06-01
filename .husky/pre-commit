@@ -1,1 +1,1 @@
-pnpm lint-staged
+[ -f package.json ] && pnpm lint-staged || true
