@@ -1,13 +1,13 @@
 import type { Locale } from './locale';
 import type { WidenStringLiterals } from './widen-literals';
-import type { AuthDict } from '@/core/auth/i18n/en';
+import type { AuthDict } from '@/core/auth/presentation/i18n/en';
 
-import enAuth from '@/core/auth/i18n/en';
-import esAuth from '@/core/auth/i18n/es';
+import enAuth from '@/core/auth/presentation/i18n/en';
+import esAuth from '@/core/auth/presentation/i18n/es';
 
 // Add module imports here as new contexts are created:
-// import enSpaces from '@/core/spaces/i18n/en';
-// import esSpaces from '@/core/spaces/i18n/es';
+// import enSpaces from '@/core/spaces/presentation/i18n/en';
+// import esSpaces from '@/core/spaces/presentation/i18n/es';
 
 export type AppDict = {
   auth: WidenStringLiterals<AuthDict>;

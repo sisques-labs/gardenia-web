@@ -124,7 +124,7 @@ i18n:
   locales: [en, es]
   default_locale: en
   routing: "app/[lang]/ — URL-based locale segment"
-  structure_per_module: "src/core/{module}/i18n/en.ts + es.ts"
+  structure_per_module: "src/core/{module}/presentation/i18n/en.ts + es.ts"
   aggregator: "src/shared/i18n/get-dictionary.ts — imports all module dicts, exports getDictionary(locale)"
   passing: "Server component calls getDictionary(locale), passes dict slice as prop to client screen"
   naming:
@@ -133,8 +133,8 @@ i18n:
     type: "{Module}Dict exported from en.ts; es.ts uses 'satisfies WidenStringLiterals<{Module}Dict>'"
   testing: "i18n-parity.test.ts per module — validates every key exists in both locales"
   adding_module: |
-    1. Create src/core/{module}/i18n/en.ts (as const + export type {Module}Dict)
-    2. Create src/core/{module}/i18n/es.ts (satisfies WidenStringLiterals<{Module}Dict>)
-    3. Create src/core/{module}/i18n/i18n-parity.test.ts
+    1. Create src/core/{module}/presentation/i18n/en.ts (as const + export type {Module}Dict)
+    2. Create src/core/{module}/presentation/i18n/es.ts (satisfies WidenStringLiterals<{Module}Dict>)
+    3. Create src/core/{module}/presentation/i18n/i18n-parity.test.ts
     4. Add import + entry in src/shared/i18n/get-dictionary.ts
     5. Pass dict slice as prop in app/[lang]/...page.tsx
