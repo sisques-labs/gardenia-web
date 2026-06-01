@@ -1,22 +1,21 @@
 # syntax=docker/dockerfile:1
 
 FROM node:24-bookworm-slim AS builder
-WORKDIR /app
-
 ENV HUSKY=0
 RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
-
+WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
-
 COPY . .
 RUN pnpm build
 
-FROM nginx:1.27-alpine AS runner
-
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=builder /app/dist/gardenia/browser/ /usr/share/nginx/html/
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+FROM node:24-bookworm-slim AS runner
+ENV NODE_ENV=production
+RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
+WORKDIR /app
+COPY --from=builder /app/package.json /app/pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile --prod
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/public ./public
+EXPOSE 3000
+CMD ["pnpm", "start"]

@@ -1,4 +1,0 @@
-/* Destructive hover requires color-mix token math — cannot express in Tailwind utilities */
-.app-button--destructive:hover:not(:disabled) {
-  background-color: color-mix(in oklch, var(--terracotta) 90%, black);
-}
