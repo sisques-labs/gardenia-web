@@ -11,6 +11,7 @@ import { SpaceSwitcher } from '../space-switcher/space-switcher';
 export function Sidebar() {
   const { collapsed, toggleCollapsed, drawerOpen, closeDrawer } = useSidebarStore();
   const pathname = usePathname();
+  const locale = pathname?.split('/')[1] ?? 'en';
 
   // Escape key closes drawer
   useEffect(() => {
@@ -33,11 +34,12 @@ export function Sidebar() {
       {/* Nav items */}
       <div className="flex-1 overflow-y-auto py-2 px-2">
         {NAV_ITEMS.map((item) => {
-          const active = pathname?.includes(item.href.replace('/[lang]', '')) ?? false;
+          const resolvedHref = item.href.replace('/[lang]', `/${locale}`);
+          const active = pathname?.startsWith(resolvedHref) ?? false;
           return (
             <NavItem
               key={item.href}
-              item={item}
+              item={{ ...item, href: resolvedHref }}
               collapsed={collapsed}
               active={active}
               onClick={closeDrawer}
