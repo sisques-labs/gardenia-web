@@ -27,6 +27,17 @@ describe('Sidebar', () => {
     expect(screen.getByTestId('sidebar')).toBeInTheDocument();
   });
 
+  it('renders the Gardenia brand header', () => {
+    render(<Sidebar />);
+    expect(screen.getByText('Gardenia')).toBeInTheDocument();
+  });
+
+  it('hides brand label when collapsed', () => {
+    useSidebarStore.setState({ collapsed: true });
+    render(<Sidebar />);
+    expect(screen.queryByText('Gardenia')).not.toBeInTheDocument();
+  });
+
   it('active nav item has forest styling', () => {
     render(<Sidebar />);
     const activeLink = screen.getByRole('link', { name: /spaces/i });

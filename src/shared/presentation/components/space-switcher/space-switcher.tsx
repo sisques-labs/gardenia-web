@@ -17,21 +17,21 @@ export function SpaceSwitcher() {
   }
 
   return (
-    <div data-testid="space-switcher" className="px-3 py-2">
-      <div className="flex items-center gap-2">
-        <div className="w-6 h-6 rounded bg-[var(--forest-bg)] flex items-center justify-center shrink-0">
-          <span className="text-xs font-bold text-[var(--forest)]">
+    <div data-testid="space-switcher" className="px-3 py-3">
+      <div className="flex items-center gap-2.5">
+        <div className="w-8 h-8 rounded-md bg-[var(--forest-bg)] flex items-center justify-center shrink-0">
+          <span className="text-sm font-bold text-[var(--forest)]">
             {currentSpace?.name?.[0]?.toUpperCase() ?? '?'}
           </span>
         </div>
         {!collapsed && (
           <div className="flex flex-col min-w-0">
-            <span className="text-xs font-medium text-[var(--ink)] truncate leading-tight">
-              {currentSpace?.name ?? '—'}
+            <span className="text-[10px] font-medium text-[var(--ink)]/50 uppercase tracking-wider leading-none mb-0.5">
+              Huerta activa {/* TODO: i18n */}
             </span>
-            {spaces.length > 1 && (
+            {spaces.length > 1 ? (
               <select
-                className="text-xs text-[var(--ink)]/60 bg-transparent border-none outline-none cursor-pointer p-0 leading-tight"
+                className="text-xs font-medium text-[var(--ink)] bg-transparent border-none outline-none cursor-pointer p-0 leading-tight truncate max-w-[140px]"
                 value={currentSpaceId ?? ''}
                 onChange={(e) => setActiveSpace(e.target.value)}
                 aria-label="Switch space"
@@ -42,6 +42,10 @@ export function SpaceSwitcher() {
                   </option>
                 ))}
               </select>
+            ) : (
+              <span className="text-xs font-medium text-[var(--ink)] truncate leading-tight">
+                {currentSpace?.name ?? '—'}
+              </span>
             )}
           </div>
         )}
