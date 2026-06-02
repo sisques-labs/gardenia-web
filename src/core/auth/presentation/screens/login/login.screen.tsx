@@ -13,9 +13,9 @@ import { AuthSocial } from '@/core/auth/presentation/components/auth-social/auth
 import { AuthDivider } from '@/core/auth/presentation/components/auth-divider/auth-divider';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
-type Props = { dict: AppDict['auth']['login'] };
+type Props = { dict: AppDict['auth']['login']; locale: string };
 
-export function LoginScreen({ dict }: Props) {
+export function LoginScreen({ dict, locale }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { mutate: login, isPending, error } = useLogin();
@@ -26,7 +26,7 @@ export function LoginScreen({ dict }: Props) {
 
   const onSubmit = (data: LoginFormValues) => {
     login(data, {
-      onSuccess: () => router.replace(searchParams.get('returnUrl') ?? '/'),
+      onSuccess: () => router.replace(searchParams.get('returnUrl') ?? `/${locale}/home`),
     });
   };
 

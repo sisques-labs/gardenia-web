@@ -10,7 +10,7 @@ export default async function Page({ params }: { params: Promise<{ lang: string 
 
   return (
     <Suspense>
-      <LoginScreen dict={dict.auth.login} />
+      <LoginScreen dict={dict.auth.login} locale={locale} />
     </Suspense>
   );
 }
