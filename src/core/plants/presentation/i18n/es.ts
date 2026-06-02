@@ -10,6 +10,9 @@ const dict = {
     newPlant: 'Nueva planta',
     empty: 'Todavía no hay plantas',
     filterAll: 'Todas',
+    filters: 'Filtros',
+    statsPlants: 'plantas',
+    statsSpecies: 'especies',
     inProgress: 'Próximamente',
   },
   detail: {

@@ -54,6 +54,9 @@ const dict = {
     newPlant: 'New plant',
     empty: 'No plants yet',
     filterAll: 'All',
+    filters: 'Filters',
+    statsPlants: 'plants',
+    statsSpecies: 'species',
     inProgress: 'Coming soon',
   },
   detail: {
