@@ -1,10 +1,24 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.7.0-alpha.0] - 2026-06-02
+
+### Chore
+- **sdd:** Archive dashboard-home change artifacts (d8d6f90)
+
+### Features
+- **home:** Implement HomeTopBar, 5 sections with skeletons, HomeScreen and route (5268bb1)
+- **home:** Add Home nav item to sidebar (8ceda9b)
+
+### Refactor
+- **home:** Remove unused lang prop from HomeScreen, add i18n TODO to nav label (7684948)
 ## [0.6.1-alpha.0] - 2026-06-02
 
 ### Bug Fixes
 - **auth:** Thread locale prop and redirect post-login to /${locale}/home (248d77d)
+
+### Chore
+- Release v0.6.1-alpha.0 (c8c5379)
 
 ### Features
 - **home:** Add i18n foundation for home dashboard context (0f2f736)
