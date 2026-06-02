@@ -1,26 +1,38 @@
 @import "tailwindcss";
+@import "../src/design-system/theme.css";
+@import "../src/design-system/palettes.css";
+@import "../src/design-system/components.css";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* shadcn semantic bridge — all values alias Gardenia tokens.
+       Because shadcn vars reference var(--paper) etc., every palette override
+       in palettes.css automatically propagates to shadcn components. */
+    --background:            var(--paper);
+    --foreground:            var(--ink);
+    --card:                  var(--paper);
+    --card-foreground:       var(--ink);
+    --popover:               var(--paper);
+    --popover-foreground:    var(--ink);
+    --primary:               var(--forest);
+    --primary-foreground:    var(--white);
+    --secondary:             var(--paper-2);
+    --secondary-foreground:  var(--ink-2);
+    --muted:                 var(--paper-2);
+    --muted-foreground:      var(--ink-3);
+    --accent:                var(--forest-bg);
+    --accent-foreground:     var(--forest);
+    --destructive:           var(--terracotta);
+    --destructive-foreground: var(--white);
+    --border:                var(--rule);
+    --input:                 var(--rule);
+    --ring:                  var(--forest-2);
+    --radius:                0.5rem;
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  body {
+    font-family: var(--font-sans);
+    background-color: var(--background);
+    color: var(--foreground);
+  }
 }

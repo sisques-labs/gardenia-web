@@ -1,0 +1,86 @@
+/* =============================================================================
+   Gardenia Design System — Theme
+   Layer 1: Canonical token source of truth.
+   @theme registers tokens with Tailwind v4 AND emits them as real CSS custom
+   properties on :root. palettes.css and components.css consume var(--*) from
+   this layer. globals.css aliases shadcn semantic vars back to these tokens.
+   ============================================================================= */
+
+@theme {
+  /* ---- Paper (background surfaces) ---- */
+  --color-paper:     oklch(0.96 0.018 80);
+  --color-paper-2:   oklch(0.93 0.022 80);
+  --color-paper-3:   oklch(0.88 0.028 80);
+
+  /* ---- Ink (text) ---- */
+  --color-ink:       oklch(0.22 0.025 60);
+  --color-ink-2:     oklch(0.38 0.03 60);
+  --color-ink-3:     oklch(0.55 0.02 60);
+
+  /* ---- Rule (borders / dividers) ---- */
+  --color-rule:      oklch(0.78 0.03 70);
+
+  /* ---- Forest family (primary brand) ---- */
+  --color-forest:    oklch(0.42 0.07 145);
+  --color-forest-2:  oklch(0.55 0.08 145);
+  --color-forest-3:  oklch(0.72 0.07 145);
+  --color-forest-bg: oklch(0.92 0.03 140);
+
+  /* ---- Accent colours ---- */
+  --color-honey:      oklch(0.74 0.12 75);
+  --color-honey-2:    oklch(0.62 0.13 65);
+  --color-terracotta: oklch(0.62 0.13 35);
+  --color-sage:       oklch(0.78 0.04 130);
+  --color-plum:       oklch(0.48 0.08 340);
+  --color-sky:        oklch(0.68 0.07 230);
+
+  /* ---- Surface tints (chip backgrounds) ---- */
+  --color-honey-bg:   oklch(0.96 0.04 75);
+  --color-terra-bg:   oklch(0.94 0.04 35);
+  --color-sage-bg:    oklch(0.94 0.03 130);
+
+  /* ---- Static whites ---- */
+  --color-white:      oklch(1 0 0);
+
+  /* ---- Brand fonts ----
+     Each stack starts with the next/font CSS var so the loaded font is used
+     when layout.tsx wires it. The literal family names serve as fallbacks.
+     ---- */
+  --font-serif: var(--font-newsreader), "Source Serif Pro", Georgia, serif;
+  --font-sans:  var(--font-dm-sans), -apple-system, "Segoe UI", sans-serif;
+  --font-hand:  var(--font-caveat), "Bradley Hand", cursive;
+  --font-mono:  var(--font-jetbrains-mono), ui-monospace, monospace;
+}
+
+/* ---- Unprefixed aliases ----
+   palettes.css and components.css reference var(--paper), var(--forest), etc.
+   @theme emits --color-* props, not the bare-name ones, so we mirror them here.
+   globals.css shadcn bridge also reads these bare vars.
+   ---- */
+:root {
+  --paper:      oklch(0.96 0.018 80);
+  --paper-2:    oklch(0.93 0.022 80);
+  --paper-3:    oklch(0.88 0.028 80);
+  --ink:        oklch(0.22 0.025 60);
+  --ink-2:      oklch(0.38 0.03 60);
+  --ink-3:      oklch(0.55 0.02 60);
+  --rule:       oklch(0.78 0.03 70);
+  --forest:     oklch(0.42 0.07 145);
+  --forest-2:   oklch(0.55 0.08 145);
+  --forest-3:   oklch(0.72 0.07 145);
+  --forest-bg:  oklch(0.92 0.03 140);
+  --honey:      oklch(0.74 0.12 75);
+  --honey-2:    oklch(0.62 0.13 65);
+  --terracotta: oklch(0.62 0.13 35);
+  --sage:       oklch(0.78 0.04 130);
+  --plum:       oklch(0.48 0.08 340);
+  --sky:        oklch(0.68 0.07 230);
+  --honey-bg:   oklch(0.96 0.04 75);
+  --terra-bg:   oklch(0.94 0.04 35);
+  --sage-bg:    oklch(0.94 0.03 130);
+  --white:      oklch(1 0 0);
+  --serif: "Newsreader", "Source Serif Pro", Georgia, serif;
+  --sans:  "DM Sans", -apple-system, "Segoe UI", sans-serif;
+  --hand:  "Caveat", "Bradley Hand", cursive;
+  --mono:  "JetBrains Mono", ui-monospace, monospace;
+}
