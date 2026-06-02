@@ -1,10 +1,21 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.8.0-alpha.0] - 2026-06-02
+
+### Chore
+- **sdd:** Archive plants-module change artifacts (b5d9e3f)
+
+### Features
+- **plants:** Add plants module data layer — domain, use-cases, repository, i18n (e61e863)
+- **plants:** Add plants module presentation layer — hooks, screens, pages, nav (719a73c)
 ## [0.7.1-alpha.0] - 2026-06-02
 
 ### Bug Fixes
 - **auth:** Fix post-login redirect — cookie name, API URL, nav hrefs (539dc86)
+
+### Chore
+- Release v0.7.1-alpha.0 (ce9398c)
 ## [0.7.0-alpha.0] - 2026-06-02
 
 ### Chore
