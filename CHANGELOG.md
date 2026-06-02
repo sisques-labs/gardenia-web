@@ -1,10 +1,18 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.8.3-alpha.0] - 2026-06-02
+
+### Bug Fixes
+- **plants:** Align UI with design — card footer, sidebar nav items, QR section, action buttons (c1702ce)
+- **plants:** Update list screen test fixture with new i18n keys (561ea92)
 ## [0.8.2-alpha.0] - 2026-06-02
 
 ### Bug Fixes
 - **sidebar:** Add Gardenia brand header, move space section to bottom, improve active space label (424d39b)
+
+### Chore
+- Release v0.8.2-alpha.0 (615b95a)
 ## [0.8.1-alpha.0] - 2026-06-02
 
 ### Bug Fixes
