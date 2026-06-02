@@ -17,6 +17,16 @@ const dict = {
     qrPrint: 'Imprimir QR',
     noImage: 'Sin imagen',
     noSpecies: 'Especie desconocida',
+    actions: {
+      markWatered: 'Marcar regado',
+      addPhoto: 'Añadir foto',
+      newNote: 'Nueva nota',
+    },
+    qr: {
+      label: 'Etiqueta · QR',
+      hint: 'Imprime y pega en la maceta',
+      download: 'Descargar PDF',
+    },
     tabs: {
       care: 'Cuidados',
       calendar: 'Calendario',
