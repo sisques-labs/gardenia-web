@@ -1,5 +1,7 @@
 import { DEFAULT_LOCALE, isLocale } from "@/shared/presentation/i18n/locale";
 import { ProtectedProviders } from "@/shared/presentation/providers/protected.providers";
+import { SidebarProvider } from "@/shared/presentation/components/sidebar/sidebar.context";
+import { AppShell } from "@/shared/presentation/components/app-shell/app-shell";
 
 export default async function ProtectedLayout({
   children,
@@ -11,5 +13,11 @@ export default async function ProtectedLayout({
   const { lang } = await params;
   const locale = isLocale(lang) ? lang : DEFAULT_LOCALE;
 
-  return <ProtectedProviders lang={locale}>{children}</ProtectedProviders>;
+  return (
+    <ProtectedProviders lang={locale}>
+      <SidebarProvider>
+        <AppShell>{children}</AppShell>
+      </SidebarProvider>
+    </ProtectedProviders>
+  );
 }
