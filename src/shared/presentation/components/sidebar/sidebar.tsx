@@ -3,13 +3,13 @@
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { useSidebar } from './sidebar.context';
+import { useSidebarStore } from '@/shared/infrastructure/store/sidebar/sidebar.store';
 import { NAV_ITEMS } from './nav-items';
 import { NavItem } from './nav-item';
 import { SpaceSwitcher } from './space-switcher';
 
 export function Sidebar() {
-  const { collapsed, toggleCollapsed, drawerOpen, closeDrawer } = useSidebar();
+  const { collapsed, toggleCollapsed, drawerOpen, closeDrawer } = useSidebarStore();
   const pathname = usePathname();
 
   // Escape key closes drawer

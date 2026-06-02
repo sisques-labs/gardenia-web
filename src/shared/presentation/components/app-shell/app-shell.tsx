@@ -2,7 +2,7 @@
 
 import type { CSSProperties, ReactNode } from 'react';
 import { Menu } from 'lucide-react';
-import { useSidebar } from '../sidebar/sidebar.context';
+import { useSidebarStore } from '@/shared/infrastructure/store/sidebar/sidebar.store';
 import { Sidebar } from '../sidebar/sidebar';
 
 interface AppShellProps {
@@ -10,7 +10,7 @@ interface AppShellProps {
 }
 
 export function AppShell({ children }: AppShellProps) {
-  const { collapsed, openDrawer } = useSidebar();
+  const { collapsed, openDrawer } = useSidebarStore();
   const sidebarWidth = collapsed ? '64px' : '240px';
 
   return (

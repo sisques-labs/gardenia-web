@@ -2,10 +2,10 @@
 
 import { useSpaces } from '@/core/spaces/presentation/hooks/use-spaces/useSpaces.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
-import { useSidebar } from './sidebar.context';
+import { useSidebarStore } from '@/shared/infrastructure/store/sidebar/sidebar.store';
 
 export function SpaceSwitcher() {
-  const { collapsed } = useSidebar();
+  const { collapsed } = useSidebarStore();
   const { data: spaces = [] } = useSpaces();
   const currentSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const setActiveSpace = useSpacesStore((s) => s.setActiveSpace);

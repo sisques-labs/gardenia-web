@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import { SpaceSwitcher } from './space-switcher';
-import { SidebarProvider } from './sidebar.context';
+import { useSidebarStore } from '@/shared/infrastructure/store/sidebar/sidebar.store';
 import type { SpacesState } from '@/core/spaces/infrastructure/store/spaces.store';
 
 vi.mock('@/core/spaces/presentation/hooks/use-spaces/useSpaces.hook', () => ({
@@ -30,12 +30,9 @@ const makeStoreState = (overrides: Partial<SpacesState> = {}): SpacesState => ({
   ...overrides,
 });
 
-function Wrapper({ children }: { children: React.ReactNode }) {
-  return <SidebarProvider>{children}</SidebarProvider>;
-}
-
 describe('SpaceSwitcher', () => {
   beforeEach(() => {
+    useSidebarStore.setState({ collapsed: false, drawerOpen: false });
     vi.mocked(useSpaces).mockReturnValue({ data: mockSpaces } as unknown as ReturnType<typeof useSpaces>);
     vi.mocked(useSpacesStore).mockImplementation((selector) =>
       selector(makeStoreState())
@@ -43,36 +40,22 @@ describe('SpaceSwitcher', () => {
   });
 
   it('renders the current space name', () => {
-    render(
-      <Wrapper>
-        <SpaceSwitcher />
-      </Wrapper>,
-    );
-    // The span showing current space name (there may also be an option with the same text)
+    render(<SpaceSwitcher />);
     const currentSpanElements = screen.getAllByText('Design Team');
     expect(currentSpanElements.length).toBeGreaterThan(0);
     expect(currentSpanElements[0]).toBeInTheDocument();
   });
 
   it('renders space switcher container', () => {
-    render(
-      <Wrapper>
-        <SpaceSwitcher />
-      </Wrapper>,
-    );
+    render(<SpaceSwitcher />);
     expect(screen.getByTestId('space-switcher')).toBeInTheDocument();
   });
 
-  it('shows collapsed indicator when sidebar is collapsed', () => {
-    localStorage.setItem('gardenia.sidebar.collapsed', 'true');
-    render(
-      <Wrapper>
-        <SpaceSwitcher />
-      </Wrapper>,
-    );
-    const switcher = screen.getByTestId('space-switcher');
-    expect(switcher).toBeInTheDocument();
-    localStorage.clear();
+  it('hides name when sidebar is collapsed', () => {
+    useSidebarStore.setState({ collapsed: true });
+    render(<SpaceSwitcher />);
+    expect(screen.getByTestId('space-switcher')).toBeInTheDocument();
+    expect(screen.queryByText('Design Team')).not.toBeInTheDocument();
   });
 
   it('renders nothing when no spaces are available', () => {
@@ -80,11 +63,7 @@ describe('SpaceSwitcher', () => {
       selector(makeStoreState({ availableSpaces: [], currentSpaceId: null }))
     );
     vi.mocked(useSpaces).mockReturnValue({ data: [] } as unknown as ReturnType<typeof useSpaces>);
-    render(
-      <Wrapper>
-        <SpaceSwitcher />
-      </Wrapper>,
-    );
+    render(<SpaceSwitcher />);
     expect(screen.queryByText('Design Team')).not.toBeInTheDocument();
   });
 });
