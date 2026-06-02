@@ -2,6 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import { SpaceSwitcher } from './space-switcher';
 import { SidebarProvider } from './sidebar.context';
+import type { SpacesState } from '@/core/spaces/infrastructure/store/spaces.store';
 
 vi.mock('@/core/spaces/presentation/hooks/use-spaces/useSpaces.hook', () => ({
   useSpaces: vi.fn(),
@@ -14,9 +15,20 @@ import { useSpaces } from '@/core/spaces/presentation/hooks/use-spaces/useSpaces
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 
 const mockSpaces = [
-  { id: 'space-1', name: 'Design Team' },
-  { id: 'space-2', name: 'Engineering' },
+  { id: 'space-1', name: 'Design Team', ownerId: 'user-1', createdAt: '2026-01-01' },
+  { id: 'space-2', name: 'Engineering', ownerId: 'user-1', createdAt: '2026-01-01' },
 ];
+
+const makeStoreState = (overrides: Partial<SpacesState> = {}): SpacesState => ({
+  availableSpaces: mockSpaces,
+  currentSpaceId: 'space-1',
+  isResolved: true,
+  setSpaces: vi.fn(),
+  setActiveSpace: vi.fn(),
+  resolveActiveSpace: vi.fn(),
+  clear: vi.fn(),
+  ...overrides,
+});
 
 function Wrapper({ children }: { children: React.ReactNode }) {
   return <SidebarProvider>{children}</SidebarProvider>;
@@ -24,9 +36,9 @@ function Wrapper({ children }: { children: React.ReactNode }) {
 
 describe('SpaceSwitcher', () => {
   beforeEach(() => {
-    vi.mocked(useSpaces).mockReturnValue({ data: mockSpaces } as ReturnType<typeof useSpaces>);
-    vi.mocked(useSpacesStore).mockImplementation((selector: (s: { availableSpaces: typeof mockSpaces; currentSpaceId: string }) => unknown) =>
-      selector({ availableSpaces: mockSpaces, currentSpaceId: 'space-1' })
+    vi.mocked(useSpaces).mockReturnValue({ data: mockSpaces } as unknown as ReturnType<typeof useSpaces>);
+    vi.mocked(useSpacesStore).mockImplementation((selector) =>
+      selector(makeStoreState())
     );
   });
 
@@ -64,10 +76,10 @@ describe('SpaceSwitcher', () => {
   });
 
   it('renders nothing when no spaces are available', () => {
-    vi.mocked(useSpacesStore).mockImplementation((selector: (s: { availableSpaces: never[]; currentSpaceId: null }) => unknown) =>
-      selector({ availableSpaces: [], currentSpaceId: null })
+    vi.mocked(useSpacesStore).mockImplementation((selector) =>
+      selector(makeStoreState({ availableSpaces: [], currentSpaceId: null }))
     );
-    vi.mocked(useSpaces).mockReturnValue({ data: [] } as ReturnType<typeof useSpaces>);
+    vi.mocked(useSpaces).mockReturnValue({ data: [] } as unknown as ReturnType<typeof useSpaces>);
     render(
       <Wrapper>
         <SpaceSwitcher />

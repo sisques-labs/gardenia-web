@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { Space } from '@/core/spaces/domain/interfaces/space.interface';
 
-interface SpacesState {
+export interface SpacesState {
   availableSpaces: Space[];
   currentSpaceId: string | null;
   isResolved: boolean;
