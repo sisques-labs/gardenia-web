@@ -1,10 +1,10 @@
 import { LayoutGrid } from 'lucide-react';
-import type { ReactNode } from 'react';
+import type { ElementType } from 'react';
 
 export interface NavItem {
   label: string;
   href: string;
-  icon?: ReactNode;
+  icon?: ElementType;
 }
 
 export const NAV_ITEMS: NavItem[] = [

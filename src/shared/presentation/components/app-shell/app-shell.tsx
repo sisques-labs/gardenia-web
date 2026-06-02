@@ -18,7 +18,7 @@ export function AppShell({ children }: AppShellProps) {
       style={{ '--sidebar-width': sidebarWidth } as CSSProperties}
     >
       <aside className="hidden md:block border-r border-[var(--rule)] bg-[var(--paper)]" />
-      <main className="overflow-y-auto bg-[var(--paper)]">
+      <main className="overflow-y-auto paper-grain">
         {children}
       </main>
     </div>
