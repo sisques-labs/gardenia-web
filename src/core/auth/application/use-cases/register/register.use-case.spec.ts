@@ -9,6 +9,7 @@ const mockRepository: IAuthRepository = {
   logout: vi.fn(),
   me: vi.fn(),
   refresh: vi.fn(),
+  forgotPassword: vi.fn(),
 };
 
 describe('RegisterUseCase', () => {

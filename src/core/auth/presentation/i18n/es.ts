@@ -31,6 +31,20 @@ const dict = {
     passwordMin: 'Mínimo 6 caracteres',
     passwordsMismatch: 'Las contraseñas no coinciden',
   },
+  forgotPassword: {
+    eyebrow: 'Recuperar contraseña',
+    title: '¿Olvidaste tu contraseña?',
+    sub: 'Introduce tu correo y te enviaremos un enlace para restablecerla.',
+    email: 'Correo electrónico',
+    emailPlaceholder: 'tu@ejemplo.com',
+    submit: 'Enviar enlace',
+    submitting: 'Enviando...',
+    successTitle: 'Revisa tu bandeja de entrada',
+    successBody: 'Si existe una cuenta con ese correo, recibirás un enlace de recuperación en breve.',
+    backToLogin: 'Volver a iniciar sesión',
+    emailInvalid: 'Correo electrónico no válido',
+    socialHint: '¿Te registraste con Google o Apple? Usa el botón de inicio de sesión social.',
+  },
 } as const satisfies AuthDictTranslated;
 
 export default dict;

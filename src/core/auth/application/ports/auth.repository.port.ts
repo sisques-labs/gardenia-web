@@ -9,4 +9,5 @@ export interface IAuthRepository {
   logout(): Promise<void>;
   me(): Promise<AccountUser>;
   refresh(): Promise<AuthResponse>;
+  forgotPassword(email: string): Promise<void>;
 }
