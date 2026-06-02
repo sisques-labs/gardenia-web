@@ -29,6 +29,10 @@ export class AuthHttpRepository implements IAuthRepository {
     const res = await http.post<AuthResponse>('/auth/refresh');
     return res.data;
   }
+
+  async forgotPassword(email: string): Promise<void> {
+    await http.post('/auth/forgot-password', { email });
+  }
 }
 
 export const authHttpRepository = new AuthHttpRepository();

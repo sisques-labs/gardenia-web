@@ -26,6 +26,20 @@ const dict = {
     passwordMin: 'At least 6 characters',
     passwordsMismatch: 'Passwords do not match',
   },
+  forgotPassword: {
+    eyebrow: 'Password reset',
+    title: 'Forgot your password?',
+    sub: 'Enter your email and we will send you a reset link.',
+    email: 'Email',
+    emailPlaceholder: 'you@example.com',
+    submit: 'Send reset link',
+    submitting: 'Sending...',
+    successTitle: 'Check your inbox',
+    successBody: 'If an account exists for that email, you will receive a reset link shortly.',
+    backToLogin: 'Back to sign in',
+    emailInvalid: 'Invalid email',
+    socialHint: 'Did you sign up with Google or Apple? Use the social sign-in button instead.',
+  },
 } as const;
 
 export default dict;
