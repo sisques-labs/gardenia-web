@@ -1,10 +1,16 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.8.1-alpha.0] - 2026-06-02
+
+### Bug Fixes
+- **plants:** Redesign list page header to match design — stats, tab bar, filters button (baba7db)
+- **plants:** Update detail screen test fixture with new i18n keys (d4c70cb)
 ## [0.8.0-alpha.0] - 2026-06-02
 
 ### Chore
 - **sdd:** Archive plants-module change artifacts (b5d9e3f)
+- Release v0.8.0-alpha.0 (f622fde)
 
 ### Features
 - **plants:** Add plants module data layer — domain, use-cases, repository, i18n (e61e863)
