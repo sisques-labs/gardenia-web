@@ -1,13 +1,14 @@
 'use client';
 
 import { Button } from '@/shared/presentation/components/ui/button';
-import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { PlantCard } from '@/core/plants/presentation/components/plant-card/plant-card';
 import { usePlants } from '@/core/plants/presentation/hooks/use-plants/use-plants.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 const shimmer = 'bg-muted rounded animate-pulse';
+
+const CATEGORY_FILTERS = ['Hortaliza', 'Aromática', 'Hoja', 'Raíz', 'Flor', 'Árbol'] as const;
 
 function PlantCardSkeleton() {
   return (
@@ -34,27 +35,49 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
   const spaceId = spaceIdProp ?? storeSpaceId;
   const { data: plants, isLoading } = usePlants(spaceId);
 
-  return (
-    <div className="p-6">
-      <ScreenHeader
-        title={dict.list.title}
-        actions={
-          <Button disabled>{dict.list.newPlant}</Button>
-        }
-      />
+  const plantCount = plants?.length ?? 0;
+  const speciesCount = new Set(plants?.filter((p) => p.plantSpeciesId).map((p) => p.plantSpeciesId)).size;
 
-      <div className="flex gap-2 mt-6 mb-4 overflow-x-auto">
-        <button className="px-3 py-1.5 text-sm font-medium rounded-full bg-primary text-primary-foreground">
+  return (
+    <div>
+      {/* Header */}
+      <header className="flex flex-col gap-1 px-6 py-4 border-b border-[var(--rule)]">
+        <p className="text-xs text-[var(--ink)]/60">
+          {dict.nav} · {plantCount} {dict.list.statsPlants} · {speciesCount} {dict.list.statsSpecies}
+        </p>
+        <div className="flex items-center">
+          <h1 className="headline text-[var(--ink)]">{dict.list.title}</h1>
+          <div className="ml-auto">
+            <Button disabled>{dict.list.newPlant}</Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Filter tabs */}
+      <div className="flex items-center gap-0 px-6 border-b border-[var(--rule)] overflow-x-auto">
+        <button className="px-4 py-3 text-sm font-medium text-[var(--ink)] border-b-2 border-[var(--ink)] whitespace-nowrap flex items-center gap-1.5">
           {dict.list.filterAll}
+          <span className="text-xs font-normal text-[var(--ink)]/60">{plantCount}</span>
         </button>
-        {['Hortaliza', 'Aromática', 'Hoja', 'Raíz', 'Flor', 'Árbol'].map((cat) => (
-          <button key={cat} disabled className="px-3 py-1.5 text-sm font-medium rounded-full bg-muted text-muted-foreground cursor-not-allowed">
+        {CATEGORY_FILTERS.map((cat) => (
+          <button
+            key={cat}
+            disabled
+            className="px-4 py-3 text-sm font-medium text-[var(--ink)]/40 whitespace-nowrap cursor-not-allowed"
+          >
             {cat}
           </button>
         ))}
+        <button
+          disabled
+          className="ml-auto px-4 py-3 text-sm font-medium text-[var(--ink)]/40 whitespace-nowrap cursor-not-allowed flex items-center gap-1"
+        >
+          {dict.list.filters}
+        </button>
       </div>
 
-      <div>
+      {/* Content */}
+      <div className="p-6">
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {Array.from({ length: 6 }).map((_, i) => (
@@ -79,4 +102,3 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
     </div>
   );
 }
-

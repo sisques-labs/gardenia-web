@@ -33,6 +33,9 @@ const dict = {
     newPlant: 'New plant',
     empty: 'No plants yet',
     filterAll: 'All',
+    filters: 'Filters',
+    statsPlants: 'plants',
+    statsSpecies: 'species',
     inProgress: 'Coming soon',
   },
   detail: {
@@ -98,14 +101,37 @@ describe('PlantsListScreen', () => {
   });
 
   it('renders "All" filter tab as active and category tabs as disabled', () => {
-    vi.mocked(usePlants).mockReturnValue({ data: [] as Plant[], isLoading: false, isError: false } as unknown as ReturnType<typeof usePlants>);
+    vi.mocked(usePlants).mockReturnValue({ data: mockPlants, isLoading: false, isError: false } as ReturnType<typeof usePlants>);
 
     render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
 
-    const allTab = screen.getByRole('button', { name: /^all$/i });
+    const allTab = screen.getByRole('button', { name: /^all/i });
     expect(allTab).not.toBeDisabled();
 
     const disabledTabs = screen.getAllByRole('button').filter((btn) => btn.hasAttribute('disabled'));
     expect(disabledTabs.length).toBeGreaterThan(0);
+  });
+
+  it('renders stats subtitle with plant and species counts', () => {
+    const plantsWithSpecies: Plant[] = [
+      { id: 'p1', name: 'Monstera', userId: 'u1', spaceId: 's1', plantSpeciesId: 'sp1', createdAt: '', updatedAt: '' },
+      { id: 'p2', name: 'Pothos', userId: 'u1', spaceId: 's1', plantSpeciesId: 'sp2', createdAt: '', updatedAt: '' },
+    ];
+    vi.mocked(usePlants).mockReturnValue({ data: plantsWithSpecies, isLoading: false, isError: false } as ReturnType<typeof usePlants>);
+
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+
+    expect(screen.getByText(/inventory/i)).toBeInTheDocument();
+    expect(screen.getByText(/2 plants/i)).toBeInTheDocument();
+    expect(screen.getByText(/2 species/i)).toBeInTheDocument();
+  });
+
+  it('renders disabled Filters button', () => {
+    vi.mocked(usePlants).mockReturnValue({ data: mockPlants, isLoading: false, isError: false } as ReturnType<typeof usePlants>);
+
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+
+    const filtersBtn = screen.getByRole('button', { name: /filters/i });
+    expect(filtersBtn).toBeDisabled();
   });
 });
