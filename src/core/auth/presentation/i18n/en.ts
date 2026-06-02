@@ -1,6 +1,7 @@
 const dict = {
   login: {
     title: 'Sign in',
+    eyebrow: '✦ Welcome back',
     email: 'Email',
     emailPlaceholder: 'you@example.com',
     password: 'Password',
@@ -8,15 +9,20 @@ const dict = {
     submit: 'Sign in',
     submitting: 'Signing in...',
     invalidCredentials: 'Invalid email or password',
+    keepSession: 'Keep me signed in on this device',
     emailInvalid: 'Invalid email',
     passwordMin: 'At least 6 characters',
+    forgotPassword: 'Forgot your password?',
+    register: "Don't have an account? Sign up",
   },
   register: {
     title: 'Create account',
+    eyebrow: '✦ Start for free',
     email: 'Email',
     emailPlaceholder: 'you@example.com',
     password: 'Password',
     passwordPlaceholder: 'Min. 6 characters',
+    passwordHint: 'Minimum 8 characters.',
     confirmPassword: 'Confirm password',
     confirmPasswordPlaceholder: 'Repeat your password',
     submit: 'Create account',
@@ -25,6 +31,8 @@ const dict = {
     emailInvalid: 'Invalid email',
     passwordMin: 'At least 6 characters',
     passwordsMismatch: 'Passwords do not match',
+    login: 'Already have an account? Sign in',
+    terms: 'By continuing, you agree to our Terms of Service and Privacy Policy.',
   },
   forgotPassword: {
     eyebrow: 'Password reset',
@@ -39,6 +47,11 @@ const dict = {
     backToLogin: 'Back to sign in',
     emailInvalid: 'Invalid email',
     socialHint: 'Did you sign up with Google or Apple? Use the social sign-in button instead.',
+  },
+  brandPanel: {
+    tagline: 'garden notebook',
+    quote: '"Plant something. Water it. Watch it grow."',
+    stats: 'GitHub ★ · MIT · no ads',
   },
 } as const;
 
