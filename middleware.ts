@@ -35,7 +35,7 @@ export function middleware(req: NextRequest) {
   const isPublic = PUBLIC_PATHS.some((p) => pathWithoutLocale.startsWith(p));
 
   if (isPublic && hasAuth) {
-    return NextResponse.redirect(new URL(`/${locale}`, req.url));
+    return NextResponse.redirect(new URL(`/${locale}/home`, req.url));
   }
   if (!isPublic && !hasAuth) {
     const url = new URL(`/${locale}/login`, req.url);
