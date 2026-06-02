@@ -1,10 +1,15 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.7.1-alpha.0] - 2026-06-02
+
+### Bug Fixes
+- **auth:** Fix post-login redirect — cookie name, API URL, nav hrefs (539dc86)
 ## [0.7.0-alpha.0] - 2026-06-02
 
 ### Chore
 - **sdd:** Archive dashboard-home change artifacts (d8d6f90)
+- Release v0.7.0-alpha.0 (7a154b3)
 
 ### Features
 - **home:** Implement HomeTopBar, 5 sections with skeletons, HomeScreen and route (5268bb1)
