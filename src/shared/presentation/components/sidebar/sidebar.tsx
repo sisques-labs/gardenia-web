@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Leaf } from 'lucide-react';
 import { useSidebarStore } from '@/shared/infrastructure/store/sidebar/sidebar.store';
 import { NAV_ITEMS } from '../sidebar-nav-items/nav-items';
 import { NavItem } from '../sidebar-nav-items/nav-item';
@@ -13,7 +13,6 @@ export function Sidebar() {
   const pathname = usePathname();
   const locale = pathname?.split('/')[1] ?? 'en';
 
-  // Escape key closes drawer
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') {
@@ -26,9 +25,12 @@ export function Sidebar() {
 
   const sidebarContent = (
     <nav data-testid="sidebar" className="flex flex-col h-full border-r border-[var(--rule)] paper-grain">
-      {/* Space switcher at top */}
-      <div className="border-b border-[var(--rule)]">
-        <SpaceSwitcher />
+      {/* Brand header */}
+      <div className="flex items-center gap-2 px-3 py-4 border-b border-[var(--rule)]">
+        <Leaf className="w-5 h-5 text-[var(--forest)] shrink-0" />
+        {!collapsed && (
+          <span className="text-sm font-semibold text-[var(--ink)] tracking-wide">Gardenia</span>
+        )}
       </div>
 
       {/* Nav items */}
@@ -46,6 +48,11 @@ export function Sidebar() {
             />
           );
         })}
+      </div>
+
+      {/* Active space */}
+      <div className="border-t border-[var(--rule)]">
+        <SpaceSwitcher />
       </div>
 
       {/* Collapse toggle */}
@@ -69,14 +76,12 @@ export function Sidebar() {
       {/* Mobile: drawer */}
       {drawerOpen && (
         <>
-          {/* Overlay */}
           <div
             data-testid="sidebar-overlay"
             aria-hidden="true"
             className="fixed inset-0 bg-[var(--ink)]/40 z-30 md:hidden"
             onClick={closeDrawer}
           />
-          {/* Drawer */}
           <div className="fixed inset-y-0 left-0 z-40 w-60 md:hidden">{sidebarContent}</div>
         </>
       )}
