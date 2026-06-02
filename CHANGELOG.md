@@ -1,7 +1,33 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.5.0-alpha.0] - 2026-06-02
+
+### Bug Fixes
+- **sidebar:** Correct NavItem icon type to ElementType and add paper-grain to AppShell main (86c8ea9)
+- **spaces:** Export SpacesState and fix mock types in SpaceSwitcher test (872d889)
+
+### Chore
+- **sdd:** Update apply-progress for sidebar-screen-header PR 2 completion (a89a47c)
+- **sdd:** Archive sidebar-screen-header change with full openspec artifacts (866ac8f)
+- **claude:** Remove stale agent worktrees (89dd32d)
+
+### Features
+- **sidebar:** Add SidebarProvider with collapse + drawer state (1e18ea1)
+- **app-shell:** Add AppShell CSS grid layout component (b16abed)
+- **layout:** Wire AppShell into protected layout + fix spaces/new routing (b04641c)
+- **sidebar:** Add NavItem and SpaceSwitcher sub-components (65e2720)
+- **sidebar:** Add Sidebar component with collapse and mobile drawer (1bb06db)
+- **screen-header:** Add ScreenHeader component (8f52513)
+- **screens:** Integrate AppShell layout into SpacesListScreen and SpaceCreateScreen (9ecf1ed)
+
+### Refactor
+- **sidebar:** Replace SidebarContext with Zustand store at shared/infrastructure/store/sidebar (6c4092d)
+- **sidebar:** Move nav-items to sidebar-nav-items/ and space-switcher to its own folder (da27608)
 ## [0.4.1-alpha.0] - 2026-06-02
+
+### Chore
+- Release v0.4.1-alpha.0 (baf976a)
 
 ### Features
 - **design:** Integrate Gardenia design tokens and brand identity (1ebed3e)
