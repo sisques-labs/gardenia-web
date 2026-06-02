@@ -1,11 +1,18 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.8.2-alpha.0] - 2026-06-02
+
+### Bug Fixes
+- **sidebar:** Add Gardenia brand header, move space section to bottom, improve active space label (424d39b)
 ## [0.8.1-alpha.0] - 2026-06-02
 
 ### Bug Fixes
 - **plants:** Redesign list page header to match design — stats, tab bar, filters button (baba7db)
 - **plants:** Update detail screen test fixture with new i18n keys (d4c70cb)
+
+### Chore
+- Release v0.8.1-alpha.0 (9912d8c)
 ## [0.8.0-alpha.0] - 2026-06-02
 
 ### Chore
