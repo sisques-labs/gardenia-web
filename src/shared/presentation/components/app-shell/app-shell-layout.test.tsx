@@ -4,8 +4,14 @@
  * itself is not directly testable in Vitest/jsdom.
  */
 import { render, screen } from '@testing-library/react';
+import { vi } from 'vitest';
 import { SidebarProvider } from '../sidebar/sidebar.context';
 import { AppShell } from './app-shell';
+
+// Sidebar renders SpaceSwitcher which needs react-query — mock at unit level
+vi.mock('../sidebar/sidebar', () => ({
+  Sidebar: () => <div data-testid="sidebar-mock" />,
+}));
 
 describe('AppShell layout integration', () => {
   it('renders AppShell wrapping page content via SidebarProvider', () => {

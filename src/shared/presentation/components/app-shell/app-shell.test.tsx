@@ -1,7 +1,13 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { vi } from 'vitest';
 import { SidebarProvider } from '../sidebar/sidebar.context';
 import { AppShell } from './app-shell';
+
+// Sidebar renders SpaceSwitcher which needs react-query — mock at unit level
+vi.mock('../sidebar/sidebar', () => ({
+  Sidebar: () => <div data-testid="sidebar-mock" />,
+}));
 
 function Wrapper({ children }: { children: React.ReactNode }) {
   return <SidebarProvider>{children}</SidebarProvider>;
