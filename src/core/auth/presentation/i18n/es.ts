@@ -6,6 +6,7 @@ type AuthDictTranslated = WidenStringLiterals<AuthDict>;
 const dict = {
   login: {
     title: 'Iniciar sesión',
+    eyebrow: '✦ Bienvenida de vuelta',
     email: 'Correo electrónico',
     emailPlaceholder: 'tu@ejemplo.com',
     password: 'Contraseña',
@@ -13,15 +14,20 @@ const dict = {
     submit: 'Iniciar sesión',
     submitting: 'Iniciando sesión...',
     invalidCredentials: 'Correo o contraseña incorrectos',
+    keepSession: 'Mantener sesión iniciada en este equipo',
     emailInvalid: 'Correo electrónico no válido',
     passwordMin: 'Mínimo 6 caracteres',
+    forgotPassword: '¿Olvidaste tu contraseña?',
+    register: '¿No tienes cuenta? Regístrate',
   },
   register: {
     title: 'Crear cuenta',
+    eyebrow: '✦ Empieza gratis',
     email: 'Correo electrónico',
     emailPlaceholder: 'tu@ejemplo.com',
     password: 'Contraseña',
     passwordPlaceholder: 'Mín. 6 caracteres',
+    passwordHint: 'Mínimo 8 caracteres.',
     confirmPassword: 'Confirmar contraseña',
     confirmPasswordPlaceholder: 'Repite tu contraseña',
     submit: 'Crear cuenta',
@@ -30,6 +36,8 @@ const dict = {
     emailInvalid: 'Correo electrónico no válido',
     passwordMin: 'Mínimo 6 caracteres',
     passwordsMismatch: 'Las contraseñas no coinciden',
+    login: '¿Ya tienes cuenta? Inicia sesión',
+    terms: 'Al continuar, aceptas nuestros Términos de servicio y Política de privacidad.',
   },
   forgotPassword: {
     eyebrow: 'Recuperar contraseña',
