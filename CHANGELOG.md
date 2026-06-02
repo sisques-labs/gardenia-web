@@ -1,6 +1,16 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.6.0-alpha.0] - 2026-06-02
+
+### Chore
+- **sdd:** Archive auth-redesign change (ac1e64e)
+- Update .gitignore to include Next.js specific files (18b90d3)
+
+### Features
+- **auth:** Add forgot-password vertical slice (f67ee45)
+- **auth:** Redesign auth screens with brand design system (fde52f5)
+- **auth:** Wire brand panel copy through i18n (5f431fa)
 ## [0.5.0-alpha.0] - 2026-06-02
 
 ### Bug Fixes
@@ -11,6 +21,7 @@ All notable changes to this project will be documented in this file.
 - **sdd:** Update apply-progress for sidebar-screen-header PR 2 completion (a89a47c)
 - **sdd:** Archive sidebar-screen-header change with full openspec artifacts (866ac8f)
 - **claude:** Remove stale agent worktrees (89dd32d)
+- Release v0.5.0-alpha.0 (3ea3eab)
 
 ### Features
 - **sidebar:** Add SidebarProvider with collapse + drawer state (1e18ea1)
