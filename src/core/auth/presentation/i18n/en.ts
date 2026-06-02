@@ -48,6 +48,11 @@ const dict = {
     emailInvalid: 'Invalid email',
     socialHint: 'Did you sign up with Google or Apple? Use the social sign-in button instead.',
   },
+  brandPanel: {
+    tagline: 'garden notebook',
+    quote: '"Plant something. Water it. Watch it grow."',
+    stats: 'GitHub ★ · MIT · no ads',
+  },
 } as const;
 
 export default dict;

@@ -1,6 +1,9 @@
 import { AuthNotebook } from '@/core/auth/presentation/components/auth-notebook/auth-notebook';
+import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
-export function AuthBrandPanel() {
+type Props = { dict: AppDict['auth']['brandPanel'] };
+
+export function AuthBrandPanel({ dict }: Props) {
   return (
     <div
       style={{
@@ -48,7 +51,7 @@ export function AuthBrandPanel() {
           className="eyebrow"
           style={{ color: 'oklch(0.72 0.07 145)', fontSize: '10px' }}
         >
-          cuaderno de huertas
+          {dict.tagline}
         </span>
       </div>
 
@@ -71,7 +74,7 @@ export function AuthBrandPanel() {
           zIndex: 1,
         }}
       >
-        &ldquo;Planta algo. Riégalo. Míralo crecer.&rdquo;
+        {dict.quote}
       </blockquote>
 
       {/* OSS stats */}
@@ -85,7 +88,7 @@ export function AuthBrandPanel() {
           letterSpacing: '0.03em',
         }}
       >
-        GitHub ★ &nbsp;·&nbsp; MIT &nbsp;·&nbsp; sin anuncios
+        {dict.stats}
       </p>
     </div>
   );

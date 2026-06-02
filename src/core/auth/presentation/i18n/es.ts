@@ -53,6 +53,11 @@ const dict = {
     emailInvalid: 'Correo electrónico no válido',
     socialHint: '¿Te registraste con Google o Apple? Usa el botón de inicio de sesión social.',
   },
+  brandPanel: {
+    tagline: 'cuaderno de huertas',
+    quote: '"Planta algo. Riégalo. Míralo crecer."',
+    stats: 'GitHub ★ · MIT · sin anuncios',
+  },
 } as const satisfies AuthDictTranslated;
 
 export default dict;
