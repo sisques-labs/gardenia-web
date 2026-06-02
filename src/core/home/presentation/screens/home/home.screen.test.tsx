@@ -44,32 +44,32 @@ beforeEach(() => {
 
 describe('HomeScreen', () => {
   it('renders greeting text with email prefix', () => {
-    render(<HomeScreen dict={mockDict} lang="es" />);
+    render(<HomeScreen dict={mockDict} />);
     expect(screen.getByText(/ana/i)).toBeInTheDocument();
   });
 
   it('renders TodayTasksSection inProgress text', () => {
-    render(<HomeScreen dict={mockDict} lang="es" />);
+    render(<HomeScreen dict={mockDict} />);
     expect(screen.getByText('En desarrollo tareas')).toBeInTheDocument();
   });
 
   it('renders GrowingNowSection inProgress text', () => {
-    render(<HomeScreen dict={mockDict} lang="es" />);
+    render(<HomeScreen dict={mockDict} />);
     expect(screen.getByText('En desarrollo crecimiento')).toBeInTheDocument();
   });
 
   it('renders MiniMapSection inProgress text', () => {
-    render(<HomeScreen dict={mockDict} lang="es" />);
+    render(<HomeScreen dict={mockDict} />);
     expect(screen.getByText('En desarrollo mapa')).toBeInTheDocument();
   });
 
   it('renders HarvestPaceSection inProgress text', () => {
-    render(<HomeScreen dict={mockDict} lang="es" />);
+    render(<HomeScreen dict={mockDict} />);
     expect(screen.getByText('En desarrollo cosecha')).toBeInTheDocument();
   });
 
   it('renders JournalSection inProgress text', () => {
-    render(<HomeScreen dict={mockDict} lang="es" />);
+    render(<HomeScreen dict={mockDict} />);
     expect(screen.getByText('En desarrollo diario')).toBeInTheDocument();
   });
 });

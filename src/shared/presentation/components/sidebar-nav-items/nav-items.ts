@@ -9,7 +9,7 @@ export interface NavItem {
 
 export const NAV_ITEMS: NavItem[] = [
   {
-    label: 'Home',
+    label: 'Home', // TODO: i18n
     href: '/[lang]/home',
     icon: Home,
   },

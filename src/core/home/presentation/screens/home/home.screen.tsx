@@ -16,7 +16,6 @@ import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {
   dict: AppDict['home'];
-  lang: string;
 };
 
 export function HomeScreen({ dict }: Props) {
