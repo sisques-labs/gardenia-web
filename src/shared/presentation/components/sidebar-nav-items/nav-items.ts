@@ -1,4 +1,4 @@
-import { Home, LayoutGrid } from 'lucide-react';
+import { Home, LayoutGrid, Leaf } from 'lucide-react';
 import type { ElementType } from 'react';
 
 export interface NavItem {
@@ -17,5 +17,10 @@ export const NAV_ITEMS: NavItem[] = [
     label: 'Spaces',
     href: '/[lang]/spaces',
     icon: LayoutGrid,
+  },
+  {
+    label: 'Inventory', // TODO: i18n
+    href: '/[lang]/plants',
+    icon: Leaf,
   },
 ];
