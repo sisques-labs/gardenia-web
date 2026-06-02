@@ -1,0 +1,44 @@
+change: design-tokens
+archived: true
+archived_date: 2026-06-02
+final_verdict: PASS
+critical_count: 0
+warning_count: 0
+suggestion_count: 0
+
+# Engram observation IDs for traceability
+artifacts:
+  proposal:
+    id: 750
+    topic_key: sdd/design-tokens/proposal
+  spec:
+    id: 751
+    topic_key: sdd/design-tokens/spec
+  design:
+    id: 752
+    topic_key: sdd/design-tokens/design
+  tasks:
+    id: 753
+    topic_key: sdd/design-tokens/tasks
+  apply_progress:
+    id: 754
+    topic_key: sdd/design-tokens/apply-progress
+  verify_report:
+    id: 755
+    topic_key: sdd/design-tokens/verify-report
+  archive_report:
+    topic_key: sdd/design-tokens/archive-report
+
+# Files created/modified
+files_changed:
+  - src/design-system/theme.css
+  - src/design-system/palettes.css
+  - src/design-system/components.css
+  - app/globals.css
+  - app/layout.tsx
+
+# Metadata
+requirements_met: 8/8
+all_issues_resolved: true
+post_verify_fixes_applied: true
+tsc_status: PASS
