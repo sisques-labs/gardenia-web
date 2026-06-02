@@ -1,11 +1,19 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.6.1-alpha.0] - 2026-06-02
+
+### Bug Fixes
+- **auth:** Thread locale prop and redirect post-login to /${locale}/home (248d77d)
+
+### Features
+- **home:** Add i18n foundation for home dashboard context (0f2f736)
 ## [0.6.0-alpha.0] - 2026-06-02
 
 ### Chore
 - **sdd:** Archive auth-redesign change (ac1e64e)
 - Update .gitignore to include Next.js specific files (18b90d3)
+- Release v0.6.0-alpha.0 (2b162cb)
 
 ### Features
 - **auth:** Add forgot-password vertical slice (f67ee45)
