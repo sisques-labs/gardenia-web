@@ -4,9 +4,9 @@ import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useSidebarStore } from '@/shared/infrastructure/store/sidebar/sidebar.store';
-import { NAV_ITEMS } from './nav-items';
-import { NavItem } from './nav-item';
-import { SpaceSwitcher } from './space-switcher';
+import { NAV_ITEMS } from '../sidebar-nav-items/nav-items';
+import { NavItem } from '../sidebar-nav-items/nav-item';
+import { SpaceSwitcher } from '../space-switcher/space-switcher';
 
 export function Sidebar() {
   const { collapsed, toggleCollapsed, drawerOpen, closeDrawer } = useSidebarStore();

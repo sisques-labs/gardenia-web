@@ -7,7 +7,7 @@ vi.mock('next/navigation', () => ({
   usePathname: vi.fn(() => '/en/spaces'),
 }));
 
-vi.mock('./space-switcher', () => ({
+vi.mock('../space-switcher/space-switcher', () => ({
   SpaceSwitcher: () => <div data-testid="space-switcher-mock" />,
 }));
 
