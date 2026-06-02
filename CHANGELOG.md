@@ -1,10 +1,15 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.4.1-alpha.0] - 2026-06-02
+
+### Features
+- **design:** Integrate Gardenia design tokens and brand identity (1ebed3e)
 ## [0.4.0-alpha.0] - 2026-06-01
 
 ### Chore
 - **env:** Document Next.js public URLs and bake them in Docker builds (2ed6ee3)
+- Release v0.4.0-alpha.0 (34e618c)
 
 ### Features
 - **spaces:** Add spaces module with full DDD structure, i18n, and shell layout (77b4e1f)
