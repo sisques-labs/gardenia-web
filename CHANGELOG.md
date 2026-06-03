@@ -1,10 +1,19 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.9.4-alpha.0] - 2026-06-03
+
+### Bug Fixes
+- **middleware:** Add forgot-password to public paths (a208fef)
+- **docker:** Bake INTERNAL_API_URL at build time for Next.js rewrites (973cadd)
+- **proxy:** Replace Next.js rewrites with runtime Route Handler proxy (0d3c605)
 ## [0.9.3-alpha.0] - 2026-06-03
 
 ### Bug Fixes
 - **middleware:** Exclude proxied API and GraphQL routes from locale and auth guards (b70084a)
+
+### Chore
+- Release v0.9.3-alpha.0 (2343f1a)
 ## [0.9.2-alpha.0] - 2026-06-03
 
 ### Bug Fixes
