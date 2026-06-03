@@ -3,7 +3,7 @@ import { refreshTokenOnce } from '@/core/auth/infrastructure/http/refresh-mutex'
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api';
 const AUTH_SKIP = ['/auth/login', '/auth/register'];
 const SPACE_SKIP = '/auth/';
 
