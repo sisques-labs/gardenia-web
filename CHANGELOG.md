@@ -1,11 +1,31 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.9.0-alpha.0] - 2026-06-03
+
+### Chore
+- **openspec:** Archive rest-to-graphql SDD change (a66728b)
+- Remove unused TypeScript environment and build info files (e30739e)
+
+### Documentation
+- **openspec:** Add GQL repository structure convention to config (88e3eb8)
+
+### Features
+- **graphql:** Add Apollo link chain with auth, space, and error handling (0be2d51)
+- **spaces:** Migrate SpacesHttpRepository from REST to GraphQL (6675073)
+- **graphql:** Migrate spaces repository from REST to GraphQL (6f5f8b9)
+- **plants:** Migrate PlantsHttpRepository to GQL adapter (PR3) (94d0f41)
+
+### Refactor
+- **graphql:** Split spaces GQL repo into graphql/ subdirectory (41c4ab8)
 ## [0.8.3-alpha.0] - 2026-06-02
 
 ### Bug Fixes
 - **plants:** Align UI with design — card footer, sidebar nav items, QR section, action buttons (c1702ce)
 - **plants:** Update list screen test fixture with new i18n keys (561ea92)
+
+### Chore
+- Release v0.8.3-alpha.0 (f123761)
 ## [0.8.2-alpha.0] - 2026-06-02
 
 ### Bug Fixes
