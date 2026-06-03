@@ -1,31 +1,9 @@
-import { gql } from '@apollo/client';
 import { apolloClient } from '@/shared/infrastructure/http/apollo.client';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import type { ISpacesRepository } from '@/core/spaces/application/ports/spaces.repository.port';
 import type { Space } from '@/core/spaces/domain/interfaces/space.interface';
-
-export const SPACES_FIND_BY_USER = gql`
-  query SpacesFindByUser {
-    spacesFindByUser {
-      items {
-        id
-        name
-        ownerId
-        createdAt
-      }
-    }
-  }
-`;
-
-export const SPACE_CREATE = gql`
-  mutation SpaceCreate($input: SpaceCreateRequestDto!) {
-    spaceCreate(input: $input) {
-      id
-      success
-      message
-    }
-  }
-`;
+import { SPACES_FIND_BY_USER } from './queries/spaces-find-by-user.query';
+import { SPACE_CREATE } from './mutations/space-create.mutation';
 
 interface SpacesFindByUserData {
   spacesFindByUser: { items: Space[] };
@@ -35,7 +13,7 @@ interface SpaceCreateData {
   spaceCreate: { id: string; success: boolean; message: string };
 }
 
-export class SpacesHttpRepository implements ISpacesRepository {
+export class SpacesGqlRepository implements ISpacesRepository {
   async listByUser(): Promise<Space[]> {
     const res = await apolloClient.query<SpacesFindByUserData>({ query: SPACES_FIND_BY_USER });
     return res.data?.spacesFindByUser?.items ?? [];
@@ -57,4 +35,4 @@ export class SpacesHttpRepository implements ISpacesRepository {
   }
 }
 
-export const spacesHttpRepository = new SpacesHttpRepository();
+export const spacesGqlRepository = new SpacesGqlRepository();

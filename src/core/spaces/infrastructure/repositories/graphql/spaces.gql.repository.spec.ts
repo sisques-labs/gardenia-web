@@ -16,7 +16,9 @@ vi.mock('@/core/auth/infrastructure/store/auth.store', () => ({
 
 import { apolloClient } from '@/shared/infrastructure/http/apollo.client';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
-import { SpacesHttpRepository, SPACES_FIND_BY_USER, SPACE_CREATE } from './spaces-http.repository';
+import { SpacesGqlRepository } from './spaces.gql.repository';
+import { SPACES_FIND_BY_USER } from './queries/spaces-find-by-user.query';
+import { SPACE_CREATE } from './mutations/space-create.mutation';
 import type { Space } from '@/core/spaces/domain/interfaces/space.interface';
 
 const mockSpaces: Space[] = [
@@ -24,11 +26,11 @@ const mockSpaces: Space[] = [
   { id: 'space-2', name: 'Balcony', ownerId: 'user-1', createdAt: '2024-01-02' },
 ];
 
-describe('SpacesHttpRepository', () => {
-  let repository: SpacesHttpRepository;
+describe('SpacesGqlRepository', () => {
+  let repository: SpacesGqlRepository;
 
   beforeEach(() => {
-    repository = new SpacesHttpRepository();
+    repository = new SpacesGqlRepository();
     vi.clearAllMocks();
     vi.mocked(useAuthStore.getState).mockReturnValue({
       accessToken: 'token-123',
