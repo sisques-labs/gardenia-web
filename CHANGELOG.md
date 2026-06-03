@@ -1,11 +1,16 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.9.1-alpha.0] - 2026-06-03
+
+### Bug Fixes
+- **config:** Proxy API and GraphQL through Next.js rewrites (5c1daa2)
 ## [0.9.0-alpha.0] - 2026-06-03
 
 ### Chore
 - **openspec:** Archive rest-to-graphql SDD change (a66728b)
 - Remove unused TypeScript environment and build info files (e30739e)
+- Release v0.9.0-alpha.0 (ee6bdf9)
 
 ### Documentation
 - **openspec:** Add GQL repository structure convention to config (88e3eb8)
