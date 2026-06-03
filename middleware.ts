@@ -3,7 +3,7 @@ import type { NextRequest } from 'next/server';
 import { DEFAULT_LOCALE, isLocale, SUPPORTED_LOCALES } from '@/shared/presentation/i18n/locale';
 
 const REFRESH_COOKIE = 'refresh_token';
-const PUBLIC_PATHS = ['/login', '/register'];
+const PUBLIC_PATHS = ['/login', '/register', '/forgot-password'];
 
 function getLocaleFromPathname(pathname: string): string | null {
   const segment = pathname.split('/')[1];
