@@ -4,6 +4,7 @@ import { DocumentNode } from '@apollo/client';
 vi.mock('@/shared/infrastructure/http/apollo.client', () => ({
   apolloClient: {
     query: vi.fn(),
+    mutate: vi.fn(),
   },
 }));
 
@@ -11,6 +12,7 @@ import { apolloClient } from '@/shared/infrastructure/http/apollo.client';
 import { PlantsGqlRepository } from './plants.gql.repository';
 import { PLANTS_FIND_BY_CRITERIA } from './queries/plants-find-by-criteria.query';
 import { PLANT_FIND_BY_ID } from './queries/plant-find-by-id.query';
+import { PLANT_CREATE } from './mutations/plant-create.mutation';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 
 const mockPlants: Plant[] = [
@@ -61,6 +63,11 @@ describe('PlantsGqlRepository', () => {
       expect(PLANT_FIND_BY_ID).toBeDefined();
       expect((PLANT_FIND_BY_ID as DocumentNode).kind).toBe('Document');
     });
+
+    it('PLANT_CREATE is a valid GQL document', () => {
+      expect(PLANT_CREATE).toBeDefined();
+      expect((PLANT_CREATE as DocumentNode).kind).toBe('Document');
+    });
   });
 
   describe('list()', () => {
@@ -110,6 +117,43 @@ describe('PlantsGqlRepository', () => {
     it('propagates errors from apolloClient.query', async () => {
       vi.mocked(apolloClient.query).mockRejectedValue(new Error('Not found'));
       await expect(repository.getById('plant-1')).rejects.toThrow('Not found');
+    });
+  });
+
+  describe('create()', () => {
+    it('calls apolloClient.mutate with PLANT_CREATE and then getById, returns Plant', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { plantCreate: { id: 'plant-1', success: true, message: 'Plant created successfully' } },
+      } as never);
+      vi.mocked(apolloClient.query).mockResolvedValue({
+        data: { plantFindById: mockPlant },
+      } as never);
+
+      const result = await repository.create({ name: 'Monstera' });
+
+      expect(apolloClient.mutate).toHaveBeenCalledOnce();
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: PLANT_CREATE,
+        variables: { input: { name: 'Monstera' } },
+      });
+      expect(apolloClient.query).toHaveBeenCalledWith({
+        query: PLANT_FIND_BY_ID,
+        variables: { input: { id: 'plant-1' } },
+      });
+      expect(result).toEqual(mockPlant);
+    });
+
+    it('throws when success is false', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { plantCreate: { id: '', success: false, message: 'Failed' } },
+      } as never);
+
+      await expect(repository.create({ name: 'Monstera' })).rejects.toThrow('plantCreate mutation failed');
+    });
+
+    it('propagates errors from apolloClient.mutate', async () => {
+      vi.mocked(apolloClient.mutate).mockRejectedValue(new Error('Network error'));
+      await expect(repository.create({ name: 'Monstera' })).rejects.toThrow('Network error');
     });
   });
 });
