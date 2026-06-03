@@ -1,10 +1,17 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.9.3-alpha.0] - 2026-06-03
+
+### Bug Fixes
+- **middleware:** Exclude proxied API and GraphQL routes from locale and auth guards (b70084a)
 ## [0.9.2-alpha.0] - 2026-06-03
 
 ### Bug Fixes
 - **docker:** Set relative defaults for NEXT_PUBLIC API URLs in build stage (632ee15)
+
+### Chore
+- Release v0.9.2-alpha.0 (eeb9fff)
 ## [0.9.1-alpha.0] - 2026-06-03
 
 ### Bug Fixes
