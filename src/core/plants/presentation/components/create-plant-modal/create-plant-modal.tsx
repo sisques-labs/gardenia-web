@@ -1,11 +1,8 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '@/shared/presentation/components/ui/button';
 import { Input } from '@/shared/presentation/components/ui/input';
-import { useCreatePlant } from '@/core/plants/presentation/hooks/use-create-plant/use-create-plant.hook';
-import { createPlantSchema, type CreatePlantFormValues } from '@/core/plants/presentation/schemas/create-plant.schema';
+import { useCreatePlantForm } from '@/core/plants/presentation/hooks/use-create-plant-form/use-create-plant-form.hook';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {
@@ -15,18 +12,8 @@ type Props = {
 };
 
 export function CreatePlantModal({ spaceId, dict, onClose }: Props) {
-  const { mutate: createPlant, isPending, error } = useCreatePlant(spaceId);
-
-  const { register, handleSubmit, formState: { errors } } = useForm<CreatePlantFormValues>({
-    resolver: zodResolver(createPlantSchema),
-  });
-
-  const onSubmit = ({ name, imageUrl }: CreatePlantFormValues) => {
-    createPlant(
-      { name, imageUrl: imageUrl || undefined },
-      { onSuccess: onClose },
-    );
-  };
+  const { form, onSubmit, isPending, error } = useCreatePlantForm(spaceId, onClose);
+  const { register, formState: { errors } } = form;
 
   return (
     <div
@@ -36,7 +23,7 @@ export function CreatePlantModal({ spaceId, dict, onClose }: Props) {
       <div className="bg-background border border-[var(--rule)] rounded-xl shadow-lg w-full max-w-md mx-4 p-6 flex flex-col gap-4">
         <h2 className="text-lg font-semibold text-[var(--ink)]">{dict.title}</h2>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+        <form onSubmit={onSubmit} className="flex flex-col gap-4">
           <div className="flex flex-col gap-1">
             <label className="text-sm text-[var(--ink)]/70">{dict.name}</label>
             <Input placeholder={dict.namePlaceholder} {...register('name')} />

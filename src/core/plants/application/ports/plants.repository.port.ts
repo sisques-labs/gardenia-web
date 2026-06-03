@@ -1,10 +1,7 @@
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
+import type { CreatePlantInput } from '@/core/plants/domain/interfaces/create-plant-input.interface';
 
-export interface CreatePlantInput {
-  name: string;
-  plantSpeciesId?: string;
-  imageUrl?: string;
-}
+export type { CreatePlantInput };
 
 export interface IPlantsRepository {
   list(): Promise<Plant[]>;
