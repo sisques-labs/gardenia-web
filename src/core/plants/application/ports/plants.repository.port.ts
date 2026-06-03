@@ -1,5 +1,5 @@
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
-import type { CreatePlantInput } from '@/core/plants/domain/interfaces/create-plant-input.interface';
+import type { CreatePlantInput } from '@/core/plants/application/interfaces/create-plant-input.interface';
 
 export type { CreatePlantInput };
 

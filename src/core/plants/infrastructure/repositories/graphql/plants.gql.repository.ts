@@ -1,6 +1,6 @@
 import { apolloClient } from '@/shared/infrastructure/http/apollo.client';
 import type { IPlantsRepository } from '@/core/plants/application/ports/plants.repository.port';
-import type { CreatePlantInput } from '@/core/plants/domain/interfaces/create-plant-input.interface';
+import type { CreatePlantInput } from '@/core/plants/application/interfaces/create-plant-input.interface';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 import { PLANTS_FIND_BY_CRITERIA } from './queries/plants-find-by-criteria.query';
 import { PLANT_FIND_BY_ID } from './queries/plant-find-by-id.query';

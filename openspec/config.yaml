@@ -71,6 +71,7 @@ conventions:
     application:
       - use-cases/{name}/ — one folder per use case
       - ports/ — repository interfaces
+      - interfaces/ — application-level input/output interfaces (e.g. use-case input DTOs)
       - Use-case classes take repository via constructor; exported as module singletons
       - Class name: {Name}UseCase. File name: {name}.use-case.ts
       - No framework imports (no React, no Zustand direct) — reads/writes store via getState()

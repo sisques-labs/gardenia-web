@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CreatePlantUseCase } from '@/core/plants/application/use-cases/create-plant/create-plant.use-case';
 import { plantsGqlRepository } from '@/core/plants/infrastructure/repositories/graphql/plants.gql.repository';
-import type { CreatePlantInput } from '@/core/plants/domain/interfaces/create-plant-input.interface';
+import type { CreatePlantInput } from '@/core/plants/application/interfaces/create-plant-input.interface';
 
 const createPlantUseCase = new CreatePlantUseCase(plantsGqlRepository);
 
