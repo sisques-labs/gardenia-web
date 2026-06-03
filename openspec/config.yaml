@@ -31,7 +31,14 @@ conventions:
   naming:
     use_cases: "{name}.use-case.ts — file; class exported as {Name}UseCase. Lives in application/use-cases/{name}/."
     repository_ports: "{name}.repository.port.ts"
-    repositories: "{name}-http.repository.ts"
+    repositories: |
+      GQL (current standard):
+        repository: infrastructure/repositories/graphql/{context}.gql.repository.ts
+        queries:   infrastructure/repositories/graphql/queries/{operation-name}.query.ts
+        mutations: infrastructure/repositories/graphql/mutations/{operation-name}.mutation.ts
+        class: {Context}GqlRepository implements I{Context}Repository
+        singleton export: {context}GqlRepository
+      REST (legacy — {name}-http.repository.ts, being replaced by GQL)
     screens: "{name}.screen.tsx — file name; component exported as {Name}Screen (PascalCase). No schemas, no business logic inline — import from schemas/ and hooks/."
     schemas: "{name}.schema.ts — Zod schema + inferred type. Lives in presentation/schemas/."
     hooks: "hooks/{hook-name}/{hookName}.hook.ts — one folder per hook; exported function named use{Name}"
@@ -47,7 +54,14 @@ conventions:
     domain_code: "src/core/{context}/ — DDD layers"
     shared_ui: "src/shared/presentation/components/ui/ — shadcn components"
     shared_lib: "src/shared/lib/ — cn() and other pure utilities"
-    shared_http: "src/shared/infrastructure/http/ — axios client"
+    shared_http: "src/shared/infrastructure/http/ — axios client, Apollo client, refresh mutex"
+    shared_config: "src/shared/config/env.ts — NEXT_PUBLIC_* env constants (GRAPHQL_URL, API_URL)"
+    gql_repos: |
+      src/core/{context}/infrastructure/repositories/graphql/
+        queries/{operation}.query.ts      ← gql`` document, named export
+        mutations/{operation}.mutation.ts ← gql`` document, named export
+        {context}.gql.repository.ts       ← implements port, imports from queries/ + mutations/
+        {context}.gql.repository.spec.ts  ← unit tests; mock apolloClient directly (vi.mock)
     shared_providers: "src/shared/presentation/providers/ — provider aggregator"
   layers:
     domain:
@@ -61,9 +75,12 @@ conventions:
       - Class name: {Name}UseCase. File name: {name}.use-case.ts
       - No framework imports (no React, no Zustand direct) — reads/writes store via getState()
     infrastructure:
-      - repositories/ — axios-based implementations of ports
+      - repositories/graphql/ — Apollo GQL implementations of ports (current standard)
+      - repositories/graphql/queries/ — gql document files ({name}.query.ts), one per query
+      - repositories/graphql/mutations/ — gql document files ({name}.mutation.ts), one per mutation
+      - repositories/ — legacy Axios HTTP repos (being phased out via rest-to-graphql change)
       - store/ — Zustand stores (framework-coupled, lives here not in application)
-      - http/ — axios interceptor utilities (refresh mutex, etc.)
+      - http/ — shared HTTP utilities (axios client, Apollo client, refresh mutex)
     presentation:
       - screens/ — React page components ('use client', React Hook Form)
       - hooks/ — TanStack Query useMutation/useQuery wrappers
