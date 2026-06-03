@@ -1,10 +1,17 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.9.2-alpha.0] - 2026-06-03
+
+### Bug Fixes
+- **docker:** Set relative defaults for NEXT_PUBLIC API URLs in build stage (632ee15)
 ## [0.9.1-alpha.0] - 2026-06-03
 
 ### Bug Fixes
 - **config:** Proxy API and GraphQL through Next.js rewrites (5c1daa2)
+
+### Chore
+- Release v0.9.1-alpha.0 (5fa1527)
 ## [0.9.0-alpha.0] - 2026-06-03
 
 ### Chore
