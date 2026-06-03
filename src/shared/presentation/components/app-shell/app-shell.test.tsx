@@ -35,4 +35,15 @@ describe('AppShell', () => {
     render(<AppShell><p>content</p></AppShell>);
     expect(screen.getByTestId('app-shell')).toHaveStyle({ '--sidebar-width': '64px' });
   });
+
+  it('renders mobile overlay when drawer is open', () => {
+    useSidebarStore.setState({ drawerOpen: true });
+    render(<AppShell><p>content</p></AppShell>);
+    expect(screen.getByTestId('sidebar-overlay')).toBeInTheDocument();
+  });
+
+  it('does not render overlay when drawer is closed', () => {
+    render(<AppShell><p>content</p></AppShell>);
+    expect(screen.queryByTestId('sidebar-overlay')).not.toBeInTheDocument();
+  });
 });
