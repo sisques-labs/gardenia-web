@@ -13,7 +13,7 @@ export const bareHttp = axios.create({
   withCredentials: true,
 });
 
-async function doRefresh(): Promise<string> {
+export async function doRefresh(): Promise<string> {
   const res = await bareHttp.post<{ accessToken: string }>('/auth/refresh');
   useAuthStore.getState().setAccessToken(res.data.accessToken);
   return res.data.accessToken;
