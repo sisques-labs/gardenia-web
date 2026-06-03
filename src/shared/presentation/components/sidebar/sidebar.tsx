@@ -8,8 +8,12 @@ import { NAV_ITEMS } from '../sidebar-nav-items/nav-items';
 import { NavItem } from '../sidebar-nav-items/nav-item';
 import { SpaceSwitcher } from '../space-switcher/space-switcher';
 
-export function Sidebar() {
-  const { collapsed, toggleCollapsed, drawerOpen, closeDrawer } = useSidebarStore();
+interface SidebarProps {
+  inDrawer?: boolean;
+}
+
+export function Sidebar({ inDrawer = false }: SidebarProps) {
+  const { collapsed, toggleCollapsed, closeDrawer } = useSidebarStore();
   const pathname = usePathname();
   const locale = pathname?.split('/')[1] ?? 'en';
 
@@ -68,23 +72,9 @@ export function Sidebar() {
     </nav>
   );
 
-  return (
-    <>
-      {/* Desktop: always visible, driven by AppShell grid */}
-      <div className="hidden md:block h-full">{sidebarContent}</div>
+  if (inDrawer) {
+    return <div className="h-full">{sidebarContent}</div>;
+  }
 
-      {/* Mobile: drawer */}
-      {drawerOpen && (
-        <>
-          <div
-            data-testid="sidebar-overlay"
-            aria-hidden="true"
-            className="fixed inset-0 bg-[var(--ink)]/40 z-30 md:hidden"
-            onClick={closeDrawer}
-          />
-          <div className="fixed inset-y-0 left-0 z-40 w-60 md:hidden">{sidebarContent}</div>
-        </>
-      )}
-    </>
-  );
+  return <div className="hidden md:block h-full">{sidebarContent}</div>;
 }

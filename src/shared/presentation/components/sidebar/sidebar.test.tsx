@@ -62,14 +62,8 @@ describe('Sidebar', () => {
     expect(label).toHaveClass('overflow-hidden');
   });
 
-  it('renders mobile overlay when drawer is open', () => {
-    useSidebarStore.setState({ drawerOpen: true });
-    render(<Sidebar />);
-    expect(screen.getByTestId('sidebar-overlay')).toBeInTheDocument();
-  });
-
-  it('does not render overlay when drawer is closed', () => {
-    render(<Sidebar />);
-    expect(screen.queryByTestId('sidebar-overlay')).not.toBeInTheDocument();
+  it('renders content directly when inDrawer is true', () => {
+    render(<Sidebar inDrawer />);
+    expect(screen.getByTestId('sidebar')).toBeInTheDocument();
   });
 });
