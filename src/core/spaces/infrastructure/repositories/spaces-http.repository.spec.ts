@@ -20,26 +20,9 @@ import { SpacesHttpRepository, SPACES_FIND_BY_USER, SPACE_CREATE } from './space
 import type { Space } from '@/core/spaces/domain/interfaces/space.interface';
 
 const mockSpaces: Space[] = [
-  {
-    id: 'space-1',
-    name: 'My Garden',
-    ownerId: 'user-1',
-    createdAt: '2024-01-01',
-  },
-  {
-    id: 'space-2',
-    name: 'Balcony',
-    ownerId: 'user-1',
-    createdAt: '2024-01-02',
-  },
+  { id: 'space-1', name: 'My Garden', ownerId: 'user-1', createdAt: '2024-01-01' },
+  { id: 'space-2', name: 'Balcony', ownerId: 'user-1', createdAt: '2024-01-02' },
 ];
-
-const mockSpace: Space = {
-  id: 'space-3',
-  name: 'New Space',
-  ownerId: 'user-1',
-  createdAt: '2024-01-03',
-};
 
 describe('SpacesHttpRepository', () => {
   let repository: SpacesHttpRepository;
@@ -69,9 +52,9 @@ describe('SpacesHttpRepository', () => {
   });
 
   describe('listByUser()', () => {
-    it('calls apolloClient.query with SPACES_FIND_BY_USER and returns mapped Space[]', async () => {
+    it('returns Space[] from the paginated items field', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { spacesFindByUser: mockSpaces },
+        data: { spacesFindByUser: { items: mockSpaces } },
       } as never);
 
       const result = await repository.listByUser();
@@ -81,27 +64,25 @@ describe('SpacesHttpRepository', () => {
       expect(result).toEqual(mockSpaces);
     });
 
-    it('returns empty array when query returns empty list', async () => {
+    it('returns empty array when items is empty', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { spacesFindByUser: [] },
+        data: { spacesFindByUser: { items: [] } },
       } as never);
 
       const result = await repository.listByUser();
-
       expect(result).toEqual([]);
     });
 
     it('propagates errors from apolloClient.query', async () => {
       vi.mocked(apolloClient.query).mockRejectedValue(new Error('Network error'));
-
       await expect(repository.listByUser()).rejects.toThrow('Network error');
     });
   });
 
   describe('create()', () => {
-    it('calls apolloClient.mutate with SPACE_CREATE and the name variable, returns created Space', async () => {
+    it('calls mutate with input wrapper and reconstructs Space from response + input', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
-        data: { spaceCreate: mockSpace },
+        data: { spaceCreate: { id: 'space-3', success: true, message: 'Space created successfully' } },
       } as never);
 
       const result = await repository.create('New Space');
@@ -109,14 +90,23 @@ describe('SpacesHttpRepository', () => {
       expect(apolloClient.mutate).toHaveBeenCalledOnce();
       expect(apolloClient.mutate).toHaveBeenCalledWith({
         mutation: SPACE_CREATE,
-        variables: { name: 'New Space' },
+        variables: { input: { name: 'New Space' } },
       });
-      expect(result).toEqual(mockSpace);
+      expect(result.id).toBe('space-3');
+      expect(result.name).toBe('New Space');
+      expect(result.ownerId).toBe('user-1');
+    });
+
+    it('throws when mutation returns success: false', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { spaceCreate: { id: '', success: false, message: 'Failed' } },
+      } as never);
+
+      await expect(repository.create('New Space')).rejects.toThrow('spaceCreate mutation failed');
     });
 
     it('propagates errors from apolloClient.mutate', async () => {
       vi.mocked(apolloClient.mutate).mockRejectedValue(new Error('Mutation failed'));
-
       await expect(repository.create('New Space')).rejects.toThrow('Mutation failed');
     });
   });

@@ -57,22 +57,22 @@ Chain strategy: pending
 ## Phase 2 — Spaces GQL Repository (PR 2)
 
 ### 2.1 GQL document constants
-- [ ] 2.1 RED — in `src/core/spaces/infrastructure/repositories/spaces-http.repository.spec.ts` (new file), write a failing test asserting `SPACES_FIND_BY_USER` and `SPACE_CREATE` gql consts are defined and have `kind === 'Document'`.
-- [ ] 2.2 GREEN — add inline `gql` constants `SPACES_FIND_BY_USER` and `SPACE_CREATE` at the top of `src/core/spaces/infrastructure/repositories/spaces-http.repository.ts`.
+- [x] 2.1 RED — in `src/core/spaces/infrastructure/repositories/spaces-http.repository.spec.ts` (new file), write a failing test asserting `SPACES_FIND_BY_USER` and `SPACE_CREATE` gql consts are defined and have `kind === 'Document'`.
+- [x] 2.2 GREEN — add inline `gql` constants `SPACES_FIND_BY_USER` and `SPACE_CREATE` at the top of `src/core/spaces/infrastructure/repositories/spaces-http.repository.ts`.
 
 ### 2.2 `listByUser()` via GQL
-- [ ] 2.3 RED — test: mock `apolloClient` (`vi.mock('@/shared/infrastructure/http/apollo.client')`); stub `useAuthStore.getState().currentUser.id` as `'user-1'`; assert `apolloClient.query` is called with `{ query: SPACES_FIND_BY_USER }` and returns mapped `Space[]`.
-- [ ] 2.4 GREEN — replace `http.get('/spaces')` in `SpacesHttpRepository.listByUser()` with `apolloClient.query({ query: SPACES_FIND_BY_USER })`; map `data.spacesFindByUser` to `Space[]`; read `userId` from auth store internally.
-- [ ] 2.5 REFACTOR — remove `http` import from `spaces-http.repository.ts` if no longer used.
+- [x] 2.3 RED — test: mock `apolloClient` (`vi.mock('@/shared/infrastructure/http/apollo.client')`); stub `useAuthStore.getState().currentUser.id` as `'user-1'`; assert `apolloClient.query` is called with `{ query: SPACES_FIND_BY_USER }` and returns mapped `Space[]`.
+- [x] 2.4 GREEN — replace `http.get('/spaces')` in `SpacesHttpRepository.listByUser()` with `apolloClient.query({ query: SPACES_FIND_BY_USER })`; map `data.spacesFindByUser` to `Space[]`; read `userId` from auth store internally.
+- [x] 2.5 REFACTOR — remove `http` import from `spaces-http.repository.ts` if no longer used.
 
 ### 2.3 `create()` via GQL
-- [ ] 2.6 RED — test: assert `apolloClient.mutate` is called with `{ mutation: SPACE_CREATE, variables: { name } }` and returns the created `Space`.
-- [ ] 2.7 GREEN — replace `http.post('/spaces', { name })` with `apolloClient.mutate({ mutation: SPACE_CREATE, variables: { name } })`; map `data.spaceCreate`.
-- [ ] 2.8 REFACTOR — verify return types match `ISpacesRepository` port exactly; no extra properties leaked.
+- [x] 2.6 RED — test: assert `apolloClient.mutate` is called with `{ mutation: SPACE_CREATE, variables: { name } }` and returns the created `Space`.
+- [x] 2.7 GREEN — replace `http.post('/spaces', { name })` with `apolloClient.mutate({ mutation: SPACE_CREATE, variables: { name } })`; map `data.spaceCreate`.
+- [x] 2.8 REFACTOR — verify return types match `ISpacesRepository` port exactly; no extra properties leaked.
 
 ### 2.4 Error propagation — Spaces
-- [ ] 2.9 RED — test: when `apolloClient.query` rejects, `listByUser()` propagates the error; when `apolloClient.mutate` rejects, `create()` propagates the error.
-- [ ] 2.10 GREEN — confirm no silent swallowing; no try/catch that masks errors.
+- [x] 2.9 RED — test: when `apolloClient.query` rejects, `listByUser()` propagates the error; when `apolloClient.mutate` rejects, `create()` propagates the error.
+- [x] 2.10 GREEN — confirm no silent swallowing; no try/catch that masks errors.
 
 ---
 
