@@ -12,8 +12,8 @@ vi.mock('@/core/plants/application/use-cases/get-plant/get-plant.use-case', () =
   },
 }));
 
-vi.mock('@/core/plants/infrastructure/repositories/plants-http.repository', () => ({
-  PlantsHttpRepository: class {},
+vi.mock('@/core/plants/infrastructure/repositories/graphql/plants.gql.repository', () => ({
+  PlantsGqlRepository: class {},
 }));
 
 import { usePlant } from './use-plant.hook';
