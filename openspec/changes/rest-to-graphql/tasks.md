@@ -79,28 +79,28 @@ Chain strategy: pending
 ## Phase 3 — Plants GQL Repository (PR 3)
 
 ### 3.1 GQL document constants
-- [ ] 3.1 RED — in existing `src/core/plants/infrastructure/repositories/plants-http.repository.spec.ts`, add failing tests asserting `PLANTS_FIND_BY_CRITERIA` and `PLANT_FIND_BY_ID` gql consts have `kind === 'Document'`.
-- [ ] 3.2 GREEN — add inline `gql` constants in `src/core/plants/infrastructure/repositories/plants-http.repository.ts`.
+- [x] 3.1 RED — created `plants.gql.repository.spec.ts` in `graphql/` dir; tests for PLANTS_FIND_BY_CRITERIA + PLANT_FIND_BY_ID kind==='Document' fail (files absent).
+- [x] 3.2 GREEN — created `queries/plants-find-by-criteria.query.ts` + `queries/plant-find-by-id.query.ts`.
 
 ### 3.2 `list()` via GQL
-- [ ] 3.3 RED — update spec: mock `apolloClient`; stub `useSpacesStore.getState().currentSpaceId` as `'space-1'`; assert `apolloClient.query` is called with `{ query: PLANTS_FIND_BY_CRITERIA, variables: { criteria: { spaceId: 'space-1' } } }` and maps to `Plant[]`; assert empty result returns `[]`.
-- [ ] 3.4 GREEN — replace `http.get('/plants')` with `apolloClient.query({ query: PLANTS_FIND_BY_CRITERIA, variables: { criteria: { spaceId } } })`; read `spaceId` from spaces store; map `data.plantsFindByCriteria.items` → `Plant[]`.
-- [ ] 3.5 REFACTOR — remove `PlantsListResponse` interface if response shape is now typed by GQL result; remove stale `http` import.
+- [x] 3.3 RED — spec asserts `apolloClient.query` called with `{ query: PLANTS_FIND_BY_CRITERIA }` (no spaceId vars — space filtering via X-Space-ID header from spaceLink).
+- [x] 3.4 GREEN — `PlantsGqlRepository.list()` calls `apolloClient.query({ query: PLANTS_FIND_BY_CRITERIA })`; maps `data.plantsFindByCriteria.items ?? []`.
+- [x] 3.5 REFACTOR — no http import; old `PlantsListResponse` interface removed; old REST files deleted.
 
 ### 3.3 `getById()` via GQL
-- [ ] 3.6 RED — test: assert `apolloClient.query` called with `{ query: PLANT_FIND_BY_ID, variables: { id } }` and returns mapped `Plant`.
-- [ ] 3.7 GREEN — replace `http.get('/plants/${id}')` with `apolloClient.query({ query: PLANT_FIND_BY_ID, variables: { id } })`; map `data.plantFindById`.
-- [ ] 3.8 REFACTOR — confirm `PlantsHttpRepository` no longer imports `http`; verify port compliance.
+- [x] 3.6 RED — test asserts `apolloClient.query` called with `{ query: PLANT_FIND_BY_ID, variables: { input: { id } } }` and returns Plant.
+- [x] 3.7 GREEN — `PlantsGqlRepository.getById(id)` calls apolloClient.query with `{ input: { id } }` variables; throws if no data.
+- [x] 3.8 REFACTOR — port compliance verified; no http import; hooks updated to use PlantsGqlRepository.
 
 ### 3.4 Error propagation — Plants
-- [ ] 3.9 RED — test: `list()` propagates query rejection; `getById()` propagates query rejection.
-- [ ] 3.10 GREEN — confirm no silent error swallowing.
+- [x] 3.9 RED — tests for list() and getById() propagating rejected promises added to spec.
+- [x] 3.10 GREEN — no try/catch; errors propagate naturally.
 
 ---
 
 ## Phase 4 — Env Documentation + Cleanup (PR 3 continued)
 
-- [ ] 4.1 Verify `.env.example` exists or locate the project's env reference file; add `NEXT_PUBLIC_GRAPHQL_URL=http://localhost:3001/graphql` with a comment.
-- [ ] 4.2 Run `rg 'http\.get\|http\.post' src/core/spaces src/core/plants` — confirm zero REST calls remain in the two migrated repos.
-- [ ] 4.3 Run `rg "from '@/shared/infrastructure/http/axios.client'" src/core/spaces src/core/plants` — confirm `http` import is gone from both migrated repository files (non-auth).
-- [ ] 4.4 Confirm `src/core/auth` files are untouched (REST stays); run full vitest suite — all tests green.
+- [x] 4.1 NEXT_PUBLIC_GRAPHQL_URL already documented in `.env.example` from PR1 — confirmed.
+- [x] 4.2 rg confirms zero http.get/http.post calls remain in src/core/spaces and src/core/plants.
+- [x] 4.3 rg confirms axios.client import is gone from both migrated repository files.
+- [x] 4.4 src/core/auth untouched; full vitest suite: 187 PASS, 0 FAIL; tsc: 0 errors.
