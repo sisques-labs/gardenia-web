@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 
@@ -9,6 +9,14 @@ vi.mock('@/core/plants/presentation/hooks/use-plants/use-plants.hook', () => ({
 vi.mock('@/core/spaces/infrastructure/store/spaces.store', () => ({
   useSpacesStore: vi.fn((selector: (s: { currentSpaceId: string | null }) => unknown) =>
     selector({ currentSpaceId: 's1' })
+  ),
+}));
+
+vi.mock('@/core/plants/presentation/components/create-plant-modal/create-plant-modal', () => ({
+  CreatePlantModal: ({ onClose }: { onClose: () => void }) => (
+    <div data-testid="create-plant-modal">
+      <button onClick={onClose}>Close modal</button>
+    </div>
   ),
 }));
 
@@ -37,6 +45,19 @@ const dict = {
     statsPlants: 'plants',
     statsSpecies: 'species',
     inProgress: 'Coming soon',
+  },
+  create: {
+    title: 'New plant',
+    name: 'Name',
+    namePlaceholder: 'e.g. Monstera',
+    nameRequired: 'Name is required',
+    nameMax: 'At most 100 characters',
+    imageUrl: 'Image URL',
+    imageUrlPlaceholder: 'https://...',
+    submit: 'Create',
+    submitting: 'Creating...',
+    cancel: 'Cancel',
+    error: 'Could not create the plant. Try again.',
   },
   detail: {
     breadcrumbList: 'Inventory',
@@ -85,13 +106,34 @@ describe('PlantsListScreen', () => {
     expect(screen.getByText('No plants yet')).toBeInTheDocument();
   });
 
-  it('renders "New plant" button as disabled', () => {
+  it('renders "New plant" button as enabled', () => {
     vi.mocked(usePlants).mockReturnValue({ data: [] as Plant[], isLoading: false, isError: false } as unknown as ReturnType<typeof usePlants>);
 
     render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
 
     const button = screen.getByRole('button', { name: /new plant/i });
-    expect(button).toBeDisabled();
+    expect(button).not.toBeDisabled();
+  });
+
+  it('opens the create modal when "New plant" button is clicked', () => {
+    vi.mocked(usePlants).mockReturnValue({ data: [] as Plant[], isLoading: false, isError: false } as unknown as ReturnType<typeof usePlants>);
+
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+
+    expect(screen.queryByTestId('create-plant-modal')).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /new plant/i }));
+    expect(screen.getByTestId('create-plant-modal')).toBeInTheDocument();
+  });
+
+  it('closes the create modal when onClose is called', () => {
+    vi.mocked(usePlants).mockReturnValue({ data: [] as Plant[], isLoading: false, isError: false } as unknown as ReturnType<typeof usePlants>);
+
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+
+    fireEvent.click(screen.getByRole('button', { name: /new plant/i }));
+    expect(screen.getByTestId('create-plant-modal')).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /close modal/i }));
+    expect(screen.queryByTestId('create-plant-modal')).not.toBeInTheDocument();
   });
 
   it('renders the screen title', () => {

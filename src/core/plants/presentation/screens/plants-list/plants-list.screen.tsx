@@ -1,9 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { Button } from '@/shared/presentation/components/ui/button';
 import { PlantCard } from '@/core/plants/presentation/components/plant-card/plant-card';
 import { usePlants } from '@/core/plants/presentation/hooks/use-plants/use-plants.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
+import { CreatePlantModal } from '@/core/plants/presentation/components/create-plant-modal/create-plant-modal';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 const shimmer = 'bg-muted rounded animate-pulse';
@@ -34,6 +36,7 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
   const storeSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const spaceId = spaceIdProp ?? storeSpaceId;
   const { data: plants, isLoading } = usePlants(spaceId);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const plantCount = plants?.length ?? 0;
   const speciesCount = new Set(plants?.filter((p) => p.plantSpeciesId).map((p) => p.plantSpeciesId)).size;
@@ -48,7 +51,7 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
         <div className="flex items-center">
           <h1 className="headline text-[var(--ink)]">{dict.list.title}</h1>
           <div className="ml-auto">
-            <Button disabled>{dict.list.newPlant}</Button>
+            <Button onClick={() => setIsCreateOpen(true)}>{dict.list.newPlant}</Button>
           </div>
         </div>
       </header>
@@ -99,6 +102,14 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
           </div>
         )}
       </div>
+
+      {isCreateOpen && (
+        <CreatePlantModal
+          spaceId={spaceId}
+          dict={dict.create}
+          onClose={() => setIsCreateOpen(false)}
+        />
+      )}
     </div>
   );
 }
