@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { CreateSpaceUseCase } from '@/core/spaces/application/use-cases/create-space/create-space.use-case';
-import { spacesHttpRepository } from '@/core/spaces/infrastructure/repositories/spaces-http.repository';
+import { spacesGqlRepository as spacesHttpRepository } from '@/core/spaces/infrastructure/repositories/graphql/spaces.gql.repository';
 
 const createSpaceUseCase = new CreateSpaceUseCase(spacesHttpRepository);
 
