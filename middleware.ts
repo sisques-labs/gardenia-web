@@ -13,8 +13,8 @@ function getLocaleFromPathname(pathname: string): string | null {
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
-  // Skip Next.js internals and static files
-  if (pathname.startsWith('/_next') || pathname.includes('.')) {
+  // Skip Next.js internals, static files, and proxied API routes
+  if (pathname.startsWith('/_next') || pathname.includes('.') || pathname.startsWith('/api') || pathname.startsWith('/graphql')) {
     return NextResponse.next();
   }
 
