@@ -7,8 +7,8 @@ WORKDIR /app
 COPY package.json pnpm-lock.yaml ./
 RUN pnpm install --frozen-lockfile
 COPY . .
-ARG NEXT_PUBLIC_API_URL=http://localhost:3000/api
-ARG NEXT_PUBLIC_GRAPHQL_URL=http://localhost:3000/graphql
+ARG NEXT_PUBLIC_API_URL=/api
+ARG NEXT_PUBLIC_GRAPHQL_URL=/graphql
 ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_GRAPHQL_URL=$NEXT_PUBLIC_GRAPHQL_URL
 RUN pnpm build
