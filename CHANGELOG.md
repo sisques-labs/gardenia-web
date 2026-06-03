@@ -1,12 +1,22 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.9.5-alpha.0] - 2026-06-03
+
+### Bug Fixes
+- Mobile menu drawer hidden by parent display:none on aside (6a85134)
+
+### Chore
+- Add package-lock.json (806f470)
 ## [0.9.4-alpha.0] - 2026-06-03
 
 ### Bug Fixes
 - **middleware:** Add forgot-password to public paths (a208fef)
 - **docker:** Bake INTERNAL_API_URL at build time for Next.js rewrites (973cadd)
 - **proxy:** Replace Next.js rewrites with runtime Route Handler proxy (0d3c605)
+
+### Chore
+- Release v0.9.4-alpha.0 (5a5462a)
 ## [0.9.3-alpha.0] - 2026-06-03
 
 ### Bug Fixes
