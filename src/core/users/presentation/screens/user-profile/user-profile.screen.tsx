@@ -1,10 +1,10 @@
 'use client';
 
-import Image from 'next/image';
 import { Globe, Clock } from 'lucide-react';
 import { Button } from '@/shared/presentation/components/ui/button';
 import { Input } from '@/shared/presentation/components/ui/input';
 import { FormField } from '@/shared/presentation/components/ui/form-field';
+import { Avatar, AvatarImage, AvatarFallback } from '@/shared/presentation/components/ui/avatar';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { useUser } from '@/core/users/presentation/hooks/use-user/use-user.hook';
 import { useUserInitials } from '@/core/users/presentation/hooks/use-user-initials/use-user-initials.hook';
@@ -63,13 +63,12 @@ export function UserProfileScreen({ dict, lang }: Props) {
       <div className="p-6 flex flex-col gap-8 max-w-2xl">
         {/* Avatar + identity */}
         <div className="flex items-center gap-4">
-          <div className="relative w-16 h-16 rounded-full overflow-hidden bg-[var(--forest-bg)] flex items-center justify-center shrink-0">
-            {user.avatarUrl ? (
-              <Image src={user.avatarUrl} alt={user.username} fill className="object-cover" />
-            ) : (
-              <span className="text-xl font-semibold text-[var(--forest)]">{initials}</span>
-            )}
-          </div>
+          <Avatar className="w-16 h-16 bg-[var(--forest-bg)]">
+            <AvatarImage src={user.avatarUrl ?? undefined} alt={user.username} />
+            <AvatarFallback className="text-xl font-semibold text-[var(--forest)] bg-[var(--forest-bg)]">
+              {initials}
+            </AvatarFallback>
+          </Avatar>
           <div>
             <p className="font-semibold text-[var(--ink)]">@{user.username}</p>
             <p className="text-sm text-muted-foreground">
