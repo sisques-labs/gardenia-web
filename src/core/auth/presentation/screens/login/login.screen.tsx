@@ -19,6 +19,7 @@ export function LoginScreen({ dict, locale }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const { mutate: login, isPending, error } = useLogin();
+  const oauthError = searchParams.get('error') === 'oauth_failed';
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -40,6 +41,19 @@ export function LoginScreen({ dict, locale }: Props) {
       <AuthSocial />
 
       <AuthDivider label="o" />
+
+      {oauthError && (
+        <div
+          role="alert"
+          style={{
+            display: 'flex', alignItems: 'flex-start', gap: 10, padding: '12px 14px',
+            background: 'oklch(0.93 0.05 35)', border: '1px solid oklch(0.84 0.06 35)', borderRadius: 9,
+            fontSize: '12.5px', color: 'var(--ink)', lineHeight: 1.45,
+          }}
+        >
+          {dict.oauthFailed}
+        </div>
+      )}
 
       {error && (
         <div
