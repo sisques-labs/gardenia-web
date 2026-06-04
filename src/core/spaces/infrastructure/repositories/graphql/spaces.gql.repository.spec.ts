@@ -35,9 +35,12 @@ describe('SpacesGqlRepository', () => {
     vi.mocked(useAuthStore.getState).mockReturnValue({
       accessToken: 'token-123',
       currentUser: { id: 'user-1', email: 'user@example.com' },
+      isBootComplete: true,
       setAccessToken: vi.fn(),
       setCurrentUser: vi.fn(),
       clearAuth: vi.fn(),
+      setBootComplete: vi.fn(),
+      redirectToLogin: vi.fn(),
     });
   });
 

@@ -48,6 +48,7 @@ http.interceptors.response.use(
     const path = originalRequest.url ?? '';
     if (path.endsWith('/auth/refresh')) {
       useAuthStore.getState().clearAuth();
+      useAuthStore.getState().redirectToLogin();
       return Promise.reject(error);
     }
     if (AUTH_SKIP.some((p) => path.endsWith(p))) {
@@ -57,6 +58,7 @@ http.interceptors.response.use(
     const newToken = await refreshTokenOnce(doRefresh);
     if (!newToken) {
       useAuthStore.getState().clearAuth();
+      useAuthStore.getState().redirectToLogin();
       return Promise.reject(error);
     }
 

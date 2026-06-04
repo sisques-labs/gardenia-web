@@ -9,7 +9,7 @@ vi.mock('@/shared/infrastructure/http/axios.client', () => ({
 
 // Mock stores used by the http client module
 vi.mock('@/core/auth/infrastructure/store/auth.store', () => ({
-  useAuthStore: { getState: vi.fn(() => ({ accessToken: null, clearAuth: vi.fn() })) },
+  useAuthStore: { getState: vi.fn(() => ({ accessToken: null, isBootComplete: false, clearAuth: vi.fn(), setBootComplete: vi.fn(), setAccessToken: vi.fn(), setCurrentUser: vi.fn(), currentUser: null })) },
 }));
 
 vi.mock('@/core/spaces/infrastructure/store/spaces.store', () => ({
