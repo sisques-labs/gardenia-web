@@ -10,6 +10,7 @@ export class UsersGqlRepository implements IUsersRepository {
     const res = await apolloClient.query<UserFindByIdResponse>({
       query: USER_FIND_BY_ID,
       variables: { input: { id } },
+      fetchPolicy: 'network-only',
     });
     if (!res.data?.userFindById) throw new Error(`User not found: ${id}`);
     return res.data.userFindById;
