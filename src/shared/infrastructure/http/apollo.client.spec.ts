@@ -110,8 +110,10 @@ function mockAuthStore(accessToken: string | null, clearAuth = vi.fn()) {
     accessToken,
     clearAuth,
     currentUser: null,
+    isBootComplete: true,
     setAccessToken: vi.fn(),
     setCurrentUser: vi.fn(),
+    setBootComplete: vi.fn(),
   });
 }
 
