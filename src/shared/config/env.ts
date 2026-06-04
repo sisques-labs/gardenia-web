@@ -1,8 +1,10 @@
+import { OAuthProvider } from '@/core/auth/domain/enums/oauth-provider.enum';
+
+export { OAuthProvider };
+
 export const GRAPHQL_URL = process.env.NEXT_PUBLIC_GRAPHQL_URL ?? '/graphql';
 export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api';
 export const OAUTH_API_ORIGIN = process.env.NEXT_PUBLIC_OAUTH_API_ORIGIN ?? '';
-
-export type OAuthProvider = 'google' | 'github' | 'apple';
 
 export function oauthUrl(provider: OAuthProvider): string {
   if (!OAUTH_API_ORIGIN) {
