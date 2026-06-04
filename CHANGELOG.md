@@ -1,10 +1,31 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.9.8-alpha.0] - 2026-06-04
+
+### Bug Fixes
+- **auth:** Block GQL queries until boot auth settles on hard reload (47b1801)
+- **auth:** Use refreshTokenOnce mutex in useBootAuth to prevent double-refresh (fe64d8f)
+- **auth:** Redirect to login on refresh-401 in axios interceptor (b7030aa)
+- **auth:** Redirect to login on refresh-401 in Apollo onErrorLink (f31ebba)
+
+### Features
+- **env:** Add NEXT_PUBLIC_OAUTH_API_ORIGIN config (ca611b0)
+- **auth:** Add redirectToLogin action to auth store (d060c4e)
+
+### Refactor
+- **auth:** Move OAuthProvider to its own domain enum (fd8d27d)
+- **auth:** Remove unnecessary OAuthProvider re-export from env.ts (86ce7b4)
+
+### Testing
+- **auth:** Add redirectToLogin mock to spaces gql repository spec (5e4c114)
 ## [0.9.7-alpha.0] - 2026-06-04
 
 ### Bug Fixes
 - **apollo:** Inject fresh token into retry context after 401/UNAUTHENTICATED (edce2f0)
+
+### Chore
+- Release v0.9.7-alpha.0 (2ce8622)
 ## [0.9.6-alpha.0] - 2026-06-04
 
 ### Bug Fixes
