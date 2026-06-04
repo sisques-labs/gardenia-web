@@ -1,4 +1,4 @@
-import { Home, LayoutGrid, Leaf, Map, Calendar, BookOpen, Wheat, Bug, Users } from 'lucide-react';
+import { Home, LayoutGrid, Leaf, Map, Calendar, BookOpen, Wheat, Bug, Users, User } from 'lucide-react';
 import type { ElementType } from 'react';
 
 export interface NavItem {
@@ -18,4 +18,5 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Harvests', href: '/[lang]/harvests', icon: Wheat, disabled: true },
   { label: 'Pests', href: '/[lang]/pests', icon: Bug, disabled: true },
   { label: 'Community', href: '/[lang]/community', icon: Users, disabled: true },
+  { label: 'Profile', href: '/[lang]/profile', icon: User },
 ];

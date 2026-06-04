@@ -1,0 +1,31 @@
+const dict = {
+  nav: 'Perfil',
+  profile: {
+    title: 'Mi Perfil',
+    subtitle: 'Gestiona tu información personal',
+    username: 'Nombre de usuario',
+    usernamePlaceholder: 'tu_usuario',
+    usernameMin: 'Mínimo 3 caracteres',
+    usernameMax: 'Máximo 30 caracteres',
+    firstName: 'Nombre',
+    firstNamePlaceholder: 'Juan',
+    lastName: 'Apellido',
+    lastNamePlaceholder: 'García',
+    avatarUrl: 'URL del avatar',
+    avatarUrlPlaceholder: 'https://...',
+    bio: 'Biografía',
+    bioPlaceholder: 'Cuéntanos algo sobre ti...',
+    bioMax: 'Máximo 500 caracteres',
+    locale: 'Idioma',
+    localePlaceholder: 'ej. es-AR',
+    timezone: 'Zona horaria',
+    timezonePlaceholder: 'ej. America/Buenos_Aires',
+    save: 'Guardar cambios',
+    saving: 'Guardando...',
+    saveSuccess: 'Perfil actualizado correctamente',
+    saveError: 'No se pudo actualizar el perfil. Inténtalo de nuevo.',
+    memberSince: 'Miembro desde',
+  },
+} as const;
+
+export default dict;
