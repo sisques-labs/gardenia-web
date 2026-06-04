@@ -1,7 +1,7 @@
 'use client';
 
 import { oauthUrl } from '@/shared/config/env';
-import { type OAuthProvider } from '@/core/auth/domain/enums/oauth-provider.enum';
+import { OAuthProvider } from '@/core/auth/domain/enums/oauth-provider.enum';
 
 const GitHubIcon = () => (
   <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
@@ -47,15 +47,15 @@ function startOAuth(provider: OAuthProvider) {
 export function AuthSocial() {
   return (
     <div style={{ display: 'flex', gap: 8 }}>
-      <button type="button" style={socialButtonStyle} onClick={() => startOAuth('github')}>
+      <button type="button" style={socialButtonStyle} onClick={() => startOAuth(OAuthProvider.GitHub)}>
         <GitHubIcon />
         GitHub
       </button>
-      <button type="button" style={socialButtonStyle} onClick={() => startOAuth('apple')}>
+      <button type="button" style={socialButtonStyle} onClick={() => startOAuth(OAuthProvider.Apple)}>
         <AppleIcon />
         Apple
       </button>
-      <button type="button" style={socialButtonStyle} onClick={() => startOAuth('google')}>
+      <button type="button" style={socialButtonStyle} onClick={() => startOAuth(OAuthProvider.Google)}>
         <GoogleIcon />
         Google
       </button>
