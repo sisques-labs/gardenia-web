@@ -1,6 +1,21 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.11.0-alpha.0] - 2026-06-04
+
+### Bug Fixes
+- **users:** Use network-only fetch policy to avoid stale Apollo cache after update (b32aac6)
+- Resolve CI TypeScript errors in users module (d41c511)
+
+### Documentation
+- Archive openspec for user-profile-page change (6f7b59a)
+
+### Features
+- **users:** Add user profile module and page (7034489)
+- **ui:** Add shadcn Avatar component and use it in UserProfileScreen (a74093b)
+
+### Refactor
+- **users:** Address PR review comments (34a6ba3)
 ## [0.10.0-alpha.0] - 2026-06-04
 
 ### Bug Fixes
@@ -10,6 +25,7 @@ All notable changes to this project will be documented in this file.
 
 ### Chore
 - **sdd:** Add openspec artifacts for auth-oauth-issue-100 (bc372aa)
+- Release v0.10.0-alpha.0 (4ea222e)
 
 ### Features
 - **i18n:** Add oauthFailed and callback.finishing keys to auth dictionaries (ac58efd)
