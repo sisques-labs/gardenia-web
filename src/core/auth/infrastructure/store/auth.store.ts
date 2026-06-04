@@ -9,6 +9,7 @@ interface AuthState {
   setCurrentUser: (user: AccountUser | null) => void;
   clearAuth: () => void;
   setBootComplete: () => void;
+  redirectToLogin: () => void;
 }
 
 export const useAuthStore = create<AuthState>()((set) => ({
@@ -19,6 +20,13 @@ export const useAuthStore = create<AuthState>()((set) => ({
   setCurrentUser: (user) => set({ currentUser: user }),
   clearAuth: () => set({ accessToken: null, currentUser: null }),
   setBootComplete: () => set({ isBootComplete: true }),
+  redirectToLogin: () => {
+    if (typeof window === 'undefined') return; // SSR-safe no-op
+    const { pathname } = window.location;
+    if (pathname.includes('/login')) return; // already on a login route — no loop
+    const localePrefix = pathname.match(/^\/[a-z]{2}(?=\/|$)/)?.[0] ?? '';
+    window.location.replace(`${localePrefix}/login`);
+  },
 }));
 
 export const isAuthenticated = () => useAuthStore.getState().accessToken !== null;
