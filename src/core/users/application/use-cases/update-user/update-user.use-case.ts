@@ -1,4 +1,5 @@
-import type { IUsersRepository, UpdateUserInput } from '@/core/users/application/ports/users.repository.port';
+import type { IUsersRepository } from '@/core/users/application/ports/users.repository.port';
+import type { UpdateUserInput } from '@/core/users/application/interfaces/update-user-input.interface';
 
 export class UpdateUserUseCase {
   constructor(private readonly usersRepository: IUsersRepository) {}

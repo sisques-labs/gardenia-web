@@ -1,5 +1,6 @@
 import { apolloClient } from '@/shared/infrastructure/http/apollo.client';
-import type { IUsersRepository, UpdateUserInput } from '@/core/users/application/ports/users.repository.port';
+import type { IUsersRepository } from '@/core/users/application/ports/users.repository.port';
+import type { UpdateUserInput } from '@/core/users/application/interfaces/update-user-input.interface';
 import type { User } from '@/core/users/domain/interfaces/user.interface';
 import { USER_FIND_BY_ID } from './queries/user-find-by-id.query';
 import { USER_UPDATE } from './mutations/user-update.mutation';
