@@ -8,6 +8,7 @@ const mockMutate = vi.hoisted(() => vi.fn());
 const mockIsPending = vi.hoisted(() => ({ value: false }));
 const mockError = vi.hoisted(() => ({ value: null as Error | null }));
 let mockReturnUrl: string | null = null;
+let mockErrorParam: string | null = null;
 
 vi.mock('@/core/auth/presentation/hooks/use-login/useLogin.hook', () => ({
   useLogin: () => ({
@@ -19,7 +20,13 @@ vi.mock('@/core/auth/presentation/hooks/use-login/useLogin.hook', () => ({
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ replace: mockReplace }),
-  useSearchParams: () => ({ get: (_key: string) => mockReturnUrl }),
+  useSearchParams: () => ({
+    get: (key: string) => {
+      if (key === 'returnUrl') return mockReturnUrl;
+      if (key === 'error') return mockErrorParam;
+      return null;
+    },
+  }),
 }));
 
 import { LoginScreen } from './login.screen';
@@ -39,6 +46,7 @@ const dict = {
   passwordMin: 'At least 6 characters',
   forgotPassword: 'Forgot your password?',
   register: "Don't have an account?",
+  oauthFailed: "We couldn't sign you in with that provider. Please use email/password or try another provider.",
 };
 
 function createWrapper() {
@@ -58,6 +66,7 @@ describe('LoginScreen', () => {
     mockIsPending.value = false;
     mockError.value = null;
     mockReturnUrl = null;
+    mockErrorParam = null;
   });
 
   it('renders without error banner when no error', () => {
@@ -102,5 +111,34 @@ describe('LoginScreen', () => {
     await waitFor(() => {
       expect(mockReplace).toHaveBeenCalledWith('/es/home');
     });
+  });
+
+  it('renders oauthFailed banner when ?error=oauth_failed is present', () => {
+    mockErrorParam = 'oauth_failed';
+
+    render(<LoginScreen dict={dict} locale="es" />, { wrapper: createWrapper() });
+
+    const alert = screen.getByRole('alert');
+    expect(alert).toBeDefined();
+    expect(alert.textContent).toContain(dict.oauthFailed);
+  });
+
+  it('does not render oauthFailed banner when ?error is absent', () => {
+    mockErrorParam = null;
+
+    render(<LoginScreen dict={dict} locale="es" />, { wrapper: createWrapper() });
+
+    // The only alert that may appear is the login error — and there is none here
+    const alerts = screen.queryAllByRole('alert');
+    expect(alerts).toHaveLength(0);
+  });
+
+  it('does not render oauthFailed banner when ?error has a different value', () => {
+    mockErrorParam = 'some_other_error';
+
+    render(<LoginScreen dict={dict} locale="es" />, { wrapper: createWrapper() });
+
+    const alerts = screen.queryAllByRole('alert');
+    expect(alerts).toHaveLength(0);
   });
 });
