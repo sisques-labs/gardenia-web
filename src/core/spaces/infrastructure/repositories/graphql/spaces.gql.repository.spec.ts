@@ -40,6 +40,7 @@ describe('SpacesGqlRepository', () => {
       setCurrentUser: vi.fn(),
       clearAuth: vi.fn(),
       setBootComplete: vi.fn(),
+      redirectToLogin: vi.fn(),
     });
   });
 
