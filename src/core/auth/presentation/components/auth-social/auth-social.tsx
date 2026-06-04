@@ -1,6 +1,7 @@
 'use client';
 
-import { oauthUrl, type OAuthProvider } from '@/shared/config/env';
+import { oauthUrl } from '@/shared/config/env';
+import { type OAuthProvider } from '@/core/auth/domain/enums/oauth-provider.enum';
 
 const GitHubIcon = () => (
   <svg viewBox="0 0 24 24" width="15" height="15" fill="currentColor" aria-hidden="true">
