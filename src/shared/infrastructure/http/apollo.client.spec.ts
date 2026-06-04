@@ -105,16 +105,26 @@ function executeLinkCollect(link: ApolloLink): Promise<FetchResult[]> {
 // ──────────────────────────────────────────────
 // Auth store mock state helpers
 // ──────────────────────────────────────────────
-function mockAuthStore(accessToken: string | null, clearAuth = vi.fn()) {
+function mockAuthStore(
+  accessToken: string | null,
+  clearAuth = vi.fn(),
+  redirectToLogin = vi.fn(),
+) {
   vi.mocked(useAuthStore.getState).mockReturnValue({
     accessToken,
     clearAuth,
+    redirectToLogin,
     currentUser: null,
     isBootComplete: true,
     setAccessToken: vi.fn(),
     setCurrentUser: vi.fn(),
     setBootComplete: vi.fn(),
   });
+}
+
+/** Returns the redirectToLogin spy from the last mockAuthStore call */
+function getRedirectToLoginSpy() {
+  return vi.mocked(useAuthStore.getState).mock.results.at(-1)?.value?.redirectToLogin as ReturnType<typeof vi.fn> | undefined;
 }
 
 function mockSpacesStore(currentSpaceId: string | null) {
@@ -218,7 +228,8 @@ describe('onErrorLink', () => {
 
   it('calls refreshTokenOnce on 401 networkError and retries once', async () => {
     const clearAuth = vi.fn();
-    mockAuthStore(null, clearAuth);
+    const redirectToLogin = vi.fn();
+    mockAuthStore(null, clearAuth, redirectToLogin);
     mockSpacesStore(null);
     vi.mocked(refreshTokenOnce).mockResolvedValue('new-token');
 
@@ -245,13 +256,15 @@ describe('onErrorLink', () => {
 
     expect(refreshTokenOnce).toHaveBeenCalledOnce();
     expect(clearAuth).not.toHaveBeenCalled();
+    expect(redirectToLogin).not.toHaveBeenCalled();
     expect(results).toHaveLength(1);
     expect(retryHeaders['Authorization']).toBe('Bearer new-token');
   });
 
   it('calls clearAuth and propagates error when refresh returns null', async () => {
     const clearAuth = vi.fn();
-    mockAuthStore(null, clearAuth);
+    const redirectToLogin = vi.fn();
+    mockAuthStore(null, clearAuth, redirectToLogin);
     mockSpacesStore(null);
     vi.mocked(refreshTokenOnce).mockResolvedValue(null);
 
@@ -268,6 +281,7 @@ describe('onErrorLink', () => {
     await expect(executeLinkCollect(chain)).rejects.toBeDefined();
 
     expect(clearAuth).toHaveBeenCalledOnce();
+    expect(redirectToLogin).toHaveBeenCalledOnce();
   });
 
   it('does not retry when __retried is already set in context', async () => {

@@ -69,6 +69,7 @@ export const onErrorLink: ApolloLink = new ErrorLink(({ error, operation, forwar
       .then((token) => {
         if (!token) {
           useAuthStore.getState().clearAuth();
+          useAuthStore.getState().redirectToLogin();
           observer.error(error);
           return;
         }
