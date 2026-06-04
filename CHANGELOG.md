@@ -1,6 +1,21 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.10.0-alpha.0] - 2026-06-04
+
+### Bug Fixes
+- **test:** Resolve TypeScript errors in PR2 OAuth spec files (2519794)
+- **auth:** Import OAuthProvider from domain enum instead of env (a00494c)
+- **auth:** Use OAuthProvider enum values in AuthSocial buttons (bc2aaf2)
+
+### Chore
+- **sdd:** Add openspec artifacts for auth-oauth-issue-100 (bc372aa)
+
+### Features
+- **i18n:** Add oauthFailed and callback.finishing keys to auth dictionaries (ac58efd)
+- **auth:** Enable OAuth provider buttons in AuthSocial (3cc211d)
+- **auth:** Add /callback page for OAuth finalization (e1e2a39)
+- **auth:** Show error banner on login for oauth_failed (1bae00b)
 ## [0.9.8-alpha.0] - 2026-06-04
 
 ### Bug Fixes
@@ -8,6 +23,9 @@ All notable changes to this project will be documented in this file.
 - **auth:** Use refreshTokenOnce mutex in useBootAuth to prevent double-refresh (fe64d8f)
 - **auth:** Redirect to login on refresh-401 in axios interceptor (b7030aa)
 - **auth:** Redirect to login on refresh-401 in Apollo onErrorLink (f31ebba)
+
+### Chore
+- Release v0.9.8-alpha.0 (2e627b2)
 
 ### Features
 - **env:** Add NEXT_PUBLIC_OAUTH_API_ORIGIN config (ca611b0)
