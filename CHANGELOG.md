@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.9.7-alpha.0] - 2026-06-04
+
+### Bug Fixes
+- **apollo:** Inject fresh token into retry context after 401/UNAUTHENTICATED (edce2f0)
 ## [0.9.6-alpha.0] - 2026-06-04
 
 ### Bug Fixes
@@ -9,6 +13,7 @@ All notable changes to this project will be documented in this file.
 
 ### Chore
 - Update package-lock.json after npm install (0146155)
+- Release v0.9.6-alpha.0 (b814baa)
 
 ### Features
 - Enable create plant button with GraphQL mutation (9943960)
