@@ -72,8 +72,11 @@ export const onErrorLink: ApolloLink = new ErrorLink(({ error, operation, forwar
           observer.error(error);
           return;
         }
-        operation.setContext({ ...ctx, __retried: true });
-        // authLink will re-read the fresh token at retry time
+        operation.setContext({
+          ...ctx,
+          __retried: true,
+          headers: { ...(ctx.headers ?? {}), Authorization: `Bearer ${token}` },
+        });
         const sub = forward(operation).subscribe({
           next: (v) => observer.next(v),
           error: (e) => observer.error(e),
