@@ -1,4 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { OAuthProvider } from '@/core/auth/domain/enums/oauth-provider.enum';
 
 // ──────────────────────────────────────────────
 // T3: oauthUrl tests
@@ -23,9 +24,9 @@ describe('oauthUrl', () => {
 
     const { oauthUrl } = await import('./env');
 
-    expect(oauthUrl('github')).toBe('https://api.example.com/auth/oauth/github');
-    expect(oauthUrl('google')).toBe('https://api.example.com/auth/oauth/google');
-    expect(oauthUrl('apple')).toBe('https://api.example.com/auth/oauth/apple');
+    expect(oauthUrl(OAuthProvider.GitHub)).toBe('https://api.example.com/auth/oauth/github');
+    expect(oauthUrl(OAuthProvider.Google)).toBe('https://api.example.com/auth/oauth/google');
+    expect(oauthUrl(OAuthProvider.Apple)).toBe('https://api.example.com/auth/oauth/apple');
 
     vi.doUnmock('./env');
   });
@@ -46,7 +47,7 @@ describe('oauthUrl', () => {
 
     const { oauthUrl } = await import('./env');
 
-    expect(() => oauthUrl('github')).toThrow('[env] NEXT_PUBLIC_OAUTH_API_ORIGIN is not set');
+    expect(() => oauthUrl(OAuthProvider.GitHub)).toThrow('[env] NEXT_PUBLIC_OAUTH_API_ORIGIN is not set');
 
     vi.doUnmock('./env');
   });
@@ -64,7 +65,7 @@ describe('oauthUrl — real implementation', () => {
 
     const { oauthUrl } = await import('./env');
 
-    expect(() => oauthUrl('github')).toThrow('[env] NEXT_PUBLIC_OAUTH_API_ORIGIN is not set');
+    expect(() => oauthUrl(OAuthProvider.GitHub)).toThrow('[env] NEXT_PUBLIC_OAUTH_API_ORIGIN is not set');
 
     process.env.NEXT_PUBLIC_OAUTH_API_ORIGIN = original;
   });
