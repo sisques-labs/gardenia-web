@@ -13,7 +13,7 @@ describe('AuthSocial', () => {
     hrefSetter = vi.fn();
     Object.defineProperty(window, 'location', {
       configurable: true,
-      value: { ...window.location, set href(v: string) { hrefSetter(v); } },
+      value: { ...window.location, set href(v: string) { (hrefSetter as (val: string) => void)(v); } },
     });
   });
 

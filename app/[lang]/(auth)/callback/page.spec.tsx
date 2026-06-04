@@ -24,7 +24,7 @@ vi.mock('@/shared/infrastructure/http/axios.client', () => ({
 }));
 
 vi.mock('@/core/auth/application/use-cases/me/me.use-case', () => ({
-  MeUseCase: vi.fn(function () {
+  MeUseCase: vi.fn(function (this: Record<string, unknown>) {
     this.me = mockMe;
   }),
 }));
