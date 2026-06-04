@@ -19,6 +19,10 @@ const dict = {
     passwordMin: 'Mínimo 6 caracteres',
     forgotPassword: '¿Olvidaste tu contraseña?',
     register: '¿No tienes cuenta? Regístrate',
+    oauthFailed: 'No pudimos iniciarte sesión con ese proveedor. Usá tu correo y contraseña, o probá con otro proveedor.',
+  },
+  callback: {
+    finishing: 'Finalizando inicio de sesión…',
   },
   register: {
     title: 'Crear cuenta',
