@@ -222,14 +222,16 @@ describe('onErrorLink', () => {
 
     const { onErrorLink } = await import('./apollo.client');
 
-    // First call → 401; second call (retry) → success
+    // First call → 401; second call (retry) → capture context and succeed
     let callCount = 0;
-    const stubLink = new ApolloLink(() =>
+    let retryHeaders: Record<string, string> = {};
+    const stubLink = new ApolloLink((operation) =>
       new Observable<FetchResult>((observer) => {
         callCount++;
         if (callCount === 1) {
           observer.error(Object.assign(new Error('Unauthorized'), { statusCode: 401 }));
         } else {
+          retryHeaders = operation.getContext().headers ?? {};
           observer.next({ data: { test: true } });
           observer.complete();
         }
@@ -242,6 +244,7 @@ describe('onErrorLink', () => {
     expect(refreshTokenOnce).toHaveBeenCalledOnce();
     expect(clearAuth).not.toHaveBeenCalled();
     expect(results).toHaveLength(1);
+    expect(retryHeaders['Authorization']).toBe('Bearer new-token');
   });
 
   it('calls clearAuth and propagates error when refresh returns null', async () => {
@@ -331,7 +334,7 @@ describe('onErrorLink', () => {
     expect(r2).toHaveLength(1);
   });
 
-  it('handles UNAUTHENTICATED graphQLError and retries once', async () => {
+  it('handles UNAUTHENTICATED graphQLError and retries with fresh token', async () => {
     const clearAuth = vi.fn();
     mockAuthStore(null, clearAuth);
     mockSpacesStore(null);
@@ -340,7 +343,8 @@ describe('onErrorLink', () => {
     const { onErrorLink } = await import('./apollo.client');
 
     let callCount = 0;
-    const stubLink = new ApolloLink(() =>
+    let retryHeaders: Record<string, string> = {};
+    const stubLink = new ApolloLink((operation) =>
       new Observable<FetchResult>((observer) => {
         callCount++;
         if (callCount === 1) {
@@ -363,6 +367,7 @@ describe('onErrorLink', () => {
           });
           observer.complete();
         } else {
+          retryHeaders = operation.getContext().headers ?? {};
           observer.next({ data: { test: true } });
           observer.complete();
         }
@@ -373,5 +378,6 @@ describe('onErrorLink', () => {
     await executeLinkCollect(chain);
 
     expect(refreshTokenOnce).toHaveBeenCalledOnce();
+    expect(retryHeaders['Authorization']).toBe('Bearer new-token');
   });
 });
