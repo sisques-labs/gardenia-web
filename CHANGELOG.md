@@ -1,6 +1,21 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.9.6-alpha.0] - 2026-06-04
+
+### Bug Fixes
+- Add create to IPlantsRepository mocks in existing specs (bf35b22)
+- **proxy:** Migrate middleware to proxy convention and fix root auth redirect (c54bd23)
+
+### Chore
+- Update package-lock.json after npm install (0146155)
+
+### Features
+- Enable create plant button with GraphQL mutation (9943960)
+
+### Refactor
+- Address PR review comments (44e4907)
+- **plants:** Move CreatePlantInput to application/interfaces layer (a07d4d3)
 ## [0.9.5-alpha.0] - 2026-06-03
 
 ### Bug Fixes
@@ -8,6 +23,7 @@ All notable changes to this project will be documented in this file.
 
 ### Chore
 - Add package-lock.json (806f470)
+- Release v0.9.5-alpha.0 (d004dce)
 ## [0.9.4-alpha.0] - 2026-06-03
 
 ### Bug Fixes
