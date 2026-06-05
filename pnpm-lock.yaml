@@ -126,6 +126,9 @@ importers:
       '@vitejs/plugin-react':
         specifier: ^6.0.2
         version: 6.0.2(vite@8.0.16(@types/node@20.19.41)(jiti@2.7.0)(terser@5.48.0)(yaml@2.9.0))
+      chromatic:
+        specifier: ^17.2.0
+        version: 17.2.0
       eslint:
         specifier: ^9
         version: 9.39.4(jiti@2.7.0)
@@ -3007,6 +3010,22 @@ packages:
   chokidar@4.0.3:
     resolution: {integrity: sha512-Qgzu8kfBvo+cA4962jnP1KkS6Dop5NS6g7R5LFYJr4b8Ub94PPQXUksCw9PvXoeXPRRddRNC5C1JQUR2SMGtnA==}
     engines: {node: '>= 14.16.0'}
+
+  chromatic@17.2.0:
+    resolution: {integrity: sha512-jxuFtNNMuxbVcM2oAAPsa1fDuygt5e1SVJpvTmvSPkVXFQGylFvApsbhDP9a94qI8QMJeUMmts4bXMqrBotWjg==}
+    engines: {node: '>=22.0.0'}
+    hasBin: true
+    peerDependencies:
+      '@chromatic-com/cypress': ^0.*.* || ^1.0.0
+      '@chromatic-com/playwright': ^0.*.* || ^1.0.0
+      '@chromatic-com/vitest': ^0.*.* || ^1.0.0
+    peerDependenciesMeta:
+      '@chromatic-com/cypress':
+        optional: true
+      '@chromatic-com/playwright':
+        optional: true
+      '@chromatic-com/vitest':
+        optional: true
 
   chrome-trace-event@1.0.4:
     resolution: {integrity: sha512-rNjApaLzuwaOTjCiT8lSDdGN1APCiqkChLMJxJPWLunPAt5fy8xgU9/jNOchV84wfIxrA0lRQB7oCT8jrn/wrQ==}
@@ -8586,6 +8605,10 @@ snapshots:
   chokidar@4.0.3:
     dependencies:
       readdirp: 4.1.2
+
+  chromatic@17.2.0:
+    dependencies:
+      semver: 7.8.1
 
   chrome-trace-event@1.0.4: {}
 
