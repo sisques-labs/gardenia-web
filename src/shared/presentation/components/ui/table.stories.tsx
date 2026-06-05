@@ -63,14 +63,15 @@ const sortableColumns: ColumnDef<Plant>[] = [
   },
 ];
 
-const meta = {
+// DataTable is generic — all stories use render wrappers that supply columns+data
+// directly, so we don't bind a component type on Meta (no args inference needed).
+const meta: Meta = {
   title: "Data/DataTable",
-  component: DataTable,
   tags: ["autodocs"],
-} satisfies Meta<typeof DataTable>;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj;
 
 export const WithData: Story = {
   render: () => (

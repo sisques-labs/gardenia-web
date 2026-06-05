@@ -3,14 +3,16 @@ import type { Meta, StoryObj } from "@storybook/react";
 import { ConfirmDialog } from "./confirm-dialog";
 import { Button } from "./button";
 
-const meta = {
+// ConfirmDialog requires open+onOpenChange as controlled props — all stories
+// use render wrappers that manage state internally, so we omit component type
+// binding on Meta to avoid requiring args that are owned by the wrapper.
+const meta: Meta = {
   title: "Overlays/ConfirmDialog",
-  component: ConfirmDialog,
   tags: ["autodocs"],
-} satisfies Meta<typeof ConfirmDialog>;
+};
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj;
 
 function DefaultConfirmDialog() {
   const [open, setOpen] = React.useState(false);
