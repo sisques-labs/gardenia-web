@@ -50,3 +50,7 @@ Thumbs.db
 # Next.js
 next-env.d.ts
 tsconfig.tsbuildinfo
+
+# Storybook
+storybook-static/
+.storybook-out/

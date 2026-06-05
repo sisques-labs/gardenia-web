@@ -1,0 +1,43 @@
+name: Chromatic
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+concurrency:
+  group: chromatic-${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
+  cancel-in-progress: true
+
+jobs:
+  chromatic:
+    name: Visual regression tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup
+        uses: sisques-labs/workflows/.github/actions/setup@main
+        with:
+          node_version: "24"
+
+      # The shared setup action does a shallow checkout (fetch-depth: 1).
+      # Chromatic needs the full git history to determine baselines, so we
+      # re-fetch the complete history here after setup has finished.
+      - name: Fetch full git history for Chromatic
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        uses: sisques-labs/workflows/.github/actions/install@main
+        with:
+          app_path: "."
+          frozen_lockfile: "true"
+
+      - name: Publish to Chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          buildScriptName: build-storybook
+          exitZeroOnChanges: true
+          onlyChanged: true
