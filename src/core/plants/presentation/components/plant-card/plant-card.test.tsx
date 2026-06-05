@@ -4,8 +4,18 @@ import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 import { PlantCard } from './plant-card';
 
 vi.mock('next/link', () => ({
-  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
+  default: ({
+    href,
+    children,
+    className,
+  }: {
+    href: string;
+    children: React.ReactNode;
+    className?: string;
+  }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
   ),
 }));
 
@@ -54,5 +64,40 @@ describe('PlantCard', () => {
     render(<PlantCard plant={basePlant} lang="en" noSpecies="Unknown species" />);
     const link = screen.getByRole('link');
     expect(link).toHaveAttribute('href', '/en/plants/p1');
+  });
+
+  it('container link has card class', () => {
+    const { container } = render(
+      <PlantCard plant={basePlant} lang="en" noSpecies="Unknown species" />,
+    );
+    const link = container.querySelector('a');
+    expect(link).toHaveClass('card');
+  });
+
+  it('renders StatusDot when status prop is provided', () => {
+    const { container } = render(
+      <PlantCard
+        plant={basePlant}
+        lang="en"
+        noSpecies="Unknown species"
+        status="good"
+      />,
+    );
+    const dots = container.querySelectorAll('.dot-good');
+    expect(dots.length).toBeGreaterThan(0);
+  });
+
+  it('renders Chip with tag label when tag prop is provided', () => {
+    const { container } = render(
+      <PlantCard
+        plant={basePlant}
+        lang="en"
+        noSpecies="Unknown species"
+        tag="Herb"
+      />,
+    );
+    expect(screen.getByText('Herb')).toBeInTheDocument();
+    const chips = container.querySelectorAll('.chip');
+    expect(chips.length).toBeGreaterThan(0);
   });
 });

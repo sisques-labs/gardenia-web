@@ -1,0 +1,43 @@
+import * as React from 'react';
+import { cn } from '@/shared/lib/utils';
+
+export interface StatCardProps extends React.HTMLAttributes<HTMLDivElement> {
+  label: string;
+  value: string | number;
+  delta?: string;
+  deltaPositive?: boolean;
+  icon?: React.ReactNode;
+}
+
+const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
+  ({ className, label, value, delta, deltaPositive, icon, ...props }, ref) => (
+    <div ref={ref} className={cn('card p-4', className)} {...props}>
+      <div className="flex items-start justify-between gap-2">
+        <div className="min-w-0 flex-1">
+          <p className="eyebrow text-muted-foreground text-xs font-medium uppercase tracking-wide">
+            {label}
+          </p>
+          <p className="headline mt-1 text-2xl font-bold">{value}</p>
+          {delta !== undefined && (
+            <p
+              className={cn(
+                'mt-1 text-xs font-medium',
+                deltaPositive ? 'text-[var(--forest)]' : 'text-[var(--terracotta)]',
+              )}
+            >
+              {delta}
+            </p>
+          )}
+        </div>
+        {icon !== undefined && (
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted">
+            {icon}
+          </div>
+        )}
+      </div>
+    </div>
+  ),
+);
+StatCard.displayName = 'StatCard';
+
+export { StatCard };
