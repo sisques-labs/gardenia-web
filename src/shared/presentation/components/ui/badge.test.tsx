@@ -35,9 +35,10 @@ describe('Badge', () => {
     expect(container.firstChild).toHaveClass('sage');
   });
 
-  it('variant="outline" renders without error', () => {
-    render(<Badge variant="outline">Outline</Badge>);
-    expect(screen.getByText('Outline')).toBeInTheDocument();
+  it('variant="outline" applies outline token class', () => {
+    const { container } = render(<Badge variant="outline">Outline</Badge>);
+    expect(container.firstChild).toHaveClass('chip');
+    expect(container.firstChild).toHaveClass('outline');
   });
 
   it('variant="neutral" renders without error', () => {
