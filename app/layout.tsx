@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Newsreader, DM_Sans, Caveat, JetBrains_Mono } from "next/font/google";
 import { Providers } from "@/shared/presentation/providers/providers";
+import { Toaster } from "@/shared/presentation/components/ui/toaster";
 import "./globals.css";
 
 const newsreader = Newsreader({
@@ -45,6 +46,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <Providers>{children}</Providers>
+        <Toaster />
       </body>
     </html>
   );
