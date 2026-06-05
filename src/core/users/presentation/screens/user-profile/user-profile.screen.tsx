@@ -3,6 +3,8 @@
 import { Globe, Clock } from 'lucide-react';
 import { Button } from '@/shared/presentation/components/ui/button';
 import { Input } from '@/shared/presentation/components/ui/input';
+import { Textarea } from '@/shared/presentation/components/ui/textarea';
+import { Alert } from '@/shared/presentation/components/ui/alert';
 import { FormField } from '@/shared/presentation/components/ui/form-field';
 import { Avatar, AvatarImage, AvatarFallback } from '@/shared/presentation/components/ui/avatar';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
@@ -98,11 +100,10 @@ export function UserProfileScreen({ dict, lang }: Props) {
           </FormField>
 
           <FormField label={t.bio} error={fieldError(errors.bio?.message)}>
-            <textarea
+            <Textarea
               {...register('bio')}
               placeholder={t.bioPlaceholder}
               rows={3}
-              className="w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm transition-colors placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 resize-none"
             />
           </FormField>
 
@@ -115,8 +116,8 @@ export function UserProfileScreen({ dict, lang }: Props) {
             </FormField>
           </div>
 
-          {isSuccess && <p className="text-sm text-[var(--forest)]">{t.saveSuccess}</p>}
-          {error && <p className="text-sm text-destructive">{t.saveError}</p>}
+          {isSuccess && <Alert variant="success" message={t.saveSuccess} />}
+          {error && <Alert variant="error" message={t.saveError} />}
 
           <div className="flex justify-end">
             <Button type="submit" disabled={isPending}>

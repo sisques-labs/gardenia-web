@@ -1,9 +1,17 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import { MoreHorizontal, CheckCircle2, ArrowRightLeft } from 'lucide-react';
 import { Badge } from '@/shared/presentation/components/ui/badge';
 import { Button } from '@/shared/presentation/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/shared/presentation/components/ui/card';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+} from '@/shared/presentation/components/ui/dropdown-menu';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { useSpaces } from '@/core/spaces/presentation/hooks/use-spaces/useSpaces.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
@@ -39,12 +47,32 @@ export function SpacesListScreen({ dict, lang }: Props) {
                 <CardHeader className="flex flex-row items-center justify-between py-3">
                   <CardTitle className="text-base">{space.name}</CardTitle>
                   <div className="flex items-center gap-2">
-                    {space.id === currentSpaceId && <Badge>{dict.active}</Badge>}
-                    {space.id !== currentSpaceId && (
-                      <Button variant="outline" size="sm" onClick={() => setActiveSpace(space.id)}>
-                        {dict.switchTo}
-                      </Button>
-                    )}
+                    {space.id === currentSpaceId && <Badge variant="forest">{dict.active}</Badge>}
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Space actions</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        {space.id !== currentSpaceId && (
+                          <>
+                            <DropdownMenuItem onClick={() => setActiveSpace(space.id)}>
+                              <ArrowRightLeft className="h-4 w-4" />
+                              {dict.switchTo}
+                            </DropdownMenuItem>
+                            <DropdownMenuSeparator />
+                          </>
+                        )}
+                        {space.id === currentSpaceId && (
+                          <DropdownMenuItem disabled>
+                            <CheckCircle2 className="h-4 w-4" />
+                            {dict.active}
+                          </DropdownMenuItem>
+                        )}
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   </div>
                 </CardHeader>
                 <CardContent className="py-0 pb-3">

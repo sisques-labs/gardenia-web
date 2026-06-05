@@ -1,6 +1,15 @@
 'use client';
 
-import { Bell } from 'lucide-react';
+import { Bell, ChevronDown, Leaf, BookOpen } from 'lucide-react';
+import { Button } from '@/shared/presentation/components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+} from '@/shared/presentation/components/ui/dropdown-menu';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
@@ -35,20 +44,35 @@ export function HomeTopBar({ dict }: Props) {
       </div>
 
       <div className="flex items-center gap-2">
-        <button
+        <Button
+          variant="ghost"
+          size="sm"
           aria-label="notifications"
-          className="p-2 rounded-md hover:bg-muted transition-colors"
-          style={{ color: 'var(--ink-3)' }}
+          className="p-2"
         >
           <Bell size={18} />
-        </button>
+        </Button>
 
-        <button
-          className="px-4 py-1.5 rounded-md text-sm font-medium transition-colors"
-          style={{ backgroundColor: 'var(--forest)', color: 'var(--paper)' }}
-        >
-          {dict.topbar.newEntry}
-        </button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button size="sm" className="gap-1.5">
+              {dict.topbar.newEntry}
+              <ChevronDown className="h-3.5 w-3.5" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end">
+            <DropdownMenuLabel>Create</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem disabled>
+              <Leaf className="h-4 w-4" />
+              New plant
+            </DropdownMenuItem>
+            <DropdownMenuItem disabled>
+              <BookOpen className="h-4 w-4" />
+              New journal entry
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );

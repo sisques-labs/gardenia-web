@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { Droplets, Camera, StickyNote } from 'lucide-react';
 import { Button } from '@/shared/presentation/components/ui/button';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/presentation/components/ui/tabs';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { PlantSectionPlaceholder } from '@/core/plants/presentation/components/plant-section-placeholder/plant-section-placeholder';
 import { usePlant } from '@/core/plants/presentation/hooks/use-plant/use-plant.hook';
@@ -119,25 +120,22 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
         )}
 
         {/* Tab nav */}
-        <div className="flex gap-0 border-b">
-          <button className="px-4 py-2 text-sm font-medium border-b-2 border-primary text-primary">
-            {dict.detail.tabs.care}
-          </button>
-          <button className="px-4 py-2 text-sm font-medium text-muted-foreground" disabled>
-            {dict.detail.tabs.calendar}
-          </button>
-          <button className="px-4 py-2 text-sm font-medium text-muted-foreground" disabled>
-            {dict.detail.tabs.associations}
-          </button>
-        </div>
+        <Tabs defaultValue="care">
+          <TabsList variant="line" className="w-full justify-start border-b rounded-none h-auto pb-0">
+            <TabsTrigger value="care">{dict.detail.tabs.care}</TabsTrigger>
+            <TabsTrigger value="calendar" disabled>{dict.detail.tabs.calendar}</TabsTrigger>
+            <TabsTrigger value="associations" disabled>{dict.detail.tabs.associations}</TabsTrigger>
+          </TabsList>
 
-        {/* Care sections */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <PlantSectionPlaceholder title={dict.detail.sections.care.title} inProgress={dict.detail.sections.care.inProgress} />
-          <PlantSectionPlaceholder title={dict.detail.sections.cycle.title} inProgress={dict.detail.sections.cycle.inProgress} />
-          <PlantSectionPlaceholder title={dict.detail.sections.photoHistory.title} inProgress={dict.detail.sections.photoHistory.inProgress} />
-          <PlantSectionPlaceholder title={dict.detail.sections.pests.title} inProgress={dict.detail.sections.pests.inProgress} />
-        </div>
+          <TabsContent value="care">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
+              <PlantSectionPlaceholder title={dict.detail.sections.care.title} inProgress={dict.detail.sections.care.inProgress} />
+              <PlantSectionPlaceholder title={dict.detail.sections.cycle.title} inProgress={dict.detail.sections.cycle.inProgress} />
+              <PlantSectionPlaceholder title={dict.detail.sections.photoHistory.title} inProgress={dict.detail.sections.photoHistory.inProgress} />
+              <PlantSectionPlaceholder title={dict.detail.sections.pests.title} inProgress={dict.detail.sections.pests.inProgress} />
+            </div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );

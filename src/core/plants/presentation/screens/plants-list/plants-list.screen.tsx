@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { Button } from '@/shared/presentation/components/ui/button';
+import { Alert } from '@/shared/presentation/components/ui/alert';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/presentation/components/ui/tabs';
 import { PlantCard } from '@/core/plants/presentation/components/plant-card/plant-card';
 import { usePlants } from '@/core/plants/presentation/hooks/use-plants/use-plants.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
@@ -57,51 +59,51 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
       </header>
 
       {/* Filter tabs */}
-      <div className="flex items-center gap-0 px-6 border-b border-[var(--rule)] overflow-x-auto">
-        <button className="px-4 py-3 text-sm font-medium text-[var(--ink)] border-b-2 border-[var(--ink)] whitespace-nowrap flex items-center gap-1.5">
-          {dict.list.filterAll}
-          <span className="text-xs font-normal text-[var(--ink)]/60">{plantCount}</span>
-        </button>
-        {CATEGORY_FILTERS.map((cat) => (
+      <Tabs defaultValue="all" className="px-6 border-b border-[var(--rule)]">
+        <div className="flex items-center">
+          <TabsList variant="line" className="flex-1 overflow-x-auto justify-start rounded-none h-auto border-0 pb-0 gap-0">
+            <TabsTrigger value="all" className="whitespace-nowrap py-3 px-4">
+              {dict.list.filterAll}
+              <span className="ml-1.5 text-xs font-normal opacity-60">{plantCount}</span>
+            </TabsTrigger>
+            {CATEGORY_FILTERS.map((cat) => (
+              <TabsTrigger key={cat} value={cat.toLowerCase()} disabled className="whitespace-nowrap py-3 px-4">
+                {cat}
+              </TabsTrigger>
+            ))}
+          </TabsList>
           <button
-            key={cat}
             disabled
-            className="px-4 py-3 text-sm font-medium text-[var(--ink)]/40 whitespace-nowrap cursor-not-allowed"
+            className="shrink-0 px-4 py-3 text-sm font-medium text-[var(--ink)]/40 whitespace-nowrap cursor-not-allowed"
           >
-            {cat}
+            {dict.list.filters}
           </button>
-        ))}
-        <button
-          disabled
-          className="ml-auto px-4 py-3 text-sm font-medium text-[var(--ink)]/40 whitespace-nowrap cursor-not-allowed flex items-center gap-1"
-        >
-          {dict.list.filters}
-        </button>
-      </div>
+        </div>
 
-      {/* Content */}
-      <div className="p-6">
-        {isLoading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <PlantCardSkeleton key={i} />
-            ))}
-          </div>
-        ) : !plants || plants.length === 0 ? (
-          <p className="text-muted-foreground">{dict.list.empty}</p>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {plants.map((plant) => (
-              <PlantCard
-                key={plant.id}
-                plant={plant}
-                lang={lang}
-                noSpecies={dict.detail.noSpecies}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+        {/* Content */}
+        <TabsContent value="all" className="pt-6 pb-6">
+          {isLoading ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <PlantCardSkeleton key={i} />
+              ))}
+            </div>
+          ) : !plants || plants.length === 0 ? (
+            <Alert variant="info" message={dict.list.empty} />
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {plants.map((plant) => (
+                <PlantCard
+                  key={plant.id}
+                  plant={plant}
+                  lang={lang}
+                  noSpecies={dict.detail.noSpecies}
+                />
+              ))}
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
 
       {isCreateOpen && (
         <CreatePlantModal

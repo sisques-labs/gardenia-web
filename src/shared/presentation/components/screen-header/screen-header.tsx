@@ -1,42 +1,44 @@
 import type { ReactNode } from 'react';
-import Link from 'next/link';
+import {
+  Breadcrumb,
+  BreadcrumbList,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from '@/shared/presentation/components/ui/breadcrumb';
 
-interface Breadcrumb {
+interface BreadcrumbEntry {
   label: string;
   href?: string;
 }
 
 interface ScreenHeaderProps {
   title: string;
-  breadcrumbs?: Breadcrumb[];
+  breadcrumbs?: BreadcrumbEntry[];
   actions?: ReactNode;
 }
 
 export function ScreenHeader({ title, breadcrumbs, actions }: ScreenHeaderProps) {
   return (
     <header className="flex flex-col gap-1 px-6 py-4 border-b border-[var(--rule)]">
-      {/* Breadcrumbs */}
       {breadcrumbs && breadcrumbs.length > 0 && (
-        <nav aria-label="Breadcrumb" className="flex items-center gap-1 text-xs text-[var(--ink)]/60">
-          {breadcrumbs.map((crumb, index) => {
-            const isLast = index === breadcrumbs.length - 1;
-            return (
-              <span key={crumb.label} className="flex items-center gap-1">
-                {index > 0 && <span aria-hidden="true" className="text-[var(--ink)]/40">/</span>}
+        <Breadcrumb>
+          <BreadcrumbList className="text-xs">
+            {breadcrumbs.map((crumb, index) => (
+              <BreadcrumbItem key={crumb.label}>
+                {index > 0 && <BreadcrumbSeparator />}
                 {crumb.href ? (
-                  <Link href={crumb.href} className="hover:text-[var(--ink)] transition-colors">
-                    {crumb.label}
-                  </Link>
+                  <BreadcrumbLink href={crumb.href}>{crumb.label}</BreadcrumbLink>
                 ) : (
-                  <span className={isLast ? 'text-[var(--ink)]' : ''}>{crumb.label}</span>
+                  <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
                 )}
-              </span>
-            );
-          })}
-        </nav>
+              </BreadcrumbItem>
+            ))}
+          </BreadcrumbList>
+        </Breadcrumb>
       )}
 
-      {/* Title row */}
       <div className="flex items-center">
         <h1 className="headline text-[var(--ink)]">{title}</h1>
         {actions && (

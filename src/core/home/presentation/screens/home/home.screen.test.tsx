@@ -63,9 +63,9 @@ describe('HomeScreen', () => {
     expect(screen.getByText('En desarrollo mapa')).toBeInTheDocument();
   });
 
-  it('renders HarvestPaceSection inProgress text', () => {
+  it('renders HarvestPaceSection title', () => {
     render(<HomeScreen dict={mockDict} />);
-    expect(screen.getByText('En desarrollo cosecha')).toBeInTheDocument();
+    expect(screen.getByText('Harvest pace')).toBeInTheDocument();
   });
 
   it('renders JournalSection inProgress text', () => {
