@@ -19,6 +19,8 @@ export interface DataTableProps<TData, TValue = unknown> {
   data: TData[];
   enableRowSelection?: boolean;
   onSelectionChange?: (rows: TData[]) => void;
+  sorting?: SortingState;
+  onSortingChange?: (sorting: SortingState) => void;
   className?: string;
 }
 
@@ -48,10 +50,17 @@ export function SortableHeader({
 }
 
 function DataTableInner<TData, TValue = unknown>(
-  { columns, data, enableRowSelection = true, onSelectionChange, className }: DataTableProps<TData, TValue>,
+  { columns, data, enableRowSelection = true, onSelectionChange, sorting: sortingProp, onSortingChange, className }: DataTableProps<TData, TValue>,
   _ref: React.ForwardedRef<HTMLDivElement>,
 ) {
-  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [sortingInternal, setSortingInternal] = React.useState<SortingState>([]);
+  const isControlledSort = sortingProp !== undefined;
+  const sorting = isControlledSort ? sortingProp : sortingInternal;
+  const setSorting = (updater: SortingState | ((prev: SortingState) => SortingState)) => {
+    const next = typeof updater === 'function' ? updater(sorting) : updater;
+    if (isControlledSort) onSortingChange?.(next);
+    else setSortingInternal(next);
+  };
   const [rowSelection, setRowSelection] = React.useState<RowSelectionState>({});
 
   const selectionColumn: ColumnDef<TData, TValue> = {

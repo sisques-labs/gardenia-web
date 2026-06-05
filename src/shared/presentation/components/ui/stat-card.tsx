@@ -22,7 +22,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
             <p
               className={cn(
                 'mt-1 text-xs font-medium',
-                deltaPositive ? 'text-[var(--forest)]' : 'text-[var(--terracotta,hsl(var(--destructive)))]',
+                deltaPositive ? 'text-[var(--forest)]' : 'text-[var(--terracotta)]',
               )}
             >
               {delta}
