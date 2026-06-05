@@ -18,7 +18,9 @@
     "lint": "eslint",
     "test": "vitest run",
     "test:watch": "vitest",
-    "prepare": "husky"
+    "prepare": "husky",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
   },
   "lint-staged": {
     "**/*.{ts,tsx}": "eslint --fix"
@@ -53,6 +55,9 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
+    "@storybook/addon-themes": "^10.4.2",
+    "@storybook/nextjs": "^10.4.2",
+    "@storybook/react": "^10.4.2",
     "@tailwindcss/postcss": "^4",
     "@tanstack/react-query-devtools": "^5.100.14",
     "@testing-library/jest-dom": "^6.9.1",
@@ -67,6 +72,7 @@
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "lint-staged": "^17.0.5",
+    "storybook": "^10.4.2",
     "tailwindcss": "^4",
     "typescript": "^5",
     "vitest": "^4.1.8"
