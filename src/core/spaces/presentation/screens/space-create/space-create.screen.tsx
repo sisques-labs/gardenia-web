@@ -5,6 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/shared/presentation/components/ui/button';
 import { Input } from '@/shared/presentation/components/ui/input';
+import { Alert } from '@/shared/presentation/components/ui/alert';
 import { Card, CardContent } from '@/shared/presentation/components/ui/card';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { useCreateSpace } from '@/core/spaces/presentation/hooks/use-create-space/useCreateSpace.hook';
@@ -46,7 +47,7 @@ export function SpaceCreateScreen({ dict, lang }: Props) {
                   </span>
                 )}
               </div>
-              {error && <span className="text-destructive text-xs">{dict.error}</span>}
+              {error && <Alert variant="error" message={dict.error} />}
               <Button type="submit" disabled={isPending}>
                 {isPending ? dict.submitting : dict.submit}
               </Button>

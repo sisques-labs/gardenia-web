@@ -149,10 +149,10 @@ describe('PlantsListScreen', () => {
 
     render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
 
-    const allTab = screen.getByRole('button', { name: /^all/i });
+    const allTab = screen.getByRole('tab', { name: /^all/i });
     expect(allTab).not.toBeDisabled();
 
-    const disabledTabs = screen.getAllByRole('button').filter((btn) => btn.hasAttribute('disabled'));
+    const disabledTabs = screen.getAllByRole('tab').filter((tab) => tab.hasAttribute('disabled'));
     expect(disabledTabs.length).toBeGreaterThan(0);
   });
 
