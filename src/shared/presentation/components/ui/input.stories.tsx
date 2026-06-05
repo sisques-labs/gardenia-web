@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Search } from "lucide-react";
+import { Search as SearchIcon } from "lucide-react";
 import { Input } from "./input";
 
 const meta = {
@@ -35,7 +35,7 @@ export const WithError: Story = {
 export const Search: Story = {
   render: () => (
     <div className="relative">
-      <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+      <SearchIcon className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
       <Input placeholder="Search…" className="pl-8" />
     </div>
   ),
