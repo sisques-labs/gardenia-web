@@ -1,19 +1,24 @@
 import Link from 'next/link';
 import Image from 'next/image';
-import { Sun, Droplets } from 'lucide-react';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
+import { Chip } from '@/shared/presentation/components/ui/chip';
+import { StatusDot, type StatusDotStatus } from '@/shared/presentation/components/ui/status-dot';
 
 type Props = {
   plant: Plant;
   lang: string;
   noSpecies: string;
+  /** Optional plant health/status for the StatusDot indicator */
+  status?: StatusDotStatus;
+  /** Optional category tag for the Chip badge */
+  tag?: string;
 };
 
-export function PlantCard({ plant, lang, noSpecies }: Props) {
+export function PlantCard({ plant, lang, noSpecies, status, tag }: Props) {
   return (
     <Link
       href={`/${lang}/plants/${plant.id}`}
-      className="flex flex-col rounded-lg border bg-card hover:shadow-md transition-shadow overflow-hidden"
+      className="card flex flex-col hover:shadow-md transition-shadow overflow-hidden"
     >
       {/* Main row */}
       <div className="flex items-center gap-3 p-4">
@@ -40,17 +45,26 @@ export function PlantCard({ plant, lang, noSpecies }: Props) {
         </div>
       </div>
 
-      {/* Footer — structural slots, data pending */}
+      {/* Footer */}
       <div className="px-4 pb-3 flex items-center justify-between gap-2 border-t border-[var(--rule)] pt-2.5">
-        {/* Category + stage placeholders */}
+        {/* Category chip */}
         <div className="flex items-center gap-1.5">
-          <div className="h-4 w-14 rounded-full bg-muted" />
-          <div className="h-4 w-16 rounded-full bg-muted" />
+          {tag ? (
+            <Chip variant="forest">{tag}</Chip>
+          ) : (
+            <>
+              <div className="h-4 w-14 rounded-full bg-muted" />
+              <div className="h-4 w-16 rounded-full bg-muted" />
+            </>
+          )}
         </div>
-        {/* Sun + water placeholders */}
-        <div className="flex items-center gap-2 text-muted-foreground/40">
-          <Sun className="w-3.5 h-3.5" />
-          <Droplets className="w-3.5 h-3.5" />
+        {/* Status indicator */}
+        <div className="flex items-center gap-2">
+          {status ? (
+            <StatusDot status={status} />
+          ) : (
+            <div className="h-2 w-2 rounded-full bg-muted-foreground/40" />
+          )}
         </div>
       </div>
     </Link>
