@@ -1,11 +1,63 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.12.0-alpha.0] - 2026-06-05
+
+### Bug Fixes
+- **ui:** Replace hsl fallback in Alert warning variant with oklch tokens (28aed98)
+- **ui:** Expose controlled sort props on DataTable and clean StatCard token (5e013ab)
+- **storybook:** Fix TypeScript issues in table, confirm-dialog and plant-card stories (7ffb11f)
+- **ci:** Add fetch-depth: 0 for full git history — Chromatic baseline fix (3db2599)
+- **ci:** Restore full git history after setup for Chromatic (49543d1)
+
+### Chore
+- **ui:** Install radix primitives, sonner, and tanstack table (dda4eb7)
+- **storybook:** Setup storybook with nextjs webpack framework (cac69c4)
+- **storybook:** Upgrade to storybook v10 for next 16 compat and fix input story naming (b24ec01)
+- Ignore storybook-static build output (95a42a1)
+- **ci:** Add Chromatic visual regression workflow (52e0f14)
+
+### Features
+- **ui:** Add Label component (77926ad)
+- **ui:** Add loading state to Button (48066f0)
+- **layout:** Register Sonner Toaster (633401f)
+- **ui:** Add Textarea component (d88104a)
+- **ui:** Add Select component (552f1f8)
+- **ui:** Add Checkbox component (2bef34b)
+- **ui:** Add RadioGroup component (4d3ccca)
+- **ui:** Add Switch component (e0fdf8f)
+- **ui:** Add Dialog component (8c06e0d)
+- **ui:** Add Alert component (60efab0)
+- **ui:** Add Chip component (fd1b0ae)
+- **ui:** Add StatusDot component (23c3857)
+- **ui:** Add toast helpers (fc125a6)
+- **ui:** Add ConfirmDialog component (582dbb3)
+- **ui:** Add Tabs component (ea7256f)
+- **ui:** Add DropdownMenu component (8325f40)
+- **ui:** Add Breadcrumb component (3d41cd2)
+- **ui:** Add Gardenia variants to Badge (ffb9ae9)
+- **ui:** Add SortableTable component (d2dc210)
+- **ui:** Add StatCard component (0bdd847)
+- **ui:** Improve PlantCard with design system components (879bc40)
+- **screens:** Integrate new UI components across all modules (cad6521)
+- **storybook:** Add foundation component stories (99d745a)
+- **storybook:** Add feedback and display stories (1917611)
+- **storybook:** Add overlay and stateful stories (2facad3)
+- **storybook:** Add navigation, data, and domain stories (cd83e7a)
+- **storybook:** Add PlantCard domain story (75cfbde)
+
+### Testing
+- **ui:** Add Toaster tests and matchMedia mock for sonner (750463d)
+- **ui:** Add missing readOnly, rows and disabled coverage for Textarea and Select (6adc188)
+- **ui:** Assert outline class is present on Badge outline variant (d94b2cf)
 ## [0.11.0-alpha.0] - 2026-06-04
 
 ### Bug Fixes
 - **users:** Use network-only fetch policy to avoid stale Apollo cache after update (b32aac6)
 - Resolve CI TypeScript errors in users module (d41c511)
+
+### Chore
+- Release v0.11.0-alpha.0 (92675bd)
 
 ### Documentation
 - Archive openspec for user-profile-page change (6f7b59a)
