@@ -58,6 +58,20 @@ describe('Select', () => {
     expect(screen.getByRole('combobox')).toHaveTextContent('Apple');
   });
 
+  it('renders trigger as disabled when disabled prop is passed', () => {
+    render(
+      <Select disabled>
+        <SelectTrigger>
+          <SelectValue placeholder="Pick one" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="a">A</SelectItem>
+        </SelectContent>
+      </Select>,
+    );
+    expect(screen.getByRole('combobox')).toBeDisabled();
+  });
+
   it('accepts className on the trigger', () => {
     render(
       <Select>

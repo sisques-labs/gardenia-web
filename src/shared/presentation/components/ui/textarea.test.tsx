@@ -28,4 +28,14 @@ describe('Textarea', () => {
     render(<Textarea placeholder="Enter text..." />);
     expect(screen.getByPlaceholderText('Enter text...')).toBeInTheDocument();
   });
+
+  it('supports readOnly state', () => {
+    render(<Textarea readOnly value="read only content" onChange={() => {}} />);
+    expect(screen.getByRole('textbox')).toHaveAttribute('readonly');
+  });
+
+  it('forwards rows prop to the underlying textarea', () => {
+    render(<Textarea rows={4} />);
+    expect(screen.getByRole('textbox')).toHaveAttribute('rows', '4');
+  });
 });
