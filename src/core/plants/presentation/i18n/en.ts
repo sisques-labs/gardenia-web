@@ -41,6 +41,9 @@ const dict = {
     tabs: {
       care: 'Care',
       calendar: 'Calendar',
+      diary: 'Diary',
+      harvests: 'Harvests',
+      pests: 'Pests',
       associations: 'Associations',
     },
     sections: {
@@ -69,6 +72,12 @@ const dict = {
       seedlingStage: 'Seedling',
       vegetativeStage: 'Vegetative',
       fruitingStage: 'Fruiting',
+    },
+    photoHistory: {
+      title: 'PHOTO HISTORY',
+    },
+    pestTracking: {
+      title: 'PEST TRACKING',
     },
   },
 } as const;

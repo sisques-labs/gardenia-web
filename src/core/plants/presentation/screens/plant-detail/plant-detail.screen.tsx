@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/presentation/
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { CareCard } from '@/core/plants/presentation/components/care-card/care-card';
 import { GrowthTimeline } from '@/core/plants/presentation/components/growth-timeline/growth-timeline';
+import { InDevelopment } from '@/shared/presentation/components/in-development/in-development';
 import { usePlant } from '@/core/plants/presentation/hooks/use-plant/use-plant.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
@@ -120,7 +121,7 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
             </div>
 
             {/* Action bar */}
-            <div className="flex flex-wrap gap-2">
+            <div data-testid="plant-action-bar" className="flex flex-wrap gap-2">
               <Button
                 variant="default"
                 size="sm"
@@ -150,7 +151,7 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
 
           {/* Right column — QR Card */}
           {plant.qr && (
-            <Card data-testid="qr-card">
+            <Card data-testid="plant-qr-card">
               <CardContent className="flex flex-col gap-3 pt-6">
                 <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {dict.detail.qr.label}
@@ -175,7 +176,7 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
                   disabled
                   variant="ghost"
                   size="sm"
-                  data-testid="btn-download-pdf"
+                  data-testid="qr-download-btn"
                   className="text-xs text-[var(--forest)] w-full"
                 >
                   {dict.detail.qr.download}
@@ -189,8 +190,11 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
         <Tabs defaultValue="care">
           <TabsList variant="line" className="w-full justify-start border-b rounded-none h-auto pb-0">
             <TabsTrigger value="care">{dict.detail.tabs.care}</TabsTrigger>
-            <TabsTrigger value="calendar" disabled>{dict.detail.tabs.calendar}</TabsTrigger>
-            <TabsTrigger value="associations" disabled>{dict.detail.tabs.associations}</TabsTrigger>
+            <TabsTrigger value="calendar">{dict.detail.tabs.calendar}</TabsTrigger>
+            <TabsTrigger value="diary">{dict.detail.tabs.diary}</TabsTrigger>
+            <TabsTrigger value="harvests">{dict.detail.tabs.harvests}</TabsTrigger>
+            <TabsTrigger value="pests">{dict.detail.tabs.pests}</TabsTrigger>
+            <TabsTrigger value="associations">{dict.detail.tabs.associations}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="care">
@@ -234,23 +238,57 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
               ];
 
               return (
-                <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {careData.map((care, i) => (
-                      <CareCard key={i} {...care} />
-                    ))}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6">
+                  {/* Left: care cards + cycle */}
+                  <div className="lg:col-span-2 flex flex-col gap-6">
+                    <div data-testid="care-grid" className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {careData.map((care, i) => (
+                        <CareCard key={i} {...care} />
+                      ))}
+                    </div>
+                    <div>
+                      <p className="eyebrow mb-3">{dict.detail.cycle.title}</p>
+                      <GrowthTimeline
+                        stages={growthStages}
+                        currentDay={36}
+                        totalDays={64}
+                      />
+                    </div>
                   </div>
-                  <div className="mt-6">
-                    <h3 className="eyebrow mb-3">{dict.detail.cycle.title}</h3>
-                    <GrowthTimeline
-                      stages={growthStages}
-                      currentDay={36}
-                      totalDays={64}
-                    />
+                  {/* Right: photo history + pest tracking */}
+                  <div className="flex flex-col gap-6">
+                    <div>
+                      <p className="eyebrow mb-3">{dict.detail.photoHistory.title}</p>
+                      <InDevelopment />
+                    </div>
+                    <div>
+                      <p className="eyebrow mb-3">{dict.detail.pestTracking.title}</p>
+                      <InDevelopment />
+                    </div>
                   </div>
-                </>
+                </div>
               );
             })()}
+          </TabsContent>
+
+          <TabsContent value="calendar">
+            <InDevelopment />
+          </TabsContent>
+
+          <TabsContent value="diary">
+            <InDevelopment />
+          </TabsContent>
+
+          <TabsContent value="harvests">
+            <InDevelopment />
+          </TabsContent>
+
+          <TabsContent value="pests">
+            <InDevelopment />
+          </TabsContent>
+
+          <TabsContent value="associations">
+            <InDevelopment />
           </TabsContent>
         </Tabs>
       </div>

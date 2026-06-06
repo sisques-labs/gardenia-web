@@ -46,6 +46,9 @@ const dict = {
     tabs: {
       care: 'Cuidados',
       calendar: 'Calendario',
+      diary: 'Diario',
+      harvests: 'Cosechas',
+      pests: 'Plagas',
       associations: 'Asociaciones',
     },
     sections: {
@@ -74,6 +77,12 @@ const dict = {
       seedlingStage: 'Plántula',
       vegetativeStage: 'Vegetativa',
       fruitingStage: 'Fructificación',
+    },
+    photoHistory: {
+      title: 'HISTORIAL FOTOGRÁFICO',
+    },
+    pestTracking: {
+      title: 'PLAGAS · SEGUIMIENTO',
     },
   },
 } as const satisfies PlantsDictTranslated;

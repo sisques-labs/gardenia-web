@@ -66,7 +66,7 @@ const dict = {
     noSpecies: 'Unknown species',
     actions: { markWatered: 'Mark watered', addPhoto: 'Add photo', newNote: 'New note' },
     qr: { label: 'Label · QR', hint: 'Print and stick on the pot', download: 'Download PDF' },
-    tabs: { care: 'Care', calendar: 'Calendar', associations: 'Associations' },
+    tabs: { care: 'Care', calendar: 'Calendar', diary: 'Diary', harvests: 'Harvests', pests: 'Pests', associations: 'Associations' },
     sections: {
       care: { title: 'Care', inProgress: 'Coming soon' },
       cycle: { title: 'Growth cycle', inProgress: 'Coming soon' },
@@ -93,6 +93,12 @@ const dict = {
       seedlingStage: 'Seedling',
       vegetativeStage: 'Vegetative',
       fruitingStage: 'Fruiting',
+    },
+    photoHistory: {
+      title: 'PHOTO HISTORY',
+    },
+    pestTracking: {
+      title: 'PEST TRACKING',
     },
   },
   plantDetail: {
