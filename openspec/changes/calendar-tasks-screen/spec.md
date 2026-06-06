@@ -4,11 +4,12 @@
 
 | Capability | Requirements | Scenarios | Type |
 |------------|-------------|-----------|------|
-| CAP-1 Monthly Calendar Grid | 6 | 11 | New |
-| CAP-2 Day Tasks Panel | 4 | 7 | New |
-| CAP-3 View Switcher | 2 | 3 | New |
-| CAP-4 Add Task CTA | 1 | 1 | New |
-| CAP-5 Calendar Route + Nav | 2 | 3 | New |
+| CAP-1 Monthly Calendar Grid | 5 | 10 | New |
+| CAP-2 Calendar Store | 3 | 6 | New |
+| CAP-3 Day Panel + InDevelopment | 3 | 5 | New |
+| CAP-4 View Switcher | 2 | 3 | New |
+| CAP-5 InDevelopment Component | 2 | 3 | New |
+| CAP-6 Calendar Route + Nav | 2 | 3 | New |
 
 ---
 
@@ -16,243 +17,279 @@
 
 ### Purpose
 
-Display a navigable month grid where each cell represents a day. Cells show abbreviated task chips and support selection to load the day panel.
+Display a navigable month grid. Each cell represents one day and supports selection. Today and the selected day have distinct visual treatments. No task chips in this iteration.
 
 ---
 
-### Requirement: Grid renders current month on mount
+### Requirement: Grid renders all days of the given month
 
-`CalendarGrid` MUST display 7 column headers (L, M, X, J, V, S, D) and all days of the current month on initial render.
+`CalendarGrid` MUST render a 7-column layout with column headers (L M X J V S D) and one cell for every day in the provided month.
 
-#### Scenario: Default month matches today
+#### Scenario: May 2026 renders 31 cells
 
-- GIVEN `CalendarGrid` mounts with `year` and `month` matching today's date
+- GIVEN `CalendarGrid` with `year=2026` and `month=4` (May)
 - WHEN rendered
-- THEN column headers L M X J V S D are visible
-- AND the day number matching today is present in the grid
+- THEN 31 day cells are present (days 1–31)
+- AND 4 empty offset cells precede day 1 (May 2026 starts on Friday, offset = 4)
 
-#### Scenario: Empty slots before first day of month
+#### Scenario: Empty offset slots before first day of month
 
 - GIVEN a month whose first day is not Monday
 - WHEN rendered
-- THEN empty non-interactive cells fill the slots before the first day in the first row
+- THEN `(getFirstDayOffset)` null cells fill the grid before day 1
+- AND those slots are non-interactive (`aria-hidden="true"`)
+
+#### Scenario: Column headers render
+
+- GIVEN `CalendarGrid` renders
+- WHEN inspected
+- THEN 7 column headers matching the dict weekday labels are visible
 
 ---
 
 ### Requirement: Today's cell has a distinct visual treatment
 
-The cell whose date equals today's date MUST render with a visually distinct background.
+The cell whose date matches today MUST use a visually distinct background and day-number colour.
 
-#### Scenario: Today cell has highlight
+#### Scenario: Today cell has highlight class
 
 - GIVEN `CalendarGrid` is rendering the current month
 - WHEN rendered
-- THEN the cell for today has a CSS class or style that differs from regular cells
-- AND the day number in that cell has a distinct color
+- THEN the cell for today has a CSS class that is absent from all other cells
 
 ---
 
-### Requirement: Selected day has a selection indicator
+### Requirement: Selected cell shows a selection indicator
 
-The cell for `selectedDate` MUST render with a ring or border that distinguishes it from the today highlight.
+The cell for the date in the store's `selectedDate` MUST render with `aria-selected="true"` and a visible ring or border.
 
 #### Scenario: Selected cell has ring
 
-- GIVEN `CalendarGrid` receives a `selectedDate` matching a specific day
+- GIVEN `CalendarGrid` receives a `selectedDate` matching day 15
 - WHEN rendered
-- THEN that cell has `aria-selected="true"` or equivalent selection indicator
+- THEN the cell for day 15 has `aria-selected="true"` and a ring style
 
-#### Scenario: Clicking an unselected cell fires onSelectDate
+#### Scenario: Clicking a cell fires onSelectDate
 
-- GIVEN `CalendarGrid` renders with `onSelectDate` callback
-- WHEN the user clicks a day cell
-- THEN `onSelectDate` is called with the corresponding `Date` object
-
----
-
-### Requirement: Task chips render on days with tasks
-
-Each cell with tasks MUST show abbreviated chip labels. At most 2 chips are shown; additional tasks are indicated by a "+n más" chip.
-
-#### Scenario: Single task renders one chip
-
-- GIVEN `tasksByDate` contains 1 task for a given day
-- WHEN that cell renders
-- THEN one task chip is visible with a truncated label
-
-#### Scenario: More than 2 tasks renders overflow chip
-
-- GIVEN `tasksByDate` contains 3 tasks for a given day
-- WHEN that cell renders
-- THEN exactly 2 task chips are visible plus a "+1 más" chip
-
-#### Scenario: Day with no tasks renders no chips
-
-- GIVEN `tasksByDate` has no entry for a given day
-- WHEN that cell renders
-- THEN no chip elements are rendered inside the cell
+- GIVEN `CalendarGrid` renders with an `onSelectDate` callback
+- WHEN the user clicks day 10
+- THEN `onSelectDate` is called with the ISO string for that day
 
 ---
 
-### Requirement: Month navigation changes displayed month
+### Requirement: Month navigation buttons fire callbacks
 
-`CalendarGrid` MUST call `onPrevMonth` / `onNextMonth` when the respective navigation buttons are clicked. The parent updates `year`/`month` props; the grid re-renders with the new month.
+Prev and next buttons MUST call `onPrevMonth` / `onNextMonth`.
 
-#### Scenario: Previous month button fires callback
+#### Scenario: Prev button fires callback
 
-- GIVEN `CalendarGrid` renders with `onPrevMonth` callback
+- GIVEN `CalendarGrid` renders with an `onPrevMonth` callback
 - WHEN the user clicks the previous-month button
 - THEN `onPrevMonth` is called once
 
-#### Scenario: Next month button fires callback
+#### Scenario: Next button fires callback
 
-- GIVEN `CalendarGrid` renders with `onNextMonth` callback
+- GIVEN `CalendarGrid` renders with an `onNextMonth` callback
 - WHEN the user clicks the next-month button
 - THEN `onNextMonth` is called once
 
 ---
 
-### Requirement: Month header shows name, year and season
+### Requirement: Header shows month name, year and season
 
-The grid header MUST display the current month name, year, and derived season label.
+#### Scenario: Header content matches props
 
-#### Scenario: Header content matches current month
-
-- GIVEN `CalendarGrid` with `year=2026` and `month=4` (May, 0-indexed)
+- GIVEN `CalendarGrid` with `year=2026`, `month=4` (May)
 - WHEN rendered
-- THEN the header contains "Mayo", "2026", and the season label for that month
+- THEN the header contains the May label, "2026", and a season label
 
 ---
 
-## CAP-2: Day Tasks Panel
+## CAP-2: Calendar Store
 
 ### Purpose
 
-Right-hand panel displaying the tasks scheduled for the selected day, with date label, task count, and task rows.
+Zustand store owning the calendar's ephemeral UI state: the selected day and the currently viewed month/year. Centralised so future components can connect without prop drilling.
 
 ---
 
-### Requirement: Panel header shows date and task count
+### Requirement: Store initialises to today
 
-`DayTasksPanel` MUST render an eyebrow with the formatted date and a headline with the task count.
+On creation the store MUST initialise `selectedDate` to today's ISO string, `currentYear` to today's year, and `currentMonth` to today's month (0-indexed).
 
-#### Scenario: Today shows "Hoy · DD mes" in eyebrow
+#### Scenario: Initial state matches today
 
-- GIVEN `DayTasksPanel` receives a `date` equal to today
-- WHEN rendered
-- THEN the eyebrow contains "Hoy" followed by the formatted date
-
-#### Scenario: Task count headline
-
-- GIVEN `DayTasksPanel` receives an array of 3 tasks
-- WHEN rendered
-- THEN the headline contains "3 tareas programadas"
-
-#### Scenario: Singular task count
-
-- GIVEN `DayTasksPanel` receives an array of 1 task
-- WHEN rendered
-- THEN the headline contains "1 tarea programada"
+- GIVEN `calendarStore` is accessed for the first time
+- WHEN initial state is read
+- THEN `selectedDate` equals `toISODate(new Date())`
+- AND `currentYear` equals `new Date().getFullYear()`
+- AND `currentMonth` equals `new Date().getMonth()`
 
 ---
 
-### Requirement: Each task row shows dot, time, checkbox, title and description
+### Requirement: setSelectedDate updates selectedDate
 
-`DayTasksPanel` MUST render each task as a row containing: a coloured dot, an optional time label, a checkbox, the task title, and an optional description line.
+#### Scenario: setSelectedDate stores the ISO string
 
-#### Scenario: Task row renders all fields
-
-- GIVEN a task with `time: "07:30"`, `title: "Regar bancal A"`, `description: "tomates y albahaca"`, `color: "forest"`
-- WHEN `DayTasksPanel` renders it
-- THEN a dot with the forest colour class, time "07:30", a checkbox, "Regar bancal A", and "tomates y albahaca" are all present in the row
-
-#### Scenario: Task without time renders no time element
-
-- GIVEN a task with no `time` field
-- WHEN rendered
-- THEN no time element is present in the row
+- GIVEN `calendarStore`
+- WHEN `setSelectedDate("2026-07-04")` is called
+- THEN `selectedDate` equals `"2026-07-04"`
 
 ---
 
-### Requirement: Empty state when no tasks
+### Requirement: prevMonth / nextMonth navigate between months correctly
 
-When `tasks` is an empty array, `DayTasksPanel` MUST render an empty-state message instead of a task list.
+`prevMonth` MUST decrement the month, wrapping from January to December of the previous year. `nextMonth` MUST increment, wrapping from December to January of the next year.
 
-#### Scenario: Empty state message
+#### Scenario: prevMonth wraps across year boundary
 
-- GIVEN `DayTasksPanel` receives `tasks: []`
-- WHEN rendered
-- THEN an empty-state message is visible (no task rows rendered)
+- GIVEN `currentYear=2026`, `currentMonth=0` (January)
+- WHEN `prevMonth()` is called
+- THEN `currentYear=2025` and `currentMonth=11` (December)
+
+#### Scenario: nextMonth wraps across year boundary
+
+- GIVEN `currentYear=2025`, `currentMonth=11` (December)
+- WHEN `nextMonth()` is called
+- THEN `currentYear=2026` and `currentMonth=0` (January)
+
+#### Scenario: setCurrentMonth updates both year and month
+
+- GIVEN `calendarStore`
+- WHEN `setCurrentMonth(2027, 3)` is called
+- THEN `currentYear=2027` and `currentMonth=3`
 
 ---
 
-### Requirement: Done tasks have a visual strikethrough or checked checkbox
-
-A task with `done: true` MUST render its checkbox in the `.cbox.done` state.
-
-#### Scenario: Done task has checked checkbox
-
-- GIVEN a task with `done: true`
-- WHEN rendered
-- THEN the checkbox element has the `.cbox.done` class
-
----
-
-## CAP-3: View Switcher
+## CAP-3: Day Panel + InDevelopment
 
 ### Purpose
 
-Tab row (Día | Semana | Mes | Año) enabling switching between calendar views. Only Mes is functional in this change.
+Right-hand panel that displays the selected date label in its header and shows the `InDevelopment` placeholder component as its body. Establishes the two-column layout; real task content replaces the placeholder in a future change.
 
 ---
 
-### Requirement: Active view is visually highlighted
+### Requirement: Panel header shows the selected date
 
-`CalendarViewSwitcher` MUST render the active view tab with a distinct active style.
+`DayTasksPanel` MUST render an eyebrow with "Hoy" prefix when the date is today, or just the formatted date otherwise.
 
-#### Scenario: Mes tab is active on mount
+#### Scenario: Today date shows "Hoy" prefix
 
-- GIVEN `CalendarViewSwitcher` receives `activeView="month"`
+- GIVEN `DayTasksPanel` receives `selectedDate` equal to today's ISO string
 - WHEN rendered
-- THEN the "Mes" tab has the active visual treatment (distinct background/colour)
-- AND the other tabs do not
+- THEN the header contains "Hoy"
+
+#### Scenario: Non-today date shows formatted date only
+
+- GIVEN `DayTasksPanel` receives `selectedDate` for a date other than today
+- WHEN rendered
+- THEN the header contains the formatted day/month string and does NOT contain "Hoy"
 
 ---
 
-### Requirement: Non-active tabs render but do not trigger navigation
+### Requirement: Panel body renders InDevelopment component
 
-Día, Semana, and Año tabs MUST render as visible buttons but are disabled in this iteration.
+The body of `DayTasksPanel` MUST render `<InDevelopment>` with the i18n label for "Tareas del día".
 
-#### Scenario: Disabled tabs are present
+#### Scenario: InDevelopment is rendered
+
+- GIVEN `DayTasksPanel` renders
+- WHEN inspected
+- THEN the `InDevelopment` component (or its rendered output) is present inside the panel body
+
+---
+
+### Requirement: CalendarScreen connects store to panel
+
+`CalendarScreen` MUST pass `calendarStore.selectedDate` to `DayTasksPanel` as its `selectedDate` prop.
+
+#### Scenario: Clicking a cell updates the panel header
+
+- GIVEN `CalendarScreen` renders
+- WHEN the user clicks a day cell
+- THEN `calendarStore.setSelectedDate` is called
+- AND `DayTasksPanel` receives the updated `selectedDate`
+
+---
+
+## CAP-4: View Switcher
+
+### Purpose
+
+Tab row (Día | Semana | Mes | Año) above the calendar grid. Only Mes is active in this change.
+
+---
+
+### Requirement: Active view tab is visually highlighted
+
+`CalendarViewSwitcher` MUST render the active tab with a distinct background/colour.
+
+#### Scenario: Mes tab is active
+
+- GIVEN `CalendarViewSwitcher` renders with `activeView="month"`
+- WHEN rendered
+- THEN the "Mes" tab has the active visual treatment
+- AND the other 3 tabs do not
+
+---
+
+### Requirement: Non-month tabs are present but disabled
+
+Día, Semana, and Año tabs MUST render and carry `disabled` or `aria-disabled="true"`.
+
+#### Scenario: Disabled tabs render
 
 - GIVEN `CalendarViewSwitcher` renders
 - WHEN inspected
-- THEN buttons for Día, Semana, and Año are present in the DOM
-- AND they carry `aria-disabled="true"` or `disabled` attribute
+- THEN buttons for Día, Semana, and Año are in the DOM with `disabled` or `aria-disabled="true"`
+
+#### Scenario: Mes tab is not disabled
+
+- GIVEN `CalendarViewSwitcher` renders
+- WHEN inspected
+- THEN the Mes tab does NOT have `disabled` or `aria-disabled`
 
 ---
 
-## CAP-4: Add Task CTA
+## CAP-5: InDevelopment Shared Component
 
 ### Purpose
 
-Primary action button ("+ Tarea") in the screen header. Visual scaffold only; no modal or navigation in this change.
+A reusable placeholder card used wherever a feature area is not yet implemented. Provides a consistent visual signal across all in-progress screens.
 
 ---
 
-### Requirement: Add task button renders
+### Requirement: Renders with default content
 
-The screen header MUST include a button labelled consistently with the i18n key for "Nueva tarea".
+`InDevelopment` MUST render without any required props and display a visible placeholder message.
 
-#### Scenario: Button is visible
+#### Scenario: Default render
 
-- GIVEN `CalendarScreen` renders
+- GIVEN `<InDevelopment />` renders with no props
 - WHEN inspected
-- THEN a button with the "Nueva tarea" label (or icon + label) is visible in the header actions area
+- THEN a visible placeholder element is present (no crash, no empty DOM)
 
 ---
 
-## CAP-5: Calendar Route + Nav
+### Requirement: label prop customises the display
+
+When `label` is provided, `InDevelopment` MUST display it to communicate what feature is coming.
+
+#### Scenario: Label renders when provided
+
+- GIVEN `<InDevelopment label="Tareas del día" />` renders
+- WHEN inspected
+- THEN "Tareas del día" is present in the rendered output
+
+#### Scenario: Component renders without label
+
+- GIVEN `<InDevelopment />` renders without `label`
+- WHEN inspected
+- THEN the component renders successfully with fallback content
+
+---
+
+## CAP-6: Calendar Route + Nav
 
 ### Purpose
 
@@ -278,9 +315,9 @@ The Calendar entry in `NAV_ITEMS` MUST NOT have `disabled: true`.
 
 #### Scenario: Nav item is clickable
 
-- GIVEN the sidebar renders for a protected route
+- GIVEN the sidebar renders
 - WHEN the Calendar nav item is inspected
-- THEN `disabled` is absent from the entry and the link is navigable
+- THEN the `disabled` property is absent and the link is navigable
 
 ---
 
@@ -292,4 +329,4 @@ The Calendar entry in `NAV_ITEMS` MUST NOT have `disabled: true`.
 
 - GIVEN the i18n parity test runs
 - WHEN both locale files are loaded
-- THEN every key present in `en.ts` is also present in `es.ts` with no extras
+- THEN every key in `en.ts` exists in `es.ts` with no missing or extra keys

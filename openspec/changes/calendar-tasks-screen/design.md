@@ -2,79 +2,89 @@
 
 ## Technical Approach
 
-Presentation-only. No backend API exists for tasks yet, so this change establishes the full UI structure with a static mock fixture. `CalendarScreen` owns two pieces of local state; all child components are pure (props-in, events-out). When a real tasks API lands, only `CalendarScreen` needs updating — the components below it remain unchanged.
+The `CalendarScreen` is a thin orchestrator: it reads from `calendarStore` (Zustand) and dispatches actions on user interaction. All child components are pure (props-in, events-out) and contain no store imports — testable in isolation. The right panel (`DayTasksPanel`) establishes the two-column layout shape and renders the shared `InDevelopment` component as its body; real task content drops in later without touching the column structure or the store contract.
 
-Design tokens (`--paper`, `--paper-2`, `--ink`, `--ink-3`, `--forest`, `--honey`, `--terracotta`, `--rule`) and utility classes (`.eyebrow`, `.headline`, `.chip`, `.cbox`, `.dashed-rule`, `.paper-grain`) from `src/design-system/` are used throughout. No new CSS files.
+Styling uses existing design tokens (`--paper`, `--paper-2`, `--paper-3`, `--ink`, `--ink-3`, `--forest`, `--rule`) and utility classes (`.eyebrow`, `.headline`, `.dashed-rule`, `.paper-grain`) from `src/design-system/`. No new CSS files.
 
 ## Architecture Decisions
 
-### Decision: State ownership
+### Decision: State ownership — Zustand from day one
 
 | Option | Tradeoff | Decision |
 |--------|----------|----------|
-| `useState` in `CalendarScreen` (local) | Simple, no store overhead; lost on navigation | **Chosen** |
-| Zustand store for selectedDate + currentMonth | Survives navigation, but calendar state is ephemeral by nature | Rejected |
-| URL search params (`?month=2026-05&day=18`) | Shareable URLs, but adds routing overhead not needed yet | Deferred |
+| `useState` in `CalendarScreen` | Simplest, zero setup, lost on navigation | Rejected |
+| Zustand store (`calendarStore`) | Small overhead; any future component (mini-calendar, badge, task modal) connects without prop refactoring | **Chosen** |
+| URL search params | Shareable URLs, but routing overhead not needed yet | Deferred |
 
-**Rationale**: Calendar state (which month is visible, which day is selected) is ephemeral presentation state. It doesn't need to survive navigation or be shared across the app. Local `useState` is the right tool; a URL-param approach can be added when deep-linking becomes a requirement.
+**Rationale**: The calendar is a hub — future components (a "today's tasks" widget in Home, a quick-add modal, a notification dot) will need to read or write the selected date and current month. Wiring those via prop drilling or React context would require refactoring this screen. Starting with Zustand is the same amount of work as `useState` but leaves the right extension points open.
 
-### Decision: Mock data strategy
+### Decision: Store date serialisation
 
-| Option | Tradeoff | Decision |
-|--------|----------|----------|
-| Hard-coded dates (e.g. "2026-05-18") | Simple but stale after the month passes | Rejected |
-| Dates relative to `new Date()` at fixture load time | Always relevant, zero maintenance | **Chosen** |
-| Server-side fixture via Next.js `page.tsx` | Adds unnecessary complexity for a stub | Rejected |
+**Choice**: `selectedDate` stored as an ISO date string (`"YYYY-MM-DD"`); `currentYear` and `currentMonth` (0-indexed, JS Date convention) as separate numbers. No `Date` objects in the store.
 
-**Rationale**: The fixture generates keys relative to `today` (e.g. `today + 0 days`, `today + 2 days`, etc.) so the mock calendar always has tasks near the current month regardless of when the app is opened.
+**Rationale**: `Date` objects do not survive Zustand `persist` serialisation (they round-trip as strings anyway). Keeping primitives avoids a custom serialiser and makes the store state trivially inspectable in devtools. Callers that need a `Date` object call `new Date(store.selectedDate)`.
+
+### Decision: No persist for calendar store (this change)
+
+**Choice**: `calendarStore` uses plain Zustand (no `persist` middleware) for now.
+
+**Rationale**: Calendar UI state (which month is displayed, which day is selected) is ephemeral — resetting to today on refresh is the expected UX. Persistence can be added later if deep-linking or session restoration is requested.
 
 ### Decision: Month grid day-of-week offset
 
-**Choice**: Compute `firstDayOffset` as `(dayOfWeek(1st of month) + 6) % 7` to normalise Monday=0. Fill offset cells with `null` entries rendered as empty, greyed-out slots. No external date library; native `Date` API only.
+**Choice**: Monday-first normalisation via `(dayOfWeek + 6) % 7` where `dayOfWeek` is `new Date(year, month, 1).getDay()`.
 
-**Rationale**: No date library needed for the limited operations required (first day of month, days in month, ISO string formatting). Avoids adding a dependency; pure functions are trivially testable.
+**Rationale**: JS `Date.getDay()` returns Sunday=0; shifting by 6 mod 7 gives Monday=0, Sunday=6 — matching the design reference (L M X J V S D). Pure function, trivially testable.
 
-### Decision: Task color mapping
+### Decision: CalendarCell — day number only (no chips)
 
-**Choice**: `CalendarTask.color` is one of `'forest' | 'honey' | 'terracotta' | 'sage'` — maps directly to design-system chip/dot class names. No CSS-in-JS or dynamic colour computation.
+**Choice**: Cells show the day number and highlight states (today, selected) only. No task chips in this iteration.
 
-**Rationale**: Mirrors the design reference where the right panel uses `oklch(0.42 0.07 145)` (forest) and `oklch(0.62 0.13 65)` (honey-2) as category colours. Keeping the type as a union of token names makes the mapping zero-overhead.
+**Rationale**: There is no task data yet. Adding placeholder chip UI with hard-coded content would be misleading and harder to remove than to add. The `DayTasksPanel` carries the "work in progress" signal; the grid stays clean.
 
-### Decision: CalendarCell chip truncation
+### Decision: DayTasksPanel body — InDevelopment component
 
-**Choice**: Show a maximum of 2 task chips per cell; if more tasks exist, show a "+n más" chip using the `.chip` utility class. Chip text is truncated at 12 characters with CSS `truncate`.
+**Choice**: `DayTasksPanel` renders a header (selected date label) and the shared `InDevelopment` component as its body.
 
-**Rationale**: Matches the design reference (cells show "Regar A,B" / "Polinizar" — short labels). Prevents cell overflow in a fixed-height grid.
+**Rationale**: The two-column layout is established, the panel header is functional (it reacts to `selectedDate`), and the `InDevelopment` component clearly communicates that task content is coming. This is strictly better than leaving the panel empty or adding fake task rows.
 
-### Decision: DayTasksPanel empty state
+### Decision: InDevelopment as a shared component
 
-**Choice**: When a selected day has no tasks, show an empty-state message using eyebrow + small paragraph ("Sin tareas · {date}"). No illustration needed for V1.
+**Choice**: `src/shared/presentation/components/in-development/in-development.tsx` — a small card using `.paper-grain` texture, `.eyebrow` label, and an optional `label` prop for what's coming.
 
-**Rationale**: Simple and consistent with the design system's text-first aesthetic.
+**Rationale**: Several screens already show "En desarrollo" as inline text. A shared component ensures consistent visual treatment across all placeholder areas and is easy to find-and-replace when features are ready.
 
 ## Component API
 
-### `CalendarTask` (domain interface)
+### `calendarStore` (Zustand)
 
 ```ts
-interface CalendarTask {
-  id: string;
-  title: string;
-  description?: string;
-  time?: string;          // "HH:MM"
-  color: 'forest' | 'honey' | 'terracotta' | 'sage';
-  done: boolean;
+interface CalendarState {
+  selectedDate: string;       // ISO "YYYY-MM-DD", default: today
+  currentYear: number;        // default: today.getFullYear()
+  currentMonth: number;       // 0-indexed, default: today.getMonth()
+  setSelectedDate: (iso: string) => void;
+  setCurrentMonth: (year: number, month: number) => void;
+  prevMonth: () => void;
+  nextMonth: () => void;
 }
+```
+
+### `InDevelopment`
+
+```ts
+type Props = {
+  label?: string;  // e.g. "Tareas del día" — names what's coming
+};
 ```
 
 ### `CalendarCell`
 
 ```ts
 type Props = {
-  day: number | null;          // null = empty pre-month slot
+  day: number | null;       // null = empty pre-month slot
   isToday: boolean;
   isSelected: boolean;
-  tasks: CalendarTask[];
   onSelect: (day: number) => void;
 };
 ```
@@ -84,10 +94,9 @@ type Props = {
 ```ts
 type Props = {
   year: number;
-  month: number;                     // 0-indexed (JS Date convention)
-  tasksByDate: Record<string, CalendarTask[]>;  // key: "YYYY-MM-DD"
-  selectedDate: Date;
-  onSelectDate: (date: Date) => void;
+  month: number;              // 0-indexed
+  selectedDate: string;       // ISO
+  onSelectDate: (iso: string) => void;
   onPrevMonth: () => void;
   onNextMonth: () => void;
   dict: CalendarDict['grid'];
@@ -100,19 +109,19 @@ type Props = {
 type View = 'day' | 'week' | 'month' | 'year';
 type Props = {
   activeView: View;
-  onChangeView: (view: View) => void;  // no-op for day/week/year in V1
   dict: CalendarDict['viewSwitcher'];
 };
+// onChangeView intentionally omitted — other views are disabled in V1
 ```
 
 ### `DayTasksPanel`
 
 ```ts
 type Props = {
-  date: Date;
-  tasks: CalendarTask[];
+  selectedDate: string;   // ISO — drives the header label
   dict: CalendarDict['panel'];
 };
+// Body: renders <InDevelopment label={dict.panel.inDevLabel} />
 ```
 
 ### `CalendarScreen`
@@ -121,59 +130,63 @@ type Props = {
 type Props = {
   dict: AppDict['calendar'];
 };
+// Reads calendarStore; dispatches prevMonth/nextMonth/setSelectedDate
 ```
 
 ## Data Flow
 
 ```
-CalendarScreen
-  state: currentMonth { year, month }  ← prev/next buttons
-  state: selectedDate: Date            ← cell click (default: today)
-  data:  tasksByDate (from mock)
+calendarStore (Zustand)
+  selectedDate: string   ←─ setSelectedDate (cell click)
+  currentYear: number    ←─ prevMonth / nextMonth (nav buttons)
+  currentMonth: number   ←┘
          │
-         ├─ CalendarGrid
-         │    ├─ CalendarViewSwitcher (activeView='month')
-         │    └─ CalendarCell × N
-         │         └─ task chips (≤2 + "+n más")
-         │
-         └─ DayTasksPanel
-              └─ task rows (dot · time · cbox · title · description)
+         ▼
+CalendarScreen (reads store via useCalendarStore())
+  ├─ CalendarGrid
+  │    ├─ CalendarViewSwitcher  (activeView="month", others disabled)
+  │    └─ CalendarCell × N      (day number, today + selected highlights)
+  │
+  └─ DayTasksPanel
+       ├─ header: selected date label (eyebrow + date string)
+       └─ body: <InDevelopment label="Tareas del día" />
 ```
 
 ## Season Utility
 
 ```ts
-function getSeason(month: number): string
-// month: 0-indexed
-// 11,0,1  → 'invierno'
-// 2,3,4   → 'primavera'
-// 5,6,7   → 'verano'
-// 8,9,10  → 'otoño'
+function getSeason(month: number): 'primavera' | 'verano' | 'otoño' | 'invierno'
+// 11, 0, 1  → 'invierno'
+// 2, 3, 4   → 'primavera'
+// 5, 6, 7   → 'verano'
+// 8, 9, 10  → 'otoño'
 ```
 
-Returns a raw season name; the dict maps to the i18n label.
+Returns a key; the dict maps it to the locale-specific display label.
 
 ## File Changes
 
 | File | Action | Description |
 |------|--------|-------------|
-| `app/[lang]/(protected)/calendar/page.tsx` | Create | Async SC: resolves locale + dict slice, renders `<CalendarScreen>` |
-| `src/core/calendar/domain/interfaces/calendar-task.interface.ts` | Create | `CalendarTask` interface |
-| `src/core/calendar/presentation/mocks/calendar-tasks.mock.ts` | Create | Static fixture relative to `new Date()` |
-| `src/core/calendar/presentation/utils/calendar.utils.ts` | Create | `getDaysInMonth`, `getFirstDayOffset`, `toISODate`, `getSeason` |
+| `app/[lang]/(protected)/calendar/page.tsx` | Create | Async SC: resolves locale + dict, renders `<CalendarScreen>` |
+| `src/core/calendar/infrastructure/store/calendar.store.ts` | Create | Zustand store: selectedDate ISO, currentYear, currentMonth, actions |
+| `src/core/calendar/infrastructure/store/calendar.store.test.ts` | Create | Store unit tests |
+| `src/core/calendar/presentation/utils/calendar.utils.ts` | Create | getDaysInMonth, getFirstDayOffset, toISODate, getSeason |
 | `src/core/calendar/presentation/utils/calendar.utils.test.ts` | Create | Pure function tests |
-| `src/core/calendar/presentation/components/calendar-cell/calendar-cell.tsx` | Create | Day cell component |
+| `src/core/calendar/presentation/components/calendar-cell/calendar-cell.tsx` | Create | Day cell: number + today/selected highlight |
 | `src/core/calendar/presentation/components/calendar-cell/calendar-cell.test.tsx` | Create | Unit tests |
-| `src/core/calendar/presentation/components/calendar-grid/calendar-grid.tsx` | Create | Month grid component |
+| `src/core/calendar/presentation/components/calendar-grid/calendar-grid.tsx` | Create | Month grid + navigation header |
 | `src/core/calendar/presentation/components/calendar-grid/calendar-grid.test.tsx` | Create | Unit tests |
-| `src/core/calendar/presentation/components/calendar-view-switcher/calendar-view-switcher.tsx` | Create | Tab switcher |
+| `src/core/calendar/presentation/components/calendar-view-switcher/calendar-view-switcher.tsx` | Create | Día/Semana/Mes/Año tab row |
 | `src/core/calendar/presentation/components/calendar-view-switcher/calendar-view-switcher.test.tsx` | Create | Unit tests |
-| `src/core/calendar/presentation/components/day-tasks-panel/day-tasks-panel.tsx` | Create | Right panel |
+| `src/core/calendar/presentation/components/day-tasks-panel/day-tasks-panel.tsx` | Create | Right panel: date header + InDevelopment body |
 | `src/core/calendar/presentation/components/day-tasks-panel/day-tasks-panel.test.tsx` | Create | Unit tests |
-| `src/core/calendar/presentation/screens/calendar/calendar.screen.tsx` | Create | Main screen |
-| `src/core/calendar/presentation/screens/calendar/calendar.screen.test.tsx` | Create | Screen tests |
-| `src/core/calendar/presentation/i18n/en.ts` | Create | English dict |
-| `src/core/calendar/presentation/i18n/es.ts` | Create | Spanish dict |
+| `src/core/calendar/presentation/screens/calendar/calendar.screen.tsx` | Create | Thin orchestrator: reads store, renders grid + panel |
+| `src/core/calendar/presentation/screens/calendar/calendar.screen.test.tsx` | Create | Screen integration tests |
+| `src/core/calendar/presentation/i18n/en.ts` | Create | English dictionary |
+| `src/core/calendar/presentation/i18n/es.ts` | Create | Spanish dictionary |
 | `src/core/calendar/presentation/i18n/i18n-parity.test.ts` | Create | Key parity test |
-| `src/shared/presentation/i18n/get-dictionary.ts` | Modify | Add `CalendarDict` import + `calendar` slice |
-| `src/shared/presentation/components/sidebar-nav-items/nav-items.ts` | Modify | Remove `disabled: true` from Calendar entry |
+| `src/shared/presentation/components/in-development/in-development.tsx` | Create | Shared placeholder card |
+| `src/shared/presentation/components/in-development/in-development.test.tsx` | Create | Placeholder tests |
+| `src/shared/presentation/i18n/get-dictionary.ts` | Modify | Add CalendarDict + calendar slice |
+| `src/shared/presentation/components/sidebar-nav-items/nav-items.ts` | Modify | Remove disabled: true from Calendar entry |

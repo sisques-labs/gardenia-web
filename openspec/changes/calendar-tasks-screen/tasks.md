@@ -4,132 +4,122 @@
 
 | Field | Value |
 |-------|-------|
-| Estimated changed lines | ~340 (utils ~60, CalendarCell ~50, CalendarGrid ~80, ViewSwitcher ~30, DayTasksPanel ~60, CalendarScreen ~50, i18n+wiring ~40) |
-| 400-line budget risk | Low |
-| Chained PRs recommended | No — fits in a single PR |
+| Estimated changed lines | ~310 (store ~40, utils ~50, InDevelopment ~25, CalendarCell ~45, CalendarGrid ~70, ViewSwitcher ~25, DayTasksPanel ~30, CalendarScreen ~35, i18n + wiring ~30) |
+| 400-line budget risk | Low — single PR |
+| Chained PRs recommended | No |
 | Delivery strategy | single-PR |
 
 ---
 
-## Phase 1: Domain Interface + Utils + Mock Data + i18n
+## Phase 1: Shared InDevelopment Component
 
-- [ ] 1.1 Create `src/core/calendar/domain/interfaces/calendar-task.interface.ts` — export `CalendarTask` interface: `{ id: string; title: string; description?: string; time?: string; color: 'forest' | 'honey' | 'terracotta' | 'sage'; done: boolean }`. No test required (pure interface).
+- [ ] 1.1 **[RED]** Write failing tests for `InDevelopment`. File: `src/shared/presentation/components/in-development/in-development.test.tsx`. Assert:
+  - Renders without props (no crash, DOM is non-empty)
+  - Renders the `label` value when provided
+  - Renders without `label` (fallback content present)
 
-- [ ] 1.2 **[RED]** Write failing tests for calendar utils. File: `src/core/calendar/presentation/utils/calendar.utils.test.ts`. Assert:
+- [ ] 1.2 **[GREEN]** Create `src/shared/presentation/components/in-development/in-development.tsx` — stateless functional component. Uses `.paper-grain` texture, `.eyebrow` class for the "En desarrollo" badge, optional `label` paragraph below. No `'use client'` needed (pure markup). Satisfies CAP-5.
+
+- [ ] 1.3 **[REFACTOR]** Confirm no inline colours — token vars only. Add `data-testid="in-development"` for test targeting.
+
+---
+
+## Phase 2: Calendar Utils + Store
+
+- [ ] 2.1 **[RED]** Write failing tests for calendar utils. File: `src/core/calendar/presentation/utils/calendar.utils.test.ts`. Assert:
   - `getDaysInMonth(2026, 1)` → 28 (non-leap Feb)
   - `getDaysInMonth(2024, 1)` → 29 (leap Feb)
   - `getDaysInMonth(2026, 4)` → 31 (May)
-  - `getFirstDayOffset(2026, 4)` → 4 (May 2026 starts on Friday = index 4, Mon=0)
+  - `getFirstDayOffset(2026, 4)` → 4 (May 2026 starts on Friday, Mon=0 normalisation)
+  - `getFirstDayOffset(2026, 0)` → 3 (Jan 2026 starts on Thursday)
   - `toISODate(new Date(2026, 4, 18))` → `'2026-05-18'`
   - `getSeason(11)` → `'invierno'`; `getSeason(2)` → `'primavera'`; `getSeason(5)` → `'verano'`; `getSeason(9)` → `'otoño'`
 
-- [ ] 1.3 **[GREEN]** Create `src/core/calendar/presentation/utils/calendar.utils.ts` — implement `getDaysInMonth`, `getFirstDayOffset` (Monday-first normalisation via `(dayOfWeek + 6) % 7`), `toISODate`, `getSeason`. All pure functions, no imports beyond native `Date`.
+- [ ] 2.2 **[GREEN]** Create `src/core/calendar/presentation/utils/calendar.utils.ts` — pure functions, no imports beyond native `Date`. `getFirstDayOffset`: `(new Date(year, month, 1).getDay() + 6) % 7`.
 
-- [ ] 1.4 Create `src/core/calendar/presentation/mocks/calendar-tasks.mock.ts` — export `MOCK_TASKS_BY_DATE: Record<string, CalendarTask[]>`. Generate 6–8 entries with keys relative to `new Date()` (today, today+2, today+4, today-1, etc.) so the fixture always falls in the current month. Include at least one entry with 3 tasks (to trigger overflow chip), one with `done: true`, and one without `time`. No test required (fixture).
+- [ ] 2.3 **[RED]** Write failing tests for `calendarStore`. File: `src/core/calendar/infrastructure/store/calendar.store.test.ts`. Assert:
+  - Initial `selectedDate` equals `toISODate(new Date())`
+  - Initial `currentYear` / `currentMonth` match today
+  - `setSelectedDate("2026-07-04")` → `selectedDate === "2026-07-04"`
+  - `setCurrentMonth(2027, 3)` → `currentYear === 2027`, `currentMonth === 3`
+  - `prevMonth()` from Jan 2026 → Dec 2025
+  - `nextMonth()` from Dec 2025 → Jan 2026
 
-- [ ] 1.5 Create `src/core/calendar/presentation/i18n/en.ts` with structure:
-  ```ts
-  const dict = {
-    screenTitle: 'Calendar',
-    addTask: 'New task',
-    viewSwitcher: { day: 'Day', week: 'Week', month: 'Month', year: 'Year' },
-    grid: {
-      weekdays: { mon: 'M', tue: 'T', wed: 'W', thu: 'T', fri: 'F', sat: 'S', sun: 'S' },
-      seasons: { spring: 'late spring', summer: 'summer', autumn: 'autumn', winter: 'winter' },
-      overflow: 'more',
-    },
-    panel: {
-      today: 'Today',
-      taskCount_one: 'task scheduled',
-      taskCount_other: 'tasks scheduled',
-      noTasks: 'No tasks',
-      noTasksHint: 'Nothing scheduled for this day.',
-    },
-  } as const;
-  export default dict;
-  export type CalendarDict = typeof dict;
-  ```
-
-- [ ] 1.6 Create `src/core/calendar/presentation/i18n/es.ts` — `satisfies WidenStringLiterals<CalendarDict>`. Keys: `screenTitle: 'Calendario'`, `addTask: 'Nueva tarea'`, `viewSwitcher: { day: 'Día', week: 'Semana', month: 'Mes', year: 'Año' }`, weekdays abbreviated (L/M/X/J/V/S/D), seasons (primavera tardía / verano / otoño / invierno), `overflow: 'más'`, panel keys in Spanish.
-
-- [ ] 1.7 Create `src/core/calendar/presentation/i18n/i18n-parity.test.ts` — follows the same pattern as existing parity tests (deep-key equality between `enCalendar` and `esCalendar`). Satisfies CAP-5 i18n parity scenario.
-
-- [ ] 1.8 Modify `src/shared/presentation/i18n/get-dictionary.ts` — add `CalendarDict` import + `calendar` slice to `AppDict` and both locale entries.
+- [ ] 2.4 **[GREEN]** Create `src/core/calendar/infrastructure/store/calendar.store.ts` — Zustand store with interface `CalendarState`. No `persist` middleware. `prevMonth` / `nextMonth` handle year wrap. Export `useCalendarStore` hook and `calendarStore` singleton (`createStore` pattern consistent with other stores). Satisfies CAP-2.
 
 ---
 
-## Phase 2: CalendarCell Component
+## Phase 3: CalendarCell Component
 
-- [ ] 2.1 **[RED]** Write failing tests for `CalendarCell`. File: `src/core/calendar/presentation/components/calendar-cell/calendar-cell.test.tsx`. Assert:
-  - Renders `null` / empty when `day` is `null`
-  - Renders day number when `day` is provided
-  - Has distinct class when `isToday` is `true`
-  - Has `aria-selected="true"` when `isSelected` is `true`
-  - Renders one chip for a single task
-  - Renders 2 chips + "+1 más" chip when 3 tasks provided
-  - Calls `onSelect(day)` on click
-  - Does not call `onSelect` when `day` is `null`
+- [ ] 3.1 **[RED]** Write failing tests for `CalendarCell`. File: `src/core/calendar/presentation/components/calendar-cell/calendar-cell.test.tsx`. Assert:
+  - Renders nothing interactive when `day` is `null` (aria-hidden slot)
+  - Renders day number when `day` is a number
+  - Today class is present when `isToday` is `true` and absent when `false`
+  - `aria-selected="true"` when `isSelected` is `true`
+  - Ring class present when `isSelected` is `true`
+  - `onSelect(7)` called when user clicks day 7 cell
+  - `onSelect` not called when null slot is clicked
 
-- [ ] 2.2 **[GREEN]** Create `src/core/calendar/presentation/components/calendar-cell/calendar-cell.tsx` — `'use client'` component. Renders a `<button>` (or `<div>` for null slots). Day number in top-left. Task chips (`.chip`) below, truncated label, max 2 + overflow. Today class: `bg-[var(--paper-3)]`. Selected ring: `ring-2 ring-[var(--forest)]`. Satisfies CAP-1 chip and selection scenarios.
+- [ ] 3.2 **[GREEN]** Create `src/core/calendar/presentation/components/calendar-cell/calendar-cell.tsx` — `'use client'`. Null slot: `<div aria-hidden="true" />` with `bg-[var(--paper-2)]`. Day cell: `<button>` with day number. Today: `bg-[var(--paper-3)] text-[var(--honey-2)]`. Selected: `ring-2 ring-[var(--forest)]`. No task chips. Satisfies CAP-1 selection and today scenarios.
 
-- [ ] 2.3 **[REFACTOR]** Confirm `aria-selected` is set only for the selected state; confirm null slot renders as a visual block with `aria-hidden="true"`.
+- [ ] 3.3 **[REFACTOR]** Confirm null slot has no click handler; confirm `aria-label` on day buttons includes the full date for screen readers.
 
 ---
 
-## Phase 3: CalendarGrid + ViewSwitcher Components
+## Phase 4: CalendarViewSwitcher + CalendarGrid
 
-- [ ] 3.1 **[RED]** Write failing tests for `CalendarViewSwitcher`. File: `src/core/calendar/presentation/components/calendar-view-switcher/calendar-view-switcher.test.tsx`. Assert:
-  - Active tab has visual distinction (check for class or aria-current)
-  - Día, Semana, Año tabs are present and have `disabled` or `aria-disabled`
-  - Mes tab is not disabled
+- [ ] 4.1 **[RED]** Write failing tests for `CalendarViewSwitcher`. File: `src/core/calendar/presentation/components/calendar-view-switcher/calendar-view-switcher.test.tsx`. Assert:
+  - Mes tab is present and NOT disabled
+  - Día, Semana, Año tabs are present and have `disabled` attribute
+  - Active tab (Mes) has a distinct class absent from inactive tabs
 
-- [ ] 3.2 **[GREEN]** Create `src/core/calendar/presentation/components/calendar-view-switcher/calendar-view-switcher.tsx` — renders 4 `<button>` tabs. Active tab: `bg-[var(--paper)] text-[var(--ink)]`. Inactive: `text-[var(--ink-3)]`. Non-month tabs: `disabled` attribute + `opacity-50`. Satisfies CAP-3.
+- [ ] 4.2 **[GREEN]** Create `src/core/calendar/presentation/components/calendar-view-switcher/calendar-view-switcher.tsx` — 4 `<button>` tabs inside a `<div>` with `bg-[var(--paper-2)]` pill container. Active (`month`): `bg-[var(--paper)] text-[var(--ink)]`. Inactive: `text-[var(--ink-3)]`. Day/Week/Year: add `disabled` attribute + `opacity-50 cursor-not-allowed`. Satisfies CAP-4.
 
-- [ ] 3.3 **[RED]** Write failing tests for `CalendarGrid`. File: `src/core/calendar/presentation/components/calendar-grid/calendar-grid.test.tsx`. Assert:
+- [ ] 4.3 **[RED]** Write failing tests for `CalendarGrid`. File: `src/core/calendar/presentation/components/calendar-grid/calendar-grid.test.tsx`. Assert:
   - Renders 7 weekday column headers
-  - Renders the correct number of day cells for May 2026 (31 days + 4 offset = 35 cells, last 4 empty)
-  - Today cell has today-specific class
-  - Clicking a day cell fires `onSelectDate` with the correct date
+  - May 2026: 31 day cells + 4 null slots rendered
+  - Today cell has the today-specific class
+  - Clicking a day fires `onSelectDate` with the correct ISO string
   - Prev-month button fires `onPrevMonth`
   - Next-month button fires `onNextMonth`
-  - Header contains month name and year
+  - Header contains the month name, year, and season label
 
-- [ ] 3.4 **[GREEN]** Create `src/core/calendar/presentation/components/calendar-grid/calendar-grid.tsx` — `'use client'`. Builds a flat array of `null | number` cells using `getDaysInMonth` + `getFirstDayOffset`. Maps to `CalendarCell`. Renders `CalendarViewSwitcher` at top. Month header shows `{monthName} {year} · {season}`. Prev/next buttons with lucide-react `ChevronLeft` / `ChevronRight` icons. Satisfies CAP-1 requirements.
+- [ ] 4.4 **[GREEN]** Create `src/core/calendar/presentation/components/calendar-grid/calendar-grid.tsx` — `'use client'`. Builds `Array<number | null>` from `getDaysInMonth` + `getFirstDayOffset`. Renders `<CalendarViewSwitcher>` + month header + 7-col grid of `<CalendarCell>`. Month header: `{monthName} {year} · {seasonLabel}`. Prev/Next: lucide-react `ChevronLeft` / `ChevronRight` buttons. `onSelectDate` receives ISO string built with `toISODate`. Satisfies CAP-1.
 
-- [ ] 3.5 **[REFACTOR]** Confirm grid is keyboard-navigable (tab order through cells); confirm month header id/aria-label is provided for the grid.
-
----
-
-## Phase 4: DayTasksPanel Component
-
-- [ ] 4.1 **[RED]** Write failing tests for `DayTasksPanel`. File: `src/core/calendar/presentation/components/day-tasks-panel/day-tasks-panel.test.tsx`. Assert:
-  - Eyebrow contains "Hoy" when date is today; contains formatted date when date is not today
-  - Headline contains task count (plural and singular forms)
-  - Each task row: dot present, time visible when provided, time absent when not provided, title present, description present when provided
-  - Done task has `.cbox.done` class on its checkbox
-  - Empty state message renders when `tasks` is empty
-
-- [ ] 4.2 **[GREEN]** Create `src/core/calendar/presentation/components/day-tasks-panel/day-tasks-panel.tsx` — `'use client'`. Eyebrow: "Hoy · DD mes" if today, "DD mes" otherwise. Headline: "{n} {taskCount_one|other}". Task rows: coloured dot (`bg-[var(--{color})]` or design token class), optional time span, `.cbox` / `.cbox.done` checkbox, title + description. Empty state: eyebrow "Sin tareas" + hint paragraph. Satisfies CAP-2 requirements.
-
-- [ ] 4.3 **[REFACTOR]** Confirm task rows have `role="listitem"` or are wrapped in `<ul><li>`; confirm dot colour uses design token vars (`--forest`, `--honey`, `--terracotta`, `--sage`).
+- [ ] 4.5 **[REFACTOR]** Confirm grid root has `role="grid"` and column headers have `role="columnheader"`; confirm prev/next buttons have accessible `aria-label`.
 
 ---
 
-## Phase 5: CalendarScreen + Route + Wiring
+## Phase 5: DayTasksPanel + CalendarScreen + Route + Wiring
 
-- [ ] 5.1 **[RED]** Write failing tests for `CalendarScreen`. File: `src/core/calendar/presentation/screens/calendar/calendar.screen.test.tsx`. Assert:
-  - Renders `CalendarGrid` (mock it — check it receives `year`, `month`, `tasksByDate`)
-  - Renders `DayTasksPanel` (mock it — check it receives `tasks` array)
-  - Renders a "Nueva tarea" button
-  - Clicking prev-month button decrements the displayed month
-  - Clicking next-month button increments the displayed month
-  - Clicking a calendar cell updates the tasks panel to show tasks for that date
+- [ ] 5.1 **[RED]** Write failing tests for `DayTasksPanel`. File: `src/core/calendar/presentation/components/day-tasks-panel/day-tasks-panel.test.tsx`. Assert:
+  - "Hoy" appears in the header when `selectedDate` is today's ISO string
+  - "Hoy" does NOT appear when `selectedDate` is a different date
+  - Formatted day/month appears in the header for any date
+  - `InDevelopment` component is rendered in the panel body (mock `InDevelopment`, check it was called)
 
-- [ ] 5.2 **[GREEN]** Create `src/core/calendar/presentation/screens/calendar/calendar.screen.tsx` — `'use client'`. `useState` for `currentMonth` (init: `{ year: today.getFullYear(), month: today.getMonth() }`) and `selectedDate` (init: `today`). Computes `tasksForSelectedDate` via `MOCK_TASKS_BY_DATE[toISODate(selectedDate)] ?? []`. Renders `<ScreenHeader title={dict.screenTitle} actions={<button ...>{dict.addTask}</button>} />` + two-column layout: `<CalendarGrid>` (left, `flex-1`) + `<DayTasksPanel>` (right, fixed width `~280px`). Satisfies CAP-1 through CAP-4.
+- [ ] 5.2 **[GREEN]** Create `src/core/calendar/presentation/components/day-tasks-panel/day-tasks-panel.tsx` — `'use client'`. Header: `.eyebrow` with "Hoy · DD mes" or "DD mes". Body: `<InDevelopment label={dict.panel.inDevLabel} />`. Panel container: `bg-[var(--paper)] border-l border-[var(--rule)]`. Satisfies CAP-3 panel requirements.
 
-- [ ] 5.3 Create `app/[lang]/(protected)/calendar/page.tsx` — async SC, resolves `locale` + `dict` via `getDictionary`, renders `<CalendarScreen dict={dict.calendar} />`. Satisfies CAP-5 route scenario.
+- [ ] 5.3 **[RED]** Write failing tests for `CalendarScreen`. File: `src/core/calendar/presentation/screens/calendar/calendar.screen.test.tsx`. Mock `useCalendarStore`, `CalendarGrid`, `DayTasksPanel`. Assert:
+  - `CalendarGrid` is rendered with `year`, `month`, `selectedDate` from the store
+  - `DayTasksPanel` is rendered with `selectedDate` from the store
+  - `onPrevMonth` callback passed to `CalendarGrid` calls `calendarStore.prevMonth`
+  - `onNextMonth` callback passed to `CalendarGrid` calls `calendarStore.nextMonth`
+  - `onSelectDate` callback passed to `CalendarGrid` calls `calendarStore.setSelectedDate`
+  - `ScreenHeader` is rendered with the calendar title
 
-- [ ] 5.4 Modify `src/shared/presentation/components/sidebar-nav-items/nav-items.ts` — remove `disabled: true` from the Calendar entry. Satisfies CAP-5 nav scenario.
+- [ ] 5.4 **[GREEN]** Create `src/core/calendar/presentation/screens/calendar/calendar.screen.tsx` — `'use client'`. Calls `useCalendarStore()`. Renders `<ScreenHeader title={dict.screenTitle} />` + `<div className="flex flex-1 overflow-hidden">` wrapping `<CalendarGrid>` (left, `flex-1`) + `<DayTasksPanel>` (right, fixed width `w-72`). All store interactions are callback props — no store imports inside child components. Satisfies CAP-1 through CAP-4.
+
+- [ ] 5.5 Create `app/[lang]/(protected)/calendar/page.tsx` — async SC resolving `locale` + `dict`, renders `<CalendarScreen dict={dict.calendar} />`. Satisfies CAP-6 route scenario.
+
+- [ ] 5.6 Create i18n files:
+  - `src/core/calendar/presentation/i18n/en.ts` — `CalendarDict` with keys: `screenTitle`, `viewSwitcher.{day,week,month,year}`, `grid.{weekdays,seasons,overflow}`, `panel.{todayPrefix,inDevLabel}`.
+  - `src/core/calendar/presentation/i18n/es.ts` — `satisfies WidenStringLiterals<CalendarDict>`. Weekdays: L/M/X/J/V/S/D. Seasons: primavera/verano/otoño/invierno. `panel.todayPrefix: 'Hoy'`, `panel.inDevLabel: 'Tareas del día'`.
+  - `src/core/calendar/presentation/i18n/i18n-parity.test.ts` — deep-key equality between `enCalendar` and `esCalendar`.
+
+- [ ] 5.7 Modify `src/shared/presentation/i18n/get-dictionary.ts` — add `import type { CalendarDict }`, import en/es dicts, add `calendar` key to `AppDict` and both locale entries. Satisfies CAP-6 i18n scenario.
+
+- [ ] 5.8 Modify `src/shared/presentation/components/sidebar-nav-items/nav-items.ts` — remove `disabled: true` from the Calendar entry. Satisfies CAP-6 nav scenario.
 
 ---
 
@@ -138,7 +128,9 @@
 - [ ] All new test files pass (`pnpm test`).
 - [ ] `pnpm tsc --noEmit` passes with zero errors.
 - [ ] `pnpm lint` passes with zero errors.
-- [ ] `/[lang]/calendar` route is accessible from the sidebar.
-- [ ] Clicking a calendar cell updates the right panel.
-- [ ] Month navigation works in both directions.
+- [ ] `/[lang]/calendar` is accessible from the sidebar and renders the two-column layout.
+- [ ] Clicking a day cell updates the store and the panel header changes.
+- [ ] Month navigation updates the grid and the store.
+- [ ] `DayTasksPanel` body shows `InDevelopment` labelled "Tareas del día".
+- [ ] `InDevelopment` component is usable standalone from `src/shared/`.
 - [ ] i18n parity test passes for the `calendar` module.
