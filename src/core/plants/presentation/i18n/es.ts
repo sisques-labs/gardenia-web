@@ -46,6 +46,9 @@ const dict = {
     tabs: {
       care: 'Cuidados',
       calendar: 'Calendario',
+      diary: 'Diario',
+      harvests: 'Cosechas',
+      pests: 'Plagas',
       associations: 'Asociaciones',
     },
     sections: {

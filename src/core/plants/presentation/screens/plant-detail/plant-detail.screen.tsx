@@ -10,6 +10,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/presentation/
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { CareCard } from '@/core/plants/presentation/components/care-card/care-card';
 import { GrowthTimeline } from '@/core/plants/presentation/components/growth-timeline/growth-timeline';
+import { InDevelopment } from '@/shared/presentation/components/in-development/in-development';
 import { usePlant } from '@/core/plants/presentation/hooks/use-plant/use-plant.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
@@ -189,8 +190,11 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
         <Tabs defaultValue="care">
           <TabsList variant="line" className="w-full justify-start border-b rounded-none h-auto pb-0">
             <TabsTrigger value="care">{dict.detail.tabs.care}</TabsTrigger>
-            <TabsTrigger value="calendar" disabled>{dict.detail.tabs.calendar}</TabsTrigger>
-            <TabsTrigger value="associations" disabled>{dict.detail.tabs.associations}</TabsTrigger>
+            <TabsTrigger value="calendar">{dict.detail.tabs.calendar}</TabsTrigger>
+            <TabsTrigger value="diary">{dict.detail.tabs.diary}</TabsTrigger>
+            <TabsTrigger value="harvests">{dict.detail.tabs.harvests}</TabsTrigger>
+            <TabsTrigger value="pests">{dict.detail.tabs.pests}</TabsTrigger>
+            <TabsTrigger value="associations">{dict.detail.tabs.associations}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="care">
@@ -251,6 +255,26 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
                 </>
               );
             })()}
+          </TabsContent>
+
+          <TabsContent value="calendar">
+            <InDevelopment />
+          </TabsContent>
+
+          <TabsContent value="diary">
+            <InDevelopment />
+          </TabsContent>
+
+          <TabsContent value="harvests">
+            <InDevelopment />
+          </TabsContent>
+
+          <TabsContent value="pests">
+            <InDevelopment />
+          </TabsContent>
+
+          <TabsContent value="associations">
+            <InDevelopment />
           </TabsContent>
         </Tabs>
       </div>

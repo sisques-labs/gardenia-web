@@ -87,7 +87,7 @@ const dict = {
       hint: 'Imprime y pega en la maceta',
       download: 'Descargar PDF',
     },
-    tabs: { care: 'Care', calendar: 'Calendar', associations: 'Associations' },
+    tabs: { care: 'Care', calendar: 'Calendar', diary: 'Diary', harvests: 'Harvests', pests: 'Pests', associations: 'Associations' },
     sections: {
       care: { title: 'Care', inProgress: 'Coming soon' },
       cycle: { title: 'Growth cycle', inProgress: 'Coming soon' },
@@ -262,5 +262,56 @@ describe('PlantDetailScreen', () => {
     render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
 
     expect(screen.getByText('CYCLE · 64 DAYS')).toBeInTheDocument();
+  });
+
+  it('renders Calendar tab trigger', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByRole('tab', { name: 'Calendar' })).toBeInTheDocument();
+  });
+
+  it('renders Diary tab trigger', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByRole('tab', { name: 'Diary' })).toBeInTheDocument();
+  });
+
+  it('renders Harvests tab trigger', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByRole('tab', { name: 'Harvests' })).toBeInTheDocument();
+  });
+
+  it('renders Pests tab trigger', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByRole('tab', { name: 'Pests' })).toBeInTheDocument();
+  });
+
+  it('renders Associations tab trigger', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByRole('tab', { name: 'Associations' })).toBeInTheDocument();
+  });
+
+  it('all tab triggers are NOT disabled', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    const tabs = screen.getAllByRole('tab');
+    tabs.forEach((tab) => {
+      expect(tab).not.toBeDisabled();
+    });
   });
 });

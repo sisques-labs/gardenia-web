@@ -41,6 +41,9 @@ const dict = {
     tabs: {
       care: 'Care',
       calendar: 'Calendar',
+      diary: 'Diary',
+      harvests: 'Harvests',
+      pests: 'Pests',
       associations: 'Associations',
     },
     sections: {
