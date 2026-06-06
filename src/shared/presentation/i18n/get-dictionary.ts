@@ -5,6 +5,7 @@ import type { SpacesDict } from '@/core/spaces/presentation/i18n/en';
 import type { HomeDict } from '@/core/home/presentation/i18n/en';
 import type { PlantsDict } from '@/core/plants/presentation/i18n/en';
 import type { UsersDict } from '@/core/users/presentation/i18n/en';
+import type { CalendarDict } from '@/core/calendar/presentation/i18n/en';
 
 import enAuth from '@/core/auth/presentation/i18n/en';
 import esAuth from '@/core/auth/presentation/i18n/es';
@@ -16,6 +17,8 @@ import enPlants from '@/core/plants/presentation/i18n/en';
 import esPlants from '@/core/plants/presentation/i18n/es';
 import enUsers from '@/core/users/presentation/i18n/en';
 import esUsers from '@/core/users/presentation/i18n/es';
+import enCalendar from '@/core/calendar/presentation/i18n/en';
+import esCalendar from '@/core/calendar/presentation/i18n/es';
 
 export type AppDict = {
   auth: WidenStringLiterals<AuthDict>;
@@ -23,6 +26,7 @@ export type AppDict = {
   home: WidenStringLiterals<HomeDict>;
   plants: WidenStringLiterals<PlantsDict>;
   users: WidenStringLiterals<UsersDict>;
+  calendar: WidenStringLiterals<CalendarDict>;
 };
 
 const dictionaries: Record<Locale, AppDict> = {
@@ -32,6 +36,7 @@ const dictionaries: Record<Locale, AppDict> = {
     home: enHome,
     plants: enPlants,
     users: enUsers,
+    calendar: enCalendar,
   },
   es: {
     auth: esAuth,
@@ -39,6 +44,7 @@ const dictionaries: Record<Locale, AppDict> = {
     home: esHome,
     plants: esPlants,
     users: esUsers,
+    calendar: esCalendar,
   },
 };
 

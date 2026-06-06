@@ -13,7 +13,7 @@ export const NAV_ITEMS: NavItem[] = [
   { label: 'Spaces', href: '/[lang]/spaces', icon: LayoutGrid },
   { label: 'Map', href: '/[lang]/map', icon: Map, disabled: true },
   { label: 'Inventory', href: '/[lang]/plants', icon: Leaf },
-  { label: 'Calendar', href: '/[lang]/calendar', icon: Calendar, disabled: true },
+  { label: 'Calendar', href: '/[lang]/calendar', icon: Calendar },
   { label: 'Journal', href: '/[lang]/journal', icon: BookOpen, disabled: true },
   { label: 'Harvests', href: '/[lang]/harvests', icon: Wheat, disabled: true },
   { label: 'Pests', href: '/[lang]/pests', icon: Bug, disabled: true },
