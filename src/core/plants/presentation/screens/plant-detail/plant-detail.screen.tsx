@@ -121,7 +121,7 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
             </div>
 
             {/* Action bar */}
-            <div className="flex flex-wrap gap-2">
+            <div data-testid="plant-action-bar" className="flex flex-wrap gap-2">
               <Button
                 variant="default"
                 size="sm"
@@ -151,7 +151,7 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
 
           {/* Right column — QR Card */}
           {plant.qr && (
-            <Card data-testid="qr-card">
+            <Card data-testid="plant-qr-card">
               <CardContent className="flex flex-col gap-3 pt-6">
                 <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {dict.detail.qr.label}
@@ -176,7 +176,7 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
                   disabled
                   variant="ghost"
                   size="sm"
-                  data-testid="btn-download-pdf"
+                  data-testid="qr-download-btn"
                   className="text-xs text-[var(--forest)] w-full"
                 >
                   {dict.detail.qr.download}
@@ -239,7 +239,7 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
 
               return (
                 <>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div data-testid="care-grid" className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {careData.map((care, i) => (
                       <CareCard key={i} {...care} />
                     ))}

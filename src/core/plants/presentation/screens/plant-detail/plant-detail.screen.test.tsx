@@ -170,7 +170,7 @@ describe('PlantDetailScreen', () => {
 
     render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
 
-    expect(screen.getByTestId('qr-card')).toBeInTheDocument();
+    expect(screen.getByTestId('plant-qr-card')).toBeInTheDocument();
     expect(screen.getByTestId('qr-image')).toHaveAttribute('src', 'data:image/png;base64,base64data');
     expect(screen.getByTestId('qr-code')).toBeInTheDocument();
   });
@@ -181,7 +181,7 @@ describe('PlantDetailScreen', () => {
 
     render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
 
-    expect(screen.queryByTestId('qr-card')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('plant-qr-card')).not.toBeInTheDocument();
   });
 
   it('renders placeholder image when plant.imageUrl is null', () => {
@@ -237,6 +237,22 @@ describe('PlantDetailScreen', () => {
     const breadcrumbLink = screen.getByRole('link', { name: 'Inventory' });
     expect(breadcrumbLink).toBeInTheDocument();
     expect(breadcrumbLink).toHaveAttribute('href', '/en/plants');
+  });
+
+  it('renders action bar wrapper with data-testid="plant-action-bar"', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByTestId('plant-action-bar')).toBeInTheDocument();
+  });
+
+  it('renders care grid with data-testid="care-grid"', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByTestId('care-grid')).toBeInTheDocument();
   });
 
   it('renders 4 CareCard components in the Cuidados tab', () => {
