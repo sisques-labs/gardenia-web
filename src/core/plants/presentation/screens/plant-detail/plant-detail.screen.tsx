@@ -2,12 +2,15 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
-import { Droplets, Camera, StickyNote } from 'lucide-react';
+import { Droplets, Camera, StickyNote, Sun, Shovel, Scissors } from 'lucide-react';
 import { Button } from '@/shared/presentation/components/ui/button';
+import { Card, CardContent } from '@/shared/presentation/components/ui/card';
+import { Chip } from '@/shared/presentation/components/ui/chip';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/presentation/components/ui/tabs';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
-import { PlantSectionPlaceholder } from '@/core/plants/presentation/components/plant-section-placeholder/plant-section-placeholder';
+import { CareCard } from '@/core/plants/presentation/components/care-card/care-card';
+import { GrowthTimeline } from '@/core/plants/presentation/components/growth-timeline/growth-timeline';
+import { InDevelopment } from '@/shared/presentation/components/in-development/in-development';
 import { usePlant } from '@/core/plants/presentation/hooks/use-plant/use-plant.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
@@ -55,7 +58,7 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
 
   return (
     <div className="flex flex-col">
-      {/* Header */}
+      {/* Breadcrumb nav */}
       <ScreenHeader
         title={plant.name}
         breadcrumbs={[
@@ -65,75 +68,227 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
       />
 
       <div className="p-6 flex flex-col gap-6">
-        {/* Species */}
-        <p className="text-sm text-muted-foreground italic">
-          {plant.species?.name ?? dict.detail.noSpecies}
-        </p>
+        {/* 3-column header grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Left column — Plant image */}
+          <div
+            data-testid="plant-image"
+            className="aspect-square rounded-xl overflow-hidden bg-muted flex items-center justify-center"
+          >
+            {plant.imageUrl ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={plant.imageUrl}
+                alt={plant.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="placeholder-img paper-grain flex items-center justify-center w-full h-full">
+                <span className="text-muted-foreground text-sm text-center px-2">{plant.name}</span>
+              </div>
+            )}
+          </div>
 
-        {/* Action buttons */}
-        <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" disabled>
-            <Droplets className="w-4 h-4 mr-1.5" />
-            {dict.detail.actions.markWatered}
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            <Camera className="w-4 h-4 mr-1.5" />
-            {dict.detail.actions.addPhoto}
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            <StickyNote className="w-4 h-4 mr-1.5" />
-            {dict.detail.actions.newNote}
-          </Button>
-        </div>
+          {/* Center column — Identity + Chips + Actions */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                BANCAL · {plant.spaceId}
+              </p>
+              <h1
+                data-testid="plant-name"
+                className="headline text-3xl font-serif"
+              >
+                {plant.name}
+              </h1>
+              {plant.species?.name && (
+                <p
+                  data-testid="plant-species"
+                  className="text-sm text-muted-foreground italic"
+                >
+                  {plant.species.name}
+                </p>
+              )}
+            </div>
 
-        {/* Plant image */}
-        <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-muted flex items-center justify-center">
-          {plant.imageUrl ? (
-            <Image
-              src={plant.imageUrl}
-              alt={plant.name}
-              fill
-              className="object-cover"
-            />
-          ) : (
-            <span className="text-muted-foreground text-sm">{dict.detail.noImage}</span>
-          )}
-        </div>
+            {/* Chips row */}
+            <div className="flex flex-wrap gap-2">
+              {plant.species?.name && (
+                <Chip variant="sage" data-testid="chip-species">
+                  {plant.species.name}
+                </Chip>
+              )}
+            </div>
 
-        {/* QR section */}
-        {plant.qr && (
-          <div className="flex items-center gap-4 rounded-lg border p-4">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`data:image/png;base64,${plant.qr.image}`}
-              alt="QR"
-              className="h-16 w-16 shrink-0"
-            />
-            <div className="flex flex-col gap-1 min-w-0">
-              <p className="text-sm font-medium">{dict.detail.qr.label}</p>
-              <p className="text-xs text-muted-foreground">{dict.detail.qr.hint}</p>
-              <button disabled className="text-xs text-[var(--forest)] opacity-40 cursor-not-allowed text-left w-fit">
-                {dict.detail.qr.download} →
-              </button>
+            {/* Action bar */}
+            <div data-testid="plant-action-bar" className="flex flex-wrap gap-2">
+              <Button
+                variant="default"
+                size="sm"
+                data-testid="btn-mark-watered"
+              >
+                <Droplets className="w-4 h-4" />
+                {dict.detail.actions.markWatered}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                data-testid="btn-add-photo"
+              >
+                <Camera className="w-4 h-4" />
+                {dict.detail.actions.addPhoto}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                data-testid="btn-new-note"
+              >
+                <StickyNote className="w-4 h-4" />
+                {dict.detail.actions.newNote}
+              </Button>
             </div>
           </div>
-        )}
+
+          {/* Right column — QR Card */}
+          {plant.qr && (
+            <Card data-testid="plant-qr-card">
+              <CardContent className="flex flex-col gap-3 pt-6">
+                <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  {dict.detail.qr.label}
+                </p>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  data-testid="qr-image"
+                  src={`data:image/png;base64,${plant.qr.image}`}
+                  alt="QR"
+                  className="w-24 h-24 mx-auto"
+                />
+                <p
+                  data-testid="qr-code"
+                  className="text-xs text-center text-muted-foreground font-mono"
+                >
+                  {plant.qr.id}
+                </p>
+                <p className="text-xs text-center text-muted-foreground">
+                  {dict.detail.qr.hint}
+                </p>
+                <Button
+                  disabled
+                  variant="ghost"
+                  size="sm"
+                  data-testid="qr-download-btn"
+                  className="text-xs text-[var(--forest)] w-full"
+                >
+                  {dict.detail.qr.download}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
 
         {/* Tab nav */}
         <Tabs defaultValue="care">
           <TabsList variant="line" className="w-full justify-start border-b rounded-none h-auto pb-0">
             <TabsTrigger value="care">{dict.detail.tabs.care}</TabsTrigger>
-            <TabsTrigger value="calendar" disabled>{dict.detail.tabs.calendar}</TabsTrigger>
-            <TabsTrigger value="associations" disabled>{dict.detail.tabs.associations}</TabsTrigger>
+            <TabsTrigger value="calendar">{dict.detail.tabs.calendar}</TabsTrigger>
+            <TabsTrigger value="diary">{dict.detail.tabs.diary}</TabsTrigger>
+            <TabsTrigger value="harvests">{dict.detail.tabs.harvests}</TabsTrigger>
+            <TabsTrigger value="pests">{dict.detail.tabs.pests}</TabsTrigger>
+            <TabsTrigger value="associations">{dict.detail.tabs.associations}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="care">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-              <PlantSectionPlaceholder title={dict.detail.sections.care.title} inProgress={dict.detail.sections.care.inProgress} />
-              <PlantSectionPlaceholder title={dict.detail.sections.cycle.title} inProgress={dict.detail.sections.cycle.inProgress} />
-              <PlantSectionPlaceholder title={dict.detail.sections.photoHistory.title} inProgress={dict.detail.sections.photoHistory.inProgress} />
-              <PlantSectionPlaceholder title={dict.detail.sections.pests.title} inProgress={dict.detail.sections.pests.inProgress} />
-            </div>
+            {(() => {
+              const careData = [
+                {
+                  icon: <Droplets className="w-4 h-4" />,
+                  label: dict.detail.care.wateringLabel,
+                  labelVariant: 'forest' as const,
+                  title: dict.detail.care.wateringTitle,
+                  description: dict.detail.care.wateringDesc,
+                },
+                {
+                  icon: <Sun className="w-4 h-4" />,
+                  label: dict.detail.care.sunLabel,
+                  labelVariant: 'honey' as const,
+                  title: dict.detail.care.sunTitle,
+                  description: dict.detail.care.sunDesc,
+                },
+                {
+                  icon: <Shovel className="w-4 h-4" />,
+                  label: dict.detail.care.soilLabel,
+                  labelVariant: 'terra' as const,
+                  title: dict.detail.care.soilTitle,
+                  description: dict.detail.care.soilDesc,
+                },
+                {
+                  icon: <Scissors className="w-4 h-4" />,
+                  label: dict.detail.care.pruningLabel,
+                  labelVariant: 'sage' as const,
+                  title: dict.detail.care.pruningTitle,
+                  description: dict.detail.care.pruningDesc,
+                },
+              ];
+
+              const growthStages = [
+                { name: dict.detail.cycle.seedStage, daysStart: 0, daysEnd: 14, color: 'var(--sage)' },
+                { name: dict.detail.cycle.seedlingStage, daysStart: 14, daysEnd: 28, color: 'var(--forest)' },
+                { name: dict.detail.cycle.vegetativeStage, daysStart: 28, daysEnd: 45, color: 'var(--honey)' },
+                { name: dict.detail.cycle.fruitingStage, daysStart: 45, daysEnd: 64, color: 'var(--terracotta)' },
+              ];
+
+              return (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6">
+                  {/* Left: care cards + cycle */}
+                  <div className="lg:col-span-2 flex flex-col gap-6">
+                    <div data-testid="care-grid" className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {careData.map((care, i) => (
+                        <CareCard key={i} {...care} />
+                      ))}
+                    </div>
+                    <div>
+                      <p className="eyebrow mb-3">{dict.detail.cycle.title}</p>
+                      <GrowthTimeline
+                        stages={growthStages}
+                        currentDay={36}
+                        totalDays={64}
+                      />
+                    </div>
+                  </div>
+                  {/* Right: photo history + pest tracking */}
+                  <div className="flex flex-col gap-6">
+                    <div>
+                      <p className="eyebrow mb-3">{dict.detail.photoHistory.title}</p>
+                      <InDevelopment />
+                    </div>
+                    <div>
+                      <p className="eyebrow mb-3">{dict.detail.pestTracking.title}</p>
+                      <InDevelopment />
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </TabsContent>
+
+          <TabsContent value="calendar">
+            <InDevelopment />
+          </TabsContent>
+
+          <TabsContent value="diary">
+            <InDevelopment />
+          </TabsContent>
+
+          <TabsContent value="harvests">
+            <InDevelopment />
+          </TabsContent>
+
+          <TabsContent value="pests">
+            <InDevelopment />
+          </TabsContent>
+
+          <TabsContent value="associations">
+            <InDevelopment />
           </TabsContent>
         </Tabs>
       </div>

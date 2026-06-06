@@ -83,16 +83,55 @@ const dict = {
       newNote: 'New note',
     },
     qr: {
-      label: 'Label · QR',
-      hint: 'Print and stick on the pot',
-      download: 'Download PDF',
+      label: 'ETIQUETA · QR',
+      hint: 'Imprime y pega en la maceta',
+      download: 'Descargar PDF',
     },
-    tabs: { care: 'Care', calendar: 'Calendar', associations: 'Associations' },
+    tabs: { care: 'Care', calendar: 'Calendar', diary: 'Diary', harvests: 'Harvests', pests: 'Pests', associations: 'Associations' },
     sections: {
       care: { title: 'Care', inProgress: 'Coming soon' },
       cycle: { title: 'Growth cycle', inProgress: 'Coming soon' },
       photoHistory: { title: 'Photo history', inProgress: 'Coming soon' },
       pests: { title: 'Pest tracking', inProgress: 'Coming soon' },
+    },
+    care: {
+      wateringLabel: 'WATERING',
+      wateringTitle: 'Every day · 250 ml',
+      wateringDesc: 'Reduce to 200ml when flowering. Deep, infrequent.',
+      sunLabel: 'SUN',
+      sunTitle: '6–8 h direct',
+      sunDesc: 'Face south. Heat tolerant but shade above 35°C.',
+      soilLabel: 'SOIL',
+      soilTitle: 'Rich, drained · pH 6.0–6.8',
+      soilDesc: 'Add compost every 3 weeks. Stake from day 21.',
+      pruningLabel: 'PRUNING',
+      pruningTitle: 'Remove suckers',
+      pruningDesc: 'Once a week. Lower leaves after first flowering.',
+    },
+    cycle: {
+      title: 'CYCLE · 64 DAYS',
+      seedStage: 'Seed',
+      seedlingStage: 'Seedling',
+      vegetativeStage: 'Vegetative',
+      fruitingStage: 'Fruiting',
+    },
+    photoHistory: {
+      title: 'PHOTO HISTORY',
+    },
+    pestTracking: {
+      title: 'PEST TRACKING',
+    },
+  },
+  plantDetail: {
+    actions: {
+      markWatered: 'Mark watered',
+      addPhoto: 'Add photo',
+      newNote: 'New note',
+    },
+    qr: {
+      label: 'ETIQUETA · QR',
+      hint: 'Print and stick on the pot',
+      downloadPdf: 'Download PDF',
     },
   },
 };
@@ -102,30 +141,82 @@ describe('PlantDetailScreen', () => {
     vi.clearAllMocks();
   });
 
-  it('renders plant name when data exists', () => {
+  it('renders plant name via data-testid="plant-name"', () => {
     vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
 
     render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
 
-    const matches = screen.getAllByText('Monstera');
-    expect(matches.length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByTestId('plant-name')).toHaveTextContent('Monstera');
   });
 
-  it('renders species name when present', () => {
+  it('renders species name via data-testid="plant-species"', () => {
     vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
 
     render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
 
-    expect(screen.getByText('Monstera deliciosa')).toBeInTheDocument();
+    expect(screen.getByTestId('plant-species')).toHaveTextContent('Monstera deliciosa');
   });
 
-  it('renders noSpecies fallback when species is absent', () => {
-    const plantWithoutSpecies: Plant = { ...mockPlant, species: undefined };
-    vi.mocked(usePlant).mockReturnValue({ data: plantWithoutSpecies, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+  it('renders 3 action buttons that are NOT disabled', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
 
     render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
 
-    expect(screen.getByText('Unknown species')).toBeInTheDocument();
+    const btnMarkWatered = screen.getByTestId('btn-mark-watered');
+    const btnAddPhoto = screen.getByTestId('btn-add-photo');
+    const btnNewNote = screen.getByTestId('btn-new-note');
+
+    expect(btnMarkWatered).not.toBeDisabled();
+    expect(btnAddPhoto).not.toBeDisabled();
+    expect(btnNewNote).not.toBeDisabled();
+  });
+
+  it('renders QR card when plant.qr exists', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByTestId('plant-qr-card')).toBeInTheDocument();
+    expect(screen.getByTestId('qr-image')).toHaveAttribute('src', 'data:image/png;base64,base64data');
+    expect(screen.getByTestId('qr-code')).toBeInTheDocument();
+  });
+
+  it('does NOT render QR card when plant.qr is absent', () => {
+    const plantWithoutQr: Plant = { ...mockPlant, qr: undefined };
+    vi.mocked(usePlant).mockReturnValue({ data: plantWithoutQr, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.queryByTestId('plant-qr-card')).not.toBeInTheDocument();
+  });
+
+  it('renders placeholder image when plant.imageUrl is null', () => {
+    const plantWithoutImage: Plant = { ...mockPlant, imageUrl: undefined };
+    vi.mocked(usePlant).mockReturnValue({ data: plantWithoutImage, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByTestId('plant-image')).toBeInTheDocument();
+    // placeholder has no <img> inside
+    expect(screen.queryByRole('img', { name: 'Monstera' })).not.toBeInTheDocument();
+  });
+
+  it('renders actual image when plant.imageUrl exists', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    const img = screen.getByRole('img', { name: 'Monstera' });
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute('src', 'https://example.com/plant.jpg');
+  });
+
+  it('renders species chip with sage variant', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByTestId('chip-species')).toBeInTheDocument();
   });
 
   it('renders skeleton when loading', () => {
@@ -144,37 +235,6 @@ describe('PlantDetailScreen', () => {
     expect(mockReplace).toHaveBeenCalledWith('/en/plants');
   });
 
-  it('renders QR section with image and labels when plant has qr data', () => {
-    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-
-    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
-
-    const qrImg = screen.getByAltText('QR');
-    expect(qrImg).toBeInTheDocument();
-    expect(qrImg).toHaveAttribute('src', 'data:image/png;base64,base64data');
-    expect(screen.getByText('Label · QR')).toBeInTheDocument();
-    expect(screen.getByText('Print and stick on the pot')).toBeInTheDocument();
-  });
-
-  it('renders disabled action buttons', () => {
-    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-
-    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
-
-    expect(screen.getByRole('button', { name: /mark watered/i })).toBeDisabled();
-    expect(screen.getByRole('button', { name: /add photo/i })).toBeDisabled();
-    expect(screen.getByRole('button', { name: /new note/i })).toBeDisabled();
-  });
-
-  it('renders noImage placeholder when imageUrl is absent', () => {
-    const plantWithoutImage: Plant = { ...mockPlant, imageUrl: undefined };
-    vi.mocked(usePlant).mockReturnValue({ data: plantWithoutImage, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-
-    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
-
-    expect(screen.getByText('No image')).toBeInTheDocument();
-  });
-
   it('renders breadcrumb with list link', () => {
     vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
 
@@ -183,5 +243,97 @@ describe('PlantDetailScreen', () => {
     const breadcrumbLink = screen.getByRole('link', { name: 'Inventory' });
     expect(breadcrumbLink).toBeInTheDocument();
     expect(breadcrumbLink).toHaveAttribute('href', '/en/plants');
+  });
+
+  it('renders action bar wrapper with data-testid="plant-action-bar"', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByTestId('plant-action-bar')).toBeInTheDocument();
+  });
+
+  it('renders care grid with data-testid="care-grid"', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByTestId('care-grid')).toBeInTheDocument();
+  });
+
+  it('renders 4 CareCard components in the Cuidados tab', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    const careCards = screen.getAllByTestId('care-card');
+    expect(careCards).toHaveLength(4);
+  });
+
+  it('renders GrowthTimeline in the Cuidados tab', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByTestId('growth-timeline')).toBeInTheDocument();
+  });
+
+  it('renders cycle title heading', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByText('CYCLE · 64 DAYS')).toBeInTheDocument();
+  });
+
+  it('renders Calendar tab trigger', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByRole('tab', { name: 'Calendar' })).toBeInTheDocument();
+  });
+
+  it('renders Diary tab trigger', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByRole('tab', { name: 'Diary' })).toBeInTheDocument();
+  });
+
+  it('renders Harvests tab trigger', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByRole('tab', { name: 'Harvests' })).toBeInTheDocument();
+  });
+
+  it('renders Pests tab trigger', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByRole('tab', { name: 'Pests' })).toBeInTheDocument();
+  });
+
+  it('renders Associations tab trigger', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByRole('tab', { name: 'Associations' })).toBeInTheDocument();
+  });
+
+  it('all tab triggers are NOT disabled', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    const tabs = screen.getAllByRole('tab');
+    tabs.forEach((tab) => {
+      expect(tab).not.toBeDisabled();
+    });
   });
 });
