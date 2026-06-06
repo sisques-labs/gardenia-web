@@ -26,14 +26,16 @@ export function ScreenHeader({ title, breadcrumbs, actions }: ScreenHeaderProps)
         <Breadcrumb>
           <BreadcrumbList className="text-xs">
             {breadcrumbs.map((crumb, index) => (
-              <BreadcrumbItem key={crumb.label}>
+              <span key={crumb.label} className="contents">
                 {index > 0 && <BreadcrumbSeparator />}
-                {crumb.href ? (
-                  <BreadcrumbLink href={crumb.href}>{crumb.label}</BreadcrumbLink>
-                ) : (
-                  <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
-                )}
-              </BreadcrumbItem>
+                <BreadcrumbItem>
+                  {crumb.href ? (
+                    <BreadcrumbLink href={crumb.href}>{crumb.label}</BreadcrumbLink>
+                  ) : (
+                    <BreadcrumbPage>{crumb.label}</BreadcrumbPage>
+                  )}
+                </BreadcrumbItem>
+              </span>
             ))}
           </BreadcrumbList>
         </Breadcrumb>
