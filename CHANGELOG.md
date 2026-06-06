@@ -1,6 +1,16 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.13.0-alpha.0] - 2026-06-06
+
+### Features
+- **openspec:** Propose calendar-tasks-screen change (3af8a8f)
+- **openspec:** Update calendar-tasks-screen — Zustand store + InDevelopment component (12bd87e)
+- **calendar:** Implement calendar-tasks-screen change (c34bc76)
+- **calendar:** PageHeader component + calendar visual redesign + storybook stories (cfda383)
+
+### Refactor
+- **calendar:** Apply DDD structure per PR review (5c684cd)
 ## [0.12.0-alpha.0] - 2026-06-05
 
 ### Bug Fixes
@@ -16,6 +26,7 @@ All notable changes to this project will be documented in this file.
 - **storybook:** Upgrade to storybook v10 for next 16 compat and fix input story naming (b24ec01)
 - Ignore storybook-static build output (95a42a1)
 - **ci:** Add Chromatic visual regression workflow (52e0f14)
+- Release v0.12.0-alpha.0 (0d56351)
 
 ### Features
 - **ui:** Add Label component (77926ad)
