@@ -73,6 +73,12 @@ const dict = {
       vegetativeStage: 'Vegetative',
       fruitingStage: 'Fruiting',
     },
+    photoHistory: {
+      title: 'PHOTO HISTORY',
+    },
+    pestTracking: {
+      title: 'PEST TRACKING',
+    },
   },
 } as const;
 

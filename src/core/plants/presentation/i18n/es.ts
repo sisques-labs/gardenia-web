@@ -78,6 +78,12 @@ const dict = {
       vegetativeStage: 'Vegetativa',
       fruitingStage: 'Fructificación',
     },
+    photoHistory: {
+      title: 'HISTORIAL FOTOGRÁFICO',
+    },
+    pestTracking: {
+      title: 'PLAGAS · SEGUIMIENTO',
+    },
   },
 } as const satisfies PlantsDictTranslated;
 

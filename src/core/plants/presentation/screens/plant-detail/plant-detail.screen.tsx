@@ -238,21 +238,35 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
               ];
 
               return (
-                <>
-                  <div data-testid="care-grid" className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {careData.map((care, i) => (
-                      <CareCard key={i} {...care} />
-                    ))}
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6">
+                  {/* Left: care cards + cycle */}
+                  <div className="lg:col-span-2 flex flex-col gap-6">
+                    <div data-testid="care-grid" className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {careData.map((care, i) => (
+                        <CareCard key={i} {...care} />
+                      ))}
+                    </div>
+                    <div>
+                      <p className="eyebrow mb-3">{dict.detail.cycle.title}</p>
+                      <GrowthTimeline
+                        stages={growthStages}
+                        currentDay={36}
+                        totalDays={64}
+                      />
+                    </div>
                   </div>
-                  <div className="mt-6">
-                    <h3 className="eyebrow mb-3">{dict.detail.cycle.title}</h3>
-                    <GrowthTimeline
-                      stages={growthStages}
-                      currentDay={36}
-                      totalDays={64}
-                    />
+                  {/* Right: photo history + pest tracking */}
+                  <div className="flex flex-col gap-6">
+                    <div>
+                      <p className="eyebrow mb-3">{dict.detail.photoHistory.title}</p>
+                      <InDevelopment />
+                    </div>
+                    <div>
+                      <p className="eyebrow mb-3">{dict.detail.pestTracking.title}</p>
+                      <InDevelopment />
+                    </div>
                   </div>
-                </>
+                </div>
               );
             })()}
           </TabsContent>
