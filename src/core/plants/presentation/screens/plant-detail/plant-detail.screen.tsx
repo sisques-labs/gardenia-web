@@ -2,9 +2,10 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { Droplets, Camera, StickyNote } from 'lucide-react';
 import { Button } from '@/shared/presentation/components/ui/button';
+import { Card, CardContent } from '@/shared/presentation/components/ui/card';
+import { Chip } from '@/shared/presentation/components/ui/chip';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/presentation/components/ui/tabs';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { PlantSectionPlaceholder } from '@/core/plants/presentation/components/plant-section-placeholder/plant-section-placeholder';
@@ -55,7 +56,7 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
 
   return (
     <div className="flex flex-col">
-      {/* Header */}
+      {/* Breadcrumb nav */}
       <ScreenHeader
         title={plant.name}
         breadcrumbs={[
@@ -65,59 +66,123 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
       />
 
       <div className="p-6 flex flex-col gap-6">
-        {/* Species */}
-        <p className="text-sm text-muted-foreground italic">
-          {plant.species?.name ?? dict.detail.noSpecies}
-        </p>
+        {/* 3-column header grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {/* Left column — Plant image */}
+          <div
+            data-testid="plant-image"
+            className="aspect-square rounded-xl overflow-hidden bg-muted flex items-center justify-center"
+          >
+            {plant.imageUrl ? (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={plant.imageUrl}
+                alt={plant.name}
+                className="w-full h-full object-cover"
+              />
+            ) : (
+              <div className="placeholder-img paper-grain flex items-center justify-center w-full h-full">
+                <span className="text-muted-foreground text-sm text-center px-2">{plant.name}</span>
+              </div>
+            )}
+          </div>
 
-        {/* Action buttons */}
-        <div className="flex flex-wrap gap-2">
-          <Button variant="outline" size="sm" disabled>
-            <Droplets className="w-4 h-4 mr-1.5" />
-            {dict.detail.actions.markWatered}
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            <Camera className="w-4 h-4 mr-1.5" />
-            {dict.detail.actions.addPhoto}
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            <StickyNote className="w-4 h-4 mr-1.5" />
-            {dict.detail.actions.newNote}
-          </Button>
-        </div>
+          {/* Center column — Identity + Chips + Actions */}
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1">
+              <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                BANCAL · {plant.spaceId}
+              </p>
+              <h1
+                data-testid="plant-name"
+                className="headline text-3xl font-serif"
+              >
+                {plant.name}
+              </h1>
+              {plant.species?.name && (
+                <p
+                  data-testid="plant-species"
+                  className="text-sm text-muted-foreground italic"
+                >
+                  {plant.species.name}
+                </p>
+              )}
+            </div>
 
-        {/* Plant image */}
-        <div className="relative w-full aspect-video rounded-lg overflow-hidden bg-muted flex items-center justify-center">
-          {plant.imageUrl ? (
-            <Image
-              src={plant.imageUrl}
-              alt={plant.name}
-              fill
-              className="object-cover"
-            />
-          ) : (
-            <span className="text-muted-foreground text-sm">{dict.detail.noImage}</span>
-          )}
-        </div>
+            {/* Chips row */}
+            <div className="flex flex-wrap gap-2">
+              {plant.species?.name && (
+                <Chip variant="sage" data-testid="chip-species">
+                  {plant.species.name}
+                </Chip>
+              )}
+            </div>
 
-        {/* QR section */}
-        {plant.qr && (
-          <div className="flex items-center gap-4 rounded-lg border p-4">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={`data:image/png;base64,${plant.qr.image}`}
-              alt="QR"
-              className="h-16 w-16 shrink-0"
-            />
-            <div className="flex flex-col gap-1 min-w-0">
-              <p className="text-sm font-medium">{dict.detail.qr.label}</p>
-              <p className="text-xs text-muted-foreground">{dict.detail.qr.hint}</p>
-              <button disabled className="text-xs text-[var(--forest)] opacity-40 cursor-not-allowed text-left w-fit">
-                {dict.detail.qr.download} →
-              </button>
+            {/* Action bar */}
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="default"
+                size="sm"
+                data-testid="btn-mark-watered"
+              >
+                <Droplets className="w-4 h-4" />
+                {dict.detail.actions.markWatered}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                data-testid="btn-add-photo"
+              >
+                <Camera className="w-4 h-4" />
+                {dict.detail.actions.addPhoto}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                data-testid="btn-new-note"
+              >
+                <StickyNote className="w-4 h-4" />
+                {dict.detail.actions.newNote}
+              </Button>
             </div>
           </div>
-        )}
+
+          {/* Right column — QR Card */}
+          {plant.qr && (
+            <Card data-testid="qr-card">
+              <CardContent className="flex flex-col gap-3 pt-6">
+                <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                  {dict.detail.qr.label}
+                </p>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  data-testid="qr-image"
+                  src={`data:image/png;base64,${plant.qr.image}`}
+                  alt="QR"
+                  className="w-24 h-24 mx-auto"
+                />
+                <p
+                  data-testid="qr-code"
+                  className="text-xs text-center text-muted-foreground font-mono"
+                >
+                  {plant.qr.id}
+                </p>
+                <p className="text-xs text-center text-muted-foreground">
+                  {dict.detail.qr.hint}
+                </p>
+                <Button
+                  disabled
+                  variant="ghost"
+                  size="sm"
+                  data-testid="btn-download-pdf"
+                  className="text-xs text-[var(--forest)] w-full"
+                >
+                  {dict.detail.qr.download}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </div>
 
         {/* Tab nav */}
         <Tabs defaultValue="care">

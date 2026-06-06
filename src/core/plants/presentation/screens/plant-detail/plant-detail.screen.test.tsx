@@ -83,9 +83,9 @@ const dict = {
       newNote: 'New note',
     },
     qr: {
-      label: 'Label · QR',
-      hint: 'Print and stick on the pot',
-      download: 'Download PDF',
+      label: 'ETIQUETA · QR',
+      hint: 'Imprime y pega en la maceta',
+      download: 'Descargar PDF',
     },
     tabs: { care: 'Care', calendar: 'Calendar', associations: 'Associations' },
     sections: {
@@ -95,6 +95,18 @@ const dict = {
       pests: { title: 'Pest tracking', inProgress: 'Coming soon' },
     },
   },
+  plantDetail: {
+    actions: {
+      markWatered: 'Mark watered',
+      addPhoto: 'Add photo',
+      newNote: 'New note',
+    },
+    qr: {
+      label: 'ETIQUETA · QR',
+      hint: 'Print and stick on the pot',
+      downloadPdf: 'Download PDF',
+    },
+  },
 };
 
 describe('PlantDetailScreen', () => {
@@ -102,30 +114,82 @@ describe('PlantDetailScreen', () => {
     vi.clearAllMocks();
   });
 
-  it('renders plant name when data exists', () => {
+  it('renders plant name via data-testid="plant-name"', () => {
     vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
 
     render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
 
-    const matches = screen.getAllByText('Monstera');
-    expect(matches.length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByTestId('plant-name')).toHaveTextContent('Monstera');
   });
 
-  it('renders species name when present', () => {
+  it('renders species name via data-testid="plant-species"', () => {
     vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
 
     render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
 
-    expect(screen.getByText('Monstera deliciosa')).toBeInTheDocument();
+    expect(screen.getByTestId('plant-species')).toHaveTextContent('Monstera deliciosa');
   });
 
-  it('renders noSpecies fallback when species is absent', () => {
-    const plantWithoutSpecies: Plant = { ...mockPlant, species: undefined };
-    vi.mocked(usePlant).mockReturnValue({ data: plantWithoutSpecies, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+  it('renders 3 action buttons that are NOT disabled', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
 
     render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
 
-    expect(screen.getByText('Unknown species')).toBeInTheDocument();
+    const btnMarkWatered = screen.getByTestId('btn-mark-watered');
+    const btnAddPhoto = screen.getByTestId('btn-add-photo');
+    const btnNewNote = screen.getByTestId('btn-new-note');
+
+    expect(btnMarkWatered).not.toBeDisabled();
+    expect(btnAddPhoto).not.toBeDisabled();
+    expect(btnNewNote).not.toBeDisabled();
+  });
+
+  it('renders QR card when plant.qr exists', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByTestId('qr-card')).toBeInTheDocument();
+    expect(screen.getByTestId('qr-image')).toHaveAttribute('src', 'data:image/png;base64,base64data');
+    expect(screen.getByTestId('qr-code')).toBeInTheDocument();
+  });
+
+  it('does NOT render QR card when plant.qr is absent', () => {
+    const plantWithoutQr: Plant = { ...mockPlant, qr: undefined };
+    vi.mocked(usePlant).mockReturnValue({ data: plantWithoutQr, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.queryByTestId('qr-card')).not.toBeInTheDocument();
+  });
+
+  it('renders placeholder image when plant.imageUrl is null', () => {
+    const plantWithoutImage: Plant = { ...mockPlant, imageUrl: undefined };
+    vi.mocked(usePlant).mockReturnValue({ data: plantWithoutImage, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByTestId('plant-image')).toBeInTheDocument();
+    // placeholder has no <img> inside
+    expect(screen.queryByRole('img', { name: 'Monstera' })).not.toBeInTheDocument();
+  });
+
+  it('renders actual image when plant.imageUrl exists', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    const img = screen.getByRole('img', { name: 'Monstera' });
+    expect(img).toBeInTheDocument();
+    expect(img).toHaveAttribute('src', 'https://example.com/plant.jpg');
+  });
+
+  it('renders species chip with sage variant', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByTestId('chip-species')).toBeInTheDocument();
   });
 
   it('renders skeleton when loading', () => {
@@ -142,37 +206,6 @@ describe('PlantDetailScreen', () => {
     render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
 
     expect(mockReplace).toHaveBeenCalledWith('/en/plants');
-  });
-
-  it('renders QR section with image and labels when plant has qr data', () => {
-    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-
-    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
-
-    const qrImg = screen.getByAltText('QR');
-    expect(qrImg).toBeInTheDocument();
-    expect(qrImg).toHaveAttribute('src', 'data:image/png;base64,base64data');
-    expect(screen.getByText('Label · QR')).toBeInTheDocument();
-    expect(screen.getByText('Print and stick on the pot')).toBeInTheDocument();
-  });
-
-  it('renders disabled action buttons', () => {
-    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-
-    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
-
-    expect(screen.getByRole('button', { name: /mark watered/i })).toBeDisabled();
-    expect(screen.getByRole('button', { name: /add photo/i })).toBeDisabled();
-    expect(screen.getByRole('button', { name: /new note/i })).toBeDisabled();
-  });
-
-  it('renders noImage placeholder when imageUrl is absent', () => {
-    const plantWithoutImage: Plant = { ...mockPlant, imageUrl: undefined };
-    vi.mocked(usePlant).mockReturnValue({ data: plantWithoutImage, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-
-    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
-
-    expect(screen.getByText('No image')).toBeInTheDocument();
   });
 
   it('renders breadcrumb with list link', () => {

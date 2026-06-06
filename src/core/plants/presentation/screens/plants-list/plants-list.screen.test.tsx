@@ -74,6 +74,18 @@ const dict = {
       pests: { title: 'Pest tracking', inProgress: 'Coming soon' },
     },
   },
+  plantDetail: {
+    actions: {
+      markWatered: 'Mark watered',
+      addPhoto: 'Add photo',
+      newNote: 'New note',
+    },
+    qr: {
+      label: 'ETIQUETA · QR',
+      hint: 'Print and stick on the pot',
+      downloadPdf: 'Download PDF',
+    },
+  },
 };
 
 describe('PlantsListScreen', () => {
