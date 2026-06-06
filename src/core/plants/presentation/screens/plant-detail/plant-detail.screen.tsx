@@ -2,13 +2,14 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Droplets, Camera, StickyNote } from 'lucide-react';
+import { Droplets, Camera, StickyNote, Sun, Shovel, Scissors } from 'lucide-react';
 import { Button } from '@/shared/presentation/components/ui/button';
 import { Card, CardContent } from '@/shared/presentation/components/ui/card';
 import { Chip } from '@/shared/presentation/components/ui/chip';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/presentation/components/ui/tabs';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
-import { PlantSectionPlaceholder } from '@/core/plants/presentation/components/plant-section-placeholder/plant-section-placeholder';
+import { CareCard } from '@/core/plants/presentation/components/care-card/care-card';
+import { GrowthTimeline } from '@/core/plants/presentation/components/growth-timeline/growth-timeline';
 import { usePlant } from '@/core/plants/presentation/hooks/use-plant/use-plant.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
@@ -193,12 +194,63 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
           </TabsList>
 
           <TabsContent value="care">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-              <PlantSectionPlaceholder title={dict.detail.sections.care.title} inProgress={dict.detail.sections.care.inProgress} />
-              <PlantSectionPlaceholder title={dict.detail.sections.cycle.title} inProgress={dict.detail.sections.cycle.inProgress} />
-              <PlantSectionPlaceholder title={dict.detail.sections.photoHistory.title} inProgress={dict.detail.sections.photoHistory.inProgress} />
-              <PlantSectionPlaceholder title={dict.detail.sections.pests.title} inProgress={dict.detail.sections.pests.inProgress} />
-            </div>
+            {(() => {
+              const careData = [
+                {
+                  icon: <Droplets className="w-4 h-4" />,
+                  label: dict.detail.care.wateringLabel,
+                  labelVariant: 'forest' as const,
+                  title: dict.detail.care.wateringTitle,
+                  description: dict.detail.care.wateringDesc,
+                },
+                {
+                  icon: <Sun className="w-4 h-4" />,
+                  label: dict.detail.care.sunLabel,
+                  labelVariant: 'honey' as const,
+                  title: dict.detail.care.sunTitle,
+                  description: dict.detail.care.sunDesc,
+                },
+                {
+                  icon: <Shovel className="w-4 h-4" />,
+                  label: dict.detail.care.soilLabel,
+                  labelVariant: 'terra' as const,
+                  title: dict.detail.care.soilTitle,
+                  description: dict.detail.care.soilDesc,
+                },
+                {
+                  icon: <Scissors className="w-4 h-4" />,
+                  label: dict.detail.care.pruningLabel,
+                  labelVariant: 'sage' as const,
+                  title: dict.detail.care.pruningTitle,
+                  description: dict.detail.care.pruningDesc,
+                },
+              ];
+
+              const growthStages = [
+                { name: dict.detail.cycle.seedStage, daysStart: 0, daysEnd: 14, color: 'var(--sage)' },
+                { name: dict.detail.cycle.seedlingStage, daysStart: 14, daysEnd: 28, color: 'var(--forest)' },
+                { name: dict.detail.cycle.vegetativeStage, daysStart: 28, daysEnd: 45, color: 'var(--honey)' },
+                { name: dict.detail.cycle.fruitingStage, daysStart: 45, daysEnd: 64, color: 'var(--terracotta)' },
+              ];
+
+              return (
+                <>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {careData.map((care, i) => (
+                      <CareCard key={i} {...care} />
+                    ))}
+                  </div>
+                  <div className="mt-6">
+                    <h3 className="eyebrow mb-3">{dict.detail.cycle.title}</h3>
+                    <GrowthTimeline
+                      stages={growthStages}
+                      currentDay={36}
+                      totalDays={64}
+                    />
+                  </div>
+                </>
+              );
+            })()}
           </TabsContent>
         </Tabs>
       </div>

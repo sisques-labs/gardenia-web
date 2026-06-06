@@ -73,6 +73,27 @@ const dict = {
       photoHistory: { title: 'Photo history', inProgress: 'Coming soon' },
       pests: { title: 'Pest tracking', inProgress: 'Coming soon' },
     },
+    care: {
+      wateringLabel: 'WATERING',
+      wateringTitle: 'Every day · 250 ml',
+      wateringDesc: 'Reduce to 200ml when flowering. Deep, infrequent.',
+      sunLabel: 'SUN',
+      sunTitle: '6–8 h direct',
+      sunDesc: 'Face south. Heat tolerant but shade above 35°C.',
+      soilLabel: 'SOIL',
+      soilTitle: 'Rich, drained · pH 6.0–6.8',
+      soilDesc: 'Add compost every 3 weeks. Stake from day 21.',
+      pruningLabel: 'PRUNING',
+      pruningTitle: 'Remove suckers',
+      pruningDesc: 'Once a week. Lower leaves after first flowering.',
+    },
+    cycle: {
+      title: 'CYCLE · 64 DAYS',
+      seedStage: 'Seed',
+      seedlingStage: 'Seedling',
+      vegetativeStage: 'Vegetative',
+      fruitingStage: 'Fruiting',
+    },
   },
   plantDetail: {
     actions: {
