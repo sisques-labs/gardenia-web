@@ -1,7 +1,24 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.13.1-alpha.0] - 2026-06-06
+
+### Bug Fixes
+- **plants:** Correct testids (plant-qr-card, qr-download-btn, plant-action-bar, care-grid) (34f9b34)
+- **plants:** 2-column layout for Cuidados tab — care+cycle left, photo+pests right (9758028)
+- **screen-header:** Move BreadcrumbSeparator outside BreadcrumbItem to fix li-in-li hydration error (597ac88)
+
+### Chore
+- **openspec:** Archive plant-detail-redesign change — 2026-06-06 (637d298)
+
+### Features
+- **plants:** Redesign plant-detail header with 3-column layout (3ccf45e)
+- **plants:** Add CareCard + GrowthTimeline + wire Cuidados tab (cd3b6d6)
+- **plants:** Wire remaining tabs with InDevelopment + remove PlantSectionPlaceholder (aae5991)
 ## [0.13.0-alpha.0] - 2026-06-06
+
+### Chore
+- Release v0.13.0-alpha.0 (66da5c5)
 
 ### Features
 - **openspec:** Propose calendar-tasks-screen change (3af8a8f)
