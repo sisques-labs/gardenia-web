@@ -46,6 +46,9 @@ const dict = {
     tabs: {
       care: 'Cuidados',
       calendar: 'Calendario',
+      diary: 'Diario',
+      harvests: 'Cosechas',
+      pests: 'Plagas',
       associations: 'Asociaciones',
     },
     sections: {
@@ -53,6 +56,33 @@ const dict = {
       cycle: { title: 'Ciclo de crecimiento', inProgress: 'Próximamente' },
       photoHistory: { title: 'Historial fotográfico', inProgress: 'Próximamente' },
       pests: { title: 'Control de plagas', inProgress: 'Próximamente' },
+    },
+    care: {
+      wateringLabel: 'RIEGO',
+      wateringTitle: 'Cada día · 250 ml',
+      wateringDesc: 'Reduce a 200ml en floración. Profundo, raras veces.',
+      sunLabel: 'SOL',
+      sunTitle: '6–8 h directo',
+      sunDesc: 'Orienta hacia el sur. Tolerante a calor pero pajas a 35°C.',
+      soilLabel: 'SUELO',
+      soilTitle: 'Rico, drenado · pH 6.0–6.8',
+      soilDesc: 'Aporta compost cada 3 semanas. Tutorear desde el día 21.',
+      pruningLabel: 'PODA',
+      pruningTitle: 'Quitar chupones',
+      pruningDesc: 'Una vez por semana. Hojas bajas tras primera floración.',
+    },
+    cycle: {
+      title: 'CICLO · 64 DÍAS',
+      seedStage: 'Semilla',
+      seedlingStage: 'Plántula',
+      vegetativeStage: 'Vegetativa',
+      fruitingStage: 'Fructificación',
+    },
+    photoHistory: {
+      title: 'HISTORIAL FOTOGRÁFICO',
+    },
+    pestTracking: {
+      title: 'PLAGAS · SEGUIMIENTO',
     },
   },
 } as const satisfies PlantsDictTranslated;

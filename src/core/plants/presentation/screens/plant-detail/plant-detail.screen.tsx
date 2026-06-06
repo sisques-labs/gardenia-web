@@ -2,13 +2,15 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { Droplets, Camera, StickyNote } from 'lucide-react';
+import { Droplets, Camera, StickyNote, Sun, Shovel, Scissors } from 'lucide-react';
 import { Button } from '@/shared/presentation/components/ui/button';
 import { Card, CardContent } from '@/shared/presentation/components/ui/card';
 import { Chip } from '@/shared/presentation/components/ui/chip';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/presentation/components/ui/tabs';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
-import { PlantSectionPlaceholder } from '@/core/plants/presentation/components/plant-section-placeholder/plant-section-placeholder';
+import { CareCard } from '@/core/plants/presentation/components/care-card/care-card';
+import { GrowthTimeline } from '@/core/plants/presentation/components/growth-timeline/growth-timeline';
+import { InDevelopment } from '@/shared/presentation/components/in-development/in-development';
 import { usePlant } from '@/core/plants/presentation/hooks/use-plant/use-plant.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
@@ -119,7 +121,7 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
             </div>
 
             {/* Action bar */}
-            <div className="flex flex-wrap gap-2">
+            <div data-testid="plant-action-bar" className="flex flex-wrap gap-2">
               <Button
                 variant="default"
                 size="sm"
@@ -149,7 +151,7 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
 
           {/* Right column — QR Card */}
           {plant.qr && (
-            <Card data-testid="qr-card">
+            <Card data-testid="plant-qr-card">
               <CardContent className="flex flex-col gap-3 pt-6">
                 <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {dict.detail.qr.label}
@@ -174,7 +176,7 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
                   disabled
                   variant="ghost"
                   size="sm"
-                  data-testid="btn-download-pdf"
+                  data-testid="qr-download-btn"
                   className="text-xs text-[var(--forest)] w-full"
                 >
                   {dict.detail.qr.download}
@@ -188,17 +190,105 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
         <Tabs defaultValue="care">
           <TabsList variant="line" className="w-full justify-start border-b rounded-none h-auto pb-0">
             <TabsTrigger value="care">{dict.detail.tabs.care}</TabsTrigger>
-            <TabsTrigger value="calendar" disabled>{dict.detail.tabs.calendar}</TabsTrigger>
-            <TabsTrigger value="associations" disabled>{dict.detail.tabs.associations}</TabsTrigger>
+            <TabsTrigger value="calendar">{dict.detail.tabs.calendar}</TabsTrigger>
+            <TabsTrigger value="diary">{dict.detail.tabs.diary}</TabsTrigger>
+            <TabsTrigger value="harvests">{dict.detail.tabs.harvests}</TabsTrigger>
+            <TabsTrigger value="pests">{dict.detail.tabs.pests}</TabsTrigger>
+            <TabsTrigger value="associations">{dict.detail.tabs.associations}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="care">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
-              <PlantSectionPlaceholder title={dict.detail.sections.care.title} inProgress={dict.detail.sections.care.inProgress} />
-              <PlantSectionPlaceholder title={dict.detail.sections.cycle.title} inProgress={dict.detail.sections.cycle.inProgress} />
-              <PlantSectionPlaceholder title={dict.detail.sections.photoHistory.title} inProgress={dict.detail.sections.photoHistory.inProgress} />
-              <PlantSectionPlaceholder title={dict.detail.sections.pests.title} inProgress={dict.detail.sections.pests.inProgress} />
-            </div>
+            {(() => {
+              const careData = [
+                {
+                  icon: <Droplets className="w-4 h-4" />,
+                  label: dict.detail.care.wateringLabel,
+                  labelVariant: 'forest' as const,
+                  title: dict.detail.care.wateringTitle,
+                  description: dict.detail.care.wateringDesc,
+                },
+                {
+                  icon: <Sun className="w-4 h-4" />,
+                  label: dict.detail.care.sunLabel,
+                  labelVariant: 'honey' as const,
+                  title: dict.detail.care.sunTitle,
+                  description: dict.detail.care.sunDesc,
+                },
+                {
+                  icon: <Shovel className="w-4 h-4" />,
+                  label: dict.detail.care.soilLabel,
+                  labelVariant: 'terra' as const,
+                  title: dict.detail.care.soilTitle,
+                  description: dict.detail.care.soilDesc,
+                },
+                {
+                  icon: <Scissors className="w-4 h-4" />,
+                  label: dict.detail.care.pruningLabel,
+                  labelVariant: 'sage' as const,
+                  title: dict.detail.care.pruningTitle,
+                  description: dict.detail.care.pruningDesc,
+                },
+              ];
+
+              const growthStages = [
+                { name: dict.detail.cycle.seedStage, daysStart: 0, daysEnd: 14, color: 'var(--sage)' },
+                { name: dict.detail.cycle.seedlingStage, daysStart: 14, daysEnd: 28, color: 'var(--forest)' },
+                { name: dict.detail.cycle.vegetativeStage, daysStart: 28, daysEnd: 45, color: 'var(--honey)' },
+                { name: dict.detail.cycle.fruitingStage, daysStart: 45, daysEnd: 64, color: 'var(--terracotta)' },
+              ];
+
+              return (
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6">
+                  {/* Left: care cards + cycle */}
+                  <div className="lg:col-span-2 flex flex-col gap-6">
+                    <div data-testid="care-grid" className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {careData.map((care, i) => (
+                        <CareCard key={i} {...care} />
+                      ))}
+                    </div>
+                    <div>
+                      <p className="eyebrow mb-3">{dict.detail.cycle.title}</p>
+                      <GrowthTimeline
+                        stages={growthStages}
+                        currentDay={36}
+                        totalDays={64}
+                      />
+                    </div>
+                  </div>
+                  {/* Right: photo history + pest tracking */}
+                  <div className="flex flex-col gap-6">
+                    <div>
+                      <p className="eyebrow mb-3">{dict.detail.photoHistory.title}</p>
+                      <InDevelopment />
+                    </div>
+                    <div>
+                      <p className="eyebrow mb-3">{dict.detail.pestTracking.title}</p>
+                      <InDevelopment />
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </TabsContent>
+
+          <TabsContent value="calendar">
+            <InDevelopment />
+          </TabsContent>
+
+          <TabsContent value="diary">
+            <InDevelopment />
+          </TabsContent>
+
+          <TabsContent value="harvests">
+            <InDevelopment />
+          </TabsContent>
+
+          <TabsContent value="pests">
+            <InDevelopment />
+          </TabsContent>
+
+          <TabsContent value="associations">
+            <InDevelopment />
           </TabsContent>
         </Tabs>
       </div>
