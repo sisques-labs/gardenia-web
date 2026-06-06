@@ -1,6 +1,7 @@
 'use client';
 
 import { cn } from '@/shared/lib/utils';
+import { Button } from '@/shared/presentation/components/ui/button';
 
 type Props = {
   day: number | null;
@@ -22,21 +23,19 @@ export function CalendarCell({ day, isToday, isSelected, onSelect }: Props) {
         !isToday && 'bg-[var(--paper)]',
       )}
     >
-      <button
-        type="button"
+      <Button
+        variant="ghost"
         aria-selected={isSelected}
         aria-label={`Día ${day}`}
         onClick={() => onSelect(day)}
         className={cn(
-          'w-full h-full min-h-16 p-1.5 text-left rounded-sm transition-shadow',
+          'w-full h-full min-h-16 p-1.5 justify-start rounded-sm transition-shadow',
           isSelected && 'ring-2 ring-[var(--forest)] ring-inset',
-          isToday
-            ? 'text-[var(--honey-2)] font-semibold'
-            : 'text-[var(--ink)]',
+          isToday ? 'text-[var(--honey-2)] font-semibold' : 'text-[var(--ink)]',
         )}
       >
         <span className="text-sm leading-none">{day}</span>
-      </button>
+      </Button>
     </div>
   );
 }

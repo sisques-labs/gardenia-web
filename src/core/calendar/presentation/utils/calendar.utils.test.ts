@@ -1,5 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { getDaysInMonth, getFirstDayOffset, toISODate, getSeason } from './calendar.utils';
+import { getDaysInMonth } from './get-days-in-month/get-days-in-month.util';
+import { getFirstDayOffset } from './get-first-day-offset/get-first-day-offset.util';
+import { toISODate } from './to-iso-date/to-iso-date.util';
+import { getSeason } from './get-season/get-season.util';
 
 describe('getDaysInMonth', () => {
   it('returns 28 for Feb 2026 (non-leap)', () => {

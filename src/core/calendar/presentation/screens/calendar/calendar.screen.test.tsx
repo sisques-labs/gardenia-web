@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CalendarScreen } from './calendar.screen';
 import { useCalendarStore } from '../../../infrastructure/store/calendar.store';
-import { toISODate } from '../../utils/calendar.utils';
+import { toISODate } from '../../utils/to-iso-date/to-iso-date.util';
 
 vi.mock('../../components/calendar-grid/calendar-grid', () => ({
   CalendarGrid: (props: Record<string, unknown>) => (

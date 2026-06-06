@@ -1,7 +1,8 @@
 'use client';
 
 import { InDevelopment } from '@/shared/presentation/components/in-development/in-development';
-import { toISODate } from '../../utils/calendar.utils';
+import { toISODate } from '../../utils/to-iso-date/to-iso-date.util';
+import { MONTH_NAMES } from '../../../domain/constants/month-names.constant';
 
 type Dict = {
   todayPrefix: string;
@@ -11,11 +12,6 @@ type Dict = {
 type Props = {
   selectedDate: string;
   dict: Dict;
-};
-
-const MONTH_NAMES: Record<number, string> = {
-  0: 'ene', 1: 'feb', 2: 'mar', 3: 'abr', 4: 'may', 5: 'jun',
-  6: 'jul', 7: 'ago', 8: 'sep', 9: 'oct', 10: 'nov', 11: 'dic',
 };
 
 export function DayTasksPanel({ selectedDate, dict }: Props) {

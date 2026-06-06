@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from 'vitest';
 import { useCalendarStore } from './calendar.store';
-import { toISODate } from '../../presentation/utils/calendar.utils';
+import { toISODate } from '../../presentation/utils/to-iso-date/to-iso-date.util';
 
 const today = new Date();
 

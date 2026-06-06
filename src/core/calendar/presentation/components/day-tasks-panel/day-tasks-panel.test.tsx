@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { DayTasksPanel } from './day-tasks-panel';
-import { toISODate } from '../../utils/calendar.utils';
+import { toISODate } from '../../utils/to-iso-date/to-iso-date.util';
 
 vi.mock('@/shared/presentation/components/in-development/in-development', () => ({
   InDevelopment: ({ label }: { label?: string }) => (

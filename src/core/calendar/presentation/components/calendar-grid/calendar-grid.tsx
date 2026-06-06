@@ -1,26 +1,15 @@
 'use client';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { getDaysInMonth, getFirstDayOffset, toISODate, getSeason } from '../../utils/calendar.utils';
+import { Button } from '@/shared/presentation/components/ui/button';
+import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
+import { getSeason } from '../../utils/get-season/get-season.util';
+import { MONTH_KEYS } from '../../../domain/constants/month-keys.constant';
+import { SEASON_KEYS } from '../../../domain/constants/season-keys.constant';
+import { WEEKDAY_KEYS } from '../../../domain/constants/weekday-keys.constant';
+import { useCalendarGrid } from '../../hooks/use-calendar-grid/use-calendar-grid.hook';
 import { CalendarCell } from '../calendar-cell/calendar-cell';
 import { CalendarViewSwitcher } from '../calendar-view-switcher/calendar-view-switcher';
-
-type WeekdayDict = { mon: string; tue: string; wed: string; thu: string; fri: string; sat: string; sun: string };
-type SeasonsDict = { spring: string; summer: string; autumn: string; winter: string };
-type MonthsDict = {
-  january: string; february: string; march: string; april: string;
-  may: string; june: string; july: string; august: string;
-  september: string; october: string; november: string; december: string;
-};
-type ViewSwitcherDict = { day: string; week: string; month: string; year: string };
-
-type GridDict = {
-  weekdays: WeekdayDict;
-  seasons: SeasonsDict;
-  months: MonthsDict;
-  overflow: string;
-  viewSwitcher: ViewSwitcherDict;
-};
 
 type Props = {
   year: number;
@@ -29,22 +18,8 @@ type Props = {
   onSelectDate: (iso: string) => void;
   onPrevMonth: () => void;
   onNextMonth: () => void;
-  dict: GridDict;
+  dict: AppDict['calendar']['grid'];
 };
-
-const MONTH_KEYS: (keyof MonthsDict)[] = [
-  'january', 'february', 'march', 'april', 'may', 'june',
-  'july', 'august', 'september', 'october', 'november', 'december',
-];
-
-const SEASON_KEYS: Record<ReturnType<typeof getSeason>, keyof SeasonsDict> = {
-  primavera: 'spring',
-  verano: 'summer',
-  otoño: 'autumn',
-  invierno: 'winter',
-};
-
-const WEEKDAY_KEYS: (keyof WeekdayDict)[] = ['mon', 'tue', 'wed', 'thu', 'fri', 'sat', 'sun'];
 
 export function CalendarGrid({
   year,
@@ -55,28 +30,14 @@ export function CalendarGrid({
   onNextMonth,
   dict,
 }: Props) {
-  const todayISO = toISODate(new Date());
-  const daysInMonth = getDaysInMonth(year, month);
-  const offset = getFirstDayOffset(year, month);
-
-  const cells: (number | null)[] = [
-    ...Array<null>(offset).fill(null),
-    ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
-  ];
+  const { cells, todayISO, handleSelectDay } = useCalendarGrid({ year, month, onSelectDate });
 
   const season = getSeason(month);
   const monthName = dict.months[MONTH_KEYS[month]];
   const seasonLabel = dict.seasons[SEASON_KEYS[season]];
 
-  function handleSelectDay(day: number) {
-    const m = String(month + 1).padStart(2, '0');
-    const d = String(day).padStart(2, '0');
-    onSelectDate(`${year}-${m}-${d}`);
-  }
-
   return (
     <div className="flex flex-col gap-4">
-      {/* Header row */}
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-baseline gap-2">
           <span className="headline">{monthName}</span>
@@ -86,26 +47,15 @@ export function CalendarGrid({
 
         <div className="flex items-center gap-2">
           <CalendarViewSwitcher activeView="month" dict={dict.viewSwitcher} />
-          <button
-            type="button"
-            aria-label="Mes anterior"
-            onClick={onPrevMonth}
-            className="btn-reset rounded p-1 text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[var(--paper-2)] transition-colors"
-          >
+          <Button variant="ghost" size="icon" aria-label="Mes anterior" onClick={onPrevMonth}>
             <ChevronLeft size={18} />
-          </button>
-          <button
-            type="button"
-            aria-label="Mes siguiente"
-            onClick={onNextMonth}
-            className="btn-reset rounded p-1 text-[var(--ink-3)] hover:text-[var(--ink)] hover:bg-[var(--paper-2)] transition-colors"
-          >
+          </Button>
+          <Button variant="ghost" size="icon" aria-label="Mes siguiente" onClick={onNextMonth}>
             <ChevronRight size={18} />
-          </button>
+          </Button>
         </div>
       </div>
 
-      {/* Grid */}
       <div role="grid" className="flex flex-col gap-px">
         <div role="row" className="grid grid-cols-7 gap-px">
           {WEEKDAY_KEYS.map((key) => (
