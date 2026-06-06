@@ -5,28 +5,6 @@ import { CalendarGrid } from './calendar-grid';
 
 const dict = {
   weekdays: { mon: 'L', tue: 'M', wed: 'X', thu: 'J', fri: 'V', sat: 'S', sun: 'D' },
-  seasons: {
-    spring: 'primavera',
-    summer: 'verano',
-    autumn: 'otoño',
-    winter: 'invierno',
-  },
-  overflow: 'más',
-  months: {
-    january: 'Enero',
-    february: 'Febrero',
-    march: 'Marzo',
-    april: 'Abril',
-    may: 'Mayo',
-    june: 'Junio',
-    july: 'Julio',
-    august: 'Agosto',
-    september: 'Septiembre',
-    october: 'Octubre',
-    november: 'Noviembre',
-    december: 'Diciembre',
-  },
-  viewSwitcher: { day: 'Día', week: 'Semana', month: 'Mes', year: 'Año' },
 };
 
 const baseProps = {
@@ -34,8 +12,6 @@ const baseProps = {
   month: 4, // May
   selectedDate: '2026-05-10',
   onSelectDate: vi.fn(),
-  onPrevMonth: vi.fn(),
-  onNextMonth: vi.fn(),
   dict,
 };
 
@@ -49,7 +25,6 @@ describe('CalendarGrid', () => {
 
   it('renders 31 day buttons for May 2026', () => {
     render(<CalendarGrid {...baseProps} />);
-    // days 1-31 as buttons
     const dayButtons = screen.getAllByRole('button', { name: /^Día \d+$/ });
     expect(dayButtons).toHaveLength(31);
   });
@@ -80,30 +55,5 @@ describe('CalendarGrid', () => {
     render(<CalendarGrid {...baseProps} onSelectDate={onSelectDate} />);
     await userEvent.click(screen.getByRole('button', { name: 'Día 15' }));
     expect(onSelectDate).toHaveBeenCalledWith('2026-05-15');
-  });
-
-  it('prev-month button fires onPrevMonth', async () => {
-    const onPrevMonth = vi.fn();
-    render(<CalendarGrid {...baseProps} onPrevMonth={onPrevMonth} />);
-    await userEvent.click(screen.getByRole('button', { name: /mes anterior/i }));
-    expect(onPrevMonth).toHaveBeenCalledOnce();
-  });
-
-  it('next-month button fires onNextMonth', async () => {
-    const onNextMonth = vi.fn();
-    render(<CalendarGrid {...baseProps} onNextMonth={onNextMonth} />);
-    await userEvent.click(screen.getByRole('button', { name: /mes siguiente/i }));
-    expect(onNextMonth).toHaveBeenCalledOnce();
-  });
-
-  it('header contains month name and year', () => {
-    render(<CalendarGrid {...baseProps} />);
-    expect(screen.getByText(/Mayo/)).toBeInTheDocument();
-    expect(screen.getByText(/2026/)).toBeInTheDocument();
-  });
-
-  it('header contains a season label', () => {
-    render(<CalendarGrid {...baseProps} />);
-    expect(screen.getByText(/primavera/i)).toBeInTheDocument();
   });
 });

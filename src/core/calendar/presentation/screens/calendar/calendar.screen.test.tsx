@@ -7,8 +7,6 @@ import { toISODate } from '../../utils/to-iso-date/to-iso-date.util';
 vi.mock('../../components/calendar-grid/calendar-grid', () => ({
   CalendarGrid: (props: Record<string, unknown>) => (
     <div data-testid="calendar-grid-mock">
-      <button onClick={() => (props.onPrevMonth as () => void)()}>prev</button>
-      <button onClick={() => (props.onNextMonth as () => void)()}>next</button>
       <button onClick={() => (props.onSelectDate as (iso: string) => void)('2026-07-04')}>select</button>
       <span data-testid="grid-year">{String(props.year)}</span>
       <span data-testid="grid-month">{String(props.month)}</span>
@@ -25,8 +23,8 @@ vi.mock('../../components/day-tasks-panel/day-tasks-panel', () => ({
   ),
 }));
 
-vi.mock('@/shared/presentation/components/screen-header/screen-header', () => ({
-  ScreenHeader: ({ title }: { title: string }) => <h1>{title}</h1>,
+vi.mock('../../components/calendar-view-switcher/calendar-view-switcher', () => ({
+  CalendarViewSwitcher: () => <div data-testid="view-switcher-mock" />,
 }));
 
 const today = new Date();
@@ -53,22 +51,32 @@ const dict = {
 beforeEach(() => {
   useCalendarStore.setState({
     selectedDate: todayISO,
-    currentYear: today.getFullYear(),
-    currentMonth: today.getMonth(),
+    currentYear: 2026,
+    currentMonth: 4, // May
   });
 });
 
 describe('CalendarScreen', () => {
-  it('renders ScreenHeader with the calendar title', () => {
+  it('renders PageHeader with the screen title in eyebrow', () => {
     render(<CalendarScreen dict={dict} />);
-    expect(screen.getByText('Calendario')).toBeInTheDocument();
+    expect(screen.getByText(/Calendario/)).toBeInTheDocument();
+  });
+
+  it('renders PageHeader title with month and year', () => {
+    render(<CalendarScreen dict={dict} />);
+    expect(screen.getByRole('heading', { name: /Mayo 2026/ })).toBeInTheDocument();
+  });
+
+  it('renders PageHeader subtitle with season', () => {
+    render(<CalendarScreen dict={dict} />);
+    expect(screen.getByText(/primavera/i)).toBeInTheDocument();
   });
 
   it('renders CalendarGrid with store year, month and selectedDate', () => {
     render(<CalendarScreen dict={dict} />);
     expect(screen.getByTestId('calendar-grid-mock')).toBeInTheDocument();
-    expect(screen.getByTestId('grid-year').textContent).toBe(String(today.getFullYear()));
-    expect(screen.getByTestId('grid-month').textContent).toBe(String(today.getMonth()));
+    expect(screen.getByTestId('grid-year').textContent).toBe('2026');
+    expect(screen.getByTestId('grid-month').textContent).toBe('4');
     expect(screen.getByTestId('grid-selected').textContent).toBe(todayISO);
   });
 
@@ -78,17 +86,17 @@ describe('CalendarScreen', () => {
     expect(screen.getByTestId('panel-selected').textContent).toBe(todayISO);
   });
 
-  it('onPrevMonth callback calls store prevMonth', async () => {
+  it('prev-month button calls store prevMonth', async () => {
     const spy = vi.spyOn(useCalendarStore.getState(), 'prevMonth');
     render(<CalendarScreen dict={dict} />);
-    screen.getByText('prev').click();
+    screen.getByRole('button', { name: /mes anterior/i }).click();
     expect(spy).toHaveBeenCalledOnce();
   });
 
-  it('onNextMonth callback calls store nextMonth', async () => {
+  it('next-month button calls store nextMonth', async () => {
     const spy = vi.spyOn(useCalendarStore.getState(), 'nextMonth');
     render(<CalendarScreen dict={dict} />);
-    screen.getByText('next').click();
+    screen.getByRole('button', { name: /mes siguiente/i }).click();
     expect(spy).toHaveBeenCalledOnce();
   });
 
