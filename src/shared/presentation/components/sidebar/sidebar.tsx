@@ -4,15 +4,17 @@ import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { ChevronLeft, ChevronRight, Leaf } from 'lucide-react';
 import { useSidebarStore } from '@/shared/infrastructure/store/sidebar/sidebar.store';
+import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import { NAV_ITEMS } from '../sidebar-nav-items/nav-items';
 import { NavItem } from '../sidebar-nav-items/nav-item';
 import { SpaceSwitcher } from '../space-switcher/space-switcher';
 
 interface SidebarProps {
   inDrawer?: boolean;
+  dict: AppDict['shell'];
 }
 
-export function Sidebar({ inDrawer = false }: SidebarProps) {
+export function Sidebar({ inDrawer = false, dict }: SidebarProps) {
   const { collapsed, toggleCollapsed, closeDrawer } = useSidebarStore();
   const pathname = usePathname();
   const locale = pathname?.split('/')[1] ?? 'en';
@@ -46,6 +48,7 @@ export function Sidebar({ inDrawer = false }: SidebarProps) {
             <NavItem
               key={item.href}
               item={{ ...item, href: resolvedHref }}
+              label={dict.nav[item.key]}
               collapsed={collapsed}
               active={active}
               onClick={closeDrawer}
@@ -56,14 +59,14 @@ export function Sidebar({ inDrawer = false }: SidebarProps) {
 
       {/* Active space */}
       <div className="border-t border-[var(--rule)]">
-        <SpaceSwitcher />
+        <SpaceSwitcher dict={dict.spaceSwitcher} />
       </div>
 
       {/* Collapse toggle */}
       <div className="border-t border-[var(--rule)] p-2">
         <button
           onClick={toggleCollapsed}
-          aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          aria-label={collapsed ? dict.sidebar.expand : dict.sidebar.collapse}
           className="w-full flex items-center justify-center p-2 rounded-md hover:bg-[var(--forest-bg)] hover:text-[var(--forest)] text-[var(--ink)]/60 transition-colors"
         >
           {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}

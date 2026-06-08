@@ -13,6 +13,12 @@ vi.mock('@/core/spaces/infrastructure/store/spaces.store', () => ({
 
 import { useSpaces } from '@/core/spaces/presentation/hooks/use-spaces/useSpaces.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
+import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
+
+const spaceSwitcherDict: AppDict['shell']['spaceSwitcher'] = {
+  activeSpaceLabel: 'Active garden',
+  switchSpace: 'Switch space',
+};
 
 const mockSpaces = [
   { id: 'space-1', name: 'Design Team', ownerId: 'user-1', createdAt: '2026-01-01' },
@@ -40,20 +46,20 @@ describe('SpaceSwitcher', () => {
   });
 
   it('renders the current space name', () => {
-    render(<SpaceSwitcher />);
+    render(<SpaceSwitcher dict={spaceSwitcherDict} />);
     const currentSpanElements = screen.getAllByText('Design Team');
     expect(currentSpanElements.length).toBeGreaterThan(0);
     expect(currentSpanElements[0]).toBeInTheDocument();
   });
 
   it('renders space switcher container', () => {
-    render(<SpaceSwitcher />);
+    render(<SpaceSwitcher dict={spaceSwitcherDict} />);
     expect(screen.getByTestId('space-switcher')).toBeInTheDocument();
   });
 
   it('hides name when sidebar is collapsed', () => {
     useSidebarStore.setState({ collapsed: true });
-    render(<SpaceSwitcher />);
+    render(<SpaceSwitcher dict={spaceSwitcherDict} />);
     expect(screen.getByTestId('space-switcher')).toBeInTheDocument();
     expect(screen.queryByText('Design Team')).not.toBeInTheDocument();
   });
@@ -63,7 +69,7 @@ describe('SpaceSwitcher', () => {
       selector(makeStoreState({ availableSpaces: [], currentSpaceId: null }))
     );
     vi.mocked(useSpaces).mockReturnValue({ data: [] } as unknown as ReturnType<typeof useSpaces>);
-    render(<SpaceSwitcher />);
+    render(<SpaceSwitcher dict={spaceSwitcherDict} />);
     expect(screen.queryByText('Design Team')).not.toBeInTheDocument();
   });
 });

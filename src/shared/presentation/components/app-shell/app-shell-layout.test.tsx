@@ -7,6 +7,25 @@ import { render, screen } from '@testing-library/react';
 import { vi } from 'vitest';
 import { useSidebarStore } from '@/shared/infrastructure/store/sidebar/sidebar.store';
 import { AppShell } from './app-shell';
+import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
+
+const shellDict: AppDict['shell'] = {
+  openNavigation: 'Open navigation',
+  sidebar: { expand: 'Expand sidebar', collapse: 'Collapse sidebar' },
+  spaceSwitcher: { activeSpaceLabel: 'Active garden', switchSpace: 'Switch space' },
+  nav: {
+    home: 'Home',
+    spaces: 'Spaces',
+    map: 'Map',
+    inventory: 'Inventory',
+    calendar: 'Calendar',
+    journal: 'Journal',
+    harvests: 'Harvests',
+    pests: 'Pests',
+    community: 'Community',
+    profile: 'Profile',
+  },
+};
 
 vi.mock('../sidebar/sidebar', () => ({
   Sidebar: () => <div data-testid="sidebar-mock" />,
@@ -19,7 +38,7 @@ beforeEach(() => {
 describe('AppShell layout integration', () => {
   it('renders AppShell wrapping page content', () => {
     render(
-      <AppShell>
+      <AppShell dict={shellDict}>
         <div data-testid="page-content">Hello</div>
       </AppShell>,
     );
@@ -30,7 +49,7 @@ describe('AppShell layout integration', () => {
 
   it('main content area contains the page children', () => {
     render(
-      <AppShell>
+      <AppShell dict={shellDict}>
         <span data-testid="child">Child content</span>
       </AppShell>,
     );

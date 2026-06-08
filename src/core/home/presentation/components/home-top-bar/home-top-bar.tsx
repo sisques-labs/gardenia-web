@@ -47,7 +47,7 @@ export function HomeTopBar({ dict }: Props) {
         <Button
           variant="ghost"
           size="sm"
-          aria-label="notifications"
+          aria-label={dict.topbar.notifications}
           className="p-2"
         >
           <Bell size={18} />
@@ -61,15 +61,15 @@ export function HomeTopBar({ dict }: Props) {
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Create</DropdownMenuLabel>
+            <DropdownMenuLabel>{dict.topbar.createMenu.label}</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem disabled>
               <Leaf className="h-4 w-4" />
-              New plant
+              {dict.topbar.createMenu.newPlant}
             </DropdownMenuItem>
             <DropdownMenuItem disabled>
               <BookOpen className="h-4 w-4" />
-              New journal entry
+              {dict.topbar.createMenu.newJournalEntry}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -2,31 +2,37 @@ const dict = {
   topbar: {
     search: 'Search',
     newEntry: 'New entry',
+    notifications: 'Notifications',
+    createMenu: {
+      label: 'Create',
+      newPlant: 'New plant',
+      newJournalEntry: 'New journal entry',
+    },
   },
   greeting: 'Hello',
   sections: {
     todayTasks: {
       title: "Today's tasks",
-      inProgress: 'En desarrollo',
+      inProgress: 'Coming soon',
     },
     growingNow: {
       title: 'Growing now',
-      inProgress: 'En desarrollo',
+      inProgress: 'Coming soon',
     },
     miniMap: {
       title: 'Garden map',
-      inProgress: 'En desarrollo',
+      inProgress: 'Coming soon',
     },
     harvestPace: {
       title: 'Harvest pace',
-      inProgress: 'En desarrollo',
+      inProgress: 'Coming soon',
     },
     journal: {
       title: 'Journal',
-      inProgress: 'En desarrollo',
+      inProgress: 'Coming soon',
     },
   },
-  inProgress: 'En desarrollo',
+  inProgress: 'Coming soon',
 } as const;
 
 export default dict;

@@ -10,7 +10,7 @@ type Props = {
   month: number;
   selectedDate: string;
   onSelectDate: (iso: string) => void;
-  dict: Pick<AppDict['calendar']['grid'], 'weekdays'>;
+  dict: Pick<AppDict['calendar']['grid'], 'weekdays' | 'dayAriaLabel' | 'todayBadge'>;
 };
 
 export function CalendarGrid({ year, month, selectedDate, onSelectDate, dict }: Props) {
@@ -38,6 +38,7 @@ export function CalendarGrid({ year, month, selectedDate, onSelectDate, dict }: 
               isToday={iso === todayISO}
               isSelected={iso === selectedDate}
               onSelect={handleSelectDay}
+              dict={{ dayAriaLabel: dict.dayAriaLabel, todayBadge: dict.todayBadge }}
             />
           );
         })}

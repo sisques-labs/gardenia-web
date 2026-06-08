@@ -26,16 +26,16 @@ export function CalendarScreen({ dict }: Props) {
   return (
     <div className="flex flex-col h-full">
       <PageHeader
-        eyebrow={`${dict.screenTitle} · Vista mensual`}
+        eyebrow={`${dict.screenTitle} · ${dict.monthlyView}`}
         title={`${monthName} ${currentYear}`}
         subtitle={`· ${seasonLabel}`}
         actions={
           <>
             <CalendarViewSwitcher activeView="month" dict={dict.grid.viewSwitcher} />
-            <Button variant="ghost" size="icon" aria-label="Mes anterior" onClick={prevMonth}>
+            <Button variant="ghost" size="icon" aria-label={dict.navigation.prevMonth} onClick={prevMonth}>
               <ChevronLeft size={18} />
             </Button>
-            <Button variant="ghost" size="icon" aria-label="Mes siguiente" onClick={nextMonth}>
+            <Button variant="ghost" size="icon" aria-label={dict.navigation.nextMonth} onClick={nextMonth}>
               <ChevronRight size={18} />
             </Button>
             <Button
@@ -55,7 +55,11 @@ export function CalendarScreen({ dict }: Props) {
             month={currentMonth}
             selectedDate={selectedDate}
             onSelectDate={setSelectedDate}
-            dict={{ weekdays: dict.grid.weekdays }}
+            dict={{
+              weekdays: dict.grid.weekdays,
+              dayAriaLabel: dict.grid.dayAriaLabel,
+              todayBadge: dict.grid.todayBadge,
+            }}
           />
         </div>
 

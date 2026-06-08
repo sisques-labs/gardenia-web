@@ -1,22 +1,25 @@
 import { Home, LayoutGrid, Leaf, Map, Calendar, BookOpen, Wheat, Bug, Users, User } from 'lucide-react';
 import type { ElementType } from 'react';
+import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
-export interface NavItem {
-  label: string;
+export type NavItemKey = keyof AppDict['shell']['nav'];
+
+export interface NavItemConfig {
+  key: NavItemKey;
   href: string;
   icon?: ElementType;
   disabled?: boolean;
 }
 
-export const NAV_ITEMS: NavItem[] = [
-  { label: 'Home', href: '/[lang]/home', icon: Home },
-  { label: 'Spaces', href: '/[lang]/spaces', icon: LayoutGrid },
-  { label: 'Map', href: '/[lang]/map', icon: Map, disabled: true },
-  { label: 'Inventory', href: '/[lang]/plants', icon: Leaf },
-  { label: 'Calendar', href: '/[lang]/calendar', icon: Calendar },
-  { label: 'Journal', href: '/[lang]/journal', icon: BookOpen, disabled: true },
-  { label: 'Harvests', href: '/[lang]/harvests', icon: Wheat, disabled: true },
-  { label: 'Pests', href: '/[lang]/pests', icon: Bug, disabled: true },
-  { label: 'Community', href: '/[lang]/community', icon: Users, disabled: true },
-  { label: 'Profile', href: '/[lang]/profile', icon: User },
+export const NAV_ITEMS: NavItemConfig[] = [
+  { key: 'home', href: '/[lang]/home', icon: Home },
+  { key: 'spaces', href: '/[lang]/spaces', icon: LayoutGrid },
+  { key: 'map', href: '/[lang]/map', icon: Map, disabled: true },
+  { key: 'inventory', href: '/[lang]/plants', icon: Leaf },
+  { key: 'calendar', href: '/[lang]/calendar', icon: Calendar },
+  { key: 'journal', href: '/[lang]/journal', icon: BookOpen, disabled: true },
+  { key: 'harvests', href: '/[lang]/harvests', icon: Wheat, disabled: true },
+  { key: 'pests', href: '/[lang]/pests', icon: Bug, disabled: true },
+  { key: 'community', href: '/[lang]/community', icon: Users, disabled: true },
+  { key: 'profile', href: '/[lang]/profile', icon: User },
 ];

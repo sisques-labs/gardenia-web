@@ -3,13 +3,15 @@
 import type { CSSProperties, ReactNode } from 'react';
 import { Menu } from 'lucide-react';
 import { useSidebarStore } from '@/shared/infrastructure/store/sidebar/sidebar.store';
+import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import { Sidebar } from '../sidebar/sidebar';
 
 interface AppShellProps {
   children: ReactNode;
+  dict: AppDict['shell'];
 }
 
-export function AppShell({ children }: AppShellProps) {
+export function AppShell({ children, dict }: AppShellProps) {
   const { collapsed, openDrawer, drawerOpen, closeDrawer } = useSidebarStore();
   const sidebarWidth = collapsed ? '64px' : '240px';
 
@@ -25,7 +27,7 @@ export function AppShell({ children }: AppShellProps) {
             onClick={closeDrawer}
           />
           <div className="fixed inset-y-0 left-0 z-40 w-60 md:hidden">
-            <Sidebar inDrawer />
+            <Sidebar inDrawer dict={dict} />
           </div>
         </>
       )}
@@ -36,14 +38,14 @@ export function AppShell({ children }: AppShellProps) {
         style={{ '--sidebar-width': sidebarWidth } as CSSProperties}
       >
         <aside className="hidden md:block">
-          <Sidebar />
+          <Sidebar dict={dict} />
         </aside>
         <main className="overflow-y-auto paper-grain">
           {/* Mobile hamburger — only visible below md */}
           <div className="md:hidden flex items-center px-4 py-3 border-b border-[var(--rule)]">
             <button
               onClick={openDrawer}
-              aria-label="Open navigation"
+              aria-label={dict.openNavigation}
               className="p-1 rounded-md hover:bg-[var(--forest-bg)] text-[var(--ink)]"
             >
               <Menu className="w-5 h-5" />

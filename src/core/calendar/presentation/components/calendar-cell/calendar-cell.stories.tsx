@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { CalendarCell } from "./calendar-cell";
 
+const dict = { dayAriaLabel: "Día {day}", todayBadge: "hoy" };
+
 const meta = {
   title: "Calendar/CalendarCell",
   component: CalendarCell,
@@ -12,6 +14,7 @@ const meta = {
       </div>
     ),
   ],
+  args: { dict },
   argTypes: {
     day: { control: "number" },
     isToday: { control: "boolean" },
