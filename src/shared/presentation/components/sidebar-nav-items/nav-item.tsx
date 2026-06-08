@@ -1,26 +1,27 @@
 'use client';
 
 import Link from 'next/link';
-import type { NavItem as NavItemType } from './nav-items';
+import type { NavItemConfig } from './nav-items';
 
 interface NavItemProps {
-  item: NavItemType;
+  item: NavItemConfig & { href: string };
+  label: string;
   collapsed: boolean;
   active: boolean;
   onClick?: () => void;
 }
 
-export function NavItem({ item, collapsed, active, onClick }: NavItemProps) {
+export function NavItem({ item, label, collapsed, active, onClick }: NavItemProps) {
   const Icon = item.icon;
 
-  const label = (
+  const labelNode = (
     <span
       className={[
         'text-sm font-medium transition-all duration-200',
         collapsed ? 'overflow-hidden whitespace-nowrap w-0 opacity-0' : 'w-auto opacity-100',
       ].join(' ')}
     >
-      {item.label}
+      {label}
     </span>
   );
 
@@ -35,11 +36,11 @@ export function NavItem({ item, collapsed, active, onClick }: NavItemProps) {
     return (
       <div
         aria-disabled="true"
-        title={item.label}
+        title={label}
         className={[baseClass, 'opacity-40 cursor-not-allowed pointer-events-none'].join(' ')}
       >
         {Icon && <Icon className="w-5 h-5 shrink-0" />}
-        {label}
+        {labelNode}
       </div>
     );
   }
@@ -48,11 +49,11 @@ export function NavItem({ item, collapsed, active, onClick }: NavItemProps) {
     <Link
       href={item.href}
       onClick={onClick}
-      aria-label={collapsed ? item.label : undefined}
+      aria-label={collapsed ? label : undefined}
       className={[baseClass, 'hover:bg-[var(--forest-bg)] hover:text-[var(--forest)]'].join(' ')}
     >
       {Icon && <Icon className="w-5 h-5 shrink-0" />}
-      {label}
+      {labelNode}
     </Link>
   );
 }

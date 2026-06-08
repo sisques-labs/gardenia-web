@@ -48,6 +48,7 @@ export function Sidebar({ inDrawer = false, dict }: SidebarProps) {
             <NavItem
               key={item.href}
               item={{ ...item, href: resolvedHref }}
+              label={dict.nav[item.key]}
               collapsed={collapsed}
               active={active}
               onClick={closeDrawer}

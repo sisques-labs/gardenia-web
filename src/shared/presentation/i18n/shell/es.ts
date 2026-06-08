@@ -11,6 +11,18 @@ const dict = {
     activeSpaceLabel: 'Huerta activa',
     switchSpace: 'Cambiar espacio',
   },
+  nav: {
+    home: 'Inicio',
+    spaces: 'Espacios',
+    map: 'Mapa',
+    inventory: 'Inventario',
+    calendar: 'Calendario',
+    journal: 'Diario',
+    harvests: 'Cosechas',
+    pests: 'Plagas',
+    community: 'Comunidad',
+    profile: 'Perfil',
+  },
 } satisfies WidenStringLiterals<ShellDict>;
 
 export default dict;
