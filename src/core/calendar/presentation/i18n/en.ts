@@ -1,6 +1,11 @@
 const dict = {
   screenTitle: 'Calendar',
+  monthlyView: 'Monthly view',
   addTask: 'New task',
+  navigation: {
+    prevMonth: 'Previous month',
+    nextMonth: 'Next month',
+  },
   viewSwitcher: {
     day: 'Day',
     week: 'Week',
@@ -38,6 +43,8 @@ const dict = {
       december: 'December',
     },
     overflow: 'more',
+    dayAriaLabel: 'Day {day}',
+    todayBadge: 'today',
     viewSwitcher: {
       day: 'Day',
       week: 'Week',
@@ -48,6 +55,20 @@ const dict = {
   panel: {
     todayPrefix: 'Today',
     inDevLabel: 'Day tasks',
+    monthAbbreviations: {
+      january: 'Jan',
+      february: 'Feb',
+      march: 'Mar',
+      april: 'Apr',
+      may: 'May',
+      june: 'Jun',
+      july: 'Jul',
+      august: 'Aug',
+      september: 'Sep',
+      october: 'Oct',
+      november: 'Nov',
+      december: 'Dec',
+    },
   },
 } as const;
 

@@ -5,6 +5,8 @@ import { CalendarGrid } from './calendar-grid';
 
 const dict = {
   weekdays: { mon: 'L', tue: 'M', wed: 'X', thu: 'J', fri: 'V', sat: 'S', sun: 'D' },
+  dayAriaLabel: 'Día {day}',
+  todayBadge: 'hoy',
 };
 
 const baseProps = {

@@ -12,6 +12,10 @@ vi.mock('@/shared/presentation/components/in-development/in-development', () => 
 const dict = {
   todayPrefix: 'Hoy',
   inDevLabel: 'Tareas del día',
+  monthAbbreviations: {
+    january: 'ene', february: 'feb', march: 'mar', april: 'abr', may: 'may', june: 'jun',
+    july: 'jul', august: 'ago', september: 'sep', october: 'oct', november: 'nov', december: 'dic',
+  },
 };
 
 describe('DayTasksPanel — header', () => {

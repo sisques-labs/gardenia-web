@@ -32,7 +32,9 @@ const todayISO = toISODate(today);
 
 const dict = {
   screenTitle: 'Calendario',
+  monthlyView: 'Vista mensual',
   addTask: 'Nueva tarea',
+  navigation: { prevMonth: 'Mes anterior', nextMonth: 'Mes siguiente' },
   viewSwitcher: { day: 'Día', week: 'Semana', month: 'Mes', year: 'Año' },
   grid: {
     weekdays: { mon: 'L', tue: 'M', wed: 'X', thu: 'J', fri: 'V', sat: 'S', sun: 'D' },
@@ -43,9 +45,18 @@ const dict = {
       september: 'Septiembre', october: 'Octubre', november: 'Noviembre', december: 'Diciembre',
     },
     overflow: 'más',
+    dayAriaLabel: 'Día {day}',
+    todayBadge: 'hoy',
     viewSwitcher: { day: 'Día', week: 'Semana', month: 'Mes', year: 'Año' },
   },
-  panel: { todayPrefix: 'Hoy', inDevLabel: 'Tareas del día' },
+  panel: {
+    todayPrefix: 'Hoy',
+    inDevLabel: 'Tareas del día',
+    monthAbbreviations: {
+      january: 'ene', february: 'feb', march: 'mar', april: 'abr', may: 'may', june: 'jun',
+      july: 'jul', august: 'ago', september: 'sep', october: 'oct', november: 'nov', december: 'dic',
+    },
+  },
 };
 
 beforeEach(() => {

@@ -1,12 +1,13 @@
 'use client';
 
 import { InDevelopment } from '@/shared/presentation/components/in-development/in-development';
+import { MONTH_KEYS } from '../../../domain/constants/month-keys.constant';
 import { toISODate } from '../../utils/to-iso-date/to-iso-date.util';
-import { MONTH_NAMES } from '../../../domain/constants/month-names.constant';
 
 type Dict = {
   todayPrefix: string;
   inDevLabel: string;
+  monthAbbreviations: Record<(typeof MONTH_KEYS)[number], string>;
 };
 
 type Props = {
@@ -20,7 +21,7 @@ export function DayTasksPanel({ selectedDate, dict }: Props) {
 
   const date = new Date(selectedDate + 'T00:00:00');
   const day = date.getDate();
-  const monthAbbr = MONTH_NAMES[date.getMonth()];
+  const monthAbbr = dict.monthAbbreviations[MONTH_KEYS[date.getMonth()]];
   const formattedDate = `${day} ${monthAbbr}`;
 
   const header = isToday ? `${dict.todayPrefix} · ${formattedDate}` : formattedDate;
