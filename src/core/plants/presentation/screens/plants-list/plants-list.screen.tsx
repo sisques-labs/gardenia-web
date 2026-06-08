@@ -101,12 +101,14 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
               </TabsTrigger>
             ))}
           </TabsList>
-          <button
+          <Button
+            size="sm"
+            type="submit"
             disabled
             className="shrink-0 px-4 py-3 text-sm font-medium text-ink-3 whitespace-nowrap cursor-not-allowed"
           >
             {dict.list.filters}
-          </button>
+          </Button>
         </div>
 
         {/* Content */}
