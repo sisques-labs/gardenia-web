@@ -1,7 +1,22 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.13.5-alpha.0] - 2026-06-08
+
+### Bug Fixes
+- **shell:** Polish collapsed sidebar layout (71d2a0f)
+- **shell:** Center collapsed sidebar icons (cfe4f27)
+- **plants:** Use Dialog for create plant modal solid surface (a4bd450)
+
+### Features
+- **shell:** Unify sidebar footer for garden and account access (e58f205)
+
+### Refactor
+- **shell:** Move sidebar collapse toggle to header (f4a69d2)
 ## [0.13.4-alpha.0] - 2026-06-08
+
+### Chore
+- Release v0.13.4-alpha.0 (ad9c529)
 
 ### Refactor
 - **plants:** Improve code formatting and structure in plants list screen (371fd00)
