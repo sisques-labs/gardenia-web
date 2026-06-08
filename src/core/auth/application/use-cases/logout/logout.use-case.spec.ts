@@ -14,7 +14,10 @@ const mockRepository: IAuthRepository = {
 
 describe('LogoutUseCase', () => {
   beforeEach(() => {
-    useAuthStore.setState({ accessToken: 'tok', currentUser: { id: '1', email: 'a@b.com' } });
+    useAuthStore.setState({
+      accessToken: 'tok',
+      currentUser: { id: 'account-1', userId: 'user-1', email: 'a@b.com' },
+    });
     vi.clearAllMocks();
   });
 

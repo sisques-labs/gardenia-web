@@ -25,7 +25,7 @@ export class SpacesGqlRepository implements ISpacesRepository {
       variables: { input: { name } },
     });
     if (!res.data?.spaceCreate?.success) throw new Error('spaceCreate mutation failed');
-    const ownerId = useAuthStore.getState().currentUser?.id ?? '';
+    const ownerId = useAuthStore.getState().currentUser?.userId ?? '';
     return {
       id: res.data.spaceCreate.id,
       name,

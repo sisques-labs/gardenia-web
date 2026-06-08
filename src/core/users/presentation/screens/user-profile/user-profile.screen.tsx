@@ -42,16 +42,29 @@ type Props = {
 };
 
 export function UserProfileScreen({ dict, lang }: Props) {
+  const isBootComplete = useAuthStore((s) => s.isBootComplete);
   const currentUser = useAuthStore((s) => s.currentUser);
-  const { data: user, isLoading } = useUser(currentUser?.id);
+  const { data: user, isLoading, isError } = useUser(currentUser?.userId);
   const initials = useUserInitials(user);
   const { form, onSubmit, isPending, error, isSuccess } = useUpdateUserProfileForm(user);
+  const t = dict.profile;
 
-  if (isLoading) return <ProfileSkeleton />;
-  if (!user) return null;
+  if (!isBootComplete || !currentUser || isLoading) {
+    return <ProfileSkeleton />;
+  }
+
+  if (isError || !user) {
+    return (
+      <div className="flex flex-col">
+        <ScreenHeader title={t.title} breadcrumbs={[{ label: t.title }]} />
+        <div className="p-6 max-w-2xl">
+          <Alert variant="error" message={t.loadError} />
+        </div>
+      </div>
+    );
+  }
 
   const { register, formState: { errors } } = form;
-  const t = dict.profile;
 
   function fieldError(msg: string | undefined) {
     if (!msg) return undefined;

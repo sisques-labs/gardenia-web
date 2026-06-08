@@ -18,13 +18,34 @@ export function useBootAuth() {
   const setBootComplete = useAuthStore((s) => s.setBootComplete);
 
   useEffect(() => {
-    if (accessToken) {
-      setBootComplete();
-      return;
+    let cancelled = false;
+
+    async function hydrateSession() {
+      try {
+        if (accessToken) {
+          if (!useAuthStore.getState().currentUser) {
+            await meService.me();
+          }
+          return;
+        }
+
+        const token = await refreshTokenOnce(doRefresh);
+        if (token) {
+          await meService.me();
+        }
+      } catch {
+        // silent — unauthenticated users continue to public routes
+      } finally {
+        if (!cancelled) {
+          setBootComplete();
+        }
+      }
     }
-    refreshTokenOnce(doRefresh)
-      .then((token) => (token ? meService.me() : null))
-      .catch(() => {})
-      .finally(() => setBootComplete());
-  }, []);
+
+    hydrateSession();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [accessToken, setBootComplete]);
 }

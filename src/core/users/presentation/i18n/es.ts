@@ -24,6 +24,7 @@ const dict = {
     saving: 'Guardando...',
     saveSuccess: 'Perfil actualizado correctamente',
     saveError: 'No se pudo actualizar el perfil. Inténtalo de nuevo.',
+    loadError: 'No se pudo cargar tu perfil. Inténtalo de nuevo.',
     memberSince: 'Miembro desde',
   },
 } as const;
