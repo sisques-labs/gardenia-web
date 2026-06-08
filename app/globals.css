@@ -5,29 +5,40 @@
 
 @layer base {
   :root {
-    /* shadcn semantic bridge — all values alias Gardenia tokens.
-       Because shadcn vars reference var(--paper) etc., every palette override
-       in palettes.css automatically propagates to shadcn components. */
-    --background:            var(--paper);
-    --foreground:            var(--ink);
-    --card:                  var(--paper);
-    --card-foreground:       var(--ink);
-    --popover:               var(--paper);
-    --popover-foreground:    var(--ink);
-    --primary:               var(--forest);
-    --primary-foreground:    var(--white);
-    --secondary:             var(--paper-2);
-    --secondary-foreground:  var(--ink-2);
-    --muted:                 var(--paper-2);
-    --muted-foreground:      var(--ink-3);
-    --accent:                var(--forest-bg);
-    --accent-foreground:     var(--forest);
-    --destructive:           var(--terracotta);
+    /* ── shadcn semantic bridge ───────────────────────────────────────────────
+       All values alias Gardenia bare vars.  Because theme.css uses @theme
+       inline, every palette override in palettes.css cascades through here
+       automatically — no extra work needed when adding a new palette.
+       ─────────────────────────────────────────────────────────────────────── */
+    --background: var(--paper);
+    --foreground: var(--ink);
+
+    --card: var(--paper);
+    --card-foreground: var(--ink);
+
+    --popover: var(--paper);
+    --popover-foreground: var(--ink);
+
+    --primary: var(--forest);
+    --primary-foreground: var(--white);
+
+    --secondary: var(--paper-2);
+    --secondary-foreground: var(--ink-2);
+
+    --muted: var(--paper-2);
+    --muted-foreground: var(--ink-3);
+
+    --accent: var(--forest-bg);
+    --accent-foreground: var(--forest);
+
+    --destructive: var(--terracotta);
     --destructive-foreground: var(--white);
-    --border:                var(--rule);
-    --input:                 var(--rule);
-    --ring:                  var(--forest-2);
-    --radius:                0.5rem;
+
+    --border: var(--rule);
+    --input: var(--rule);
+    --ring: var(--forest-2);
+
+    --radius: 0.5rem;
   }
 
   body {
