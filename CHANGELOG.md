@@ -1,17 +1,33 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.13.4-alpha.0] - 2026-06-08
+
+### Refactor
+- **plants:** Improve code formatting and structure in plants list screen (371fd00)
+- **plants:** Replace button with Button component in plants list screen (268f25a)
 ## [0.13.3-alpha.0] - 2026-06-08
 
 ### Bug Fixes
 - **profile:** Hydrate current user and show load states (9eacb6c)
 - **profile:** Use account userId for userFindById query (9e33430)
+- Resolve React Doctor redirect and metadata warnings (b7cd614)
+- **plants:** Use next/image on plant detail screen (03c80e7)
 
 ### CI
 - Add React Doctor workflow and local doctor script (35128e3)
 
+### Chore
+- Release v0.13.3-alpha.0 (28da3c6)
+
+### Performance
+- Combine chained array iterations for React Doctor (b896962)
+
 ### Refactor
 - **plants:** Use PageHeader on plants list screen (ba2bc7a)
+
+### Testing
+- Fix redirect mocks to avoid unhandled vitest errors (e014500)
 ## [0.13.2-alpha.0] - 2026-06-08
 
 ### Bug Fixes
