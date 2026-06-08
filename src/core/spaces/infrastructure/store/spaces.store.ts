@@ -14,7 +14,7 @@ export interface SpacesState {
 
 export const useSpacesStore = create<SpacesState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       availableSpaces: [],
       currentSpaceId: null,
       isResolved: false,
@@ -22,8 +22,15 @@ export const useSpacesStore = create<SpacesState>()(
       setActiveSpace: (spaceId) => set({ currentSpaceId: spaceId }),
       resolveActiveSpace: (spaces, storedId) => {
         const valid = storedId && spaces.some((s) => s.id === storedId);
-        const resolved = valid ? storedId : (spaces[0]?.id ?? null);
-        set({ currentSpaceId: resolved, isResolved: true });
+        if (valid) {
+          set({ currentSpaceId: storedId, isResolved: true });
+          return;
+        }
+        const pending = storedId && get().availableSpaces.some((s) => s.id === storedId);
+        set({
+          currentSpaceId: pending ? storedId : (spaces[0]?.id ?? null),
+          isResolved: true,
+        });
       },
       clear: () => set({ availableSpaces: [], currentSpaceId: null, isResolved: false }),
     }),

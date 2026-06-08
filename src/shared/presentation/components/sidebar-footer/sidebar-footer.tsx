@@ -1,11 +1,10 @@
 'use client';
 
 import Link from 'next/link';
-import { Check, ChevronUp, LogOut, Settings, User } from 'lucide-react';
+import { Check, ChevronUp, LogOut, Plus, Settings, User } from 'lucide-react';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { useLogout } from '@/core/auth/presentation/hooks/use-logout/useLogout.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
-import { useSpaces } from '@/core/spaces/presentation/hooks/use-spaces/useSpaces.hook';
 import { useSidebarStore } from '@/shared/infrastructure/store/sidebar/sidebar.store';
 import {
   DropdownMenu,
@@ -29,7 +28,7 @@ type Props = {
 export function SidebarFooter({ dict, locale, onNavigate }: Props) {
   const { collapsed } = useSidebarStore();
   const currentUser = useAuthStore((s) => s.currentUser);
-  const { data: spaces = [] } = useSpaces();
+  const spaces = useSpacesStore((s) => s.availableSpaces);
   const currentSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const setActiveSpace = useSpacesStore((s) => s.setActiveSpace);
   const { mutate: logout, isPending } = useLogout();
@@ -77,7 +76,7 @@ export function SidebarFooter({ dict, locale, onNavigate }: Props) {
           </button>
         </DropdownMenuTrigger>
         <DropdownMenuContent side="top" align="start" className="w-56">
-          {spaces.length > 1 && (
+          {spaces.length > 0 && (
             <>
               <DropdownMenuLabel>{dict.spaceSwitcher.switchSpace}</DropdownMenuLabel>
               {spaces.map((space) => (
@@ -94,11 +93,17 @@ export function SidebarFooter({ dict, locale, onNavigate }: Props) {
                   {space.name}
                 </DropdownMenuItem>
               ))}
-              <DropdownMenuSeparator />
             </>
           )}
+          <DropdownMenuItem asChild>
+            <Link href={`/${locale}/spaces/new`} onClick={onNavigate}>
+              <Plus className="h-4 w-4" />
+              {dict.spaceSwitcher.createSpace}
+            </Link>
+          </DropdownMenuItem>
           {currentUser && (
             <>
+              <DropdownMenuSeparator />
               <DropdownMenuItem asChild>
                 <Link href={`/${locale}/profile`} onClick={onNavigate}>
                   <User className="h-4 w-4" />

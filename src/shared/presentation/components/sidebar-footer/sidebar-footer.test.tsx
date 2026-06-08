@@ -31,6 +31,7 @@ const dict = {
   spaceSwitcher: {
     activeSpaceLabel: 'Active garden',
     switchSpace: 'Switch space',
+    createSpace: 'New space',
   },
   userMenu: {
     openMenu: 'Open menu',
@@ -98,6 +99,22 @@ describe('SidebarFooter', () => {
     expect(screen.getByRole('menuitem', { name: /engineering/i })).toBeInTheDocument();
     expect(screen.getByRole('menuitem', { name: /profile/i })).toBeInTheDocument();
     expect(screen.getByRole('menuitem', { name: /log out/i })).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: /new space/i })).toHaveAttribute('href', '/en/spaces/new');
+  });
+
+  it('shows space list with a single space', async () => {
+    vi.mocked(useSpacesStore).mockImplementation((selector) =>
+      selector(makeStoreState({ availableSpaces: [mockSpaces[0]] })),
+    );
+
+    const user = userEvent.setup();
+    render(<SidebarFooter dict={dict} locale="en" />);
+
+    await user.click(screen.getByLabelText('Open menu'));
+
+    expect(screen.getByText('Switch space')).toBeInTheDocument();
+    expect(screen.getByRole('menuitem', { name: /design team/i })).toBeInTheDocument();
+    expect(screen.queryByRole('menuitem', { name: /engineering/i })).not.toBeInTheDocument();
   });
 
   it('switches space from the menu', async () => {

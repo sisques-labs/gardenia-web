@@ -10,6 +10,7 @@ const dict = {
   spaceSwitcher: {
     activeSpaceLabel: 'Huerta activa',
     switchSpace: 'Cambiar espacio',
+    createSpace: 'Nuevo espacio',
   },
   userMenu: {
     openMenu: 'Abrir menú',
@@ -19,7 +20,6 @@ const dict = {
   },
   nav: {
     home: 'Inicio',
-    spaces: 'Espacios',
     map: 'Mapa',
     inventory: 'Inventario',
     calendar: 'Calendario',
