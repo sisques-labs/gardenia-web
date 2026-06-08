@@ -8,6 +8,12 @@ const shellDict: AppDict['shell'] = {
   openNavigation: 'Open navigation',
   sidebar: { expand: 'Expand sidebar', collapse: 'Collapse sidebar' },
   spaceSwitcher: { activeSpaceLabel: 'Active garden', switchSpace: 'Switch space' },
+  userMenu: {
+    openMenu: 'Open menu',
+    profile: 'Profile',
+    settings: 'Settings',
+    logOut: 'Log out',
+  },
   nav: {
     home: 'Home',
     spaces: 'Spaces',
@@ -18,7 +24,6 @@ const shellDict: AppDict['shell'] = {
     harvests: 'Harvests',
     pests: 'Pests',
     community: 'Community',
-    profile: 'Profile',
   },
 };
 

@@ -7,7 +7,7 @@ import { useSidebarStore } from '@/shared/infrastructure/store/sidebar/sidebar.s
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import { NAV_ITEMS } from '../sidebar-nav-items/nav-items';
 import { NavItem } from '../sidebar-nav-items/nav-item';
-import { SpaceSwitcher } from '../space-switcher/space-switcher';
+import { SidebarFooter } from '../sidebar-footer/sidebar-footer';
 
 interface SidebarProps {
   inDrawer?: boolean;
@@ -31,16 +31,41 @@ export function Sidebar({ inDrawer = false, dict }: SidebarProps) {
 
   const sidebarContent = (
     <nav data-testid="sidebar" className="flex flex-col h-full border-r border-[var(--rule)] paper-grain">
-      {/* Brand header */}
-      <div className="flex items-center gap-2 px-3 py-4 border-b border-[var(--rule)]">
-        <Leaf className="w-5 h-5 text-[var(--forest)] shrink-0" />
-        {!collapsed && (
-          <span className="text-sm font-semibold text-[var(--ink)] tracking-wide">Gardenia</span>
+      {/* Brand header + collapse toggle */}
+      <div className={`border-b border-[var(--rule)] py-2 ${collapsed ? 'px-1' : 'px-2'}`}>
+        {collapsed ? (
+          !inDrawer && (
+            <button
+              type="button"
+              onClick={toggleCollapsed}
+              aria-label={dict.sidebar.expand}
+              className="flex w-full items-center justify-center rounded-md p-2 hover:bg-[var(--forest-bg)] hover:text-[var(--forest)] text-[var(--ink)]/60 transition-colors"
+            >
+              <ChevronRight className="w-5 h-5 shrink-0" />
+            </button>
+          )
+        ) : (
+          <div className="flex items-center gap-2 px-1 py-2">
+            <div className="flex min-w-0 flex-1 items-center gap-2">
+              <Leaf className="w-5 h-5 shrink-0 text-[var(--forest)]" />
+              <span className="text-sm font-semibold tracking-wide text-[var(--ink)]">Gardenia</span>
+            </div>
+            {!inDrawer && (
+              <button
+                type="button"
+                onClick={toggleCollapsed}
+                aria-label={dict.sidebar.collapse}
+                className="shrink-0 rounded-md p-1 text-[var(--ink)]/60 transition-colors hover:bg-[var(--forest-bg)] hover:text-[var(--forest)]"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         )}
       </div>
 
       {/* Nav items */}
-      <div className="flex-1 overflow-y-auto py-2 px-2">
+      <div className={`flex-1 overflow-y-auto py-2 ${collapsed ? 'px-1' : 'px-2'}`}>
         {NAV_ITEMS.map((item) => {
           const resolvedHref = item.href.replace('/[lang]', `/${locale}`);
           const active = pathname?.startsWith(resolvedHref) ?? false;
@@ -57,20 +82,13 @@ export function Sidebar({ inDrawer = false, dict }: SidebarProps) {
         })}
       </div>
 
-      {/* Active space */}
+      {/* Garden + account */}
       <div className="border-t border-[var(--rule)]">
-        <SpaceSwitcher dict={dict.spaceSwitcher} />
-      </div>
-
-      {/* Collapse toggle */}
-      <div className="border-t border-[var(--rule)] p-2">
-        <button
-          onClick={toggleCollapsed}
-          aria-label={collapsed ? dict.sidebar.expand : dict.sidebar.collapse}
-          className="w-full flex items-center justify-center p-2 rounded-md hover:bg-[var(--forest-bg)] hover:text-[var(--forest)] text-[var(--ink)]/60 transition-colors"
-        >
-          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-        </button>
+        <SidebarFooter
+          dict={{ spaceSwitcher: dict.spaceSwitcher, userMenu: dict.userMenu }}
+          locale={locale}
+          onNavigate={closeDrawer}
+        />
       </div>
     </nav>
   );

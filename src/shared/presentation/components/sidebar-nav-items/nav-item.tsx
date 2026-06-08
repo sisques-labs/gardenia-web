@@ -26,7 +26,8 @@ export function NavItem({ item, label, collapsed, active, onClick }: NavItemProp
   );
 
   const baseClass = [
-    'flex items-center gap-3 px-3 py-2 rounded-md transition-colors',
+    'flex items-center py-2 rounded-md transition-colors',
+    collapsed ? 'justify-center px-0' : 'gap-3 px-3',
     active
       ? 'bg-[var(--forest-bg)] text-[var(--forest)]'
       : 'text-[var(--ink)]',
@@ -40,7 +41,7 @@ export function NavItem({ item, label, collapsed, active, onClick }: NavItemProp
         className={[baseClass, 'opacity-40 cursor-not-allowed pointer-events-none'].join(' ')}
       >
         {Icon && <Icon className="w-5 h-5 shrink-0" />}
-        {labelNode}
+        {!collapsed && labelNode}
       </div>
     );
   }
@@ -53,7 +54,7 @@ export function NavItem({ item, label, collapsed, active, onClick }: NavItemProp
       className={[baseClass, 'hover:bg-[var(--forest-bg)] hover:text-[var(--forest)]'].join(' ')}
     >
       {Icon && <Icon className="w-5 h-5 shrink-0" />}
-      {labelNode}
+      {!collapsed && labelNode}
     </Link>
   );
 }

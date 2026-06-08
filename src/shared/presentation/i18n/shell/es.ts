@@ -11,6 +11,12 @@ const dict = {
     activeSpaceLabel: 'Huerta activa',
     switchSpace: 'Cambiar espacio',
   },
+  userMenu: {
+    openMenu: 'Abrir menú',
+    profile: 'Perfil',
+    settings: 'Ajustes',
+    logOut: 'Cerrar sesión',
+  },
   nav: {
     home: 'Inicio',
     spaces: 'Espacios',
@@ -21,7 +27,6 @@ const dict = {
     harvests: 'Cosechas',
     pests: 'Plagas',
     community: 'Comunidad',
-    profile: 'Perfil',
   },
 } satisfies WidenStringLiterals<ShellDict>;
 
