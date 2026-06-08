@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { redirect } from 'next/navigation';
 import { Droplets, Camera, StickyNote, Sun, Shovel, Scissors } from 'lucide-react';
 import { Button } from '@/shared/presentation/components/ui/button';
@@ -66,14 +67,15 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
           {/* Left column — Plant image */}
           <div
             data-testid="plant-image"
-            className="aspect-square rounded-xl overflow-hidden bg-muted flex items-center justify-center"
+            className="relative aspect-square rounded-xl overflow-hidden bg-muted flex items-center justify-center"
           >
             {plant.imageUrl ? (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img
+              <Image
                 src={plant.imageUrl}
                 alt={plant.name}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, 33vw"
               />
             ) : (
               <div className="placeholder-img paper-grain flex items-center justify-center w-full h-full">
@@ -149,11 +151,13 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
                 <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {dict.detail.qr.label}
                 </p>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
+                <Image
                   data-testid="qr-image"
                   src={`data:image/png;base64,${plant.qr.image}`}
                   alt="QR"
+                  width={96}
+                  height={96}
+                  unoptimized
                   className="w-24 h-24 mx-auto"
                 />
                 <p
