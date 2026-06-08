@@ -1,14 +1,18 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-## [0.13.5-alpha.2] - 2026-06-08
+## [0.13.5-alpha.3] - 2026-06-08
 
 ### CI
 - Add release train workflow for develop/staging/main (14d7a6e)
 
 ### Chore
 - Update package versions and dependencies in package.json and package-lock.json (f12119b)
-## [0.13.5-alpha.0] - 2026-06-08
+- Release v0.13.5-alpha.2 (bfec0ed)
+
+### Features
+- **spaces:** Move space selection to sidebar switcher (dffbb2a)
+## [0.13.5-alpha.2] - 2026-06-08
 
 ### Bug Fixes
 - **shell:** Polish collapsed sidebar layout (71d2a0f)
