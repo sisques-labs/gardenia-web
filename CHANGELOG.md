@@ -1,6 +1,18 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.13.2-alpha.0] - 2026-06-08
+
+### Bug Fixes
+- **calendar:** Wire hardcoded UI strings through i18n dicts (55b357d)
+- **i18n:** Localize shell chrome and home topbar strings (c9c43e1)
+- **i18n:** Localize sidebar navigation labels via shell dict (ad25868)
+
+### Chore
+- Ignore Claude worktrees and remove tracked worktree artifacts (aef09b0)
+
+### Refactor
+- **design-system:** Use @theme inline and bare CSS tokens (5e79707)
 ## [0.13.1-alpha.0] - 2026-06-06
 
 ### Bug Fixes
@@ -10,6 +22,7 @@ All notable changes to this project will be documented in this file.
 
 ### Chore
 - **openspec:** Archive plant-detail-redesign change — 2026-06-06 (637d298)
+- Release v0.13.1-alpha.0 (b2a64fa)
 
 ### Features
 - **plants:** Redesign plant-detail header with 3-column layout (3ccf45e)
