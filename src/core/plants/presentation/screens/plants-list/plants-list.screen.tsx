@@ -42,7 +42,12 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const plantCount = plants?.length ?? 0;
-  const speciesCount = new Set(plants?.filter((p) => p.plantSpeciesId).map((p) => p.plantSpeciesId)).size;
+  const speciesCount = plants
+    ? plants.reduce((ids, plant) => {
+        if (plant.plantSpeciesId) ids.add(plant.plantSpeciesId);
+        return ids;
+      }, new Set<string>()).size
+    : 0;
 
   return (
     <div>

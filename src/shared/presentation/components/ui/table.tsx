@@ -100,9 +100,10 @@ function DataTableInner<TData, TValue = unknown>(
       const next = typeof updater === 'function' ? updater(rowSelection) : updater;
       setRowSelection(next);
       if (onSelectionChange) {
-        const selectedRows = Object.keys(next)
-          .filter(k => next[k])
-          .map(k => data[Number(k)]);
+        const selectedRows: TData[] = [];
+        for (const key of Object.keys(next)) {
+          if (next[key]) selectedRows.push(data[Number(key)]);
+        }
         onSelectionChange(selectedRows);
       }
     },
