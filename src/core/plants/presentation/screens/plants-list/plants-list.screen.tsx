@@ -1,19 +1,31 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { Button } from '@/shared/presentation/components/ui/button';
-import { PageHeader } from '@/shared/presentation/components/page-header/page-header';
-import { Alert } from '@/shared/presentation/components/ui/alert';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/presentation/components/ui/tabs';
-import { PlantCard } from '@/core/plants/presentation/components/plant-card/plant-card';
-import { usePlants } from '@/core/plants/presentation/hooks/use-plants/use-plants.hook';
-import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
-import { CreatePlantModal } from '@/core/plants/presentation/components/create-plant-modal/create-plant-modal';
-import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
+import { CreatePlantModal } from "@/core/plants/presentation/components/create-plant-modal/create-plant-modal";
+import { PlantCard } from "@/core/plants/presentation/components/plant-card/plant-card";
+import { usePlants } from "@/core/plants/presentation/hooks/use-plants/use-plants.hook";
+import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store";
+import { PageHeader } from "@/shared/presentation/components/page-header/page-header";
+import { Alert } from "@/shared/presentation/components/ui/alert";
+import { Button } from "@/shared/presentation/components/ui/button";
+import {
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+} from "@/shared/presentation/components/ui/tabs";
+import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
+import { useState } from "react";
 
-const shimmer = 'bg-muted rounded animate-pulse';
+const shimmer = "bg-muted rounded animate-pulse";
 
-const CATEGORY_FILTERS = ['Hortaliza', 'Aromática', 'Hoja', 'Raíz', 'Flor', 'Árbol'] as const;
+const CATEGORY_FILTERS = [
+  "Hortaliza",
+  "Aromática",
+  "Hoja",
+  "Raíz",
+  "Flor",
+  "Árbol",
+] as const;
 
 function PlantCardSkeleton() {
   return (
@@ -30,7 +42,7 @@ function PlantCardSkeleton() {
 }
 
 type Props = {
-  dict: AppDict['plants'];
+  dict: AppDict["plants"];
   lang: string;
   spaceId: string | null;
 };
@@ -55,27 +67,43 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
         eyebrow={`${dict.nav} · ${plantCount} ${dict.list.statsPlants} · ${speciesCount} ${dict.list.statsSpecies}`}
         title={dict.list.title}
         actions={
-          <Button onClick={() => setIsCreateOpen(true)}>{dict.list.newPlant}</Button>
+          <Button
+            size="sm"
+            className="ml-1 bg-forest hover:bg-forest-2 text-white gap-1"
+            onClick={() => setIsCreateOpen(true)}
+          >
+            {dict.list.newPlant}
+          </Button>
         }
       />
 
       {/* Filter tabs */}
-      <Tabs defaultValue="all" className="px-6 border-b border-[var(--rule)]">
+      <Tabs defaultValue="all" className="px-6 border-b border-rule">
         <div className="flex items-center">
-          <TabsList variant="line" className="flex-1 overflow-x-auto justify-start rounded-none h-auto border-0 pb-0 gap-0">
+          <TabsList
+            variant="line"
+            className="flex-1 overflow-x-auto justify-start rounded-none h-auto border-0 pb-0 gap-0"
+          >
             <TabsTrigger value="all" className="whitespace-nowrap py-3 px-4">
               {dict.list.filterAll}
-              <span className="ml-1.5 text-xs font-normal opacity-60">{plantCount}</span>
+              <span className="ml-1.5 text-xs font-normal opacity-60">
+                {plantCount}
+              </span>
             </TabsTrigger>
             {CATEGORY_FILTERS.map((cat) => (
-              <TabsTrigger key={cat} value={cat.toLowerCase()} disabled className="whitespace-nowrap py-3 px-4">
+              <TabsTrigger
+                key={cat}
+                value={cat.toLowerCase()}
+                disabled
+                className="whitespace-nowrap py-3 px-4"
+              >
                 {cat}
               </TabsTrigger>
             ))}
           </TabsList>
           <button
             disabled
-            className="shrink-0 px-4 py-3 text-sm font-medium text-[var(--ink)]/40 whitespace-nowrap cursor-not-allowed"
+            className="shrink-0 px-4 py-3 text-sm font-medium text-ink-3 whitespace-nowrap cursor-not-allowed"
           >
             {dict.list.filters}
           </button>
