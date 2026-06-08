@@ -54,3 +54,6 @@ tsconfig.tsbuildinfo
 # Storybook
 storybook-static/
 .storybook-out/
+
+# Claude
+.claude/worktrees/
