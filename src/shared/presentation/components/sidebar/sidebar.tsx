@@ -31,11 +31,27 @@ export function Sidebar({ inDrawer = false, dict }: SidebarProps) {
 
   const sidebarContent = (
     <nav data-testid="sidebar" className="flex flex-col h-full border-r border-[var(--rule)] paper-grain">
-      {/* Brand header */}
-      <div className="flex items-center gap-2 px-3 py-4 border-b border-[var(--rule)]">
-        <Leaf className="w-5 h-5 text-[var(--forest)] shrink-0" />
-        {!collapsed && (
-          <span className="text-sm font-semibold text-[var(--ink)] tracking-wide">Gardenia</span>
+      {/* Brand header + collapse toggle */}
+      <div
+        className={`border-b border-[var(--rule)] px-3 py-4 ${
+          collapsed ? 'flex flex-col items-center gap-2' : 'flex items-center gap-2'
+        }`}
+      >
+        <div className={`flex items-center gap-2 min-w-0 ${collapsed ? '' : 'flex-1'}`}>
+          <Leaf className="w-5 h-5 text-[var(--forest)] shrink-0" />
+          {!collapsed && (
+            <span className="text-sm font-semibold text-[var(--ink)] tracking-wide">Gardenia</span>
+          )}
+        </div>
+        {!inDrawer && (
+          <button
+            type="button"
+            onClick={toggleCollapsed}
+            aria-label={collapsed ? dict.sidebar.expand : dict.sidebar.collapse}
+            className="shrink-0 p-1 rounded-md hover:bg-[var(--forest-bg)] hover:text-[var(--forest)] text-[var(--ink)]/60 transition-colors"
+          >
+            {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+          </button>
         )}
       </div>
 
@@ -64,17 +80,6 @@ export function Sidebar({ inDrawer = false, dict }: SidebarProps) {
           locale={locale}
           onNavigate={closeDrawer}
         />
-      </div>
-
-      {/* Collapse toggle */}
-      <div className="border-t border-[var(--rule)] p-2">
-        <button
-          onClick={toggleCollapsed}
-          aria-label={collapsed ? dict.sidebar.expand : dict.sidebar.collapse}
-          className="w-full flex items-center justify-center p-2 rounded-md hover:bg-[var(--forest-bg)] hover:text-[var(--forest)] text-[var(--ink)]/60 transition-colors"
-        >
-          {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-        </button>
       </div>
     </nav>
   );

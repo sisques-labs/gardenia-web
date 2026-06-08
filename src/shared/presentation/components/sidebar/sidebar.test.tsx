@@ -68,9 +68,14 @@ describe('Sidebar', () => {
     expect(activeLink).toHaveClass('text-[var(--forest)]');
   });
 
-  it('renders collapse toggle button', () => {
+  it('renders collapse toggle in the header on desktop', () => {
     render(<Sidebar dict={shellDict} />);
-    expect(screen.getByRole('button', { name: /collapse|expand|toggle/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /collapse sidebar/i })).toBeInTheDocument();
+  });
+
+  it('hides collapse toggle in mobile drawer', () => {
+    render(<Sidebar inDrawer dict={shellDict} />);
+    expect(screen.queryByRole('button', { name: /collapse sidebar|expand sidebar/i })).not.toBeInTheDocument();
   });
 
   it('calls closeDrawer on Escape key press', () => {
