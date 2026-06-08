@@ -1,6 +1,17 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.13.3-alpha.0] - 2026-06-08
+
+### Bug Fixes
+- **profile:** Hydrate current user and show load states (9eacb6c)
+- **profile:** Use account userId for userFindById query (9e33430)
+
+### CI
+- Add React Doctor workflow and local doctor script (35128e3)
+
+### Refactor
+- **plants:** Use PageHeader on plants list screen (ba2bc7a)
 ## [0.13.2-alpha.0] - 2026-06-08
 
 ### Bug Fixes
@@ -10,6 +21,7 @@ All notable changes to this project will be documented in this file.
 
 ### Chore
 - Ignore Claude worktrees and remove tracked worktree artifacts (aef09b0)
+- Release v0.13.2-alpha.0 (46da0c2)
 
 ### Refactor
 - **design-system:** Use @theme inline and bare CSS tokens (5e79707)
