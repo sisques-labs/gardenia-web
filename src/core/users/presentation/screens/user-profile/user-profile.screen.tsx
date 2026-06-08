@@ -44,7 +44,7 @@ type Props = {
 export function UserProfileScreen({ dict, lang }: Props) {
   const isBootComplete = useAuthStore((s) => s.isBootComplete);
   const currentUser = useAuthStore((s) => s.currentUser);
-  const { data: user, isLoading, isError } = useUser(currentUser?.id);
+  const { data: user, isLoading, isError } = useUser(currentUser?.userId);
   const initials = useUserInitials(user);
   const { form, onSubmit, isPending, error, isSuccess } = useUpdateUserProfileForm(user);
   const t = dict.profile;

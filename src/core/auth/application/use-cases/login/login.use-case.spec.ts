@@ -20,13 +20,21 @@ describe('LoginUseCase', () => {
 
   it('stores access token and current user on successful login', async () => {
     vi.mocked(mockRepository.login).mockResolvedValue({ accessToken: 'tok-123' });
-    vi.mocked(mockRepository.me).mockResolvedValue({ id: 'user-1', email: 'a@b.com' });
+    vi.mocked(mockRepository.me).mockResolvedValue({
+      id: 'account-1',
+      userId: 'user-1',
+      email: 'a@b.com',
+    });
     const service = new LoginUseCase(mockRepository);
 
     await service.login({ email: 'a@b.com', password: '123456' });
 
     expect(useAuthStore.getState().accessToken).toBe('tok-123');
-    expect(useAuthStore.getState().currentUser).toEqual({ id: 'user-1', email: 'a@b.com' });
+    expect(useAuthStore.getState().currentUser).toEqual({
+      id: 'account-1',
+      userId: 'user-1',
+      email: 'a@b.com',
+    });
     expect(mockRepository.me).toHaveBeenCalledOnce();
   });
 

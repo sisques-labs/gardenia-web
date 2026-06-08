@@ -8,7 +8,7 @@ const mockUseUser = vi.fn();
 vi.mock('@/core/auth/infrastructure/store/auth.store', () => ({
   useAuthStore: (selector: (s: {
     isBootComplete: boolean;
-    currentUser: { id: string; email: string } | null;
+    currentUser: { id: string; userId: string; email: string } | null;
   }) => unknown) => mockAuthSelector(selector),
 }));
 
@@ -77,10 +77,10 @@ const dict = {
 
 function setupAuth({
   isBootComplete = true,
-  currentUser = { id: 'user-1', email: 'john@example.com' },
+  currentUser = { id: 'account-1', userId: 'user-1', email: 'john@example.com' },
 }: {
   isBootComplete?: boolean;
-  currentUser?: { id: string; email: string } | null;
+  currentUser?: { id: string; userId: string; email: string } | null;
 } = {}) {
   mockAuthSelector.mockImplementation((selector) =>
     selector({ isBootComplete, currentUser })
@@ -108,6 +108,14 @@ describe('UserProfileScreen', () => {
     const { container } = render(<UserProfileScreen dict={dict} lang="en" />);
 
     expect(container.querySelector('.animate-pulse')).toBeInTheDocument();
+  });
+
+  it('fetches profile by userId, not account id', () => {
+    mockUseUser.mockReturnValue({ data: mockUser, isLoading: false, isError: false });
+
+    render(<UserProfileScreen dict={dict} lang="en" />);
+
+    expect(mockUseUser).toHaveBeenCalledWith('user-1');
   });
 
   it('renders profile form when user data is available', () => {
