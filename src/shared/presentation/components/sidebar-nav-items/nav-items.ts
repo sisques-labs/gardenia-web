@@ -1,4 +1,4 @@
-import { Home, LayoutGrid, Leaf, Map, Calendar, BookOpen, Wheat, Bug, Users } from 'lucide-react';
+import { Home, Leaf, Map, Calendar, BookOpen, Wheat, Bug, Users } from 'lucide-react';
 import type { ElementType } from 'react';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
@@ -13,7 +13,6 @@ export interface NavItemConfig {
 
 export const NAV_ITEMS: NavItemConfig[] = [
   { key: 'home', href: '/[lang]/home', icon: Home },
-  { key: 'spaces', href: '/[lang]/spaces', icon: LayoutGrid },
   { key: 'map', href: '/[lang]/map', icon: Map, disabled: true },
   { key: 'inventory', href: '/[lang]/plants', icon: Leaf },
   { key: 'calendar', href: '/[lang]/calendar', icon: Calendar },
