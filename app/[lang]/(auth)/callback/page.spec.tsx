@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render } from '@testing-library/react';
 import React from 'react';
 
-const mockReplace = vi.hoisted(() => vi.fn());
+const mockRedirect = vi.hoisted(() => vi.fn());
 const mockRefreshTokenOnce = vi.hoisted(() => vi.fn());
 const mockDoRefresh = vi.hoisted(() => vi.fn());
 const mockMe = vi.hoisted(() => vi.fn());
@@ -10,7 +10,7 @@ let mockLang = 'es';
 let mockReturnUrl: string | null = null;
 
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ replace: mockReplace }),
+  redirect: (url: string) => mockRedirect(url),
   useParams: () => ({ lang: mockLang }),
   useSearchParams: () => ({ get: (key: string) => (key === 'returnUrl' ? mockReturnUrl : null) }),
 }));
@@ -37,7 +37,7 @@ import CallbackPage from './page';
 
 describe('CallbackPage', () => {
   beforeEach(() => {
-    mockReplace.mockReset();
+    mockRedirect.mockReset();
     mockRefreshTokenOnce.mockReset();
     mockMe.mockReset();
     mockLang = 'es';
@@ -51,7 +51,7 @@ describe('CallbackPage', () => {
     render(<CallbackPage />);
 
     await vi.waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith('/es/home');
+      expect(mockRedirect).toHaveBeenCalledWith('/es/home');
     });
   });
 
@@ -63,7 +63,7 @@ describe('CallbackPage', () => {
     render(<CallbackPage />);
 
     await vi.waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith('/dashboard/plants');
+      expect(mockRedirect).toHaveBeenCalledWith('/dashboard/plants');
     });
   });
 
@@ -73,7 +73,7 @@ describe('CallbackPage', () => {
     render(<CallbackPage />);
 
     await vi.waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith('/es/login?error=oauth_failed');
+      expect(mockRedirect).toHaveBeenCalledWith('/es/login?error=oauth_failed');
     });
   });
 
@@ -84,11 +84,11 @@ describe('CallbackPage', () => {
     render(<CallbackPage />);
 
     await vi.waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith('/es/login?error=oauth_failed');
+      expect(mockRedirect).toHaveBeenCalledWith('/es/login?error=oauth_failed');
     });
   });
 
-  it('calls router.replace exactly once even on StrictMode double-mount (ran ref guard)', async () => {
+  it('runs OAuth exchange exactly once even on StrictMode double-mount (ran ref guard)', async () => {
     mockRefreshTokenOnce.mockResolvedValue('abc123');
     mockMe.mockResolvedValue({ id: '1', email: 'test@example.com' });
 
@@ -99,7 +99,8 @@ describe('CallbackPage', () => {
     );
 
     await vi.waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledTimes(1);
+      expect(mockRefreshTokenOnce).toHaveBeenCalledTimes(1);
+      expect(mockRedirect).toHaveBeenCalledWith('/es/home');
     });
   });
 });

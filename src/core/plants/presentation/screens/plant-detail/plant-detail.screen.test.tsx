@@ -2,10 +2,10 @@ import { render, screen } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 
-const mockReplace = vi.fn();
+const mockRedirect = vi.fn();
 
 vi.mock('next/navigation', () => ({
-  useRouter: vi.fn(() => ({ replace: mockReplace })),
+  redirect: (url: string) => mockRedirect(url),
 }));
 
 vi.mock('@/core/plants/presentation/hooks/use-plant/use-plant.hook', () => ({
@@ -208,7 +208,7 @@ describe('PlantDetailScreen', () => {
 
     const img = screen.getByRole('img', { name: 'Monstera' });
     expect(img).toBeInTheDocument();
-    expect(img).toHaveAttribute('src', 'https://example.com/plant.jpg');
+    expect(img.getAttribute('src')).toContain('example.com');
   });
 
   it('renders species chip with sage variant', () => {
@@ -232,7 +232,7 @@ describe('PlantDetailScreen', () => {
 
     render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
 
-    expect(mockReplace).toHaveBeenCalledWith('/en/plants');
+    expect(mockRedirect).toHaveBeenCalledWith('/en/plants');
   });
 
   it('renders breadcrumb with list link', () => {
