@@ -26,7 +26,8 @@ export function NavItem({ item, label, collapsed, active, onClick }: NavItemProp
   );
 
   const baseClass = [
-    'flex items-center gap-3 px-3 py-2 rounded-md transition-colors',
+    'flex items-center gap-3 py-2 rounded-md transition-colors',
+    collapsed ? 'justify-center px-2' : 'px-3',
     active
       ? 'bg-[var(--forest-bg)] text-[var(--forest)]'
       : 'text-[var(--ink)]',

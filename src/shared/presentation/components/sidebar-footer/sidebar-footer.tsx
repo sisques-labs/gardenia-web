@@ -43,13 +43,15 @@ export function SidebarFooter({ dict, locale, onNavigate }: Props) {
   }
 
   return (
-    <div data-testid="sidebar-footer" className="px-3 py-3">
+    <div data-testid="sidebar-footer" className={collapsed ? 'px-2 py-2' : 'px-3 py-3'}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
             type="button"
             aria-label={dict.userMenu.openMenu}
-            className="w-full flex items-center gap-2.5 rounded-md hover:bg-[var(--forest-bg)] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--forest)]"
+            className={`rounded-md hover:bg-[var(--forest-bg)] transition-colors outline-none focus-visible:ring-2 focus-visible:ring-[var(--forest)] ${
+              collapsed ? 'flex w-full justify-center p-2' : 'flex w-full items-center gap-2.5'
+            }`}
           >
             <div className="w-8 h-8 rounded-md bg-[var(--forest-bg)] flex items-center justify-center shrink-0">
               <span className="text-sm font-bold text-[var(--forest)]">{spaceInitial}</span>

@@ -32,26 +32,35 @@ export function Sidebar({ inDrawer = false, dict }: SidebarProps) {
   const sidebarContent = (
     <nav data-testid="sidebar" className="flex flex-col h-full border-r border-[var(--rule)] paper-grain">
       {/* Brand header + collapse toggle */}
-      <div
-        className={`border-b border-[var(--rule)] px-3 py-4 ${
-          collapsed ? 'flex flex-col items-center gap-2' : 'flex items-center gap-2'
-        }`}
-      >
-        <div className={`flex items-center gap-2 min-w-0 ${collapsed ? '' : 'flex-1'}`}>
-          <Leaf className="w-5 h-5 text-[var(--forest)] shrink-0" />
-          {!collapsed && (
-            <span className="text-sm font-semibold text-[var(--ink)] tracking-wide">Gardenia</span>
-          )}
-        </div>
-        {!inDrawer && (
-          <button
-            type="button"
-            onClick={toggleCollapsed}
-            aria-label={collapsed ? dict.sidebar.expand : dict.sidebar.collapse}
-            className="shrink-0 p-1 rounded-md hover:bg-[var(--forest-bg)] hover:text-[var(--forest)] text-[var(--ink)]/60 transition-colors"
-          >
-            {collapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
-          </button>
+      <div className="border-b border-[var(--rule)] px-2 py-2">
+        {collapsed ? (
+          !inDrawer && (
+            <button
+              type="button"
+              onClick={toggleCollapsed}
+              aria-label={dict.sidebar.expand}
+              className="flex w-full items-center justify-center rounded-md p-2 hover:bg-[var(--forest-bg)] hover:text-[var(--forest)] text-[var(--ink)]/60 transition-colors"
+            >
+              <ChevronRight className="w-5 h-5 shrink-0" />
+            </button>
+          )
+        ) : (
+          <div className="flex items-center gap-2 px-1 py-2">
+            <div className="flex min-w-0 flex-1 items-center gap-2">
+              <Leaf className="w-5 h-5 shrink-0 text-[var(--forest)]" />
+              <span className="text-sm font-semibold tracking-wide text-[var(--ink)]">Gardenia</span>
+            </div>
+            {!inDrawer && (
+              <button
+                type="button"
+                onClick={toggleCollapsed}
+                aria-label={dict.sidebar.collapse}
+                className="shrink-0 rounded-md p-1 text-[var(--ink)]/60 transition-colors hover:bg-[var(--forest-bg)] hover:text-[var(--forest)]"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+            )}
+          </div>
         )}
       </div>
 

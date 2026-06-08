@@ -56,9 +56,10 @@ describe('Sidebar', () => {
     expect(screen.getByText('Gardenia')).toBeInTheDocument();
   });
 
-  it('hides brand label when collapsed', () => {
+  it('shows only expand button when collapsed', () => {
     useSidebarStore.setState({ collapsed: true });
     render(<Sidebar dict={shellDict} />);
+    expect(screen.getByRole('button', { name: /expand sidebar/i })).toBeInTheDocument();
     expect(screen.queryByText('Gardenia')).not.toBeInTheDocument();
   });
 
