@@ -20,7 +20,8 @@
     "test:watch": "vitest",
     "prepare": "husky",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build",
+    "doctor": "npx react-doctor@latest"
   },
   "lint-staged": {
     "**/*.{ts,tsx}": "eslint --fix"
