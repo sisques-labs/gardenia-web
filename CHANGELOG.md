@@ -1,12 +1,22 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.13.5-alpha.2] - 2026-06-08
+
+### CI
+- Add release train workflow for develop/staging/main (14d7a6e)
+
+### Chore
+- Update package versions and dependencies in package.json and package-lock.json (f12119b)
 ## [0.13.5-alpha.0] - 2026-06-08
 
 ### Bug Fixes
 - **shell:** Polish collapsed sidebar layout (71d2a0f)
 - **shell:** Center collapsed sidebar icons (cfe4f27)
 - **plants:** Use Dialog for create plant modal solid surface (a4bd450)
+
+### Chore
+- Release v0.13.5-alpha.0 (39b74d5)
 
 ### Features
 - **shell:** Unify sidebar footer for garden and account access (e58f205)
