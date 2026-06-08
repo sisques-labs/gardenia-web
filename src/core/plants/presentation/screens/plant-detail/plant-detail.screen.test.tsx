@@ -2,9 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 
-const mockRedirect = vi.fn((url: string) => {
-  throw Object.assign(new Error('NEXT_REDIRECT'), { url });
-});
+const mockRedirect = vi.fn();
 
 vi.mock('next/navigation', () => ({
   redirect: (url: string) => mockRedirect(url),
@@ -232,9 +230,8 @@ describe('PlantDetailScreen', () => {
   it('redirects to plants list on error', () => {
     vi.mocked(usePlant).mockReturnValue({ data: undefined, isLoading: false, isError: true } as ReturnType<typeof usePlant>);
 
-    expect(() =>
-      render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />)
-    ).toThrow('NEXT_REDIRECT');
+    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
+
     expect(mockRedirect).toHaveBeenCalledWith('/en/plants');
   });
 

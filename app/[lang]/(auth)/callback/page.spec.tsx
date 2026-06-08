@@ -2,11 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render } from '@testing-library/react';
 import React from 'react';
 
-const mockRedirect = vi.hoisted(() =>
-  vi.fn((url: string) => {
-    throw Object.assign(new Error('NEXT_REDIRECT'), { url });
-  })
-);
+const mockRedirect = vi.hoisted(() => vi.fn());
 const mockRefreshTokenOnce = vi.hoisted(() => vi.fn());
 const mockDoRefresh = vi.hoisted(() => vi.fn());
 const mockMe = vi.hoisted(() => vi.fn());
