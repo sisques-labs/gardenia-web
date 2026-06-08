@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Button } from '@/shared/presentation/components/ui/button';
+import { PageHeader } from '@/shared/presentation/components/page-header/page-header';
 import { Alert } from '@/shared/presentation/components/ui/alert';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/presentation/components/ui/tabs';
 import { PlantCard } from '@/core/plants/presentation/components/plant-card/plant-card';
@@ -45,18 +46,13 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
 
   return (
     <div>
-      {/* Header */}
-      <header className="flex flex-col gap-1 px-6 py-4 border-b border-[var(--rule)]">
-        <p className="text-xs text-[var(--ink)]/60">
-          {dict.nav} · {plantCount} {dict.list.statsPlants} · {speciesCount} {dict.list.statsSpecies}
-        </p>
-        <div className="flex items-center">
-          <h1 className="headline text-[var(--ink)]">{dict.list.title}</h1>
-          <div className="ml-auto">
-            <Button onClick={() => setIsCreateOpen(true)}>{dict.list.newPlant}</Button>
-          </div>
-        </div>
-      </header>
+      <PageHeader
+        eyebrow={`${dict.nav} · ${plantCount} ${dict.list.statsPlants} · ${speciesCount} ${dict.list.statsSpecies}`}
+        title={dict.list.title}
+        actions={
+          <Button onClick={() => setIsCreateOpen(true)}>{dict.list.newPlant}</Button>
+        }
+      />
 
       {/* Filter tabs */}
       <Tabs defaultValue="all" className="px-6 border-b border-[var(--rule)]">
