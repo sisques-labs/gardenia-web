@@ -43,7 +43,7 @@ export function SidebarFooter({ dict, locale, onNavigate }: Props) {
   }
 
   return (
-    <div data-testid="sidebar-footer" className={collapsed ? 'px-2 py-2' : 'px-3 py-3'}>
+    <div data-testid="sidebar-footer" className={collapsed ? 'px-1 py-2' : 'px-3 py-3'}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <button
@@ -53,7 +53,7 @@ export function SidebarFooter({ dict, locale, onNavigate }: Props) {
               collapsed ? 'flex w-full justify-center p-2' : 'flex w-full items-center gap-2.5'
             }`}
           >
-            <div className="w-8 h-8 rounded-md bg-[var(--forest-bg)] flex items-center justify-center shrink-0">
+            <div className={`rounded-md bg-[var(--forest-bg)] flex items-center justify-center shrink-0 ${collapsed ? 'w-9 h-9' : 'w-8 h-8'}`}>
               <span className="text-sm font-bold text-[var(--forest)]">{spaceInitial}</span>
             </div>
             {!collapsed && (

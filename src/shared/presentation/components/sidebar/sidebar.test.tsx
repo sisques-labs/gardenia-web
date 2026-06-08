@@ -88,8 +88,8 @@ describe('Sidebar', () => {
   it('hides labels when collapsed', () => {
     useSidebarStore.setState({ collapsed: true });
     render(<Sidebar dict={shellDict} />);
-    const label = screen.getByText('Spaces');
-    expect(label).toHaveClass('overflow-hidden');
+    expect(screen.queryByText('Spaces')).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /spaces/i })).toBeInTheDocument();
   });
 
   it('renders sidebar footer', () => {

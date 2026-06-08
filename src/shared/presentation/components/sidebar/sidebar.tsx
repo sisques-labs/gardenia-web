@@ -32,7 +32,7 @@ export function Sidebar({ inDrawer = false, dict }: SidebarProps) {
   const sidebarContent = (
     <nav data-testid="sidebar" className="flex flex-col h-full border-r border-[var(--rule)] paper-grain">
       {/* Brand header + collapse toggle */}
-      <div className="border-b border-[var(--rule)] px-2 py-2">
+      <div className={`border-b border-[var(--rule)] py-2 ${collapsed ? 'px-1' : 'px-2'}`}>
         {collapsed ? (
           !inDrawer && (
             <button
@@ -65,7 +65,7 @@ export function Sidebar({ inDrawer = false, dict }: SidebarProps) {
       </div>
 
       {/* Nav items */}
-      <div className="flex-1 overflow-y-auto py-2 px-2">
+      <div className={`flex-1 overflow-y-auto py-2 ${collapsed ? 'px-1' : 'px-2'}`}>
         {NAV_ITEMS.map((item) => {
           const resolvedHref = item.href.replace('/[lang]', `/${locale}`);
           const active = pathname?.startsWith(resolvedHref) ?? false;
