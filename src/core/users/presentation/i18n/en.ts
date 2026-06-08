@@ -24,6 +24,7 @@ const dict = {
     saving: 'Saving...',
     saveSuccess: 'Profile updated successfully',
     saveError: 'Could not update profile. Try again.',
+    loadError: 'Could not load your profile. Try again.',
     memberSince: 'Member since',
   },
 } as const;
