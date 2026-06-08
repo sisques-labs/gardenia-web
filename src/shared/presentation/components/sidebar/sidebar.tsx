@@ -7,7 +7,7 @@ import { useSidebarStore } from '@/shared/infrastructure/store/sidebar/sidebar.s
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import { NAV_ITEMS } from '../sidebar-nav-items/nav-items';
 import { NavItem } from '../sidebar-nav-items/nav-item';
-import { SpaceSwitcher } from '../space-switcher/space-switcher';
+import { SidebarFooter } from '../sidebar-footer/sidebar-footer';
 
 interface SidebarProps {
   inDrawer?: boolean;
@@ -57,9 +57,13 @@ export function Sidebar({ inDrawer = false, dict }: SidebarProps) {
         })}
       </div>
 
-      {/* Active space */}
+      {/* Garden + account */}
       <div className="border-t border-[var(--rule)]">
-        <SpaceSwitcher dict={dict.spaceSwitcher} />
+        <SidebarFooter
+          dict={{ spaceSwitcher: dict.spaceSwitcher, userMenu: dict.userMenu }}
+          locale={locale}
+          onNavigate={closeDrawer}
+        />
       </div>
 
       {/* Collapse toggle */}

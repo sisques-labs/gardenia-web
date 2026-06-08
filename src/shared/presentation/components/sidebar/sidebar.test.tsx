@@ -8,6 +8,12 @@ const shellDict: AppDict['shell'] = {
   openNavigation: 'Open navigation',
   sidebar: { expand: 'Expand sidebar', collapse: 'Collapse sidebar' },
   spaceSwitcher: { activeSpaceLabel: 'Active garden', switchSpace: 'Switch space' },
+  userMenu: {
+    openMenu: 'Open menu',
+    profile: 'Profile',
+    settings: 'Settings',
+    logOut: 'Log out',
+  },
   nav: {
     home: 'Home',
     spaces: 'Spaces',
@@ -18,7 +24,6 @@ const shellDict: AppDict['shell'] = {
     harvests: 'Harvests',
     pests: 'Pests',
     community: 'Community',
-    profile: 'Profile',
   },
 };
 
@@ -26,8 +31,8 @@ vi.mock('next/navigation', () => ({
   usePathname: vi.fn(() => '/en/spaces'),
 }));
 
-vi.mock('../space-switcher/space-switcher', () => ({
-  SpaceSwitcher: () => <div data-testid="space-switcher-mock" />,
+vi.mock('../sidebar-footer/sidebar-footer', () => ({
+  SidebarFooter: () => <div data-testid="sidebar-footer-mock" />,
 }));
 
 beforeEach(() => {
@@ -79,6 +84,11 @@ describe('Sidebar', () => {
     render(<Sidebar dict={shellDict} />);
     const label = screen.getByText('Spaces');
     expect(label).toHaveClass('overflow-hidden');
+  });
+
+  it('renders sidebar footer', () => {
+    render(<Sidebar dict={shellDict} />);
+    expect(screen.getByTestId('sidebar-footer-mock')).toBeInTheDocument();
   });
 
   it('renders content directly when inDrawer is true', () => {

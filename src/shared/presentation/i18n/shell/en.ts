@@ -8,6 +8,12 @@ const dict = {
     activeSpaceLabel: 'Active garden',
     switchSpace: 'Switch space',
   },
+  userMenu: {
+    openMenu: 'Open menu',
+    profile: 'Profile',
+    settings: 'Settings',
+    logOut: 'Log out',
+  },
   nav: {
     home: 'Home',
     spaces: 'Spaces',
@@ -18,7 +24,6 @@ const dict = {
     harvests: 'Harvests',
     pests: 'Pests',
     community: 'Community',
-    profile: 'Profile',
   },
 } as const;
 
