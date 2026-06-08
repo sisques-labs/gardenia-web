@@ -1,7 +1,6 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 import { Droplets, Camera, StickyNote, Sun, Shovel, Scissors } from 'lucide-react';
 import { Button } from '@/shared/presentation/components/ui/button';
 import { Card, CardContent } from '@/shared/presentation/components/ui/card';
@@ -42,19 +41,13 @@ type Props = {
 };
 
 export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }: Props) {
-  const router = useRouter();
   const storeSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const spaceId = spaceIdProp ?? storeSpaceId;
   const { data: plant, isLoading, isError } = usePlant(spaceId, plantId);
 
-  useEffect(() => {
-    if (isError) {
-      router.replace(`/${lang}/plants`);
-    }
-  }, [isError, lang, router]);
-
   if (isLoading) return <DetailSkeleton />;
-  if (isError || !plant) return null;
+  if (isError) redirect(`/${lang}/plants`);
+  if (!plant) return null;
 
   return (
     <div className="flex flex-col">

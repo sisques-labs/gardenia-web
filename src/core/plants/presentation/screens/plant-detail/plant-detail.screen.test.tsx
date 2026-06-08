@@ -2,10 +2,12 @@ import { render, screen } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 
-const mockReplace = vi.fn();
+const mockRedirect = vi.fn((url: string) => {
+  throw Object.assign(new Error('NEXT_REDIRECT'), { url });
+});
 
 vi.mock('next/navigation', () => ({
-  useRouter: vi.fn(() => ({ replace: mockReplace })),
+  redirect: (url: string) => mockRedirect(url),
 }));
 
 vi.mock('@/core/plants/presentation/hooks/use-plant/use-plant.hook', () => ({
@@ -230,9 +232,10 @@ describe('PlantDetailScreen', () => {
   it('redirects to plants list on error', () => {
     vi.mocked(usePlant).mockReturnValue({ data: undefined, isLoading: false, isError: true } as ReturnType<typeof usePlant>);
 
-    render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />);
-
-    expect(mockReplace).toHaveBeenCalledWith('/en/plants');
+    expect(() =>
+      render(<PlantDetailScreen dict={dict} lang="en" spaceId="s1" plantId="p1" />)
+    ).toThrow('NEXT_REDIRECT');
+    expect(mockRedirect).toHaveBeenCalledWith('/en/plants');
   });
 
   it('renders breadcrumb with list link', () => {
