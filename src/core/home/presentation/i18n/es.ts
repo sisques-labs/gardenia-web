@@ -2,6 +2,12 @@ const dict = {
   topbar: {
     search: 'Buscar',
     newEntry: 'Nueva entrada',
+    notifications: 'Notificaciones',
+    createMenu: {
+      label: 'Crear',
+      newPlant: 'Nueva planta',
+      newJournalEntry: 'Nueva entrada del diario',
+    },
   },
   greeting: 'Hola',
   sections: {

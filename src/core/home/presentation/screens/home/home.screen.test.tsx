@@ -18,7 +18,16 @@ import { HomeScreen } from './home.screen';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 const mockDict: AppDict['home'] = {
-  topbar: { search: 'Search', newEntry: 'Nueva entrada' },
+  topbar: {
+    search: 'Search',
+    newEntry: 'Nueva entrada',
+    notifications: 'Notifications',
+    createMenu: {
+      label: 'Create',
+      newPlant: 'New plant',
+      newJournalEntry: 'New journal entry',
+    },
+  },
   greeting: 'Hello',
   sections: {
     todayTasks: { title: "Today's tasks", inProgress: 'En desarrollo tareas' },

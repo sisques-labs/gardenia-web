@@ -3,8 +3,13 @@
 import { useSpaces } from '@/core/spaces/presentation/hooks/use-spaces/useSpaces.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import { useSidebarStore } from '@/shared/infrastructure/store/sidebar/sidebar.store';
+import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
-export function SpaceSwitcher() {
+type Props = {
+  dict: AppDict['shell']['spaceSwitcher'];
+};
+
+export function SpaceSwitcher({ dict }: Props) {
   const { collapsed } = useSidebarStore();
   const { data: spaces = [] } = useSpaces();
   const currentSpaceId = useSpacesStore((s) => s.currentSpaceId);
@@ -27,14 +32,14 @@ export function SpaceSwitcher() {
         {!collapsed && (
           <div className="flex flex-col min-w-0">
             <span className="text-[10px] font-medium text-[var(--ink)]/50 uppercase tracking-wider leading-none mb-0.5">
-              Huerta activa {/* TODO: i18n */}
+              {dict.activeSpaceLabel}
             </span>
             {spaces.length > 1 ? (
               <select
                 className="text-xs font-medium text-[var(--ink)] bg-transparent border-none outline-none cursor-pointer p-0 leading-tight truncate max-w-[140px]"
                 value={currentSpaceId ?? ''}
                 onChange={(e) => setActiveSpace(e.target.value)}
-                aria-label="Switch space"
+                aria-label={dict.switchSpace}
               >
                 {spaces.map((space) => (
                   <option key={space.id} value={space.id}>
