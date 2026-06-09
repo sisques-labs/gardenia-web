@@ -7,7 +7,11 @@ import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 const shellDict: AppDict['shell'] = {
   openNavigation: 'Open navigation',
   sidebar: { expand: 'Expand sidebar', collapse: 'Collapse sidebar' },
-  spaceSwitcher: { activeSpaceLabel: 'Active garden', switchSpace: 'Switch space' },
+  spaceSwitcher: {
+    activeSpaceLabel: 'Active garden',
+    switchSpace: 'Switch space',
+    createSpace: 'New space',
+  },
   userMenu: {
     openMenu: 'Open menu',
     profile: 'Profile',
@@ -16,7 +20,6 @@ const shellDict: AppDict['shell'] = {
   },
   nav: {
     home: 'Home',
-    spaces: 'Spaces',
     map: 'Map',
     inventory: 'Inventory',
     calendar: 'Calendar',
@@ -28,7 +31,7 @@ const shellDict: AppDict['shell'] = {
 };
 
 vi.mock('next/navigation', () => ({
-  usePathname: vi.fn(() => '/en/spaces'),
+  usePathname: vi.fn(() => '/en/home'),
 }));
 
 vi.mock('../sidebar-footer/sidebar-footer', () => ({
@@ -43,7 +46,8 @@ beforeEach(() => {
 describe('Sidebar', () => {
   it('renders all nav items with labels in expanded state', () => {
     render(<Sidebar dict={shellDict} />);
-    expect(screen.getByText('Spaces')).toBeInTheDocument();
+    expect(screen.getByText('Home')).toBeInTheDocument();
+    expect(screen.getByText('Inventory')).toBeInTheDocument();
   });
 
   it('renders the sidebar container', () => {
@@ -65,7 +69,7 @@ describe('Sidebar', () => {
 
   it('active nav item has forest styling', () => {
     render(<Sidebar dict={shellDict} />);
-    const activeLink = screen.getByRole('link', { name: /spaces/i });
+    const activeLink = screen.getByRole('link', { name: /home/i });
     expect(activeLink).toHaveClass('text-[var(--forest)]');
   });
 
@@ -88,8 +92,8 @@ describe('Sidebar', () => {
   it('hides labels when collapsed', () => {
     useSidebarStore.setState({ collapsed: true });
     render(<Sidebar dict={shellDict} />);
-    expect(screen.queryByText('Spaces')).not.toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /spaces/i })).toBeInTheDocument();
+    expect(screen.queryByText('Home')).not.toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /home/i })).toBeInTheDocument();
   });
 
   it('renders sidebar footer', () => {

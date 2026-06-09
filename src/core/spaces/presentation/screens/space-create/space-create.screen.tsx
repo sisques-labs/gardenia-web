@@ -27,7 +27,7 @@ export function SpaceCreateScreen({ dict, lang }: Props) {
 
   const onSubmit = ({ name }: CreateSpaceFormValues) => {
     createSpace(name, {
-      onSuccess: () => router.replace(`/${lang}/spaces`),
+      onSuccess: () => router.replace(`/${lang}/home`),
     });
   };
 

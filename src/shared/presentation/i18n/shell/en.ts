@@ -7,6 +7,7 @@ const dict = {
   spaceSwitcher: {
     activeSpaceLabel: 'Active garden',
     switchSpace: 'Switch space',
+    createSpace: 'New space',
   },
   userMenu: {
     openMenu: 'Open menu',
@@ -16,7 +17,6 @@ const dict = {
   },
   nav: {
     home: 'Home',
-    spaces: 'Spaces',
     map: 'Map',
     inventory: 'Inventory',
     calendar: 'Calendar',
