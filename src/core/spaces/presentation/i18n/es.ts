@@ -25,6 +25,11 @@ const dict = {
     loading: 'Cargando...',
     noSpace: 'Sin espacio activo',
   },
+  invite: {
+    accepting: 'Uniéndote al espacio...',
+    missingCode: 'Este enlace de invitación no es válido o no incluye un código.',
+    error: 'No se pudo aceptar la invitación. Puede haber caducado o ya ser miembro.',
+  },
 } as const satisfies SpacesDictTranslated;
 
 export default dict;

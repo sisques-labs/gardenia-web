@@ -12,7 +12,11 @@ import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 const shellDict: AppDict['shell'] = {
   openNavigation: 'Open navigation',
   sidebar: { expand: 'Expand sidebar', collapse: 'Collapse sidebar' },
-  spaceSwitcher: { activeSpaceLabel: 'Active garden', switchSpace: 'Switch space' },
+  spaceSwitcher: {
+    activeSpaceLabel: 'Active garden',
+    switchSpace: 'Switch space',
+    createSpace: 'New space',
+  },
   userMenu: {
     openMenu: 'Open menu',
     profile: 'Profile',
@@ -21,7 +25,6 @@ const shellDict: AppDict['shell'] = {
   },
   nav: {
     home: 'Home',
-    spaces: 'Spaces',
     map: 'Map',
     inventory: 'Inventory',
     calendar: 'Calendar',
