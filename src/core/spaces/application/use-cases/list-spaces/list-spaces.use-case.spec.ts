@@ -11,6 +11,7 @@ const mockSpaces: Space[] = [
 const mockRepository: ISpacesRepository = {
   listByUser: vi.fn(),
   create: vi.fn(),
+  acceptInvitation: vi.fn(),
 };
 
 describe('ListSpacesUseCase', () => {
