@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-## [0.13.5-alpha.4] - 2026-06-09
+## [0.13.5-beta.0] - 2026-06-09
 
 ### Bug Fixes
 - **spaces:** Make invite accept flow reliable end-to-end (6dacfb8)
@@ -14,11 +14,12 @@ All notable changes to this project will be documented in this file.
 - Update package versions and dependencies in package.json and package-lock.json (f12119b)
 - Release v0.13.5-alpha.2 (bfec0ed)
 - Release v0.13.5-alpha.3 (ab2b737)
+- Release v0.13.5-alpha.4 (deea5c5)
 
 ### Features
 - **spaces:** Move space selection to sidebar switcher (dffbb2a)
 - **spaces:** Add invite page for space invitation accept flow (ec01386)
-## [0.13.5-alpha.3] - 2026-06-08
+## [0.13.5-alpha.4] - 2026-06-08
 
 ### Bug Fixes
 - **shell:** Polish collapsed sidebar layout (71d2a0f)
