@@ -20,6 +20,11 @@ const dict = {
     loading: 'Loading...',
     noSpace: 'No active space',
   },
+  invite: {
+    accepting: 'Joining space...',
+    missingCode: 'This invitation link is invalid or missing a code.',
+    error: 'Could not accept the invitation. It may be expired or you may already be a member.',
+  },
 } as const;
 
 export default dict;

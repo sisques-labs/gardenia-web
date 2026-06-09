@@ -18,6 +18,7 @@ import { apolloClient } from '@/shared/infrastructure/http/apollo.client';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { SpacesGqlRepository } from './spaces.gql.repository';
 import { SPACES_FIND_BY_USER } from './queries/spaces-find-by-user.query';
+import { SPACE_ACCEPT_INVITATION } from './mutations/space-accept-invitation.mutation';
 import { SPACE_CREATE } from './mutations/space-create.mutation';
 import type { Space } from '@/core/spaces/domain/interfaces/space.interface';
 
@@ -54,6 +55,11 @@ describe('SpacesGqlRepository', () => {
       expect(SPACE_CREATE).toBeDefined();
       expect((SPACE_CREATE as DocumentNode).kind).toBe('Document');
     });
+
+    it('SPACE_ACCEPT_INVITATION is a valid GQL document', () => {
+      expect(SPACE_ACCEPT_INVITATION).toBeDefined();
+      expect((SPACE_ACCEPT_INVITATION as DocumentNode).kind).toBe('Document');
+    });
   });
 
   describe('listByUser()', () => {
@@ -81,6 +87,43 @@ describe('SpacesGqlRepository', () => {
     it('propagates errors from apolloClient.query', async () => {
       vi.mocked(apolloClient.query).mockRejectedValue(new Error('Network error'));
       await expect(repository.listByUser()).rejects.toThrow('Network error');
+    });
+  });
+
+  describe('acceptInvitation()', () => {
+    it('calls mutate with code input and succeeds when success is true', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: {
+          spaceAcceptInvitation: {
+            id: 'user-1',
+            success: true,
+            message: 'Invitation accepted successfully',
+          },
+        },
+      } as never);
+
+      await repository.acceptInvitation('TES · 2026 · AB');
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: SPACE_ACCEPT_INVITATION,
+        variables: { input: { code: 'TES · 2026 · AB' } },
+      });
+    });
+
+    it('throws when mutation returns success: false', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: {
+          spaceAcceptInvitation: {
+            id: '',
+            success: false,
+            message: 'Invitation expired',
+          },
+        },
+      } as never);
+
+      await expect(repository.acceptInvitation('TES · 2026 · AB')).rejects.toThrow(
+        'Invitation expired',
+      );
     });
   });
 

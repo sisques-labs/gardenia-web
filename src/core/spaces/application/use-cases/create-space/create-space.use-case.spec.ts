@@ -9,6 +9,7 @@ const newSpace: Space = { id: 'space-new', name: 'New Space', ownerId: 'user-1',
 const mockRepository: ISpacesRepository = {
   listByUser: vi.fn(),
   create: vi.fn(),
+  acceptInvitation: vi.fn(),
 };
 
 describe('CreateSpaceUseCase', () => {
