@@ -1,21 +1,18 @@
 import type { ISpacesRepository } from '@/core/spaces/application/ports/spaces.repository.port';
-import type { Space } from '@/core/spaces/domain/interfaces/space.interface';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 
 export class AcceptSpaceInvitationUseCase {
   constructor(private readonly spacesRepository: ISpacesRepository) {}
 
-  async execute(code: string): Promise<Space | null> {
+  async execute(code: string): Promise<string> {
     const spaceId = await this.spacesRepository.acceptInvitation(code);
+    useSpacesStore.getState().setActiveSpace(spaceId);
 
-    const spaces = await this.spacesRepository.listByUser();
-    useSpacesStore.getState().setSpaces(spaces);
+    void this.spacesRepository
+      .listByUser()
+      .then((spaces) => useSpacesStore.getState().setSpaces(spaces))
+      .catch(() => undefined);
 
-    const joined = spaces.find((space) => space.id === spaceId) ?? null;
-    if (joined) {
-      useSpacesStore.getState().setActiveSpace(joined.id);
-    }
-
-    return joined;
+    return spaceId;
   }
 }

@@ -7,7 +7,9 @@ import { useAcceptInvitation } from '@/core/spaces/presentation/hooks/use-accept
 import {
   claimInviteAccept,
   isAlreadyMemberError,
+  markInviteAcceptCompleted,
   releaseInviteAccept,
+  wasInviteAcceptCompleted,
 } from '@/core/spaces/presentation/screens/space-invite/invite-accept-in-flight';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
@@ -23,14 +25,14 @@ function SpaceInviteInner({ dict, lang }: Props) {
 
   const isBootComplete = useAuthStore((s) => s.isBootComplete);
   const accessToken = useAuthStore((s) => s.accessToken);
-  const { mutate: acceptInvitation } = useAcceptInvitation();
+  const { mutateAsync: acceptInvitation } = useAcceptInvitation();
 
   const code = searchParams.get('code')?.trim() ?? '';
 
-  const goHome = () => router.replace(`/${lang}/home`);
-
   useEffect(() => {
     if (!isBootComplete || !code) return;
+
+    const goHome = () => router.replace(`/${lang}/home`);
 
     if (!accessToken) {
       const returnUrl = `/${lang}/invite?code=${encodeURIComponent(code)}`;
@@ -38,22 +40,29 @@ function SpaceInviteInner({ dict, lang }: Props) {
       return;
     }
 
+    if (wasInviteAcceptCompleted(code)) {
+      goHome();
+      return;
+    }
+
     if (!claimInviteAccept(code)) return;
 
-    acceptInvitation(code, {
-      onSuccess: () => {
-        releaseInviteAccept(code);
+    void (async () => {
+      try {
+        await acceptInvitation(code);
+        markInviteAcceptCompleted(code);
         goHome();
-      },
-      onError: (error) => {
-        releaseInviteAccept(code);
+      } catch (error) {
         if (isAlreadyMemberError(error)) {
+          markInviteAcceptCompleted(code);
           goHome();
           return;
         }
         setAcceptError(error instanceof Error ? error.message : dict.error);
-      },
-    });
+      } finally {
+        releaseInviteAccept(code);
+      }
+    })();
   }, [acceptInvitation, accessToken, code, dict.error, isBootComplete, lang, router]);
 
   if (!code) {

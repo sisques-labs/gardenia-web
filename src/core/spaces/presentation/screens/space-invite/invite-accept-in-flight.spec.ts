@@ -2,7 +2,9 @@ import { describe, expect, it, beforeEach } from 'vitest';
 import {
   claimInviteAccept,
   isAlreadyMemberError,
+  markInviteAcceptCompleted,
   releaseInviteAccept,
+  wasInviteAcceptCompleted,
 } from './invite-accept-in-flight';
 
 describe('invite-accept-in-flight', () => {
@@ -16,6 +18,12 @@ describe('invite-accept-in-flight', () => {
     expect(claimInviteAccept('CODE-A')).toBe(false);
     releaseInviteAccept('CODE-A');
     expect(claimInviteAccept('CODE-A')).toBe(true);
+  });
+
+  it('tracks completed accepts in sessionStorage', () => {
+    expect(wasInviteAcceptCompleted('CODE-A')).toBe(false);
+    markInviteAcceptCompleted('CODE-A');
+    expect(wasInviteAcceptCompleted('CODE-A')).toBe(true);
   });
 
   it('detects already-member error messages', () => {

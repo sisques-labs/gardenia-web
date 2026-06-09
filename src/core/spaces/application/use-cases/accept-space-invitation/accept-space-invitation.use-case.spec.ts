@@ -32,7 +32,7 @@ describe('AcceptSpaceInvitationUseCase', () => {
     vi.clearAllMocks();
   });
 
-  it('accepts invitation, refreshes spaces, and activates the newly joined space', async () => {
+  it('activates joined space immediately and refreshes spaces in the background', async () => {
     vi.mocked(mockRepository.acceptInvitation).mockResolvedValue(joinedSpace.id);
     vi.mocked(mockRepository.listByUser).mockResolvedValue([homeSpace, joinedSpace]);
 
@@ -40,8 +40,11 @@ describe('AcceptSpaceInvitationUseCase', () => {
     const result = await useCase.execute('TES · 2026 · AB');
 
     expect(mockRepository.acceptInvitation).toHaveBeenCalledWith('TES · 2026 · AB');
-    expect(result).toEqual(joinedSpace);
-    expect(useSpacesStore.getState().availableSpaces).toEqual([homeSpace, joinedSpace]);
+    expect(result).toBe(joinedSpace.id);
     expect(useSpacesStore.getState().currentSpaceId).toBe('space-joined');
+
+    await vi.waitFor(() => {
+      expect(useSpacesStore.getState().availableSpaces).toEqual([homeSpace, joinedSpace]);
+    });
   });
 });

@@ -3,15 +3,9 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
 import { useAcceptInvitation } from './useAcceptInvitation.hook';
-import type { Space } from '@/core/spaces/domain/interfaces/space.interface';
 
-const { mockJoinedSpace, mockExecute } = vi.hoisted(() => ({
-  mockJoinedSpace: {
-    id: 'space-joined',
-    name: 'Shared Garden',
-    ownerId: 'user-2',
-    createdAt: '2024-01-02',
-  } satisfies Space,
+const { mockSpaceId, mockExecute } = vi.hoisted(() => ({
+  mockSpaceId: 'space-joined',
   mockExecute: vi.fn(),
 }));
 
@@ -28,9 +22,8 @@ describe('useAcceptInvitation', () => {
   let queryClient: QueryClient;
 
   beforeEach(() => {
-    mockExecute.mockResolvedValue(mockJoinedSpace);
+    mockExecute.mockResolvedValue(mockSpaceId);
     queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-    queryClient.setQueryData<Space[]>(['spaces'], []);
   });
 
   const wrapper = ({ children }: { children: ReactNode }) =>
@@ -44,6 +37,5 @@ describe('useAcceptInvitation', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['spaces'] });
-    expect(queryClient.getQueryData<Space[]>(['spaces'])).toEqual([mockJoinedSpace]);
   });
 });
