@@ -6,16 +6,12 @@ export class AcceptSpaceInvitationUseCase {
   constructor(private readonly spacesRepository: ISpacesRepository) {}
 
   async execute(code: string): Promise<Space | null> {
-    const beforeIds = new Set(
-      useSpacesStore.getState().availableSpaces.map((space) => space.id),
-    );
-
-    await this.spacesRepository.acceptInvitation(code);
+    const spaceId = await this.spacesRepository.acceptInvitation(code);
 
     const spaces = await this.spacesRepository.listByUser();
     useSpacesStore.getState().setSpaces(spaces);
 
-    const joined = spaces.find((space) => !beforeIds.has(space.id)) ?? null;
+    const joined = spaces.find((space) => space.id === spaceId) ?? null;
     if (joined) {
       useSpacesStore.getState().setActiveSpace(joined.id);
     }

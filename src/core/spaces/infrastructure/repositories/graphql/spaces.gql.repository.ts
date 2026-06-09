@@ -20,11 +20,14 @@ interface SpaceAcceptInvitationData {
 
 export class SpacesGqlRepository implements ISpacesRepository {
   async listByUser(): Promise<Space[]> {
-    const res = await apolloClient.query<SpacesFindByUserData>({ query: SPACES_FIND_BY_USER });
+    const res = await apolloClient.query<SpacesFindByUserData>({
+      query: SPACES_FIND_BY_USER,
+      fetchPolicy: 'network-only',
+    });
     return res.data?.spacesFindByUser?.items ?? [];
   }
 
-  async acceptInvitation(code: string): Promise<void> {
+  async acceptInvitation(code: string): Promise<string> {
     const res = await apolloClient.mutate<SpaceAcceptInvitationData>({
       mutation: SPACE_ACCEPT_INVITATION,
       variables: { input: { code } },
@@ -34,6 +37,11 @@ export class SpacesGqlRepository implements ISpacesRepository {
         res.data?.spaceAcceptInvitation?.message ?? 'spaceAcceptInvitation mutation failed',
       );
     }
+    const spaceId = res.data.spaceAcceptInvitation.id;
+    if (!spaceId) {
+      throw new Error('spaceAcceptInvitation mutation did not return a space id');
+    }
+    return spaceId;
   }
 
   async create(name: string): Promise<Space> {

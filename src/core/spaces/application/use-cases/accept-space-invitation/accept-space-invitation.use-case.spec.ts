@@ -33,7 +33,7 @@ describe('AcceptSpaceInvitationUseCase', () => {
   });
 
   it('accepts invitation, refreshes spaces, and activates the newly joined space', async () => {
-    vi.mocked(mockRepository.acceptInvitation).mockResolvedValue(undefined);
+    vi.mocked(mockRepository.acceptInvitation).mockResolvedValue(joinedSpace.id);
     vi.mocked(mockRepository.listByUser).mockResolvedValue([homeSpace, joinedSpace]);
 
     const useCase = new AcceptSpaceInvitationUseCase(mockRepository);

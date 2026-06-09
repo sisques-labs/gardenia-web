@@ -3,7 +3,8 @@ import type { NextRequest } from 'next/server';
 import { DEFAULT_LOCALE, isLocale } from '@/shared/presentation/i18n/locale';
 
 const REFRESH_COOKIE = 'refresh_token';
-const PUBLIC_PATHS = ['/login', '/register', '/forgot-password'];
+const GUEST_ONLY_PATHS = ['/login', '/register', '/forgot-password'];
+const PUBLIC_PATHS = [...GUEST_ONLY_PATHS, '/invite'];
 
 function getLocaleFromPathname(pathname: string): string | null {
   const segment = pathname.split('/')[1];
@@ -31,7 +32,9 @@ export function proxy(req: NextRequest) {
 
   const locale = getLocaleFromPathname(pathname);
   if (!locale) {
-    return NextResponse.redirect(new URL(`/${DEFAULT_LOCALE}${pathname}`, req.url));
+    const url = new URL(`/${DEFAULT_LOCALE}${pathname}`, req.url);
+    url.search = req.nextUrl.search;
+    return NextResponse.redirect(url);
   }
 
   const pathWithoutLocale = pathname.replace(`/${locale}`, '') || '/';
@@ -42,13 +45,15 @@ export function proxy(req: NextRequest) {
   }
 
   const isPublic = PUBLIC_PATHS.some((p) => pathWithoutLocale.startsWith(p));
+  const isGuestOnly = GUEST_ONLY_PATHS.some((p) => pathWithoutLocale.startsWith(p));
 
-  if (isPublic && hasAuth) {
+  if (isGuestOnly && hasAuth) {
     return NextResponse.redirect(new URL(`/${locale}/home`, req.url));
   }
   if (!isPublic && !hasAuth) {
     const url = new URL(`/${locale}/login`, req.url);
-    url.searchParams.set('returnUrl', pathWithoutLocale);
+    const returnUrl = `${pathWithoutLocale}${req.nextUrl.search}`;
+    url.searchParams.set('returnUrl', returnUrl);
     return NextResponse.redirect(url);
   }
 

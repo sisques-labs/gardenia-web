@@ -1,9 +1,14 @@
 'use client';
 
-import { Suspense, useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { useAcceptInvitation } from '@/core/spaces/presentation/hooks/use-accept-invitation/useAcceptInvitation.hook';
+import {
+  claimInviteAccept,
+  isAlreadyMemberError,
+  releaseInviteAccept,
+} from '@/core/spaces/presentation/screens/space-invite/invite-accept-in-flight';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {
@@ -14,8 +19,7 @@ type Props = {
 function SpaceInviteInner({ dict, lang }: Props) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const ran = useRef(false);
-  const [acceptError, setAcceptError] = useState(false);
+  const [acceptError, setAcceptError] = useState<string | null>(null);
 
   const isBootComplete = useAuthStore((s) => s.isBootComplete);
   const accessToken = useAuthStore((s) => s.accessToken);
@@ -23,8 +27,10 @@ function SpaceInviteInner({ dict, lang }: Props) {
 
   const code = searchParams.get('code')?.trim() ?? '';
 
+  const goHome = () => router.replace(`/${lang}/home`);
+
   useEffect(() => {
-    if (!isBootComplete || !code || ran.current) return;
+    if (!isBootComplete || !code) return;
 
     if (!accessToken) {
       const returnUrl = `/${lang}/invite?code=${encodeURIComponent(code)}`;
@@ -32,12 +38,23 @@ function SpaceInviteInner({ dict, lang }: Props) {
       return;
     }
 
-    ran.current = true;
+    if (!claimInviteAccept(code)) return;
+
     acceptInvitation(code, {
-      onSuccess: () => router.replace(`/${lang}/home`),
-      onError: () => setAcceptError(true),
+      onSuccess: () => {
+        releaseInviteAccept(code);
+        goHome();
+      },
+      onError: (error) => {
+        releaseInviteAccept(code);
+        if (isAlreadyMemberError(error)) {
+          goHome();
+          return;
+        }
+        setAcceptError(error instanceof Error ? error.message : dict.error);
+      },
     });
-  }, [acceptInvitation, accessToken, code, isBootComplete, lang, router]);
+  }, [acceptInvitation, accessToken, code, dict.error, isBootComplete, lang, router]);
 
   if (!code) {
     return (
@@ -50,7 +67,7 @@ function SpaceInviteInner({ dict, lang }: Props) {
   if (acceptError) {
     return (
       <p role="alert" style={{ textAlign: 'center' }}>
-        {dict.error}
+        {acceptError}
       </p>
     );
   }

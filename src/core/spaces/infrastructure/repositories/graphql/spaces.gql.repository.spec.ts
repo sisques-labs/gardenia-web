@@ -71,7 +71,10 @@ describe('SpacesGqlRepository', () => {
       const result = await repository.listByUser();
 
       expect(apolloClient.query).toHaveBeenCalledOnce();
-      expect(apolloClient.query).toHaveBeenCalledWith({ query: SPACES_FIND_BY_USER });
+      expect(apolloClient.query).toHaveBeenCalledWith({
+        query: SPACES_FIND_BY_USER,
+        fetchPolicy: 'network-only',
+      });
       expect(result).toEqual(mockSpaces);
     });
 
@@ -95,15 +98,16 @@ describe('SpacesGqlRepository', () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: {
           spaceAcceptInvitation: {
-            id: 'user-1',
+            id: 'space-joined',
             success: true,
             message: 'Invitation accepted successfully',
           },
         },
       } as never);
 
-      await repository.acceptInvitation('TES · 2026 · AB');
+      const spaceId = await repository.acceptInvitation('TES · 2026 · AB');
 
+      expect(spaceId).toBe('space-joined');
       expect(apolloClient.mutate).toHaveBeenCalledWith({
         mutation: SPACE_ACCEPT_INVITATION,
         variables: { input: { code: 'TES · 2026 · AB' } },
