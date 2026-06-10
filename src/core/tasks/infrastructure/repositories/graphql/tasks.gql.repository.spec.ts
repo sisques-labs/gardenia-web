@@ -17,6 +17,9 @@ import { TASK_TEMPLATES_FIND_BY_CRITERIA } from './queries/task-templates-find-b
 import { TASK_TEMPLATE_FIND_BY_ID } from './queries/task-template-find-by-id.query';
 import { SCHEDULE_TASK } from './mutations/schedule-task.mutation';
 import { CANCEL_TASK } from './mutations/cancel-task.mutation';
+import { TASK_TEMPLATE_CREATE } from './mutations/task-template-create.mutation';
+import { TASK_TEMPLATE_UPDATE } from './mutations/task-template-update.mutation';
+import { TASK_TEMPLATE_DELETE } from './mutations/task-template-delete.mutation';
 import { TaskStatus } from '@/core/tasks/domain/interfaces/task-status.enum';
 import { TaskRunStatus } from '@/core/tasks/domain/interfaces/task-run-status.enum';
 import { TaskBackoffStrategy } from '@/core/tasks/domain/interfaces/task-backoff-strategy.enum';
@@ -281,6 +284,130 @@ describe('TasksGqlRepository', () => {
         variables: { input: { id: 'task-1' } },
       });
       expect(result.status).toBe(TaskStatus.Cancelled);
+    });
+  });
+
+  describe('createTemplate()', () => {
+    it('TASK_TEMPLATE_CREATE is a valid GQL document', () => {
+      expect((TASK_TEMPLATE_CREATE as DocumentNode).kind).toBe('Document');
+    });
+
+    it('calls apolloClient.mutate with TASK_TEMPLATE_CREATE and stringifies defaultPayload', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { createTaskTemplate: mockTemplateRaw },
+      } as never);
+
+      const input = {
+        spaceId: 'space-1',
+        name: 'Daily sync',
+        defaultPayload: { freq: 'daily' },
+        maxRetries: 3,
+        backoffStrategy: TaskBackoffStrategy.Exponential,
+      };
+
+      const result = await repository.createTemplate(input);
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: TASK_TEMPLATE_CREATE,
+        variables: {
+          input: {
+            spaceId: 'space-1',
+            name: 'Daily sync',
+            defaultPayload: '{"freq":"daily"}',
+            maxRetries: 3,
+            backoffStrategy: TaskBackoffStrategy.Exponential,
+          },
+        },
+      });
+      expect(result.defaultPayload).toEqual({ freq: 'daily' });
+    });
+
+    it('stringifies empty defaultPayload as {}', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { createTaskTemplate: { ...mockTemplateRaw, defaultPayload: '{}' } },
+      } as never);
+
+      await repository.createTemplate({
+        spaceId: 'space-1',
+        name: 'Test',
+        defaultPayload: {},
+        maxRetries: 0,
+        backoffStrategy: TaskBackoffStrategy.Fixed,
+      });
+
+      const callArgs = vi.mocked(apolloClient.mutate).mock.calls[0][0] as { variables: { input: { defaultPayload: string } } };
+      expect(callArgs.variables.input.defaultPayload).toBe('{}');
+    });
+  });
+
+  describe('updateTemplate()', () => {
+    it('TASK_TEMPLATE_UPDATE is a valid GQL document', () => {
+      expect((TASK_TEMPLATE_UPDATE as DocumentNode).kind).toBe('Document');
+    });
+
+    it('calls apolloClient.mutate with TASK_TEMPLATE_UPDATE and stringifies defaultPayload', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { updateTaskTemplate: mockTemplateRaw },
+      } as never);
+
+      const input = {
+        id: 'tmpl-1',
+        name: 'Updated',
+        defaultPayload: { freq: 'weekly' },
+      };
+
+      const result = await repository.updateTemplate(input);
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: TASK_TEMPLATE_UPDATE,
+        variables: {
+          input: {
+            id: 'tmpl-1',
+            name: 'Updated',
+            defaultPayload: '{"freq":"weekly"}',
+          },
+        },
+      });
+      expect(result.name).toBe('Daily sync');
+    });
+
+    it('omits defaultPayload from variables when not provided', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { updateTaskTemplate: mockTemplateRaw },
+      } as never);
+
+      await repository.updateTemplate({ id: 'tmpl-1', name: 'Only name change' });
+
+      const callArgs = vi.mocked(apolloClient.mutate).mock.calls[0][0] as { variables: { input: { defaultPayload?: string } } };
+      expect(callArgs.variables.input.defaultPayload).toBeUndefined();
+    });
+  });
+
+  describe('deleteTemplate()', () => {
+    it('TASK_TEMPLATE_DELETE is a valid GQL document', () => {
+      expect((TASK_TEMPLATE_DELETE as DocumentNode).kind).toBe('Document');
+    });
+
+    it('calls apolloClient.mutate with TASK_TEMPLATE_DELETE and template id', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { deleteTaskTemplate: { success: true } },
+      } as never);
+
+      await repository.deleteTemplate('tmpl-1');
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: TASK_TEMPLATE_DELETE,
+        variables: { input: { id: 'tmpl-1' } },
+      });
+    });
+
+    it('resolves to void on success', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { deleteTaskTemplate: { success: true } },
+      } as never);
+
+      const result = await repository.deleteTemplate('tmpl-1');
+      expect(result).toBeUndefined();
     });
   });
 });

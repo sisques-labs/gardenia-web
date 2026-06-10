@@ -20,6 +20,9 @@ import { TASK_TEMPLATES_FIND_BY_CRITERIA } from './queries/task-templates-find-b
 import { TASK_TEMPLATE_FIND_BY_ID } from './queries/task-template-find-by-id.query';
 import { SCHEDULE_TASK } from './mutations/schedule-task.mutation';
 import { CANCEL_TASK } from './mutations/cancel-task.mutation';
+import { TASK_TEMPLATE_CREATE } from './mutations/task-template-create.mutation';
+import { TASK_TEMPLATE_UPDATE } from './mutations/task-template-update.mutation';
+import { TASK_TEMPLATE_DELETE } from './mutations/task-template-delete.mutation';
 
 import type { TasksFindByCriteriaResponse } from './responses/tasks-find-by-criteria.response';
 import type { TaskFindByIdResponse } from './responses/task-find-by-id.response';
@@ -28,6 +31,9 @@ import type { TaskTemplatesFindByCriteriaResponse } from './responses/task-templ
 import type { TaskTemplateFindByIdResponse } from './responses/task-template-find-by-id.response';
 import type { ScheduleTaskResponse } from './responses/schedule-task.response';
 import type { CancelTaskResponse } from './responses/cancel-task.response';
+import type { TaskTemplateCreateResponse } from './responses/task-template-create.response';
+import type { TaskTemplateUpdateResponse } from './responses/task-template-update.response';
+import type { TaskTemplateDeleteResponse } from './responses/task-template-delete.response';
 
 import { TaskMapper } from './mappers/task.mapper';
 import { TaskRunMapper } from './mappers/task-run.mapper';
@@ -117,16 +123,38 @@ export class TasksGqlRepository implements ITasksRepository {
     return TaskMapper.toTask(res.data.cancelTask);
   }
 
-  async createTemplate(_input: CreateTemplateInput): Promise<ITaskTemplate> {
-    throw new Error('createTemplate: not implemented in PR1');
+  async createTemplate(input: CreateTemplateInput): Promise<ITaskTemplate> {
+    const res = await apolloClient.mutate<TaskTemplateCreateResponse>({
+      mutation: TASK_TEMPLATE_CREATE,
+      variables: {
+        input: {
+          ...input,
+          defaultPayload: JSON.stringify(input.defaultPayload),
+        },
+      },
+    });
+    if (!res.data?.createTaskTemplate) throw new Error('createTemplate returned no data');
+    return TaskTemplateMapper.toTaskTemplate(res.data.createTaskTemplate);
   }
 
-  async updateTemplate(_input: UpdateTemplateInput): Promise<ITaskTemplate> {
-    throw new Error('updateTemplate: not implemented in PR1');
+  async updateTemplate(input: UpdateTemplateInput): Promise<ITaskTemplate> {
+    const variables: Record<string, unknown> = { ...input };
+    if (input.defaultPayload !== undefined) {
+      variables.defaultPayload = JSON.stringify(input.defaultPayload);
+    }
+    const res = await apolloClient.mutate<TaskTemplateUpdateResponse>({
+      mutation: TASK_TEMPLATE_UPDATE,
+      variables: { input: variables },
+    });
+    if (!res.data?.updateTaskTemplate) throw new Error('updateTemplate returned no data');
+    return TaskTemplateMapper.toTaskTemplate(res.data.updateTaskTemplate);
   }
 
-  async deleteTemplate(_id: string): Promise<void> {
-    throw new Error('deleteTemplate: not implemented in PR1');
+  async deleteTemplate(id: string): Promise<void> {
+    await apolloClient.mutate<TaskTemplateDeleteResponse>({
+      mutation: TASK_TEMPLATE_DELETE,
+      variables: { input: { id } },
+    });
   }
 }
 
