@@ -18,12 +18,16 @@ import { TASK_FIND_BY_ID } from './queries/task-find-by-id.query';
 import { TASK_RUNS_FIND_BY_TASK_ID } from './queries/task-runs-find-by-task-id.query';
 import { TASK_TEMPLATES_FIND_BY_CRITERIA } from './queries/task-templates-find-by-criteria.query';
 import { TASK_TEMPLATE_FIND_BY_ID } from './queries/task-template-find-by-id.query';
+import { SCHEDULE_TASK } from './mutations/schedule-task.mutation';
+import { CANCEL_TASK } from './mutations/cancel-task.mutation';
 
 import type { TasksFindByCriteriaResponse } from './responses/tasks-find-by-criteria.response';
 import type { TaskFindByIdResponse } from './responses/task-find-by-id.response';
 import type { TaskRunsFindByTaskIdResponse } from './responses/task-runs-find-by-task-id.response';
 import type { TaskTemplatesFindByCriteriaResponse } from './responses/task-templates-find-by-criteria.response';
 import type { TaskTemplateFindByIdResponse } from './responses/task-template-find-by-id.response';
+import type { ScheduleTaskResponse } from './responses/schedule-task.response';
+import type { CancelTaskResponse } from './responses/cancel-task.response';
 
 import { TaskMapper } from './mappers/task.mapper';
 import { TaskRunMapper } from './mappers/task-run.mapper';
@@ -90,12 +94,27 @@ export class TasksGqlRepository implements ITasksRepository {
     return TaskTemplateMapper.toTaskTemplate(res.data.taskTemplateFindById);
   }
 
-  async scheduleTask(_input: ScheduleTaskInput): Promise<ITask> {
-    throw new Error('scheduleTask: not implemented in PR1');
+  async scheduleTask(input: ScheduleTaskInput): Promise<ITask> {
+    const res = await apolloClient.mutate<ScheduleTaskResponse>({
+      mutation: SCHEDULE_TASK,
+      variables: {
+        input: {
+          ...input,
+          payload: JSON.stringify(input.payload),
+        },
+      },
+    });
+    if (!res.data?.scheduleTask) throw new Error('scheduleTask returned no data');
+    return TaskMapper.toTask(res.data.scheduleTask);
   }
 
-  async cancelTask(_id: string): Promise<ITask> {
-    throw new Error('cancelTask: not implemented in PR1');
+  async cancelTask(id: string): Promise<ITask> {
+    const res = await apolloClient.mutate<CancelTaskResponse>({
+      mutation: CANCEL_TASK,
+      variables: { input: { id } },
+    });
+    if (!res.data?.cancelTask) throw new Error(`cancelTask returned no data for id: ${id}`);
+    return TaskMapper.toTask(res.data.cancelTask);
   }
 
   async createTemplate(_input: CreateTemplateInput): Promise<ITaskTemplate> {

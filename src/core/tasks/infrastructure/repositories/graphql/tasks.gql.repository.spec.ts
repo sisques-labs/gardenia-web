@@ -15,6 +15,8 @@ import { TASK_FIND_BY_ID } from './queries/task-find-by-id.query';
 import { TASK_RUNS_FIND_BY_TASK_ID } from './queries/task-runs-find-by-task-id.query';
 import { TASK_TEMPLATES_FIND_BY_CRITERIA } from './queries/task-templates-find-by-criteria.query';
 import { TASK_TEMPLATE_FIND_BY_ID } from './queries/task-template-find-by-id.query';
+import { SCHEDULE_TASK } from './mutations/schedule-task.mutation';
+import { CANCEL_TASK } from './mutations/cancel-task.mutation';
 import { TaskStatus } from '@/core/tasks/domain/interfaces/task-status.enum';
 import { TaskRunStatus } from '@/core/tasks/domain/interfaces/task-run-status.enum';
 import { TaskBackoffStrategy } from '@/core/tasks/domain/interfaces/task-backoff-strategy.enum';
@@ -207,6 +209,78 @@ describe('TasksGqlRepository', () => {
       } as never);
 
       await expect(repository.getTemplate('tmpl-1')).rejects.toThrow('TaskTemplate not found: tmpl-1');
+    });
+  });
+
+  describe('scheduleTask()', () => {
+    it('SCHEDULE_TASK is a valid GQL document', () => {
+      expect((SCHEDULE_TASK as DocumentNode).kind).toBe('Document');
+    });
+
+    it('calls apolloClient.mutate with SCHEDULE_TASK and stringifies payload', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { scheduleTask: { ...mockTaskRaw, templateId: 'tmpl-1' } },
+      } as never);
+
+      const input = {
+        spaceId: 'space-1',
+        templateId: 'tmpl-1',
+        name: 'Test task',
+        scheduledAt: '2026-06-10T08:00:00Z',
+        payload: { key: 'value' },
+      };
+
+      const result = await repository.scheduleTask(input);
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: SCHEDULE_TASK,
+        variables: {
+          input: {
+            spaceId: 'space-1',
+            templateId: 'tmpl-1',
+            name: 'Test task',
+            scheduledAt: '2026-06-10T08:00:00Z',
+            payload: '{"key":"value"}',
+          },
+        },
+      });
+      expect(result.payload).toEqual({ key: 'value' });
+    });
+
+    it('stringifies empty payload as {}', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { scheduleTask: { ...mockTaskRaw, payload: '{}' } },
+      } as never);
+
+      await repository.scheduleTask({
+        spaceId: 'space-1',
+        name: 'Test task',
+        scheduledAt: '2026-06-10T08:00:00Z',
+        payload: {},
+      });
+
+      const callArgs = vi.mocked(apolloClient.mutate).mock.calls[0][0] as { variables: { input: { payload: string } } };
+      expect(callArgs.variables.input.payload).toBe('{}');
+    });
+  });
+
+  describe('cancelTask()', () => {
+    it('CANCEL_TASK is a valid GQL document', () => {
+      expect((CANCEL_TASK as DocumentNode).kind).toBe('Document');
+    });
+
+    it('calls apolloClient.mutate with CANCEL_TASK and task id', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { cancelTask: { ...mockTaskRaw, status: TaskStatus.Cancelled } },
+      } as never);
+
+      const result = await repository.cancelTask('task-1');
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: CANCEL_TASK,
+        variables: { input: { id: 'task-1' } },
+      });
+      expect(result.status).toBe(TaskStatus.Cancelled);
     });
   });
 });
