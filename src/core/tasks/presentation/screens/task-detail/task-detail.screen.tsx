@@ -1,12 +1,17 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { useTask } from '@/core/tasks/presentation/hooks/use-task/use-task.hook';
 import { useTaskRuns } from '@/core/tasks/presentation/hooks/use-task-runs/use-task-runs.hook';
+import { useCancelTask } from '@/core/tasks/presentation/hooks/use-cancel-task/use-cancel-task.hook';
 import { TaskStatusBadge } from '@/core/tasks/presentation/components/task-status-badge/task-status-badge';
 import { TaskRunStatusBadge } from '@/core/tasks/presentation/components/task-run-status-badge/task-run-status-badge';
 import { PageHeader } from '@/shared/presentation/components/page-header/page-header';
 import { Alert } from '@/shared/presentation/components/ui/alert';
+import { Button } from '@/shared/presentation/components/ui/button';
+import { ConfirmModal } from '@/shared/presentation/components/ui/dialog';
+import { TaskStatus } from '@/core/tasks/domain/interfaces/task-status.enum';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {
@@ -18,6 +23,10 @@ type Props = {
 export function TaskDetailScreen({ dict, lang, taskId }: Props) {
   const { data: task, isLoading: taskLoading } = useTask(taskId);
   const { data: runs, isLoading: runsLoading } = useTaskRuns({ taskId, page: 1, pageSize: 20 });
+  const { mutate: cancelTask } = useCancelTask(task?.spaceId ?? null);
+  const [showCancelConfirm, setShowCancelConfirm] = useState(false);
+
+  const isCancellable = task?.status === TaskStatus.Pending;
 
   if (taskLoading || runsLoading) {
     return (
@@ -42,6 +51,17 @@ export function TaskDetailScreen({ dict, lang, taskId }: Props) {
           </Link>
         }
         title={task.name}
+        actions={
+          isCancellable ? (
+            <Button
+              variant="outline"
+              data-testid="cancel-task-btn"
+              onClick={() => setShowCancelConfirm(true)}
+            >
+              Cancel Task
+            </Button>
+          ) : undefined
+        }
       />
 
       <div className="px-6 pt-4 flex flex-col gap-6">
@@ -107,6 +127,23 @@ export function TaskDetailScreen({ dict, lang, taskId }: Props) {
           )}
         </section>
       </div>
+
+      {isCancellable && (
+        <ConfirmModal
+          open={showCancelConfirm}
+          onOpenChange={setShowCancelConfirm}
+          title="Cancel Task"
+          description="Are you sure you want to cancel this task? This action cannot be undone."
+          onConfirm={() => {
+            cancelTask(taskId);
+            setShowCancelConfirm(false);
+          }}
+          onCancel={() => setShowCancelConfirm(false)}
+          confirmLabel="Yes, cancel task"
+          cancelLabel="Keep task"
+          destructive
+        />
+      )}
     </div>
   );
 }

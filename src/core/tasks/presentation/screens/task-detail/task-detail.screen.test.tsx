@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import type { ITask } from '@/core/tasks/domain/interfaces/task.interface';
 import type { ITaskRun } from '@/core/tasks/domain/interfaces/task-run.interface';
@@ -13,6 +13,15 @@ vi.mock('@/core/tasks/presentation/hooks/use-task-runs/use-task-runs.hook', () =
   useTaskRuns: vi.fn(),
 }));
 
+vi.mock('@/core/tasks/presentation/hooks/use-cancel-task/use-cancel-task.hook', () => ({
+  useCancelTask: vi.fn(),
+}));
+
+vi.mock('@/shared/presentation/components/ui/dialog', () => ({
+  ConfirmModal: ({ open, onConfirm }: { open: boolean; onConfirm: () => void }) =>
+    open ? <button data-testid="confirm-cancel-btn" onClick={onConfirm}>Confirm</button> : null,
+}));
+
 vi.mock('next/link', () => ({
   default: ({ href, children }: { href: string; children: React.ReactNode }) => (
     <a href={href}>{children}</a>
@@ -21,6 +30,7 @@ vi.mock('next/link', () => ({
 
 import { useTask } from '@/core/tasks/presentation/hooks/use-task/use-task.hook';
 import { useTaskRuns } from '@/core/tasks/presentation/hooks/use-task-runs/use-task-runs.hook';
+import { useCancelTask } from '@/core/tasks/presentation/hooks/use-cancel-task/use-cancel-task.hook';
 import { TaskDetailScreen } from './task-detail.screen';
 
 const mockTask: ITask = {
@@ -83,9 +93,12 @@ const dict = {
   },
 };
 
+const mockCancelMutate = vi.fn();
+
 describe('TaskDetailScreen', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useCancelTask).mockReturnValue({ mutate: mockCancelMutate, isPending: false } as ReturnType<typeof useCancelTask>);
   });
 
   it('renders task name and status when task is loaded', () => {
@@ -124,5 +137,39 @@ describe('TaskDetailScreen', () => {
 
     const { container } = render(<TaskDetailScreen dict={dict} lang="en" taskId="t1" />);
     expect(container.querySelector('.animate-pulse')).toBeInTheDocument();
+  });
+
+  it('shows cancel button for pending task', () => {
+    vi.mocked(useTask).mockReturnValue({ data: { ...mockTask, status: TaskStatus.Pending }, isLoading: false, isError: false } as ReturnType<typeof useTask>);
+    vi.mocked(useTaskRuns).mockReturnValue({ data: { items: [], total: 0, page: 1, pageSize: 10 }, isLoading: false, isError: false } as ReturnType<typeof useTaskRuns>);
+
+    render(<TaskDetailScreen dict={dict} lang="en" taskId="t1" />);
+
+    expect(screen.getByTestId('cancel-task-btn')).toBeInTheDocument();
+  });
+
+  it('does not show cancel button for non-pending (active) task', () => {
+    vi.mocked(useTask).mockReturnValue({ data: { ...mockTask, status: TaskStatus.Active }, isLoading: false, isError: false } as ReturnType<typeof useTask>);
+    vi.mocked(useTaskRuns).mockReturnValue({ data: { items: [], total: 0, page: 1, pageSize: 10 }, isLoading: false, isError: false } as ReturnType<typeof useTaskRuns>);
+
+    render(<TaskDetailScreen dict={dict} lang="en" taskId="t1" />);
+
+    expect(screen.queryByTestId('cancel-task-btn')).not.toBeInTheDocument();
+  });
+
+  it('fires cancelTask mutation after confirm modal confirmation', async () => {
+    vi.mocked(useTask).mockReturnValue({ data: { ...mockTask, status: TaskStatus.Pending }, isLoading: false, isError: false } as ReturnType<typeof useTask>);
+    vi.mocked(useTaskRuns).mockReturnValue({ data: { items: [], total: 0, page: 1, pageSize: 10 }, isLoading: false, isError: false } as ReturnType<typeof useTaskRuns>);
+
+    render(<TaskDetailScreen dict={dict} lang="en" taskId="t1" />);
+
+    const cancelBtn = screen.getByTestId('cancel-task-btn');
+    fireEvent.click(cancelBtn);
+
+    // Confirm button appears in ConfirmModal
+    const confirmBtn = screen.getByTestId('confirm-cancel-btn');
+    fireEvent.click(confirmBtn);
+
+    expect(mockCancelMutate).toHaveBeenCalledWith('t1');
   });
 });

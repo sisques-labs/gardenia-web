@@ -22,6 +22,32 @@ const dict = {
       error: 'Error',
     },
   },
+  schedule: {
+    title: 'Schedule Task',
+    templateLabel: 'Template',
+    templatePlaceholder: 'Select a template...',
+    nameLabel: 'Name',
+    namePlaceholder: 'Task name',
+    scheduledAtLabel: 'Scheduled At',
+    payloadLabel: 'Payload (JSON)',
+    payloadPlaceholder: '{}',
+    submitBtn: 'Schedule',
+    submittingBtn: 'Scheduling...',
+    cancelBtn: 'Cancel',
+    cancelTask: 'Cancel Task',
+    cancelTaskDescription: 'Are you sure you want to cancel this task? This action cannot be undone.',
+    confirmCancelLabel: 'Yes, cancel task',
+    keepTaskLabel: 'Keep task',
+    validation: {
+      templateIdRequired: 'Template is required',
+      templateIdInvalid: 'Invalid template',
+      nameRequired: 'Name is required',
+      nameMax: 'Name must be 100 characters or less',
+      scheduledAtRequired: 'Scheduled at is required',
+      scheduledAtInvalid: 'Invalid date',
+      payloadInvalidJson: 'Payload must be valid JSON',
+    },
+  },
 } as const;
 
 export default dict;
