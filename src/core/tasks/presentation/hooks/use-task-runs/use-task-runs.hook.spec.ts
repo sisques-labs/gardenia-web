@@ -40,7 +40,7 @@ describe('useTaskRuns', () => {
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual(mockPaginated);
-    expect(mockExecute).toHaveBeenCalledWith({ taskId: 't1', page: 1, pageSize: 10 });
+    expect(mockExecute).toHaveBeenCalledWith({ taskId: 't1' });
   });
 
   it('is disabled when taskId is undefined', () => {

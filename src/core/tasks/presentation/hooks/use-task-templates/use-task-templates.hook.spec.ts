@@ -2,8 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
-import { TaskBackoffStrategy } from '@/core/tasks/domain/interfaces/task-backoff-strategy.enum';
-
 const { mockExecute, mockPaginated } = vi.hoisted(() => ({
   mockPaginated: {
     items: [
@@ -12,7 +10,7 @@ const { mockExecute, mockPaginated } = vi.hoisted(() => ({
         name: 'Daily sync',
         defaultPriority: 5,
         defaultRetryCount: 3,
-        defaultBackoffStrategy: TaskBackoffStrategy.Exponential,
+        defaultBackoffStrategy: 'exponential',
         defaultTimeoutMs: 30000,
         maxConcurrency: 1,
         defaultIsRecurring: false,

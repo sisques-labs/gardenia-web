@@ -11,7 +11,7 @@ const { mockExecute, mockPaginated } = vi.hoisted(() => ({
         id: 't1',
         title: 'Task 1',
         triggerType: 'template',
-        status: TaskStatus.Pending,
+        status: 'pending',
         payload: {},
         priority: 5,
         isRecurring: false,
