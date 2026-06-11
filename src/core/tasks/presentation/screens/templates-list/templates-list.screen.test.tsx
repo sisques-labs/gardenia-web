@@ -87,7 +87,7 @@ describe('TemplatesListScreen', () => {
     vi.mocked(useDeleteTaskTemplate).mockReturnValue({
       mutate: mockDeleteMutate,
       isPending: false,
-    } as ReturnType<typeof useDeleteTaskTemplate>);
+    } as unknown as ReturnType<typeof useDeleteTaskTemplate>);
   });
 
   it('renders 10 rows for 15 total templates', () => {
@@ -95,7 +95,7 @@ describe('TemplatesListScreen', () => {
     vi.mocked(useTaskTemplates).mockReturnValue({
       data: { items: templates, total: 15, page: 1, pageSize: 10 },
       isLoading: false,
-    } as ReturnType<typeof useTaskTemplates>);
+    } as unknown as ReturnType<typeof useTaskTemplates>);
 
     render(<TemplatesListScreen dict={dict as never} lang="en" spaceId="s1" />);
 
@@ -109,7 +109,7 @@ describe('TemplatesListScreen', () => {
     vi.mocked(useTaskTemplates).mockReturnValue({
       data: { items: templates, total: 15, page: 1, pageSize: 10 },
       isLoading: false,
-    } as ReturnType<typeof useTaskTemplates>);
+    } as unknown as ReturnType<typeof useTaskTemplates>);
 
     render(<TemplatesListScreen dict={dict as never} lang="en" spaceId="s1" />);
     // 2 pages means next button is enabled
@@ -122,7 +122,7 @@ describe('TemplatesListScreen', () => {
     vi.mocked(useTaskTemplates).mockReturnValue({
       data: { items: templates, total: 1, page: 1, pageSize: 10 },
       isLoading: false,
-    } as ReturnType<typeof useTaskTemplates>);
+    } as unknown as ReturnType<typeof useTaskTemplates>);
 
     render(<TemplatesListScreen dict={dict as never} lang="en" spaceId="s1" />);
 
@@ -135,7 +135,7 @@ describe('TemplatesListScreen', () => {
     vi.mocked(useTaskTemplates).mockReturnValue({
       data: { items: templates, total: 1, page: 1, pageSize: 10 },
       isLoading: false,
-    } as ReturnType<typeof useTaskTemplates>);
+    } as unknown as ReturnType<typeof useTaskTemplates>);
 
     render(<TemplatesListScreen dict={dict as never} lang="en" spaceId="s1" />);
 
@@ -151,7 +151,7 @@ describe('TemplatesListScreen', () => {
     vi.mocked(useTaskTemplates).mockReturnValue({
       data: { items: [], total: 0, page: 1, pageSize: 10 },
       isLoading: false,
-    } as ReturnType<typeof useTaskTemplates>);
+    } as unknown as ReturnType<typeof useTaskTemplates>);
 
     render(<TemplatesListScreen dict={dict as never} lang="en" spaceId="s1" />);
     expect(screen.getByText('No templates yet')).toBeInTheDocument();

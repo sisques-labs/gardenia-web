@@ -160,7 +160,7 @@ describe('TasksGqlRepository', () => {
         },
       } as never);
 
-      const result = await repository.listTaskRuns({ taskId: 'task-1', page: 1, pageSize: 10 });
+      const result = await repository.listTaskRuns({ taskId: 'task-1' });
 
       expect(apolloClient.query).toHaveBeenCalledWith({
         query: TASK_RUNS_FIND_BY_TASK_ID,
@@ -254,7 +254,7 @@ describe('TasksGqlRepository', () => {
 
       await repository.scheduleTask({ templateId: 'tmpl-1', payload: {} });
 
-      const callArgs = vi.mocked(apolloClient.mutate).mock.calls[0][0] as { variables: { input: { payload: string } } };
+      const callArgs = vi.mocked(apolloClient.mutate).mock.calls[0][0] as unknown as { variables: { input: { payload: string } } };
       expect(callArgs.variables.input.payload).toBe('{}');
     });
   });

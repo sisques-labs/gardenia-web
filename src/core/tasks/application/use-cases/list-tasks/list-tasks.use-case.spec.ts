@@ -7,10 +7,13 @@ import { TaskStatus } from '@/core/tasks/domain/interfaces/task-status.enum';
 
 const mockTask: ITask = {
   id: 'task-1',
-  spaceId: 'space-1',
-  name: 'Test task',
+  triggerType: 'manual',
   status: TaskStatus.Pending,
   payload: {},
+  priority: 5,
+  isRecurring: false,
+  runCount: 0,
+  userId: 'u1',
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
 };
@@ -44,16 +47,16 @@ describe('ListTasksUseCase', () => {
     vi.mocked(mockRepository.listTasks).mockResolvedValue(mockPaginated);
     const useCase = new ListTasksUseCase(mockRepository);
 
-    const result = await useCase.execute({ spaceId: 'space-1', page: 1, pageSize: 10 });
+    const result = await useCase.execute({ page: 1, pageSize: 10 });
 
     expect(result).toEqual(mockPaginated);
-    expect(mockRepository.listTasks).toHaveBeenCalledWith({ spaceId: 'space-1', page: 1, pageSize: 10 });
+    expect(mockRepository.listTasks).toHaveBeenCalledWith({ page: 1, pageSize: 10 });
   });
 
   it('propagates repository errors', async () => {
     vi.mocked(mockRepository.listTasks).mockRejectedValue(new Error('Network error'));
     const useCase = new ListTasksUseCase(mockRepository);
 
-    await expect(useCase.execute({ spaceId: 'space-1', page: 1, pageSize: 10 })).rejects.toThrow('Network error');
+    await expect(useCase.execute({ page: 1, pageSize: 10 })).rejects.toThrow('Network error');
   });
 });

@@ -6,10 +6,13 @@ import { TaskStatus } from '@/core/tasks/domain/interfaces/task-status.enum';
 
 const mockTask: ITask = {
   id: 'task-1',
-  spaceId: 'space-1',
-  name: 'Test task',
+  triggerType: 'manual',
   status: TaskStatus.Active,
   payload: { key: 'value' },
+  priority: 5,
+  isRecurring: false,
+  runCount: 0,
+  userId: 'u1',
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
 };

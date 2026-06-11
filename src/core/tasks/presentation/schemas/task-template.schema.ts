@@ -37,4 +37,5 @@ export const taskTemplateSchema = z.object({
   defaultIsRecurring: z.boolean().default(false),
 });
 
-export type TaskTemplateFormValues = z.infer<typeof taskTemplateSchema>;
+export type TaskTemplateFormInput = z.input<typeof taskTemplateSchema>;
+export type TaskTemplateFormValues = z.output<typeof taskTemplateSchema>;

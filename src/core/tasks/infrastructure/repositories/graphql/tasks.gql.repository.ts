@@ -53,7 +53,7 @@ export class TasksGqlRepository implements ITasksRepository {
         },
       },
     });
-    const data = res.data.taskFindByCriteria;
+    const data = res.data!.taskFindByCriteria;
     return {
       items: data.items.map(TaskMapper.toTask),
       total: data.total,
@@ -76,7 +76,7 @@ export class TasksGqlRepository implements ITasksRepository {
       query: TASK_RUNS_FIND_BY_TASK_ID,
       variables: { input: { taskId: input.taskId } },
     });
-    const items = (res.data.taskRunsFindByTaskId ?? []).map(TaskRunMapper.toTaskRun);
+    const items = (res.data?.taskRunsFindByTaskId ?? []).map(TaskRunMapper.toTaskRun);
     return { items, total: items.length, page: 1, pageSize: items.length };
   }
 
@@ -87,7 +87,7 @@ export class TasksGqlRepository implements ITasksRepository {
         input: { pagination: { page: input.page, perPage: input.pageSize } },
       },
     });
-    const data = res.data.taskTemplateFindByCriteria;
+    const data = res.data!.taskTemplateFindByCriteria;
     return {
       items: data.items.map(TaskTemplateMapper.toTaskTemplate),
       total: data.total,

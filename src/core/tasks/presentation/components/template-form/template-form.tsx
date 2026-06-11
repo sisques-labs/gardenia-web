@@ -8,6 +8,7 @@ import { useCreateTaskTemplate } from '@/core/tasks/presentation/hooks/use-creat
 import { useUpdateTaskTemplate } from '@/core/tasks/presentation/hooks/use-update-task-template/use-update-task-template.hook';
 import {
   taskTemplateSchema,
+  type TaskTemplateFormInput,
   type TaskTemplateFormValues,
 } from '@/core/tasks/presentation/schemas/task-template.schema';
 import type { ITaskTemplate } from '@/core/tasks/domain/interfaces/task-template.interface';
@@ -30,7 +31,7 @@ export function TemplateForm({ dict, template, onSuccess }: TemplateFormProps) {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<TaskTemplateFormValues>({
+  } = useForm<TaskTemplateFormInput, unknown, TaskTemplateFormValues>({
     resolver: zodResolver(taskTemplateSchema),
     defaultValues: {
       name: template?.name ?? '',

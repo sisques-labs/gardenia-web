@@ -2,15 +2,17 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GetTemplateUseCase } from './get-template.use-case';
 import type { ITasksRepository } from '@/core/tasks/application/ports/tasks.repository.port';
 import type { ITaskTemplate } from '@/core/tasks/domain/interfaces/task-template.interface';
-import { TaskBackoffStrategy } from '@/core/tasks/domain/interfaces/task-backoff-strategy.enum';
 
 const mockTemplate: ITaskTemplate = {
   id: 'tmpl-1',
-  spaceId: 'space-1',
   name: 'Daily sync',
-  defaultPayload: { freq: 'daily' },
-  maxRetries: 3,
-  backoffStrategy: TaskBackoffStrategy.Fixed,
+  defaultPriority: 5,
+  defaultRetryCount: 3,
+  defaultBackoffStrategy: 'exponential',
+  defaultTimeoutMs: 30000,
+  maxConcurrency: 1,
+  defaultIsRecurring: false,
+  userId: 'u1',
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
 };

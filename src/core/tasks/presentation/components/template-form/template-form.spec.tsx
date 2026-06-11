@@ -2,8 +2,8 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { TaskBackoffStrategy } from '@/core/tasks/domain/interfaces/task-backoff-strategy.enum';
 import type { ITaskTemplate } from '@/core/tasks/domain/interfaces/task-template.interface';
+import { TaskBackoffStrategy } from '@/core/tasks/domain/interfaces/task-backoff-strategy.enum';
 
 const { mockCreate, mockUpdate } = vi.hoisted(() => ({
   mockCreate: vi.fn(),
@@ -31,20 +31,45 @@ const dict = {
     formTitle: 'Template',
     nameLabel: 'Name',
     namePlaceholder: 'Template name',
-    defaultPayloadLabel: 'Default Payload (JSON)',
-    defaultPayloadPlaceholder: '{}',
+    descriptionLabel: 'Description',
+    descriptionPlaceholder: 'Optional description',
+    taskTitleLabel: 'Task Title',
+    taskTitlePlaceholder: 'Optional task title',
+    taskDescriptionLabel: 'Task Description',
+    taskDescriptionPlaceholder: 'Optional task description',
+    handlerKeyLabel: 'Handler Key',
+    handlerKeyPlaceholder: 'Optional handler key',
+    defaultPriorityLabel: 'Priority',
+    defaultTimeoutMsLabel: 'Timeout (ms)',
+    maxConcurrencyLabel: 'Max Concurrency',
     maxRetriesLabel: 'Max Retries',
     backoffStrategyLabel: 'Backoff Strategy',
+    defaultCronExpressionLabel: 'Cron Expression',
+    defaultCronExpressionPlaceholder: '0 8 * * *',
+    defaultIsRecurringLabel: 'Recurring',
     submitBtn: 'Save',
     submittingBtn: 'Saving...',
     cancelBtn: 'Cancel',
     validation: {
       nameRequired: 'Name is required',
       nameMax: 'Name must be 100 characters or less',
-      defaultPayloadInvalidJson: 'Default payload must be valid JSON',
-      maxRetriesInvalid: 'Max retries must be a non-negative integer',
-      maxRetriesMin: 'Max retries must be 0 or greater',
+      descriptionMax: 'Too long',
+      taskTitleMax: 'Too long',
+      taskDescriptionMax: 'Too long',
+      handlerKeyMax: 'Too long',
+      priorityInvalid: 'Invalid',
+      priorityMin: 'Too low',
+      priorityMax: 'Too high',
+      maxRetriesInvalid: 'Invalid',
+      maxRetriesMin: 'Too low',
+      maxRetriesMax: 'Too high',
       backoffStrategyInvalid: 'Invalid backoff strategy',
+      timeoutInvalid: 'Invalid',
+      timeoutMin: 'Too low',
+      maxConcurrencyInvalid: 'Invalid',
+      maxConcurrencyMin: 'Too low',
+      maxConcurrencyMax: 'Too high',
+      cronMax: 'Too long',
     },
   },
 };
@@ -78,11 +103,14 @@ describe('TemplateForm', () => {
   it('pre-populates fields in edit mode', () => {
     const template: ITaskTemplate = {
       id: 'tmpl-1',
-      spaceId: 's1',
       name: 'Daily sync',
-      defaultPayload: { cron: '0 8 * * *' },
-      maxRetries: 3,
-      backoffStrategy: TaskBackoffStrategy.Exponential,
+      defaultPriority: 5,
+      defaultRetryCount: 3,
+      defaultBackoffStrategy: TaskBackoffStrategy.Exponential,
+      defaultTimeoutMs: 30000,
+      maxConcurrency: 1,
+      defaultIsRecurring: false,
+      userId: 'u1',
       createdAt: '',
       updatedAt: '',
     };
@@ -117,11 +145,14 @@ describe('TemplateForm', () => {
   it('calls updateTemplate when template prop is provided and form is valid', async () => {
     const template: ITaskTemplate = {
       id: 'tmpl-1',
-      spaceId: 's1',
       name: 'Daily sync',
-      defaultPayload: {},
-      maxRetries: 3,
-      backoffStrategy: TaskBackoffStrategy.Exponential,
+      defaultPriority: 5,
+      defaultRetryCount: 3,
+      defaultBackoffStrategy: TaskBackoffStrategy.Exponential,
+      defaultTimeoutMs: 30000,
+      maxConcurrency: 1,
+      defaultIsRecurring: false,
+      userId: 'u1',
       createdAt: '',
       updatedAt: '',
     };
