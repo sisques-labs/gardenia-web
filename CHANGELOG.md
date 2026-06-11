@@ -1,11 +1,15 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-## [0.13.5-beta.1] - 2026-06-11
+## [0.13.5-beta.2] - 2026-06-11
 
 ### CI
 - **release-train:** Freeze package.json version to 0.0.0-dev on develop (0329a37)
-## [0.13.5-alpha.5] - 2026-06-09
+- Run CI and Docker build only on pull_request, not on push to branches (4196024)
+
+### Chore
+- Release v0.13.5-beta.1 (c46c6c7)
+## [0.13.5-beta.1] - 2026-06-09
 
 ### Bug Fixes
 - **spaces:** Make invite accept flow reliable end-to-end (6dacfb8)
