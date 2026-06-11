@@ -1,7 +1,11 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-## [0.13.5] - 2026-06-09
+## [0.13.5-beta.1] - 2026-06-11
+
+### CI
+- **release-train:** Freeze package.json version to 0.0.0-dev on develop (0329a37)
+## [0.13.5-alpha.5] - 2026-06-09
 
 ### Bug Fixes
 - **spaces:** Make invite accept flow reliable end-to-end (6dacfb8)
@@ -16,6 +20,7 @@ All notable changes to this project will be documented in this file.
 - Release v0.13.5-alpha.3 (ab2b737)
 - Release v0.13.5-alpha.4 (deea5c5)
 - Release v0.13.5-beta.0 (09d5e8d)
+- Release v0.13.5 (23eb7f8)
 
 ### Features
 - **spaces:** Move space selection to sidebar switcher (dffbb2a)
