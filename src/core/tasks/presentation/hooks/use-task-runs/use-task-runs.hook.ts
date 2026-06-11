@@ -13,7 +13,7 @@ export interface UseTaskRunsInput {
 export function useTaskRuns({ taskId, page, pageSize }: UseTaskRunsInput) {
   return useQuery({
     queryKey: ['task-runs', taskId, page, pageSize],
-    queryFn: () => listTaskRunsUseCase.execute({ taskId: taskId!, page, pageSize }),
+    queryFn: () => listTaskRunsUseCase.execute({ taskId: taskId! }),
     enabled: !!taskId,
   });
 }

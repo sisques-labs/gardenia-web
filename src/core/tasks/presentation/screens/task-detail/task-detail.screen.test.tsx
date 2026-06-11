@@ -82,11 +82,7 @@ const mockRuns: ITaskRun[] = [
 
 const dict = {
   nav: 'Tasks',
-  list: {
-    title: 'Tasks',
-    empty: 'No tasks yet',
-    columns: { name: 'Name', status: 'Status', scheduledAt: 'Scheduled At' },
-  },
+  list: { title: 'Tasks', empty: 'No tasks yet', columns: { name: 'Name', status: 'Status', scheduledAt: 'Scheduled At' } },
   detail: {
     title: 'Task Detail',
     breadcrumbList: 'Tasks',
@@ -95,19 +91,21 @@ const dict = {
     runsEmpty: 'No runs yet',
     columns: { status: 'Status', startedAt: 'Started At', completedAt: 'Completed At', error: 'Error' },
   },
-};
+  schedule: { title: 'Schedule Task' },
+  templates: { listTitle: 'Templates' },
+} as never;
 
 const mockCancelMutate = vi.fn();
 
 describe('TaskDetailScreen', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useCancelTask).mockReturnValue({ mutate: mockCancelMutate, isPending: false } as ReturnType<typeof useCancelTask>);
+    vi.mocked(useCancelTask).mockReturnValue({ mutate: mockCancelMutate, isPending: false } as unknown as ReturnType<typeof useCancelTask>);
   });
 
   it('renders task name and status when task is loaded', () => {
     vi.mocked(useTask).mockReturnValue({ data: mockTask, isLoading: false, isError: false } as ReturnType<typeof useTask>);
-    vi.mocked(useTaskRuns).mockReturnValue({ data: { items: [], total: 0, page: 1, pageSize: 10 }, isLoading: false, isError: false } as ReturnType<typeof useTaskRuns>);
+    vi.mocked(useTaskRuns).mockReturnValue({ data: { items: [], total: 0, page: 1, pageSize: 10 }, isLoading: false, isError: false } as unknown as ReturnType<typeof useTaskRuns>);
 
     render(<TaskDetailScreen dict={dict} lang="en" taskId="t1" />);
 
@@ -116,7 +114,7 @@ describe('TaskDetailScreen', () => {
 
   it('renders run history with 3 run entries', () => {
     vi.mocked(useTask).mockReturnValue({ data: mockTask, isLoading: false, isError: false } as ReturnType<typeof useTask>);
-    vi.mocked(useTaskRuns).mockReturnValue({ data: { items: mockRuns, total: 3, page: 1, pageSize: 10 }, isLoading: false, isError: false } as ReturnType<typeof useTaskRuns>);
+    vi.mocked(useTaskRuns).mockReturnValue({ data: { items: mockRuns, total: 3, page: 1, pageSize: 10 }, isLoading: false, isError: false } as unknown as ReturnType<typeof useTaskRuns>);
 
     render(<TaskDetailScreen dict={dict} lang="en" taskId="t1" />);
 
@@ -128,7 +126,7 @@ describe('TaskDetailScreen', () => {
 
   it('renders empty run history state when no runs', () => {
     vi.mocked(useTask).mockReturnValue({ data: mockTask, isLoading: false, isError: false } as ReturnType<typeof useTask>);
-    vi.mocked(useTaskRuns).mockReturnValue({ data: { items: [], total: 0, page: 1, pageSize: 10 }, isLoading: false, isError: false } as ReturnType<typeof useTaskRuns>);
+    vi.mocked(useTaskRuns).mockReturnValue({ data: { items: [], total: 0, page: 1, pageSize: 10 }, isLoading: false, isError: false } as unknown as ReturnType<typeof useTaskRuns>);
 
     render(<TaskDetailScreen dict={dict} lang="en" taskId="t1" />);
 
@@ -137,7 +135,7 @@ describe('TaskDetailScreen', () => {
 
   it('renders loading skeleton when task is loading', () => {
     vi.mocked(useTask).mockReturnValue({ data: undefined, isLoading: true, isError: false } as ReturnType<typeof useTask>);
-    vi.mocked(useTaskRuns).mockReturnValue({ data: undefined, isLoading: true, isError: false } as ReturnType<typeof useTaskRuns>);
+    vi.mocked(useTaskRuns).mockReturnValue({ data: undefined, isLoading: true, isError: false } as unknown as ReturnType<typeof useTaskRuns>);
 
     const { container } = render(<TaskDetailScreen dict={dict} lang="en" taskId="t1" />);
     expect(container.querySelector('.animate-pulse')).toBeInTheDocument();
@@ -145,7 +143,7 @@ describe('TaskDetailScreen', () => {
 
   it('shows cancel button for pending task', () => {
     vi.mocked(useTask).mockReturnValue({ data: { ...mockTask, status: TaskStatus.Pending }, isLoading: false, isError: false } as ReturnType<typeof useTask>);
-    vi.mocked(useTaskRuns).mockReturnValue({ data: { items: [], total: 0, page: 1, pageSize: 10 }, isLoading: false, isError: false } as ReturnType<typeof useTaskRuns>);
+    vi.mocked(useTaskRuns).mockReturnValue({ data: { items: [], total: 0, page: 1, pageSize: 10 }, isLoading: false, isError: false } as unknown as ReturnType<typeof useTaskRuns>);
 
     render(<TaskDetailScreen dict={dict} lang="en" taskId="t1" />);
 
@@ -154,7 +152,7 @@ describe('TaskDetailScreen', () => {
 
   it('does not show cancel button for non-pending (active) task', () => {
     vi.mocked(useTask).mockReturnValue({ data: { ...mockTask, status: TaskStatus.Active }, isLoading: false, isError: false } as ReturnType<typeof useTask>);
-    vi.mocked(useTaskRuns).mockReturnValue({ data: { items: [], total: 0, page: 1, pageSize: 10 }, isLoading: false, isError: false } as ReturnType<typeof useTaskRuns>);
+    vi.mocked(useTaskRuns).mockReturnValue({ data: { items: [], total: 0, page: 1, pageSize: 10 }, isLoading: false, isError: false } as unknown as ReturnType<typeof useTaskRuns>);
 
     render(<TaskDetailScreen dict={dict} lang="en" taskId="t1" />);
 
@@ -163,7 +161,7 @@ describe('TaskDetailScreen', () => {
 
   it('fires cancelTask mutation after confirm modal confirmation', async () => {
     vi.mocked(useTask).mockReturnValue({ data: { ...mockTask, status: TaskStatus.Pending }, isLoading: false, isError: false } as ReturnType<typeof useTask>);
-    vi.mocked(useTaskRuns).mockReturnValue({ data: { items: [], total: 0, page: 1, pageSize: 10 }, isLoading: false, isError: false } as ReturnType<typeof useTaskRuns>);
+    vi.mocked(useTaskRuns).mockReturnValue({ data: { items: [], total: 0, page: 1, pageSize: 10 }, isLoading: false, isError: false } as unknown as ReturnType<typeof useTaskRuns>);
 
     render(<TaskDetailScreen dict={dict} lang="en" taskId="t1" />);
 

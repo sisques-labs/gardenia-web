@@ -8,27 +8,27 @@ export const taskTemplateSchema = z.object({
   taskDescription: z.string().max(1000, 'taskDescriptionMax').optional().or(z.literal('')),
   handlerKey: z.string().max(200, 'handlerKeyMax').optional().or(z.literal('')),
   defaultPriority: z
-    .number({ invalid_type_error: 'priorityInvalid' })
+    .number({ error: 'priorityInvalid' })
     .int('priorityInvalid')
     .min(1, 'priorityMin')
     .max(10, 'priorityMax')
     .default(5),
   defaultRetryCount: z
-    .number({ invalid_type_error: 'maxRetriesInvalid' })
+    .number({ error: 'maxRetriesInvalid' })
     .int('maxRetriesInvalid')
     .min(0, 'maxRetriesMin')
     .max(10, 'maxRetriesMax')
     .default(3),
   defaultBackoffStrategy: z.nativeEnum(TaskBackoffStrategy, {
-    errorMap: () => ({ message: 'backoffStrategyInvalid' }),
+    error: 'backoffStrategyInvalid',
   }).default(TaskBackoffStrategy.Exponential),
   defaultTimeoutMs: z
-    .number({ invalid_type_error: 'timeoutInvalid' })
+    .number({ error: 'timeoutInvalid' })
     .int('timeoutInvalid')
     .min(1000, 'timeoutMin')
     .default(30000),
   maxConcurrency: z
-    .number({ invalid_type_error: 'maxConcurrencyInvalid' })
+    .number({ error: 'maxConcurrencyInvalid' })
     .int('maxConcurrencyInvalid')
     .min(1, 'maxConcurrencyMin')
     .max(100, 'maxConcurrencyMax')

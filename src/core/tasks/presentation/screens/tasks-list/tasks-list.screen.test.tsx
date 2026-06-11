@@ -81,6 +81,29 @@ const dict = {
   },
   schedule: {
     title: 'Schedule Task',
+    templateLabel: 'Template',
+    templatePlaceholder: 'Select a template...',
+    nameLabel: 'Name',
+    namePlaceholder: 'Task name',
+    scheduledAtLabel: 'Scheduled At',
+    payloadLabel: 'Payload (JSON)',
+    payloadPlaceholder: '{}',
+    submitBtn: 'Schedule',
+    submittingBtn: 'Scheduling...',
+    cancelBtn: 'Cancel',
+    cancelTask: 'Cancel Task',
+    cancelTaskDescription: 'Are you sure?',
+    confirmCancelLabel: 'Yes, cancel task',
+    keepTaskLabel: 'Keep task',
+    validation: {
+      templateIdRequired: 'Required',
+      templateIdInvalid: 'Invalid',
+      nameRequired: 'Required',
+      nameMax: 'Too long',
+      scheduledAtRequired: 'Required',
+      scheduledAtInvalid: 'Invalid',
+      payloadInvalidJson: 'Invalid JSON',
+    },
   },
   templates: {
     listTitle: 'Templates',
@@ -148,7 +171,7 @@ describe('TasksListScreen', () => {
       data: { items: mockTasks, total: 2, page: 1, pageSize: 10 },
       isLoading: false,
       isError: false,
-    } as ReturnType<typeof useTasks>);
+    } as unknown as ReturnType<typeof useTasks>);
 
     render(<TasksListScreen dict={dict} lang="en" spaceId={null} />);
 
@@ -161,7 +184,7 @@ describe('TasksListScreen', () => {
       data: undefined,
       isLoading: true,
       isError: false,
-    } as ReturnType<typeof useTasks>);
+    } as unknown as ReturnType<typeof useTasks>);
 
     const { container } = render(<TasksListScreen dict={dict} lang="en" spaceId="s1" />);
     expect(container.querySelector('.animate-pulse')).toBeInTheDocument();
@@ -172,7 +195,7 @@ describe('TasksListScreen', () => {
       data: { items: [], total: 0, page: 1, pageSize: 10 },
       isLoading: false,
       isError: false,
-    } as ReturnType<typeof useTasks>);
+    } as unknown as ReturnType<typeof useTasks>);
 
     render(<TasksListScreen dict={dict} lang="en" spaceId={null} />);
     expect(screen.getByText('No tasks yet')).toBeInTheDocument();
@@ -183,7 +206,7 @@ describe('TasksListScreen', () => {
       data: { items: mockTasks, total: 12, page: 1, pageSize: 10 },
       isLoading: false,
       isError: false,
-    } as ReturnType<typeof useTasks>);
+    } as unknown as ReturnType<typeof useTasks>);
 
     render(<TasksListScreen dict={dict} lang="en" spaceId={null} />);
     // Pagination should be visible (2 pages means next button is enabled)
@@ -196,7 +219,7 @@ describe('TasksListScreen', () => {
       data: { items: mockTasks, total: 12, page: 1, pageSize: 10 },
       isLoading: false,
       isError: false,
-    } as ReturnType<typeof useTasks>);
+    } as unknown as ReturnType<typeof useTasks>);
 
     render(<TasksListScreen dict={dict} lang="en" spaceId={null} />);
     fireEvent.click(screen.getByRole('button', { name: /next/i }));
