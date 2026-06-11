@@ -1,40 +1,58 @@
 import type { TaskStatus } from '@/core/tasks/domain/interfaces/task-status.enum';
-import type { TaskBackoffStrategy } from '@/core/tasks/domain/interfaces/task-backoff-strategy.enum';
 import type { PaginationInput } from './pagination.interface';
 
 export interface ListTasksInput extends PaginationInput {
-  spaceId: string;
   status?: TaskStatus;
 }
 
-export interface ListTaskRunsInput extends PaginationInput {
+export interface ListTaskRunsInput {
   taskId: string;
 }
 
 export interface ScheduleTaskInput {
-  spaceId: string;
-  templateId?: string;
-  name: string;
-  scheduledAt: string;
-  payload: Record<string, unknown>;
+  templateId: string;
+  payload?: Record<string, unknown>;
+  priority?: number;
+  delayMs?: number;
+  cronExpression?: string;
+  isRecurring?: boolean;
+  maxRuns?: number;
+  idempotencyKey?: string;
+  targetType?: string;
+  targetId?: string;
+  validFrom?: string;
+  validUntil?: string;
 }
 
-export interface ListTemplatesInput extends PaginationInput {
-  spaceId: string;
-}
+export type ListTemplatesInput = PaginationInput;
 
 export interface CreateTemplateInput {
-  spaceId: string;
   name: string;
-  defaultPayload: Record<string, unknown>;
-  maxRetries: number;
-  backoffStrategy: TaskBackoffStrategy;
+  description?: string | null;
+  taskTitle?: string | null;
+  taskDescription?: string | null;
+  handlerKey?: string | null;
+  defaultPriority?: number;
+  defaultRetryCount?: number;
+  defaultBackoffStrategy?: string;
+  defaultTimeoutMs?: number;
+  maxConcurrency?: number;
+  defaultCronExpression?: string | null;
+  defaultIsRecurring?: boolean;
 }
 
 export interface UpdateTemplateInput {
   id: string;
   name?: string;
-  defaultPayload?: Record<string, unknown>;
-  maxRetries?: number;
-  backoffStrategy?: TaskBackoffStrategy;
+  description?: string | null;
+  taskTitle?: string | null;
+  taskDescription?: string | null;
+  handlerKey?: string | null;
+  defaultPriority?: number;
+  defaultRetryCount?: number;
+  defaultBackoffStrategy?: string;
+  defaultTimeoutMs?: number;
+  maxConcurrency?: number;
+  defaultCronExpression?: string | null;
+  defaultIsRecurring?: boolean;
 }

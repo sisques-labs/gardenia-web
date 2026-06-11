@@ -1,8 +1,5 @@
-export interface TaskTemplateDeleteGqlRaw {
-  success: boolean;
-  message?: string;
-}
+import type { MutationResponseGqlRaw } from './cancel-task.response';
 
 export interface TaskTemplateDeleteResponse {
-  deleteTaskTemplate: TaskTemplateDeleteGqlRaw;
+  deleteTaskTemplate: MutationResponseGqlRaw;
 }

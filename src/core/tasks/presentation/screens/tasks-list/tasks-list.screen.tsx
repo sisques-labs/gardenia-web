@@ -5,11 +5,12 @@ import Link from 'next/link';
 import type { ColumnDef } from '@tanstack/react-table';
 import { useTasks } from '@/core/tasks/presentation/hooks/use-tasks/use-tasks.hook';
 import { TaskStatusBadge } from '@/core/tasks/presentation/components/task-status-badge/task-status-badge';
-import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
+import { ScheduleTaskModal } from '@/core/tasks/presentation/components/schedule-task-modal/schedule-task-modal';
 import { PageHeader } from '@/shared/presentation/components/page-header/page-header';
 import { DataTable } from '@/shared/presentation/components/ui/table';
 import { Pagination } from '@/shared/presentation/components/ui/pagination/pagination';
 import { Alert } from '@/shared/presentation/components/ui/alert';
+import { Button } from '@/shared/presentation/components/ui/button';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import type { ITask } from '@/core/tasks/domain/interfaces/task.interface';
 
@@ -18,7 +19,7 @@ const PAGE_SIZE = 10;
 type Props = {
   dict: AppDict['tasks'];
   lang: string;
-  spaceId: string | null;
+  spaceId?: string | null;
 };
 
 function SkeletonRow() {
@@ -33,21 +34,19 @@ function SkeletonRow() {
   );
 }
 
-export function TasksListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
-  const storeSpaceId = useSpacesStore((s) => s.currentSpaceId);
-  const spaceId = spaceIdProp ?? storeSpaceId;
-
+export function TasksListScreen({ dict, lang }: Props) {
   const [page, setPage] = useState(1);
+  const [scheduleOpen, setScheduleOpen] = useState(false);
 
-  const { data, isLoading } = useTasks({ spaceId, page, pageSize: PAGE_SIZE });
+  const { data, isLoading } = useTasks({ page, pageSize: PAGE_SIZE });
 
   const columns: ColumnDef<ITask>[] = [
     {
-      accessorKey: 'name',
+      accessorKey: 'title',
       header: dict.list.columns.name,
       cell: ({ row }) => (
         <Link href={`/${lang}/tasks/${row.original.id}`} className="hover:underline font-medium">
-          {row.original.name}
+          {row.original.title ?? row.original.id}
         </Link>
       ),
     },
@@ -68,7 +67,15 @@ export function TasksListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
 
   return (
     <div>
-      <PageHeader title={dict.list.title} />
+      <PageHeader
+        title={dict.list.title}
+        actions={
+          <Button onClick={() => setScheduleOpen(true)}>
+            {dict.schedule.title}
+          </Button>
+        }
+      />
+      <ScheduleTaskModal open={scheduleOpen} onClose={() => setScheduleOpen(false)} />
 
       {isLoading ? (
         <div className="px-6 pt-4">

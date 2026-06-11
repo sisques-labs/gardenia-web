@@ -2,17 +2,21 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
+import { TaskBackoffStrategy } from '@/core/tasks/domain/interfaces/task-backoff-strategy.enum';
 
 const { mockExecute, mockPaginated } = vi.hoisted(() => ({
   mockPaginated: {
     items: [
       {
         id: 'tmpl-1',
-        spaceId: 's1',
         name: 'Daily sync',
-        defaultPayload: {},
-        maxRetries: 3,
-        backoffStrategy: 'exponential',
+        defaultPriority: 5,
+        defaultRetryCount: 3,
+        defaultBackoffStrategy: TaskBackoffStrategy.Exponential,
+        defaultTimeoutMs: 30000,
+        maxConcurrency: 1,
+        defaultIsRecurring: false,
+        userId: 'u1',
         createdAt: '',
         updatedAt: '',
       },
@@ -44,24 +48,24 @@ describe('useTaskTemplates', () => {
   const wrapper = ({ children }: { children: ReactNode }) =>
     createElement(QueryClientProvider, { client: queryClient }, children);
 
-  it('returns paginated templates when spaceId is provided', async () => {
+  it('returns paginated templates', async () => {
     const { result } = renderHook(
-      () => useTaskTemplates({ spaceId: 's1', page: 1, pageSize: 10 }),
+      () => useTaskTemplates({ page: 1, pageSize: 10 }),
       { wrapper },
     );
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.data).toEqual(mockPaginated);
-    expect(mockExecute).toHaveBeenCalledWith({ spaceId: 's1', page: 1, pageSize: 10 });
+    expect(mockExecute).toHaveBeenCalledWith({ page: 1, pageSize: 10 });
   });
 
-  it('is disabled when spaceId is null', () => {
+  it('passes custom page/pageSize to use case', async () => {
     const { result } = renderHook(
-      () => useTaskTemplates({ spaceId: null, page: 1, pageSize: 10 }),
+      () => useTaskTemplates({ page: 2, pageSize: 20 }),
       { wrapper },
     );
 
-    expect(result.current.fetchStatus).toBe('idle');
-    expect(mockExecute).not.toHaveBeenCalled();
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockExecute).toHaveBeenCalledWith({ page: 2, pageSize: 20 });
   });
 });

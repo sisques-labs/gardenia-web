@@ -22,14 +22,13 @@ describe('useDeleteTaskTemplate', () => {
     vi.clearAllMocks();
     mockExecute.mockResolvedValue(undefined);
     queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-    queryClient.setQueryData(['task-templates', 'space-1'], []);
   });
 
   const wrapper = ({ children }: { children: ReactNode }) =>
     createElement(QueryClientProvider, { client: queryClient }, children);
 
   it('calls DeleteTemplateUseCase.execute with templateId on mutate', async () => {
-    const { result } = renderHook(() => useDeleteTaskTemplate('space-1'), { wrapper });
+    const { result } = renderHook(() => useDeleteTaskTemplate(), { wrapper });
 
     result.current.mutate('tmpl-1');
 
@@ -37,13 +36,13 @@ describe('useDeleteTaskTemplate', () => {
     expect(mockExecute).toHaveBeenCalledWith('tmpl-1');
   });
 
-  it('invalidates [task-templates, spaceId] query on success', async () => {
+  it('invalidates [task-templates] query on success', async () => {
     const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
-    const { result } = renderHook(() => useDeleteTaskTemplate('space-1'), { wrapper });
+    const { result } = renderHook(() => useDeleteTaskTemplate(), { wrapper });
 
     result.current.mutate('tmpl-1');
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['task-templates', 'space-1'] });
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['task-templates'] });
   });
 });

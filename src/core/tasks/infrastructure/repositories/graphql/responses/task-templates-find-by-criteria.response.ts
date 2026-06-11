@@ -1,16 +1,28 @@
-import type { Paginated } from '@/core/tasks/application/interfaces/pagination.interface';
-
 export interface TaskTemplateGqlRaw {
   id: string;
-  spaceId: string;
   name: string;
-  defaultPayload: string;
-  maxRetries: number;
-  backoffStrategy: string;
+  description?: string | null;
+  taskTitle?: string | null;
+  taskDescription?: string | null;
+  handlerKey?: string | null;
+  defaultPriority: number;
+  defaultRetryCount: number;
+  defaultBackoffStrategy: string;
+  defaultTimeoutMs: number;
+  maxConcurrency: number;
+  defaultCronExpression?: string | null;
+  defaultIsRecurring: boolean;
+  userId: string;
   createdAt: string;
   updatedAt: string;
 }
 
+export interface TaskTemplatesFindByCriteriaRaw {
+  items: TaskTemplateGqlRaw[];
+  total: number;
+  page: number;
+}
+
 export interface TaskTemplatesFindByCriteriaResponse {
-  taskTemplatesFindByCriteria: Paginated<TaskTemplateGqlRaw>;
+  taskTemplateFindByCriteria: TaskTemplatesFindByCriteriaRaw;
 }

@@ -18,12 +18,6 @@ vi.mock(
   }),
 );
 
-vi.mock('@/core/spaces/infrastructure/store/spaces.store', () => ({
-  useSpacesStore: vi.fn((selector: (s: { currentSpaceId: string | null }) => unknown) =>
-    selector({ currentSpaceId: 's1' }),
-  ),
-}));
-
 vi.mock('next/link', () => ({
   default: ({ href, children }: { href: string; children: React.ReactNode }) => (
     <a href={href}>{children}</a>
@@ -56,11 +50,14 @@ const mockDeleteMutate = vi.fn();
 function makeTemplates(count: number): ITaskTemplate[] {
   return Array.from({ length: count }, (_, i) => ({
     id: `tmpl-${i + 1}`,
-    spaceId: 's1',
     name: `Template ${i + 1}`,
-    defaultPayload: {},
-    maxRetries: 3,
-    backoffStrategy: TaskBackoffStrategy.Exponential,
+    defaultPriority: 5,
+    defaultRetryCount: 3,
+    defaultBackoffStrategy: TaskBackoffStrategy.Exponential,
+    defaultTimeoutMs: 30000,
+    maxConcurrency: 1,
+    defaultIsRecurring: false,
+    userId: 'u1',
     createdAt: '',
     updatedAt: '',
   }));

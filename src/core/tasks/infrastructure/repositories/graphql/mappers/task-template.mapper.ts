@@ -1,25 +1,23 @@
 import type { ITaskTemplate } from '@/core/tasks/domain/interfaces/task-template.interface';
-import { TaskBackoffStrategy } from '@/core/tasks/domain/interfaces/task-backoff-strategy.enum';
 import type { TaskTemplateGqlRaw } from '../responses/task-templates-find-by-criteria.response';
 
 export class TaskTemplateMapper {
   static toTaskTemplate(raw: TaskTemplateGqlRaw): ITaskTemplate {
-    let defaultPayload: Record<string, unknown> = {};
-    if (raw.defaultPayload) {
-      try {
-        const parsed = JSON.parse(raw.defaultPayload);
-        defaultPayload = parsed ?? {};
-      } catch {
-        defaultPayload = {};
-      }
-    }
     return {
       id: raw.id,
-      spaceId: raw.spaceId,
       name: raw.name,
-      defaultPayload,
-      maxRetries: raw.maxRetries,
-      backoffStrategy: raw.backoffStrategy as TaskBackoffStrategy,
+      description: raw.description,
+      taskTitle: raw.taskTitle,
+      taskDescription: raw.taskDescription,
+      handlerKey: raw.handlerKey,
+      defaultPriority: raw.defaultPriority,
+      defaultRetryCount: raw.defaultRetryCount,
+      defaultBackoffStrategy: raw.defaultBackoffStrategy,
+      defaultTimeoutMs: raw.defaultTimeoutMs,
+      maxConcurrency: raw.maxConcurrency,
+      defaultCronExpression: raw.defaultCronExpression,
+      defaultIsRecurring: raw.defaultIsRecurring,
+      userId: raw.userId,
       createdAt: raw.createdAt,
       updatedAt: raw.updatedAt,
     };

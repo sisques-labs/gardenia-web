@@ -5,7 +5,6 @@ import Link from 'next/link';
 import type { ColumnDef } from '@tanstack/react-table';
 import { useTaskTemplates } from '@/core/tasks/presentation/hooks/use-task-templates/use-task-templates.hook';
 import { useDeleteTaskTemplate } from '@/core/tasks/presentation/hooks/use-delete-task-template/use-delete-task-template.hook';
-import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import { PageHeader } from '@/shared/presentation/components/page-header/page-header';
 import { DataTable } from '@/shared/presentation/components/ui/table';
 import { Pagination } from '@/shared/presentation/components/ui/pagination/pagination';
@@ -20,18 +19,15 @@ const PAGE_SIZE = 10;
 type Props = {
   dict: AppDict['tasks'];
   lang: string;
-  spaceId: string | null;
+  spaceId?: string | null;
 };
 
-export function TemplatesListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
-  const storeSpaceId = useSpacesStore((s) => s.currentSpaceId);
-  const spaceId = spaceIdProp ?? storeSpaceId;
-
+export function TemplatesListScreen({ dict, lang }: Props) {
   const [page, setPage] = useState(1);
   const [templateToDelete, setTemplateToDelete] = useState<ITaskTemplate | null>(null);
 
-  const { data, isLoading } = useTaskTemplates({ spaceId, page, pageSize: PAGE_SIZE });
-  const { mutate: deleteTemplate } = useDeleteTaskTemplate(spaceId);
+  const { data, isLoading } = useTaskTemplates({ page, pageSize: PAGE_SIZE });
+  const { mutate: deleteTemplate } = useDeleteTaskTemplate();
 
   const t = dict.templates;
 
@@ -41,7 +37,7 @@ export function TemplatesListScreen({ dict, lang, spaceId: spaceIdProp }: Props)
       header: t.columns.name,
       cell: ({ row }) => (
         <Link
-          href={`/${lang}/tasks/templates/${row.original.id}`}
+          href={`/${lang}/settings/templates/${row.original.id}`}
           className="hover:underline font-medium"
         >
           {row.original.name}
@@ -49,11 +45,11 @@ export function TemplatesListScreen({ dict, lang, spaceId: spaceIdProp }: Props)
       ),
     },
     {
-      accessorKey: 'maxRetries',
+      accessorKey: 'defaultRetryCount',
       header: t.columns.maxRetries,
     },
     {
-      accessorKey: 'backoffStrategy',
+      accessorKey: 'defaultBackoffStrategy',
       header: t.columns.backoffStrategy,
     },
     {
@@ -62,7 +58,7 @@ export function TemplatesListScreen({ dict, lang, spaceId: spaceIdProp }: Props)
       cell: ({ row }) => (
         <div className="flex gap-2 justify-end">
           <Link
-            href={`/${lang}/tasks/templates/${row.original.id}`}
+            href={`/${lang}/settings/templates/${row.original.id}`}
             className="text-sm hover:underline px-2 py-1"
           >
             Edit
@@ -86,7 +82,7 @@ export function TemplatesListScreen({ dict, lang, spaceId: spaceIdProp }: Props)
         title={t.listTitle}
         actions={
           <Link
-            href={`/${lang}/tasks/templates/new`}
+            href={`/${lang}/settings/templates/new`}
             className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2"
           >
             {t.newTemplate}

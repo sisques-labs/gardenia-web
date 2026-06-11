@@ -41,16 +41,24 @@ import { TaskTemplateMapper } from './mappers/task-template.mapper';
 
 export class TasksGqlRepository implements ITasksRepository {
   async listTasks(input: ListTasksInput): Promise<Paginated<ITask>> {
+    const filters = input.status
+      ? [{ field: 'status', operator: 'eq', value: input.status }]
+      : [];
     const res = await apolloClient.query<TasksFindByCriteriaResponse>({
       query: TASKS_FIND_BY_CRITERIA,
-      variables: { input },
+      variables: {
+        input: {
+          ...(filters.length ? { filters } : {}),
+          pagination: { page: input.page, perPage: input.pageSize },
+        },
+      },
     });
-    const data = res.data.tasksFindByCriteria;
+    const data = res.data.taskFindByCriteria;
     return {
       items: data.items.map(TaskMapper.toTask),
       total: data.total,
       page: data.page,
-      pageSize: data.pageSize,
+      pageSize: input.pageSize,
     };
   }
 
@@ -66,94 +74,80 @@ export class TasksGqlRepository implements ITasksRepository {
   async listTaskRuns(input: ListTaskRunsInput): Promise<Paginated<ITaskRun>> {
     const res = await apolloClient.query<TaskRunsFindByTaskIdResponse>({
       query: TASK_RUNS_FIND_BY_TASK_ID,
-      variables: { input },
+      variables: { input: { taskId: input.taskId } },
     });
-    const data = res.data.taskRunsFindByTaskId;
-    return {
-      items: data.items.map(TaskRunMapper.toTaskRun),
-      total: data.total,
-      page: data.page,
-      pageSize: data.pageSize,
-    };
+    const items = (res.data.taskRunsFindByTaskId ?? []).map(TaskRunMapper.toTaskRun);
+    return { items, total: items.length, page: 1, pageSize: items.length };
   }
 
   async listTemplates(input: ListTemplatesInput): Promise<Paginated<ITaskTemplate>> {
     const res = await apolloClient.query<TaskTemplatesFindByCriteriaResponse>({
       query: TASK_TEMPLATES_FIND_BY_CRITERIA,
-      variables: { input },
+      variables: {
+        input: { pagination: { page: input.page, perPage: input.pageSize } },
+      },
     });
-    const data = res.data.taskTemplatesFindByCriteria;
+    const data = res.data.taskTemplateFindByCriteria;
     return {
       items: data.items.map(TaskTemplateMapper.toTaskTemplate),
       total: data.total,
       page: data.page,
-      pageSize: data.pageSize,
+      pageSize: input.pageSize,
     };
   }
 
   async getTemplate(id: string): Promise<ITaskTemplate> {
     const res = await apolloClient.query<TaskTemplateFindByIdResponse>({
       query: TASK_TEMPLATE_FIND_BY_ID,
-      variables: { input: { id } },
+      variables: { id },
     });
     if (!res.data?.taskTemplateFindById) throw new Error(`TaskTemplate not found: ${id}`);
     return TaskTemplateMapper.toTaskTemplate(res.data.taskTemplateFindById);
   }
 
-  async scheduleTask(input: ScheduleTaskInput): Promise<ITask> {
+  async scheduleTask(input: ScheduleTaskInput): Promise<string> {
     const res = await apolloClient.mutate<ScheduleTaskResponse>({
       mutation: SCHEDULE_TASK,
       variables: {
         input: {
           ...input,
-          payload: JSON.stringify(input.payload),
+          ...(input.payload !== undefined ? { payload: JSON.stringify(input.payload) } : {}),
         },
       },
     });
-    if (!res.data?.scheduleTask) throw new Error('scheduleTask returned no data');
-    return TaskMapper.toTask(res.data.scheduleTask);
+    const id = res.data?.scheduleTask?.id;
+    if (!id) throw new Error('scheduleTask returned no id');
+    return id;
   }
 
-  async cancelTask(id: string): Promise<ITask> {
-    const res = await apolloClient.mutate<CancelTaskResponse>({
+  async cancelTask(id: string): Promise<void> {
+    await apolloClient.mutate<CancelTaskResponse>({
       mutation: CANCEL_TASK,
-      variables: { input: { id } },
+      variables: { id },
     });
-    if (!res.data?.cancelTask) throw new Error(`cancelTask returned no data for id: ${id}`);
-    return TaskMapper.toTask(res.data.cancelTask);
   }
 
-  async createTemplate(input: CreateTemplateInput): Promise<ITaskTemplate> {
+  async createTemplate(input: CreateTemplateInput): Promise<string> {
     const res = await apolloClient.mutate<TaskTemplateCreateResponse>({
       mutation: TASK_TEMPLATE_CREATE,
-      variables: {
-        input: {
-          ...input,
-          defaultPayload: JSON.stringify(input.defaultPayload),
-        },
-      },
+      variables: { input },
     });
-    if (!res.data?.createTaskTemplate) throw new Error('createTemplate returned no data');
-    return TaskTemplateMapper.toTaskTemplate(res.data.createTaskTemplate);
+    const id = res.data?.createTaskTemplate?.id;
+    if (!id) throw new Error('createTemplate returned no id');
+    return id;
   }
 
-  async updateTemplate(input: UpdateTemplateInput): Promise<ITaskTemplate> {
-    const variables: Record<string, unknown> = { ...input };
-    if (input.defaultPayload !== undefined) {
-      variables.defaultPayload = JSON.stringify(input.defaultPayload);
-    }
-    const res = await apolloClient.mutate<TaskTemplateUpdateResponse>({
+  async updateTemplate(input: UpdateTemplateInput): Promise<void> {
+    await apolloClient.mutate<TaskTemplateUpdateResponse>({
       mutation: TASK_TEMPLATE_UPDATE,
-      variables: { input: variables },
+      variables: { input },
     });
-    if (!res.data?.updateTaskTemplate) throw new Error('updateTemplate returned no data');
-    return TaskTemplateMapper.toTaskTemplate(res.data.updateTaskTemplate);
   }
 
   async deleteTemplate(id: string): Promise<void> {
     await apolloClient.mutate<TaskTemplateDeleteResponse>({
       mutation: TASK_TEMPLATE_DELETE,
-      variables: { input: { id } },
+      variables: { id },
     });
   }
 }

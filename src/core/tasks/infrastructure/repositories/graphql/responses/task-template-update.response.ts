@@ -1,5 +1,5 @@
-import type { TaskTemplateGqlRaw } from './task-templates-find-by-criteria.response';
+import type { MutationResponseGqlRaw } from './cancel-task.response';
 
 export interface TaskTemplateUpdateResponse {
-  updateTaskTemplate: TaskTemplateGqlRaw;
+  updateTaskTemplate: MutationResponseGqlRaw;
 }

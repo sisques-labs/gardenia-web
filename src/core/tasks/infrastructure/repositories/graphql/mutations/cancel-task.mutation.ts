@@ -1,19 +1,11 @@
 import { gql } from '@apollo/client';
 
 export const CANCEL_TASK = gql`
-  mutation CancelTask($input: CancelTaskInput!) {
-    cancelTask(input: $input) {
+  mutation CancelTask($id: String!) {
+    cancelTask(id: $id) {
+      success
+      message
       id
-      spaceId
-      templateId
-      name
-      status
-      payload
-      scheduledAt
-      startedAt
-      completedAt
-      createdAt
-      updatedAt
     }
   }
 `;

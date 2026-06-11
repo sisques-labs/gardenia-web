@@ -23,7 +23,7 @@ type Props = {
 export function TaskDetailScreen({ dict, lang, taskId }: Props) {
   const { data: task, isLoading: taskLoading } = useTask(taskId);
   const { data: runs, isLoading: runsLoading } = useTaskRuns({ taskId, page: 1, pageSize: 20 });
-  const { mutate: cancelTask } = useCancelTask(task?.spaceId ?? null);
+  const { mutate: cancelTask } = useCancelTask();
   const [showCancelConfirm, setShowCancelConfirm] = useState(false);
 
   const isCancellable = task?.status === TaskStatus.Pending;
@@ -50,7 +50,7 @@ export function TaskDetailScreen({ dict, lang, taskId }: Props) {
             {dict.detail.breadcrumbList}
           </Link>
         }
-        title={task.name}
+        title={task.title ?? task.id}
         actions={
           isCancellable ? (
             <Button
@@ -111,9 +111,9 @@ export function TaskDetailScreen({ dict, lang, taskId }: Props) {
                   <span className="text-muted-foreground text-xs">
                     {run.startedAt ? new Date(run.startedAt).toLocaleString() : '—'}
                   </span>
-                  {run.completedAt && (
+                  {run.endedAt && (
                     <span className="text-muted-foreground text-xs">
-                      → {new Date(run.completedAt).toLocaleString()}
+                      → {new Date(run.endedAt).toLocaleString()}
                     </span>
                   )}
                   {run.error && (

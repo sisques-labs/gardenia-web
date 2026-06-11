@@ -4,12 +4,12 @@ import { tasksGqlRepository } from '@/core/tasks/infrastructure/repositories/gra
 
 const deleteTemplateUseCase = new DeleteTemplateUseCase(tasksGqlRepository);
 
-export function useDeleteTaskTemplate(spaceId: string | null) {
+export function useDeleteTaskTemplate() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (templateId: string) => deleteTemplateUseCase.execute(templateId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['task-templates', spaceId] });
+      queryClient.invalidateQueries({ queryKey: ['task-templates'] });
     },
   });
 }

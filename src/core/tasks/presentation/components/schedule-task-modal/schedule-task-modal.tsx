@@ -29,12 +29,12 @@ import type { ITaskTemplate } from '@/core/tasks/domain/interfaces/task-template
 interface ScheduleTaskModalProps {
   open: boolean;
   onClose: () => void;
-  spaceId: string | null;
+  spaceId?: string | null;
 }
 
-export function ScheduleTaskModal({ open, onClose, spaceId }: ScheduleTaskModalProps) {
-  const { data: templatesData } = useTaskTemplates({ spaceId, page: 1, pageSize: 50 });
-  const { mutate: scheduleTask, isPending } = useScheduleTask(spaceId);
+export function ScheduleTaskModal({ open, onClose }: ScheduleTaskModalProps) {
+  const { data: templatesData } = useTaskTemplates({ page: 1, pageSize: 50 });
+  const { mutate: scheduleTask, isPending } = useScheduleTask();
   const [selectedTemplate, setSelectedTemplate] = useState<ITaskTemplate | null>(null);
 
   const {
@@ -47,8 +47,6 @@ export function ScheduleTaskModal({ open, onClose, spaceId }: ScheduleTaskModalP
     resolver: zodResolver(scheduleTaskSchema),
     defaultValues: {
       templateId: '',
-      name: '',
-      scheduledAt: '',
       payload: '{}',
     },
   });
@@ -60,20 +58,13 @@ export function ScheduleTaskModal({ open, onClose, spaceId }: ScheduleTaskModalP
     if (template) {
       setSelectedTemplate(template);
       setValue('templateId', template.id);
-      setValue('name', template.name);
-      setValue('payload', JSON.stringify(template.defaultPayload, null, 2));
     }
   };
 
   const onSubmit = (values: ScheduleTaskFormValues) => {
+    const payload = JSON.parse(values.payload) as Record<string, unknown>;
     scheduleTask(
-      {
-        spaceId: spaceId!,
-        templateId: values.templateId,
-        name: values.name,
-        scheduledAt: values.scheduledAt,
-        payload: JSON.parse(values.payload) as Record<string, unknown>,
-      },
+      { templateId: values.templateId, payload },
       {
         onSuccess: () => {
           reset();
@@ -99,7 +90,7 @@ export function ScheduleTaskModal({ open, onClose, spaceId }: ScheduleTaskModalP
               <SelectTrigger>
                 <SelectValue placeholder="Select a template..." />
               </SelectTrigger>
-              <SelectContent>
+              <SelectContent className="z-[200]">
                 {templates.map((template) => (
                   <SelectItem key={template.id} value={template.id}>
                     {template.name}
@@ -109,32 +100,6 @@ export function ScheduleTaskModal({ open, onClose, spaceId }: ScheduleTaskModalP
             </Select>
             {errors.templateId && (
               <p className="text-xs text-destructive mt-1">{errors.templateId.message}</p>
-            )}
-          </div>
-
-          {/* Name */}
-          <div>
-            <label className="text-sm font-medium mb-1 block">Name</label>
-            <input
-              {...register('name')}
-              className="w-full border rounded-md px-3 py-2 text-sm"
-              placeholder="Task name"
-            />
-            {errors.name && (
-              <p className="text-xs text-destructive mt-1">{errors.name.message}</p>
-            )}
-          </div>
-
-          {/* Scheduled At */}
-          <div>
-            <label className="text-sm font-medium mb-1 block">Scheduled At</label>
-            <input
-              {...register('scheduledAt')}
-              type="datetime-local"
-              className="w-full border rounded-md px-3 py-2 text-sm"
-            />
-            {errors.scheduledAt && (
-              <p className="text-xs text-destructive mt-1">{errors.scheduledAt.message}</p>
             )}
           </div>
 

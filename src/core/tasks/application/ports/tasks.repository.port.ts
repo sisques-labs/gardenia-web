@@ -15,11 +15,11 @@ export interface ITasksRepository {
   listTasks(input: ListTasksInput): Promise<Paginated<ITask>>;
   getTask(id: string): Promise<ITask>;
   listTaskRuns(input: ListTaskRunsInput): Promise<Paginated<ITaskRun>>;
-  scheduleTask(input: ScheduleTaskInput): Promise<ITask>;
-  cancelTask(id: string): Promise<ITask>;
+  scheduleTask(input: ScheduleTaskInput): Promise<string>;
+  cancelTask(id: string): Promise<void>;
   listTemplates(input: ListTemplatesInput): Promise<Paginated<ITaskTemplate>>;
   getTemplate(id: string): Promise<ITaskTemplate>;
-  createTemplate(input: CreateTemplateInput): Promise<ITaskTemplate>;
-  updateTemplate(input: UpdateTemplateInput): Promise<ITaskTemplate>;
+  createTemplate(input: CreateTemplateInput): Promise<string>;
+  updateTemplate(input: UpdateTemplateInput): Promise<void>;
   deleteTemplate(id: string): Promise<void>;
 }

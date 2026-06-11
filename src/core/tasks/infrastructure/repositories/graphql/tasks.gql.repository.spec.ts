@@ -26,10 +26,14 @@ import { TaskBackoffStrategy } from '@/core/tasks/domain/interfaces/task-backoff
 
 const mockTaskRaw = {
   id: 'task-1',
-  spaceId: 'space-1',
-  name: 'Test task',
+  triggerType: 'template',
+  title: 'Test task',
   status: TaskStatus.Pending,
   payload: '{"key":"value"}',
+  priority: 5,
+  isRecurring: false,
+  runCount: 0,
+  userId: 'u1',
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
 };
@@ -37,19 +41,24 @@ const mockTaskRaw = {
 const mockRunRaw = {
   id: 'run-1',
   taskId: 'task-1',
+  attempt: 1,
   status: TaskRunStatus.Completed,
-  output: '{"result":"ok"}',
+  progress: 100,
+  startedAt: '2024-01-01',
+  endedAt: '2024-01-01',
   createdAt: '2024-01-01',
-  updatedAt: '2024-01-01',
 };
 
 const mockTemplateRaw = {
   id: 'tmpl-1',
-  spaceId: 'space-1',
   name: 'Daily sync',
-  defaultPayload: '{"freq":"daily"}',
-  maxRetries: 3,
-  backoffStrategy: TaskBackoffStrategy.Exponential,
+  defaultPriority: 5,
+  defaultRetryCount: 3,
+  defaultBackoffStrategy: TaskBackoffStrategy.Exponential,
+  defaultTimeoutMs: 30000,
+  maxConcurrency: 1,
+  defaultIsRecurring: false,
+  userId: 'u1',
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
 };
@@ -84,20 +93,19 @@ describe('TasksGqlRepository', () => {
     it('calls apolloClient.query with TASKS_FIND_BY_CRITERIA and returns Paginated<ITask>', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
         data: {
-          tasksFindByCriteria: {
+          taskFindByCriteria: {
             items: [mockTaskRaw],
             total: 1,
             page: 1,
-            pageSize: 10,
           },
         },
       } as never);
 
-      const result = await repository.listTasks({ spaceId: 'space-1', page: 1, pageSize: 10 });
+      const result = await repository.listTasks({ page: 1, pageSize: 10 });
 
       expect(apolloClient.query).toHaveBeenCalledWith({
         query: TASKS_FIND_BY_CRITERIA,
-        variables: { input: { spaceId: 'space-1', page: 1, pageSize: 10 } },
+        variables: { input: { pagination: { page: 1, perPage: 10 } } },
       });
       expect(result.items).toHaveLength(1);
       expect(result.items[0].payload).toEqual({ key: 'value' });
@@ -107,16 +115,15 @@ describe('TasksGqlRepository', () => {
     it('parses null payload as empty object', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
         data: {
-          tasksFindByCriteria: {
+          taskFindByCriteria: {
             items: [{ ...mockTaskRaw, payload: '' }],
             total: 1,
             page: 1,
-            pageSize: 10,
           },
         },
       } as never);
 
-      const result = await repository.listTasks({ spaceId: 'space-1', page: 1, pageSize: 10 });
+      const result = await repository.listTasks({ page: 1, pageSize: 10 });
       expect(result.items[0].payload).toEqual({});
     });
   });
@@ -149,12 +156,7 @@ describe('TasksGqlRepository', () => {
     it('calls apolloClient.query with TASK_RUNS_FIND_BY_TASK_ID and returns Paginated<ITaskRun>', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
         data: {
-          taskRunsFindByTaskId: {
-            items: [mockRunRaw],
-            total: 1,
-            page: 1,
-            pageSize: 10,
-          },
+          taskRunsFindByTaskId: [mockRunRaw],
         },
       } as never);
 
@@ -162,9 +164,11 @@ describe('TasksGqlRepository', () => {
 
       expect(apolloClient.query).toHaveBeenCalledWith({
         query: TASK_RUNS_FIND_BY_TASK_ID,
-        variables: { input: { taskId: 'task-1', page: 1, pageSize: 10 } },
+        variables: { input: { taskId: 'task-1' } },
       });
-      expect(result.items[0].output).toEqual({ result: 'ok' });
+      expect(result.items).toHaveLength(1);
+      expect(result.items[0].attempt).toBe(1);
+      expect(result.items[0].progress).toBe(100);
     });
   });
 
@@ -172,22 +176,21 @@ describe('TasksGqlRepository', () => {
     it('calls apolloClient.query with TASK_TEMPLATES_FIND_BY_CRITERIA and returns Paginated<ITaskTemplate>', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
         data: {
-          taskTemplatesFindByCriteria: {
+          taskTemplateFindByCriteria: {
             items: [mockTemplateRaw],
             total: 1,
             page: 1,
-            pageSize: 10,
           },
         },
       } as never);
 
-      const result = await repository.listTemplates({ spaceId: 'space-1', page: 1, pageSize: 10 });
+      const result = await repository.listTemplates({ page: 1, pageSize: 10 });
 
       expect(apolloClient.query).toHaveBeenCalledWith({
         query: TASK_TEMPLATES_FIND_BY_CRITERIA,
-        variables: { input: { spaceId: 'space-1', page: 1, pageSize: 10 } },
+        variables: { input: { pagination: { page: 1, perPage: 10 } } },
       });
-      expect(result.items[0].defaultPayload).toEqual({ freq: 'daily' });
+      expect(result.items[0].defaultRetryCount).toBe(3);
     });
   });
 
@@ -201,9 +204,9 @@ describe('TasksGqlRepository', () => {
 
       expect(apolloClient.query).toHaveBeenCalledWith({
         query: TASK_TEMPLATE_FIND_BY_ID,
-        variables: { input: { id: 'tmpl-1' } },
+        variables: { id: 'tmpl-1' },
       });
-      expect(result.defaultPayload).toEqual({ freq: 'daily' });
+      expect(result.name).toBe('Daily sync');
     });
 
     it('throws when template not found', async () => {
@@ -222,14 +225,11 @@ describe('TasksGqlRepository', () => {
 
     it('calls apolloClient.mutate with SCHEDULE_TASK and stringifies payload', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
-        data: { scheduleTask: { ...mockTaskRaw, templateId: 'tmpl-1' } },
+        data: { scheduleTask: { success: true, message: 'ok', id: 'task-new' } },
       } as never);
 
       const input = {
-        spaceId: 'space-1',
         templateId: 'tmpl-1',
-        name: 'Test task',
-        scheduledAt: '2026-06-10T08:00:00Z',
         payload: { key: 'value' },
       };
 
@@ -239,28 +239,20 @@ describe('TasksGqlRepository', () => {
         mutation: SCHEDULE_TASK,
         variables: {
           input: {
-            spaceId: 'space-1',
             templateId: 'tmpl-1',
-            name: 'Test task',
-            scheduledAt: '2026-06-10T08:00:00Z',
             payload: '{"key":"value"}',
           },
         },
       });
-      expect(result.payload).toEqual({ key: 'value' });
+      expect(result).toBe('task-new');
     });
 
     it('stringifies empty payload as {}', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
-        data: { scheduleTask: { ...mockTaskRaw, payload: '{}' } },
+        data: { scheduleTask: { success: true, id: 'task-new' } },
       } as never);
 
-      await repository.scheduleTask({
-        spaceId: 'space-1',
-        name: 'Test task',
-        scheduledAt: '2026-06-10T08:00:00Z',
-        payload: {},
-      });
+      await repository.scheduleTask({ templateId: 'tmpl-1', payload: {} });
 
       const callArgs = vi.mocked(apolloClient.mutate).mock.calls[0][0] as { variables: { input: { payload: string } } };
       expect(callArgs.variables.input.payload).toBe('{}');
@@ -274,16 +266,24 @@ describe('TasksGqlRepository', () => {
 
     it('calls apolloClient.mutate with CANCEL_TASK and task id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
-        data: { cancelTask: { ...mockTaskRaw, status: TaskStatus.Cancelled } },
+        data: { cancelTask: { success: true, id: 'task-1' } },
       } as never);
 
-      const result = await repository.cancelTask('task-1');
+      await repository.cancelTask('task-1');
 
       expect(apolloClient.mutate).toHaveBeenCalledWith({
         mutation: CANCEL_TASK,
-        variables: { input: { id: 'task-1' } },
+        variables: { id: 'task-1' },
       });
-      expect(result.status).toBe(TaskStatus.Cancelled);
+    });
+
+    it('resolves to void on success', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { cancelTask: { success: true } },
+      } as never);
+
+      const result = await repository.cancelTask('task-1');
+      expect(result).toBeUndefined();
     });
   });
 
@@ -292,51 +292,24 @@ describe('TasksGqlRepository', () => {
       expect((TASK_TEMPLATE_CREATE as DocumentNode).kind).toBe('Document');
     });
 
-    it('calls apolloClient.mutate with TASK_TEMPLATE_CREATE and stringifies defaultPayload', async () => {
+    it('calls apolloClient.mutate with TASK_TEMPLATE_CREATE', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
-        data: { createTaskTemplate: mockTemplateRaw },
+        data: { createTaskTemplate: { success: true, id: 'tmpl-new' } },
       } as never);
 
       const input = {
-        spaceId: 'space-1',
         name: 'Daily sync',
-        defaultPayload: { freq: 'daily' },
-        maxRetries: 3,
-        backoffStrategy: TaskBackoffStrategy.Exponential,
+        defaultRetryCount: 3,
+        defaultBackoffStrategy: TaskBackoffStrategy.Exponential,
       };
 
       const result = await repository.createTemplate(input);
 
       expect(apolloClient.mutate).toHaveBeenCalledWith({
         mutation: TASK_TEMPLATE_CREATE,
-        variables: {
-          input: {
-            spaceId: 'space-1',
-            name: 'Daily sync',
-            defaultPayload: '{"freq":"daily"}',
-            maxRetries: 3,
-            backoffStrategy: TaskBackoffStrategy.Exponential,
-          },
-        },
+        variables: { input },
       });
-      expect(result.defaultPayload).toEqual({ freq: 'daily' });
-    });
-
-    it('stringifies empty defaultPayload as {}', async () => {
-      vi.mocked(apolloClient.mutate).mockResolvedValue({
-        data: { createTaskTemplate: { ...mockTemplateRaw, defaultPayload: '{}' } },
-      } as never);
-
-      await repository.createTemplate({
-        spaceId: 'space-1',
-        name: 'Test',
-        defaultPayload: {},
-        maxRetries: 0,
-        backoffStrategy: TaskBackoffStrategy.Fixed,
-      });
-
-      const callArgs = vi.mocked(apolloClient.mutate).mock.calls[0][0] as { variables: { input: { defaultPayload: string } } };
-      expect(callArgs.variables.input.defaultPayload).toBe('{}');
+      expect(result).toBe('tmpl-new');
     });
   });
 
@@ -345,41 +318,33 @@ describe('TasksGqlRepository', () => {
       expect((TASK_TEMPLATE_UPDATE as DocumentNode).kind).toBe('Document');
     });
 
-    it('calls apolloClient.mutate with TASK_TEMPLATE_UPDATE and stringifies defaultPayload', async () => {
+    it('calls apolloClient.mutate with TASK_TEMPLATE_UPDATE', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
-        data: { updateTaskTemplate: mockTemplateRaw },
+        data: { updateTaskTemplate: { success: true } },
       } as never);
 
       const input = {
         id: 'tmpl-1',
         name: 'Updated',
-        defaultPayload: { freq: 'weekly' },
+        defaultRetryCount: 5,
+        defaultBackoffStrategy: TaskBackoffStrategy.Fixed,
       };
 
-      const result = await repository.updateTemplate(input);
+      await repository.updateTemplate(input);
 
       expect(apolloClient.mutate).toHaveBeenCalledWith({
         mutation: TASK_TEMPLATE_UPDATE,
-        variables: {
-          input: {
-            id: 'tmpl-1',
-            name: 'Updated',
-            defaultPayload: '{"freq":"weekly"}',
-          },
-        },
+        variables: { input },
       });
-      expect(result.name).toBe('Daily sync');
     });
 
-    it('omits defaultPayload from variables when not provided', async () => {
+    it('resolves to void on success', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
-        data: { updateTaskTemplate: mockTemplateRaw },
+        data: { updateTaskTemplate: { success: true } },
       } as never);
 
-      await repository.updateTemplate({ id: 'tmpl-1', name: 'Only name change' });
-
-      const callArgs = vi.mocked(apolloClient.mutate).mock.calls[0][0] as { variables: { input: { defaultPayload?: string } } };
-      expect(callArgs.variables.input.defaultPayload).toBeUndefined();
+      const result = await repository.updateTemplate({ id: 'tmpl-1', name: 'Only name change' });
+      expect(result).toBeUndefined();
     });
   });
 
@@ -397,7 +362,7 @@ describe('TasksGqlRepository', () => {
 
       expect(apolloClient.mutate).toHaveBeenCalledWith({
         mutation: TASK_TEMPLATE_DELETE,
-        variables: { input: { id: 'tmpl-1' } },
+        variables: { id: 'tmpl-1' },
       });
     });
 

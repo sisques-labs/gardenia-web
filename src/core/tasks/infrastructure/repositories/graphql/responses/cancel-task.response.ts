@@ -1,5 +1,9 @@
-import type { TaskGqlRaw } from './tasks-find-by-criteria.response';
+export interface MutationResponseGqlRaw {
+  success: boolean;
+  message?: string;
+  id?: string;
+}
 
 export interface CancelTaskResponse {
-  cancelTask: TaskGqlRaw;
+  cancelTask: MutationResponseGqlRaw;
 }

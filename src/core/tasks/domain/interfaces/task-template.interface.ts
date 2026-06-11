@@ -1,12 +1,18 @@
-import type { TaskBackoffStrategy } from './task-backoff-strategy.enum';
-
 export interface ITaskTemplate {
   id: string;
-  spaceId: string;
   name: string;
-  defaultPayload: Record<string, unknown>;
-  maxRetries: number;
-  backoffStrategy: TaskBackoffStrategy;
+  description?: string | null;
+  taskTitle?: string | null;
+  taskDescription?: string | null;
+  handlerKey?: string | null;
+  defaultPriority: number;
+  defaultRetryCount: number;
+  defaultBackoffStrategy: string;
+  defaultTimeoutMs: number;
+  maxConcurrency: number;
+  defaultCronExpression?: string | null;
+  defaultIsRecurring: boolean;
+  userId: string;
   createdAt: string;
   updatedAt: string;
 }

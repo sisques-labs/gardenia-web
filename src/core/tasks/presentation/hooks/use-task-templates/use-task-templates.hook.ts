@@ -5,15 +5,13 @@ import { tasksGqlRepository } from '@/core/tasks/infrastructure/repositories/gra
 const listTemplatesUseCase = new ListTemplatesUseCase(tasksGqlRepository);
 
 export interface UseTaskTemplatesInput {
-  spaceId: string | null;
   page: number;
   pageSize: number;
 }
 
-export function useTaskTemplates({ spaceId, page, pageSize }: UseTaskTemplatesInput) {
+export function useTaskTemplates({ page, pageSize }: UseTaskTemplatesInput) {
   return useQuery({
-    queryKey: ['task-templates', spaceId, page, pageSize],
-    queryFn: () => listTemplatesUseCase.execute({ spaceId: spaceId!, page, pageSize }),
-    enabled: !!spaceId,
+    queryKey: ['task-templates', page, pageSize],
+    queryFn: () => listTemplatesUseCase.execute({ page, pageSize }),
   });
 }

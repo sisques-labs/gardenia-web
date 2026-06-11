@@ -5,12 +5,12 @@ import type { ScheduleTaskInput } from '@/core/tasks/application/interfaces/task
 
 const scheduleTaskUseCase = new ScheduleTaskUseCase(tasksGqlRepository);
 
-export function useScheduleTask(spaceId: string | null) {
+export function useScheduleTask() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: ScheduleTaskInput) => scheduleTaskUseCase.execute(input),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks', spaceId] });
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
     },
   });
 }

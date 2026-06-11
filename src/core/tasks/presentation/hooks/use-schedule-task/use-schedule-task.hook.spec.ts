@@ -3,20 +3,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
 
-const { mockExecute, mockTask } = vi.hoisted(() => ({
-  mockTask: {
-    id: 'task-1',
-    spaceId: 'space-1',
-    templateId: 'tmpl-1',
-    name: 'Daily sync',
-    status: 'pending',
-    payload: { cron: '0 8 * * *' },
-    scheduledAt: '2026-06-10T08:00:00Z',
-    maxRetries: 3,
-    backoffStrategy: 'EXPONENTIAL',
-    createdAt: '2026-06-10T00:00:00Z',
-    updatedAt: '2026-06-10T00:00:00Z',
-  },
+const { mockExecute } = vi.hoisted(() => ({
   mockExecute: vi.fn(),
 }));
 
@@ -33,22 +20,18 @@ describe('useScheduleTask', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    mockExecute.mockResolvedValue(mockTask);
+    mockExecute.mockResolvedValue('task-new-id');
     queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
-    queryClient.setQueryData(['tasks', 'space-1'], []);
   });
 
   const wrapper = ({ children }: { children: ReactNode }) =>
     createElement(QueryClientProvider, { client: queryClient }, children);
 
   it('calls ScheduleTaskUseCase.execute with input on mutate', async () => {
-    const { result } = renderHook(() => useScheduleTask('space-1'), { wrapper });
+    const { result } = renderHook(() => useScheduleTask(), { wrapper });
 
     const input = {
-      spaceId: 'space-1',
       templateId: 'tmpl-1',
-      name: 'Daily sync',
-      scheduledAt: '2026-06-10T08:00:00Z',
       payload: { cron: '0 8 * * *' },
     };
 
@@ -58,18 +41,13 @@ describe('useScheduleTask', () => {
     expect(mockExecute).toHaveBeenCalledWith(input);
   });
 
-  it('invalidates [tasks, spaceId] query on success', async () => {
+  it('invalidates [tasks] query on success', async () => {
     const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
-    const { result } = renderHook(() => useScheduleTask('space-1'), { wrapper });
+    const { result } = renderHook(() => useScheduleTask(), { wrapper });
 
-    result.current.mutate({
-      spaceId: 'space-1',
-      name: 'Test',
-      scheduledAt: '2026-06-10T08:00:00Z',
-      payload: {},
-    });
+    result.current.mutate({ templateId: 'tmpl-1', payload: {} });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['tasks', 'space-1'] });
+    expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['tasks'] });
   });
 });

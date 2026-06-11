@@ -4,25 +4,16 @@ import type { TaskRunGqlRaw } from '../responses/task-runs-find-by-task-id.respo
 
 export class TaskRunMapper {
   static toTaskRun(raw: TaskRunGqlRaw): ITaskRun {
-    let output: Record<string, unknown> = {};
-    if (raw.output) {
-      try {
-        const parsed = JSON.parse(raw.output);
-        output = parsed ?? {};
-      } catch {
-        output = {};
-      }
-    }
     return {
       id: raw.id,
       taskId: raw.taskId,
+      attempt: raw.attempt,
       status: raw.status as TaskRunStatus,
-      output,
+      progress: raw.progress,
       error: raw.error,
       startedAt: raw.startedAt,
-      completedAt: raw.completedAt,
+      endedAt: raw.endedAt,
       createdAt: raw.createdAt,
-      updatedAt: raw.updatedAt,
     };
   }
 }

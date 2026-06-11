@@ -4,13 +4,13 @@ import { tasksGqlRepository } from '@/core/tasks/infrastructure/repositories/gra
 
 const cancelTaskUseCase = new CancelTaskUseCase(tasksGqlRepository);
 
-export function useCancelTask(spaceId: string | null) {
+export function useCancelTask() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (taskId: string) => cancelTaskUseCase.execute(taskId),
     onSuccess: (_data, taskId) => {
-      queryClient.invalidateQueries({ queryKey: ['tasks', spaceId] });
-      queryClient.invalidateQueries({ queryKey: ['task', taskId] });
+      queryClient.invalidateQueries({ queryKey: ['tasks'] });
+      queryClient.invalidateQueries({ queryKey: ['tasks', taskId] });
     },
   });
 }

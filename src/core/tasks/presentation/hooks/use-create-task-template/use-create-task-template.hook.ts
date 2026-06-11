@@ -5,12 +5,12 @@ import type { CreateTemplateInput } from '@/core/tasks/application/interfaces/ta
 
 const createTemplateUseCase = new CreateTemplateUseCase(tasksGqlRepository);
 
-export function useCreateTaskTemplate(spaceId: string | null) {
+export function useCreateTaskTemplate() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: (input: CreateTemplateInput) => createTemplateUseCase.execute(input),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['task-templates', spaceId] });
+      queryClient.invalidateQueries({ queryKey: ['task-templates'] });
     },
   });
 }

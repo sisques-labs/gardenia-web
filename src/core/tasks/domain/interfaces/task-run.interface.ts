@@ -3,11 +3,11 @@ import type { TaskRunStatus } from './task-run-status.enum';
 export interface ITaskRun {
   id: string;
   taskId: string;
+  attempt: number;
   status: TaskRunStatus;
-  output: Record<string, unknown>;
-  error?: string;
-  startedAt?: string;
-  completedAt?: string;
+  progress: number;
+  error?: string | null;
+  startedAt: string;
+  endedAt?: string | null;
   createdAt: string;
-  updatedAt: string;
 }

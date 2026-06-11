@@ -6,16 +6,14 @@ import type { TaskStatus } from '@/core/tasks/domain/interfaces/task-status.enum
 const listTasksUseCase = new ListTasksUseCase(tasksGqlRepository);
 
 export interface UseTasksInput {
-  spaceId: string | null;
   page: number;
   pageSize: number;
   status?: TaskStatus;
 }
 
-export function useTasks({ spaceId, page, pageSize, status }: UseTasksInput) {
+export function useTasks({ page, pageSize, status }: UseTasksInput) {
   return useQuery({
-    queryKey: ['tasks', spaceId, page, pageSize, status],
-    queryFn: () => listTasksUseCase.execute({ spaceId: spaceId!, page, pageSize, status }),
-    enabled: !!spaceId,
+    queryKey: ['tasks', page, pageSize, status],
+    queryFn: () => listTasksUseCase.execute({ page, pageSize, status }),
   });
 }

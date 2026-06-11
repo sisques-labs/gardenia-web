@@ -15,15 +15,15 @@ import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 interface TemplateFormProps {
   dict: AppDict['tasks'];
-  spaceId: string | null;
+  spaceId?: string | null;
   template?: ITaskTemplate;
   onSuccess: () => void;
 }
 
-export function TemplateForm({ dict, spaceId, template, onSuccess }: TemplateFormProps) {
+export function TemplateForm({ dict, template, onSuccess }: TemplateFormProps) {
   const isEdit = !!template;
-  const { mutate: createTemplate, isPending: isCreating } = useCreateTaskTemplate(spaceId);
-  const { mutate: updateTemplate, isPending: isUpdating } = useUpdateTaskTemplate(spaceId);
+  const { mutate: createTemplate, isPending: isCreating } = useCreateTaskTemplate();
+  const { mutate: updateTemplate, isPending: isUpdating } = useUpdateTaskTemplate();
   const isPending = isCreating || isUpdating;
 
   const {
@@ -34,94 +34,139 @@ export function TemplateForm({ dict, spaceId, template, onSuccess }: TemplateFor
     resolver: zodResolver(taskTemplateSchema),
     defaultValues: {
       name: template?.name ?? '',
-      defaultPayload: template?.defaultPayload
-        ? JSON.stringify(template.defaultPayload, null, 2)
-        : '{}',
-      maxRetries: template?.maxRetries ?? 3,
-      backoffStrategy: template?.backoffStrategy ?? TaskBackoffStrategy.Exponential,
+      description: template?.description ?? '',
+      taskTitle: template?.taskTitle ?? '',
+      taskDescription: template?.taskDescription ?? '',
+      handlerKey: template?.handlerKey ?? '',
+      defaultPriority: template?.defaultPriority ?? 5,
+      defaultRetryCount: template?.defaultRetryCount ?? 3,
+      defaultBackoffStrategy: (template?.defaultBackoffStrategy as TaskBackoffStrategy | undefined) ?? TaskBackoffStrategy.Exponential,
+      defaultTimeoutMs: template?.defaultTimeoutMs ?? 30000,
+      maxConcurrency: template?.maxConcurrency ?? 1,
+      defaultCronExpression: template?.defaultCronExpression ?? '',
+      defaultIsRecurring: template?.defaultIsRecurring ?? false,
     },
   });
 
   const t = dict.templates;
+  const v = t.validation;
+
+  const fieldError = (msg: string | undefined) =>
+    msg ? <p className="text-xs text-destructive mt-1">{v[msg as keyof typeof v] ?? msg}</p> : null;
 
   const onSubmit = (values: TaskTemplateFormValues) => {
-    const defaultPayload = JSON.parse(values.defaultPayload) as Record<string, unknown>;
-
+    const clean = {
+      ...values,
+      description: values.description || null,
+      taskTitle: values.taskTitle || null,
+      taskDescription: values.taskDescription || null,
+      handlerKey: values.handlerKey || null,
+      defaultCronExpression: values.defaultCronExpression || null,
+    };
     if (isEdit) {
-      updateTemplate(
-        { id: template.id, ...values, defaultPayload },
-        { onSuccess },
-      );
+      updateTemplate({ id: template.id, ...clean }, { onSuccess });
     } else {
-      createTemplate(
-        { spaceId: spaceId!, ...values, defaultPayload },
-        { onSuccess },
-      );
+      createTemplate(clean, { onSuccess });
     }
   };
 
+  const inputClass = 'w-full border rounded-md px-3 py-2 text-sm';
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-5">
+
       {/* Name */}
       <div>
-        <label className="text-sm font-medium mb-1 block">{t.nameLabel}</label>
-        <input
-          {...register('name')}
-          placeholder={t.namePlaceholder}
-          className="w-full border rounded-md px-3 py-2 text-sm"
-        />
-        {errors.name && (
-          <p className="text-xs text-destructive mt-1">{t.validation[errors.name.message as keyof typeof t.validation] ?? errors.name.message}</p>
-        )}
+        <label className="text-sm font-medium mb-1 block">{t.nameLabel} <span className="text-destructive">*</span></label>
+        <input {...register('name')} placeholder={t.namePlaceholder} className={inputClass} />
+        {fieldError(errors.name?.message)}
       </div>
 
-      {/* Default Payload */}
+      {/* Description */}
       <div>
-        <label className="text-sm font-medium mb-1 block">{t.defaultPayloadLabel}</label>
-        <textarea
-          {...register('defaultPayload')}
-          rows={5}
-          placeholder={t.defaultPayloadPlaceholder}
-          className="w-full border rounded-md px-3 py-2 text-sm font-mono"
-        />
-        {errors.defaultPayload && (
-          <p className="text-xs text-destructive mt-1">{t.validation[errors.defaultPayload.message as keyof typeof t.validation] ?? errors.defaultPayload.message}</p>
-        )}
+        <label className="text-sm font-medium mb-1 block">{t.descriptionLabel}</label>
+        <textarea {...register('description')} placeholder={t.descriptionPlaceholder} rows={2} className={inputClass} />
+        {fieldError(errors.description?.message)}
       </div>
 
-      {/* Max Retries */}
+      <hr className="border-border" />
+
+      {/* Task Title */}
       <div>
-        <label className="text-sm font-medium mb-1 block">{t.maxRetriesLabel}</label>
-        <input
-          {...register('maxRetries', { valueAsNumber: true })}
-          type="number"
-          min={0}
-          className="w-full border rounded-md px-3 py-2 text-sm"
-        />
-        {errors.maxRetries && (
-          <p className="text-xs text-destructive mt-1">{t.validation[errors.maxRetries.message as keyof typeof t.validation] ?? errors.maxRetries.message}</p>
-        )}
+        <label className="text-sm font-medium mb-1 block">{t.taskTitleLabel}</label>
+        <input {...register('taskTitle')} placeholder={t.taskTitlePlaceholder} className={inputClass} />
+        {fieldError(errors.taskTitle?.message)}
       </div>
 
-      {/* Backoff Strategy */}
+      {/* Task Description */}
       <div>
-        <label className="text-sm font-medium mb-1 block">{t.backoffStrategyLabel}</label>
-        <select
-          {...register('backoffStrategy')}
-          className="w-full border rounded-md px-3 py-2 text-sm"
-        >
-          {Object.values(TaskBackoffStrategy).map((strategy) => (
-            <option key={strategy} value={strategy}>
-              {strategy}
-            </option>
-          ))}
-        </select>
-        {errors.backoffStrategy && (
-          <p className="text-xs text-destructive mt-1">{t.validation[errors.backoffStrategy.message as keyof typeof t.validation] ?? errors.backoffStrategy.message}</p>
-        )}
+        <label className="text-sm font-medium mb-1 block">{t.taskDescriptionLabel}</label>
+        <textarea {...register('taskDescription')} placeholder={t.taskDescriptionPlaceholder} rows={2} className={inputClass} />
+        {fieldError(errors.taskDescription?.message)}
       </div>
 
-      <div className="flex justify-end gap-2">
+      {/* Handler Key */}
+      <div>
+        <label className="text-sm font-medium mb-1 block">{t.handlerKeyLabel}</label>
+        <input {...register('handlerKey')} placeholder={t.handlerKeyPlaceholder} className={inputClass} />
+        {fieldError(errors.handlerKey?.message)}
+      </div>
+
+      <hr className="border-border" />
+
+      {/* Priority + Timeout + Concurrency */}
+      <div className="grid grid-cols-3 gap-4">
+        <div>
+          <label className="text-sm font-medium mb-1 block">{t.defaultPriorityLabel}</label>
+          <input {...register('defaultPriority', { valueAsNumber: true })} type="number" min={1} max={10} className={inputClass} />
+          {fieldError(errors.defaultPriority?.message)}
+        </div>
+        <div>
+          <label className="text-sm font-medium mb-1 block">{t.defaultTimeoutMsLabel}</label>
+          <input {...register('defaultTimeoutMs', { valueAsNumber: true })} type="number" min={1000} step={1000} className={inputClass} />
+          {fieldError(errors.defaultTimeoutMs?.message)}
+        </div>
+        <div>
+          <label className="text-sm font-medium mb-1 block">{t.maxConcurrencyLabel}</label>
+          <input {...register('maxConcurrency', { valueAsNumber: true })} type="number" min={1} max={100} className={inputClass} />
+          {fieldError(errors.maxConcurrency?.message)}
+        </div>
+      </div>
+
+      {/* Retries + Backoff */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="text-sm font-medium mb-1 block">{t.maxRetriesLabel}</label>
+          <input {...register('defaultRetryCount', { valueAsNumber: true })} type="number" min={0} max={10} className={inputClass} />
+          {fieldError(errors.defaultRetryCount?.message)}
+        </div>
+        <div>
+          <label className="text-sm font-medium mb-1 block">{t.backoffStrategyLabel}</label>
+          <select {...register('defaultBackoffStrategy')} className={inputClass}>
+            {Object.values(TaskBackoffStrategy).map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
+          {fieldError(errors.defaultBackoffStrategy?.message)}
+        </div>
+      </div>
+
+      <hr className="border-border" />
+
+      {/* Cron + Recurring */}
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="text-sm font-medium mb-1 block">{t.defaultCronExpressionLabel}</label>
+          <input {...register('defaultCronExpression')} placeholder={t.defaultCronExpressionPlaceholder} className={inputClass} />
+          {fieldError(errors.defaultCronExpression?.message)}
+        </div>
+        <div className="flex items-center gap-3 pt-6">
+          <input {...register('defaultIsRecurring')} type="checkbox" id="defaultIsRecurring" className="h-4 w-4" />
+          <label htmlFor="defaultIsRecurring" className="text-sm font-medium">{t.defaultIsRecurringLabel}</label>
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-2 pt-2">
         <Button type="submit" disabled={isPending}>
           {isPending ? t.submittingBtn : t.submitBtn}
         </Button>

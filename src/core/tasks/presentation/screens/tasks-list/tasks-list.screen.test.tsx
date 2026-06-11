@@ -7,17 +7,19 @@ vi.mock('@/core/tasks/presentation/hooks/use-tasks/use-tasks.hook', () => ({
   useTasks: vi.fn(),
 }));
 
-vi.mock('@/core/spaces/infrastructure/store/spaces.store', () => ({
-  useSpacesStore: vi.fn((selector: (s: { currentSpaceId: string | null }) => unknown) =>
-    selector({ currentSpaceId: 's1' })
-  ),
-}));
-
 vi.mock('next/link', () => ({
   default: ({ href, children }: { href: string; children: React.ReactNode }) => (
     <a href={href}>{children}</a>
   ),
 }));
+
+vi.mock(
+  '@/core/tasks/presentation/components/schedule-task-modal/schedule-task-modal',
+  () => ({
+    ScheduleTaskModal: ({ open }: { open: boolean }) =>
+      open ? <div data-testid="schedule-task-modal" /> : null,
+  }),
+);
 
 import { useTasks } from '@/core/tasks/presentation/hooks/use-tasks/use-tasks.hook';
 import { TasksListScreen } from './tasks-list.screen';
@@ -25,20 +27,28 @@ import { TasksListScreen } from './tasks-list.screen';
 const mockTasks: ITask[] = [
   {
     id: 't1',
-    name: 'Daily Sync',
+    title: 'Daily Sync',
+    triggerType: 'template',
     status: TaskStatus.Pending,
-    spaceId: 's1',
     payload: {},
+    priority: 5,
+    isRecurring: false,
+    runCount: 0,
+    userId: 'u1',
     scheduledAt: '2026-06-10T10:00:00Z',
     createdAt: '2026-06-01T00:00:00Z',
     updatedAt: '2026-06-01T00:00:00Z',
   },
   {
     id: 't2',
-    name: 'Weekly Report',
+    title: 'Weekly Report',
+    triggerType: 'template',
     status: TaskStatus.Completed,
-    spaceId: 's1',
     payload: {},
+    priority: 5,
+    isRecurring: false,
+    runCount: 1,
+    userId: 'u1',
     scheduledAt: '2026-06-09T08:00:00Z',
     createdAt: '2026-06-01T00:00:00Z',
     updatedAt: '2026-06-01T00:00:00Z',
@@ -69,6 +79,9 @@ const dict = {
       error: 'Error',
     },
   },
+  schedule: {
+    title: 'Schedule Task',
+  },
 };
 
 describe('TasksListScreen', () => {
@@ -83,7 +96,7 @@ describe('TasksListScreen', () => {
       isError: false,
     } as ReturnType<typeof useTasks>);
 
-    render(<TasksListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<TasksListScreen dict={dict} lang="en" spaceId={null} />);
 
     expect(screen.getByText('Daily Sync')).toBeInTheDocument();
     expect(screen.getByText('Weekly Report')).toBeInTheDocument();
@@ -107,7 +120,7 @@ describe('TasksListScreen', () => {
       isError: false,
     } as ReturnType<typeof useTasks>);
 
-    render(<TasksListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<TasksListScreen dict={dict} lang="en" spaceId={null} />);
     expect(screen.getByText('No tasks yet')).toBeInTheDocument();
   });
 
@@ -118,7 +131,7 @@ describe('TasksListScreen', () => {
       isError: false,
     } as ReturnType<typeof useTasks>);
 
-    render(<TasksListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<TasksListScreen dict={dict} lang="en" spaceId={null} />);
     // Pagination should be visible (2 pages means next button is enabled)
     const nextBtn = screen.getByRole('button', { name: /next/i });
     expect(nextBtn).not.toBeDisabled();
@@ -131,7 +144,7 @@ describe('TasksListScreen', () => {
       isError: false,
     } as ReturnType<typeof useTasks>);
 
-    render(<TasksListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<TasksListScreen dict={dict} lang="en" spaceId={null} />);
     fireEvent.click(screen.getByRole('button', { name: /next/i }));
 
     expect(vi.mocked(useTasks)).toHaveBeenCalledWith(

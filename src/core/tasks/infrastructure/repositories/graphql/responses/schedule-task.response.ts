@@ -1,5 +1,5 @@
-import type { TaskGqlRaw } from './tasks-find-by-criteria.response';
+import type { MutationResponseGqlRaw } from './cancel-task.response';
 
 export interface ScheduleTaskResponse {
-  scheduleTask: TaskGqlRaw;
+  scheduleTask: MutationResponseGqlRaw;
 }
