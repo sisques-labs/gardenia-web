@@ -10,9 +10,11 @@ export type AuthFieldProps = {
   placeholder?: string;
   error?: string;
   registration: UseFormRegisterReturn;
+  showLabel?: string;
+  hideLabel?: string;
 };
 
-export function AuthField({ id, label, type = 'text', placeholder, error, registration }: AuthFieldProps) {
+export function AuthField({ id, label, type = 'text', placeholder, error, registration, showLabel = 'Show', hideLabel = 'Hide' }: AuthFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === 'password';
   const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
@@ -57,7 +59,7 @@ export function AuthField({ id, label, type = 'text', placeholder, error, regist
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
-            aria-label={showPassword ? 'Hide password' : 'Show password'}
+            aria-label={showPassword ? hideLabel : showLabel}
             style={{
               position: 'absolute',
               right: 10,
@@ -71,7 +73,7 @@ export function AuthField({ id, label, type = 'text', placeholder, error, regist
               fontSize: '12px',
             }}
           >
-            {showPassword ? 'Hide' : 'Show'}
+            {showPassword ? hideLabel : showLabel}
           </button>
         )}
       </div>

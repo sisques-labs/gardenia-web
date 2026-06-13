@@ -1,6 +1,8 @@
 export interface PlantSpecies {
   id: string;
-  name: string;
+  scientificName: string;
+  description: string | null;
+  imageUrl: string | null;
   createdAt: string;
   updatedAt: string;
 }

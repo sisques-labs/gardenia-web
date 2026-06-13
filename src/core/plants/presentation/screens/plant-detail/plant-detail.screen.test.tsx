@@ -32,7 +32,7 @@ const mockPlant: Plant = {
   name: 'Monstera',
   userId: 'u1',
   spaceId: 's1',
-  species: { id: 'sp1', name: 'Monstera deliciosa', createdAt: '', updatedAt: '' },
+  species: { id: 'sp1', scientificName: 'Monstera deliciosa', description: null, imageUrl: null, createdAt: '', updatedAt: '' },
   imageUrl: 'https://example.com/plant.jpg',
   qr: {
     id: 'qr1',
@@ -58,6 +58,14 @@ const dict = {
     statsPlants: 'plants',
     statsSpecies: 'species',
     inProgress: 'Coming soon',
+    categories: {
+      vegetable: 'Vegetable',
+      herb: 'Herb',
+      leafy: 'Leafy',
+      root: 'Root',
+      flower: 'Flower',
+      tree: 'Tree',
+    },
   },
   create: {
     title: 'New plant',
@@ -74,6 +82,7 @@ const dict = {
   },
   detail: {
     breadcrumbList: 'Inventory',
+    bancal: 'Plot',
     qrPrint: 'Print QR',
     noImage: 'No image',
     noSpecies: 'Unknown species',

@@ -1,6 +1,35 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.13.7-alpha.5] - 2026-06-13
+
+### Testing
+- Add coverage config and missing specs for auth/users (acc34f5)
+- **auth:** Remove stale store assertions after use-case decoupling (af0ce12)
+- **coverage:** Lower thresholds to match current baseline (71931f2)
+## [0.13.7-alpha.4] - 2026-06-13
+
+### Bug Fixes
+- **i18n:** Replace hardcoded strings with i18n keys (feccc1d)
+- **i18n:** Update test mocks with new i18n dict keys (f24965d)
+- **i18n:** Add bancal key to plants-list screen test mock (ba71bb0)
+## [0.13.7-alpha.3] - 2026-06-13
+
+### Bug Fixes
+- **plants:** Update species view model to use scientificName (228aa59)
+- **plants:** Replace array index key with stable label key in care grid (599839c)
+## [0.13.7-alpha.2] - 2026-06-13
+
+### Chore
+- Remove package-lock.json and ignore it (975c675)
+## [0.13.7-alpha.1] - 2026-06-13
+
+### Refactor
+- **architecture:** Decouple use cases from zustand stores (20326d8)
+## [0.13.7-alpha.0] - 2026-06-13
+
+### Bug Fixes
+- **docker:** Run container as non-root node user (af8d32b)
 ## [0.13.6] - 2026-06-12
 
 ### CI
