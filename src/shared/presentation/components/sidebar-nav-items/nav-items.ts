@@ -17,7 +17,7 @@ export const NAV_ITEMS: NavItemConfig[] = [
   { key: 'inventory', href: '/[lang]/plants', icon: Leaf },
   { key: 'calendar', href: '/[lang]/calendar', icon: Calendar },
   { key: 'journal', href: '/[lang]/journal', icon: BookOpen, disabled: true },
-  { key: 'harvests', href: '/[lang]/harvests', icon: Wheat, disabled: true },
+  { key: 'harvests', href: '/[lang]/harvests', icon: Wheat },
   { key: 'pests', href: '/[lang]/pests', icon: Bug, disabled: true },
   { key: 'community', href: '/[lang]/community', icon: Users, disabled: true },
 ];
