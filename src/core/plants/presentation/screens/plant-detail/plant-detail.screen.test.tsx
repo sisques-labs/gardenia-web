@@ -32,7 +32,7 @@ const mockPlant: Plant = {
   name: 'Monstera',
   userId: 'u1',
   spaceId: 's1',
-  species: { id: 'sp1', name: 'Monstera deliciosa', createdAt: '', updatedAt: '' },
+  species: { id: 'sp1', scientificName: 'Monstera deliciosa', description: null, imageUrl: null, createdAt: '', updatedAt: '' },
   imageUrl: 'https://example.com/plant.jpg',
   qr: {
     id: 'qr1',

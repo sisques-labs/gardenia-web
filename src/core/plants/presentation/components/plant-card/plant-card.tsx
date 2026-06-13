@@ -40,7 +40,7 @@ export function PlantCard({ plant, lang, noSpecies, status, tag }: Props) {
         <div className="min-w-0 flex-1">
           <p className="font-semibold text-sm truncate">{plant.name}</p>
           <p className="text-xs text-muted-foreground truncate italic">
-            {plant.species?.name ?? noSpecies}
+            {plant.species?.scientificName ?? noSpecies}
           </p>
         </div>
       </div>

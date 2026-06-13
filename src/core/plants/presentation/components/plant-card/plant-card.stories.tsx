@@ -4,7 +4,7 @@ import { PlantCard } from "./plant-card"
 const mockPlant = {
   id: "1",
   name: "Tomate Cherry",
-  species: { id: "1", name: "Solanum lycopersicum", createdAt: "2026-01-01", updatedAt: "2026-01-01" },
+  species: { id: "1", scientificName: "Solanum lycopersicum", description: null, imageUrl: null, createdAt: "2026-01-01", updatedAt: "2026-01-01" },
   imageUrl: undefined,
   userId: "user-1",
   spaceId: "space-1",
