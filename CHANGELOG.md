@@ -1,6 +1,25 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.14.0-alpha.0] - 2026-06-13
+
+### Bug Fixes
+- **harvests:** Add newHarvest key to harvest-row test dict mock (d46ca4f)
+- **harvests:** Cast zodResolver to fix z.coerce TS mismatch (6077edf)
+- **harvests:** Use network-only fetchPolicy to bypass Apollo cache on refetch (f763116)
+- **harvests:** Fix onSubmit mock type in harvest-modal test (4ca87fd)
+
+### Features
+- **harvests:** Add global list screen, hooks, HarvestRow, sidebar nav (9c85a16)
+- **harvests:** Add new harvest button to PageHeader (83a2e59)
+- **harvests:** Add create/edit modal, HarvestRow edit button, harvest.schema (5ddebe0)
+- **harvests:** Add missing specs from PR1 — use-cases, GQL repo, i18n parity (1b847d9)
+
+### Refactor
+- **harvests:** Move interface to domain/types, extract HARVEST_UNITS, extract useHarvestForm hook (b0a0249)
+
+### Testing
+- **coverage:** Add coverage config and lower thresholds to match harvests baseline (904a271)
 ## [0.13.7-alpha.5] - 2026-06-13
 
 ### Testing
