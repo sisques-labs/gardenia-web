@@ -96,21 +96,21 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
               >
                 {plant.name}
               </h1>
-              {plant.species?.name && (
+              {plant.species?.scientificName && (
                 <p
                   data-testid="plant-species"
                   className="text-sm text-muted-foreground italic"
                 >
-                  {plant.species.name}
+                  {plant.species.scientificName}
                 </p>
               )}
             </div>
 
             {/* Chips row */}
             <div className="flex flex-wrap gap-2">
-              {plant.species?.name && (
+              {plant.species?.scientificName && (
                 <Chip variant="sage" data-testid="chip-species">
-                  {plant.species.name}
+                  {plant.species.scientificName}
                 </Chip>
               )}
             </div>
