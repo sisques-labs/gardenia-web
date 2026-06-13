@@ -239,8 +239,8 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
                   {/* Left: care cards + cycle */}
                   <div className="lg:col-span-2 flex flex-col gap-6">
                     <div data-testid="care-grid" className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {careData.map((care, i) => (
-                        <CareCard key={i} {...care} />
+                      {careData.map((care) => (
+                        <CareCard key={care.label} {...care} />
                       ))}
                     </div>
                     <div>
