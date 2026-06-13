@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ListSpacesUseCase } from './list-spaces.use-case';
-import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import type { ISpacesRepository } from '@/core/spaces/application/ports/spaces.repository.port';
 import type { Space } from '@/core/spaces/domain/interfaces/space.interface';
 
@@ -16,18 +15,16 @@ const mockRepository: ISpacesRepository = {
 
 describe('ListSpacesUseCase', () => {
   beforeEach(() => {
-    useSpacesStore.getState().clear();
     vi.clearAllMocks();
   });
 
-  it('fetches spaces and stores them', async () => {
+  it('fetches and returns spaces', async () => {
     vi.mocked(mockRepository.listByUser).mockResolvedValue(mockSpaces);
     const useCase = new ListSpacesUseCase(mockRepository);
 
     const result = await useCase.execute();
 
     expect(result).toEqual(mockSpaces);
-    expect(useSpacesStore.getState().availableSpaces).toEqual(mockSpaces);
   });
 
   it('propagates repository errors', async () => {

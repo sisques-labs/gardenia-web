@@ -37,7 +37,7 @@ describe('PlantCard', () => {
   it('renders species name when present', () => {
     const plant: Plant = {
       ...basePlant,
-      species: { id: 'sp1', name: 'Monstera deliciosa', createdAt: '', updatedAt: '' },
+      species: { id: 'sp1', scientificName: 'Monstera deliciosa', description: null, imageUrl: null, createdAt: '', updatedAt: '' },
     };
     render(<PlantCard plant={plant} lang="en" noSpecies="Unknown species" />);
     expect(screen.getByText('Monstera deliciosa')).toBeInTheDocument();

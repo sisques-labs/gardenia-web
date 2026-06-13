@@ -14,6 +14,14 @@ const dict = {
     statsPlants: 'plantas',
     statsSpecies: 'especies',
     inProgress: 'Próximamente',
+    categories: {
+      vegetable: 'Hortaliza',
+      herb: 'Aromática',
+      leafy: 'Hoja',
+      root: 'Raíz',
+      flower: 'Flor',
+      tree: 'Árbol',
+    },
   },
   create: {
     title: 'Nueva planta',
@@ -30,6 +38,7 @@ const dict = {
   },
   detail: {
     breadcrumbList: 'Inventario',
+    bancal: 'Bancal',
     qrPrint: 'Imprimir QR',
     noImage: 'Sin imagen',
     noSpecies: 'Especie desconocida',

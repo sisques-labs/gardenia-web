@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { LoginUseCase } from './login.use-case';
-import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import type { IAuthRepository } from '@/core/auth/application/ports/auth.repository.port';
 
 const mockRepository: IAuthRepository = {
@@ -14,27 +13,18 @@ const mockRepository: IAuthRepository = {
 
 describe('LoginUseCase', () => {
   beforeEach(() => {
-    useAuthStore.getState().clearAuth();
     vi.clearAllMocks();
   });
 
-  it('stores access token and current user on successful login', async () => {
+  it('returns access token and user on successful login', async () => {
+    const mockUser = { id: 'account-1', userId: 'user-1', email: 'a@b.com' };
     vi.mocked(mockRepository.login).mockResolvedValue({ accessToken: 'tok-123' });
-    vi.mocked(mockRepository.me).mockResolvedValue({
-      id: 'account-1',
-      userId: 'user-1',
-      email: 'a@b.com',
-    });
+    vi.mocked(mockRepository.me).mockResolvedValue(mockUser);
     const service = new LoginUseCase(mockRepository);
 
-    await service.login({ email: 'a@b.com', password: '123456' });
+    const result = await service.login({ email: 'a@b.com', password: '123456' });
 
-    expect(useAuthStore.getState().accessToken).toBe('tok-123');
-    expect(useAuthStore.getState().currentUser).toEqual({
-      id: 'account-1',
-      userId: 'user-1',
-      email: 'a@b.com',
-    });
+    expect(result).toEqual({ accessToken: 'tok-123', user: mockUser });
     expect(mockRepository.me).toHaveBeenCalledOnce();
   });
 

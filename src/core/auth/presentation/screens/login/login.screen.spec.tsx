@@ -44,6 +44,8 @@ const dict = {
   keepSession: 'Keep me signed in on this device',
   emailInvalid: 'Invalid email',
   passwordMin: 'At least 6 characters',
+  showPassword: 'Show',
+  hidePassword: 'Hide',
   forgotPassword: 'Forgot your password?',
   register: "Don't have an account?",
   oauthFailed: "We couldn't sign you in with that provider. Please use email/password or try another provider.",

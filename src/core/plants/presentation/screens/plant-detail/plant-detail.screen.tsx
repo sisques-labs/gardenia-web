@@ -88,7 +88,7 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
               <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                BANCAL · {plant.spaceId}
+                {dict.detail.bancal} · {plant.spaceId}
               </p>
               <h1
                 data-testid="plant-name"
@@ -96,21 +96,21 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
               >
                 {plant.name}
               </h1>
-              {plant.species?.name && (
+              {plant.species?.scientificName && (
                 <p
                   data-testid="plant-species"
                   className="text-sm text-muted-foreground italic"
                 >
-                  {plant.species.name}
+                  {plant.species.scientificName}
                 </p>
               )}
             </div>
 
             {/* Chips row */}
             <div className="flex flex-wrap gap-2">
-              {plant.species?.name && (
+              {plant.species?.scientificName && (
                 <Chip variant="sage" data-testid="chip-species">
-                  {plant.species.name}
+                  {plant.species.scientificName}
                 </Chip>
               )}
             </div>
@@ -239,8 +239,8 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
                   {/* Left: care cards + cycle */}
                   <div className="lg:col-span-2 flex flex-col gap-6">
                     <div data-testid="care-grid" className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {careData.map((care, i) => (
-                        <CareCard key={i} {...care} />
+                      {careData.map((care) => (
+                        <CareCard key={care.label} {...care} />
                       ))}
                     </div>
                     <div>

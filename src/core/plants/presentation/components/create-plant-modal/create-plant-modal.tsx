@@ -9,6 +9,7 @@ import {
   DialogTitle,
 } from '@/shared/presentation/components/ui/dialog';
 import { Input } from '@/shared/presentation/components/ui/input';
+import { resolveFieldError } from '@/shared/presentation/utils/resolve-field-error';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {
@@ -37,7 +38,7 @@ export function CreatePlantModal({ spaceId, dict, onClose }: Props) {
             <Input placeholder={dict.namePlaceholder} {...register('name')} />
             {errors.name && (
               <span className="text-destructive text-xs">
-                {errors.name.message === 'nameRequired' ? dict.nameRequired : dict.nameMax}
+                {resolveFieldError(errors.name.message, dict)}
               </span>
             )}
           </div>
