@@ -11,6 +11,7 @@ import { AuthField } from '@/core/auth/presentation/components/auth-field/auth-f
 import { AuthSubmit } from '@/core/auth/presentation/components/auth-submit/auth-submit';
 import { AuthSocial } from '@/core/auth/presentation/components/auth-social/auth-social';
 import { AuthDivider } from '@/core/auth/presentation/components/auth-divider/auth-divider';
+import { resolveFieldError } from '@/shared/presentation/utils/resolve-field-error';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = { dict: AppDict['auth']['login']; locale: string };
@@ -74,7 +75,7 @@ export function LoginScreen({ dict, locale }: Props) {
           label={dict.email}
           type="email"
           placeholder={dict.emailPlaceholder}
-          error={errors.email?.message ? dict.emailInvalid : undefined}
+          error={resolveFieldError(errors.email?.message, dict)}
           registration={register('email')}
         />
 
@@ -98,7 +99,9 @@ export function LoginScreen({ dict, locale }: Props) {
             label=""
             type="password"
             placeholder={dict.passwordPlaceholder}
-            error={errors.password?.message ? dict.passwordMin : undefined}
+            error={resolveFieldError(errors.password?.message, dict)}
+            showLabel={dict.showPassword}
+            hideLabel={dict.hidePassword}
             registration={register('password')}
           />
         </div>

@@ -18,14 +18,6 @@ import { useState } from "react";
 
 const shimmer = "bg-muted rounded animate-pulse";
 
-const CATEGORY_FILTERS = [
-  "Hortaliza",
-  "Aromática",
-  "Hoja",
-  "Raíz",
-  "Flor",
-  "Árbol",
-] as const;
 
 function PlantCardSkeleton() {
   return (
@@ -90,14 +82,14 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
                 {plantCount}
               </span>
             </TabsTrigger>
-            {CATEGORY_FILTERS.map((cat) => (
+            {Object.entries(dict.list.categories).map(([key, label]) => (
               <TabsTrigger
-                key={cat}
-                value={cat.toLowerCase()}
+                key={key}
+                value={key}
                 disabled
                 className="whitespace-nowrap py-3 px-4"
               >
-                {cat}
+                {label}
               </TabsTrigger>
             ))}
           </TabsList>

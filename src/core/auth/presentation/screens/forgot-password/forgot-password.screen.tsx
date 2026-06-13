@@ -8,6 +8,7 @@ import { forgotPasswordSchema, type ForgotPasswordFormData } from '@/core/auth/p
 import { AuthHead } from '@/core/auth/presentation/components/auth-head/auth-head';
 import { AuthField } from '@/core/auth/presentation/components/auth-field/auth-field';
 import { AuthSubmit } from '@/core/auth/presentation/components/auth-submit/auth-submit';
+import { resolveFieldError } from '@/shared/presentation/utils/resolve-field-error';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = { dict: AppDict['auth']['forgotPassword'] };
@@ -60,7 +61,7 @@ export function ForgotPasswordScreen({ dict }: Props) {
           label={dict.email}
           type="email"
           placeholder={dict.emailPlaceholder}
-          error={errors.email?.message ? dict.emailInvalid : undefined}
+          error={resolveFieldError(errors.email?.message, dict)}
           registration={register('email')}
         />
 
