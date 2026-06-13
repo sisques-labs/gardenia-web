@@ -44,6 +44,7 @@ const dict = {
     title: 'Harvests',
     empty: 'No harvests yet',
     deleteConfirm: 'Are you sure?',
+    newHarvest: 'New harvest',
   },
   form: {
     cropType: 'Crop type',
@@ -100,6 +101,14 @@ describe('HarvestsListScreen', () => {
 
     expect(screen.getByText('Tomato')).toBeInTheDocument();
     expect(screen.getByText('Basil')).toBeInTheDocument();
+  });
+
+  it('renders new harvest button', () => {
+    vi.mocked(useHarvests).mockReturnValue({ harvests: [], isLoading: false, error: null });
+
+    render(<HarvestsListScreen dict={dict} lang="en" />);
+
+    expect(screen.getByRole('button', { name: 'New harvest' })).toBeInTheDocument();
   });
 
   it('calls useDeleteHarvest.mutate(id) when delete is triggered on a row', () => {

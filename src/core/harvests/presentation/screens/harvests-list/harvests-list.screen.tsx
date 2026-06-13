@@ -4,7 +4,9 @@ import { HarvestRow } from '@/core/harvests/presentation/components/harvest-row/
 import { useHarvests } from '@/core/harvests/presentation/hooks/use-harvests/use-harvests.hook';
 import { useDeleteHarvest } from '@/core/harvests/presentation/hooks/use-delete-harvest/use-delete-harvest.hook';
 import { PageHeader } from '@/shared/presentation/components/page-header/page-header';
+import { Button } from '@/shared/presentation/components/ui/button';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
+import { useState } from 'react';
 
 const shimmer = 'bg-muted rounded animate-pulse';
 
@@ -31,10 +33,18 @@ type Props = {
 export function HarvestsListScreen({ dict, lang: _lang }: Props) {
   const { harvests, isLoading } = useHarvests();
   const { mutate: deleteHarvest } = useDeleteHarvest();
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   return (
     <div>
-      <PageHeader title={dict.list.title} />
+      <PageHeader
+        title={dict.list.title}
+        actions={
+          <Button size="sm" className="ml-1 bg-forest hover:bg-forest-2 text-white gap-1" onClick={() => setIsCreateOpen(true)}>
+            {dict.list.newHarvest}
+          </Button>
+        }
+      />
 
       <div className="px-6 py-6">
         {isLoading ? (
@@ -58,6 +68,8 @@ export function HarvestsListScreen({ dict, lang: _lang }: Props) {
           </div>
         )}
       </div>
+
+      {isCreateOpen && <div data-testid="create-harvest-placeholder" />}
     </div>
   );
 }

@@ -8,6 +8,7 @@ const dict = {
     title: 'Cosechas',
     empty: 'Todavía no hay cosechas',
     deleteConfirm: '¿Estás seguro de que quieres eliminar esta cosecha?',
+    newHarvest: 'Nueva cosecha',
   },
   form: {
     cropType: 'Tipo de cultivo',

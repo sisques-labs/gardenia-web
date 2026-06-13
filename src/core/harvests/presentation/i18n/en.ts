@@ -3,6 +3,7 @@ const dict = {
     title: 'Harvests',
     empty: 'No harvests yet',
     deleteConfirm: 'Are you sure you want to delete this harvest?',
+    newHarvest: 'New harvest',
   },
   form: {
     cropType: 'Crop type',
