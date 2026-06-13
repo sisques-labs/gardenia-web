@@ -7,6 +7,7 @@ import type { PlantsDict } from '@/core/plants/presentation/i18n/en';
 import type { UsersDict } from '@/core/users/presentation/i18n/en';
 import type { CalendarDict } from '@/core/calendar/presentation/i18n/en';
 import type { ShellDict } from '@/shared/presentation/i18n/shell/en';
+import type { HarvestsDict } from '@/core/harvests/presentation/i18n/en';
 
 import enAuth from '@/core/auth/presentation/i18n/en';
 import esAuth from '@/core/auth/presentation/i18n/es';
@@ -22,6 +23,8 @@ import enCalendar from '@/core/calendar/presentation/i18n/en';
 import esCalendar from '@/core/calendar/presentation/i18n/es';
 import enShell from '@/shared/presentation/i18n/shell/en';
 import esShell from '@/shared/presentation/i18n/shell/es';
+import enHarvests from '@/core/harvests/presentation/i18n/en';
+import esHarvests from '@/core/harvests/presentation/i18n/es';
 
 export type AppDict = {
   auth: WidenStringLiterals<AuthDict>;
@@ -31,6 +34,7 @@ export type AppDict = {
   users: WidenStringLiterals<UsersDict>;
   calendar: WidenStringLiterals<CalendarDict>;
   shell: WidenStringLiterals<ShellDict>;
+  harvests: WidenStringLiterals<HarvestsDict>;
 };
 
 const dictionaries: Record<Locale, AppDict> = {
@@ -42,6 +46,7 @@ const dictionaries: Record<Locale, AppDict> = {
     users: enUsers,
     calendar: enCalendar,
     shell: enShell,
+    harvests: enHarvests,
   },
   es: {
     auth: esAuth,
@@ -51,6 +56,7 @@ const dictionaries: Record<Locale, AppDict> = {
     users: esUsers,
     calendar: esCalendar,
     shell: esShell,
+    harvests: esHarvests,
   },
 };
 
