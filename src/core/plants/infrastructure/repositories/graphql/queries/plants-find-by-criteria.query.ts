@@ -9,7 +9,9 @@ export const PLANTS_FIND_BY_CRITERIA = gql`
         plantSpeciesId
         species {
           id
-          name
+          scientificName
+          description
+          imageUrl
           createdAt
           updatedAt
         }
