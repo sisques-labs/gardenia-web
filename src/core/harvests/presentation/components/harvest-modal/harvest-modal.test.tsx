@@ -109,7 +109,7 @@ describe('HarvestModal', () => {
   });
 
   it('calls onSubmit when form is submitted', async () => {
-    const mockOnSubmit = vi.fn((e?: React.BaseSyntheticEvent) => { e?.preventDefault?.(); });
+    const mockOnSubmit = vi.fn(async (e?: React.BaseSyntheticEvent) => { e?.preventDefault?.(); });
     vi.mocked(useHarvestForm).mockReturnValue(makeMockForm({ onSubmit: mockOnSubmit }));
 
     render(<HarvestModal dict={dict} onClose={vi.fn()} />);
