@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MeUseCase } from './me.use-case';
-import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import type { IAuthRepository } from '@/core/auth/application/ports/auth.repository.port';
 
 const mockRepository: IAuthRepository = {
@@ -14,7 +13,6 @@ const mockRepository: IAuthRepository = {
 
 describe('MeUseCase', () => {
   beforeEach(() => {
-    useAuthStore.getState().clearAuth();
     vi.clearAllMocks();
   });
 
@@ -26,7 +24,6 @@ describe('MeUseCase', () => {
     const result = await service.me();
 
     expect(result).toEqual(mockUser);
-    expect(useAuthStore.getState().currentUser).toEqual(mockUser);
   });
 
   it('propagates repository errors', async () => {

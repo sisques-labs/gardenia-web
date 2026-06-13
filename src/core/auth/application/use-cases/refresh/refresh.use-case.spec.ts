@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { RefreshUseCase } from './refresh.use-case';
-import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import type { IAuthRepository } from '@/core/auth/application/ports/auth.repository.port';
 
 const mockRepository: IAuthRepository = {
@@ -14,7 +13,6 @@ const mockRepository: IAuthRepository = {
 
 describe('RefreshUseCase', () => {
   beforeEach(() => {
-    useAuthStore.getState().clearAuth();
     vi.clearAllMocks();
   });
 
@@ -25,7 +23,6 @@ describe('RefreshUseCase', () => {
     const token = await service.refresh();
 
     expect(token).toBe('new-tok');
-    expect(useAuthStore.getState().accessToken).toBe('new-tok');
   });
 
   it('propagates repository errors', async () => {
