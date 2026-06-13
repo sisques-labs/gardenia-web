@@ -10,6 +10,24 @@ export default defineConfig({
     globals: true,
     include: ['src/**/*.{test,spec}.{ts,tsx}', 'app/**/*.{test,spec}.{ts,tsx}'],
     exclude: ['node_modules', '.next', '.claude'],
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json-summary', 'lcov'],
+      include: ['src/**/*.{ts,tsx}'],
+      exclude: [
+        'src/**/*.{test,spec}.{ts,tsx}',
+        'src/**/*.stories.{ts,tsx}',
+        'src/shared/presentation/components/ui/**',
+        'src/**/index.ts',
+        'src/**/*.d.ts',
+      ],
+      thresholds: {
+        lines: 70,
+        functions: 66,
+        branches: 67,
+        statements: 69,
+      },
+    },
   },
   resolve: {
     alias: { '@': path.resolve(__dirname, './src') },
