@@ -58,6 +58,14 @@ const dict = {
     statsPlants: 'plants',
     statsSpecies: 'species',
     inProgress: 'Coming soon',
+    categories: {
+      vegetable: 'Vegetable',
+      herb: 'Herb',
+      leafy: 'Leafy',
+      root: 'Root',
+      flower: 'Flower',
+      tree: 'Tree',
+    },
   },
   create: {
     title: 'New plant',
