@@ -1,11 +1,8 @@
 'use client';
 
-import { useForm, type Resolver } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useCreateHarvest } from '@/core/harvests/presentation/hooks/use-create-harvest/use-create-harvest.hook';
-import { useUpdateHarvest } from '@/core/harvests/presentation/hooks/use-update-harvest/use-update-harvest.hook';
-import { harvestSchema, type HarvestFormValues } from '@/core/harvests/presentation/schemas/harvest.schema';
-import type { Harvest } from '@/core/harvests/domain/interfaces/harvest.interface';
+import { useHarvestForm } from '@/core/harvests/presentation/hooks/use-harvest-form/use-harvest-form.hook';
+import { HARVEST_UNITS } from '@/core/harvests/domain/types/harvest.interface';
+import type { Harvest } from '@/core/harvests/domain/types/harvest.interface';
 import { Button } from '@/shared/presentation/components/ui/button';
 import {
   Dialog,
@@ -29,50 +26,15 @@ type Props = {
   harvest?: Harvest;
 };
 
-const UNITS = ['KG', 'G', 'PIECES', 'LITERS', 'ML', 'BUNCHES'] as const;
-
 export function HarvestModal({ dict, onClose, harvest }: Props) {
   const isEditing = !!harvest;
 
-  const { mutate: createHarvest, isPending: isCreating } = useCreateHarvest();
-  const { mutate: updateHarvest, isPending: isUpdating } = useUpdateHarvest();
-
-  const isPending = isCreating || isUpdating;
-
-  const form = useForm<HarvestFormValues>({
-    resolver: zodResolver(harvestSchema) as Resolver<HarvestFormValues>,
-    defaultValues: harvest
-      ? {
-          cropType: harvest.cropType,
-          quantity: harvest.quantity,
-          unit: harvest.unit,
-          harvestedAt: harvest.harvestedAt,
-        }
-      : {
-          unit: 'KG' as const,
-        },
-  });
+  const { form, isPending, onSubmit, selectedUnit, setUnit } = useHarvestForm({ harvest, onClose });
 
   const {
     register,
-    handleSubmit,
-    setValue,
-    watch,
     formState: { errors },
   } = form;
-
-  const selectedUnit = watch('unit');
-
-  const onSubmit = handleSubmit((values) => {
-    if (isEditing) {
-      updateHarvest(
-        { id: harvest.id, ...values },
-        { onSuccess: onClose },
-      );
-    } else {
-      createHarvest(values, { onSuccess: onClose });
-    }
-  });
 
   return (
     <Dialog open onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
@@ -102,12 +64,12 @@ export function HarvestModal({ dict, onClose, harvest }: Props) {
 
           <div className="flex flex-col gap-1">
             <label className="text-sm text-ink-2">{dict.form.unit}</label>
-            <Select value={selectedUnit} onValueChange={(val) => setValue('unit', val as HarvestFormValues['unit'])}>
+            <Select value={selectedUnit} onValueChange={setUnit}>
               <SelectTrigger>
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {UNITS.map((unit) => (
+                {HARVEST_UNITS.map((unit) => (
                   <SelectItem key={unit} value={unit}>
                     {dict.units[unit]}
                   </SelectItem>

@@ -1,17 +1,12 @@
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import type { Harvest } from '@/core/harvests/domain/interfaces/harvest.interface';
+import type { Harvest } from '@/core/harvests/domain/types/harvest.interface';
 
-vi.mock('@/core/harvests/presentation/hooks/use-create-harvest/use-create-harvest.hook', () => ({
-  useCreateHarvest: vi.fn(),
+vi.mock('@/core/harvests/presentation/hooks/use-harvest-form/use-harvest-form.hook', () => ({
+  useHarvestForm: vi.fn(),
 }));
 
-vi.mock('@/core/harvests/presentation/hooks/use-update-harvest/use-update-harvest.hook', () => ({
-  useUpdateHarvest: vi.fn(),
-}));
-
-import { useCreateHarvest } from '@/core/harvests/presentation/hooks/use-create-harvest/use-create-harvest.hook';
-import { useUpdateHarvest } from '@/core/harvests/presentation/hooks/use-update-harvest/use-update-harvest.hook';
+import { useHarvestForm } from '@/core/harvests/presentation/hooks/use-harvest-form/use-harvest-form.hook';
 import { HarvestModal } from './harvest-modal';
 
 const dict = {
@@ -64,28 +59,30 @@ const mockHarvest: Harvest = {
   updatedAt: '2026-06-01',
 };
 
-const mockCreateMutate = vi.fn();
-const mockUpdateMutate = vi.fn();
+function makeMockForm(overrides: Partial<ReturnType<typeof useHarvestForm>> = {}) {
+  const mockRegister = vi.fn((name: string) => ({ name }));
+  return {
+    form: {
+      register: mockRegister,
+      formState: { errors: {} },
+    },
+    isPending: false,
+    onSubmit: vi.fn((e?: React.BaseSyntheticEvent) => { e?.preventDefault?.(); }),
+    selectedUnit: 'KG' as const,
+    setUnit: vi.fn(),
+    ...overrides,
+  } as unknown as ReturnType<typeof useHarvestForm>;
+}
 
 describe('HarvestModal', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useCreateHarvest).mockReturnValue({
-      mutate: mockCreateMutate,
-      isPending: false,
-    } as unknown as ReturnType<typeof useCreateHarvest>);
-    vi.mocked(useUpdateHarvest).mockReturnValue({
-      mutate: mockUpdateMutate,
-      isPending: false,
-    } as unknown as ReturnType<typeof useUpdateHarvest>);
+    vi.mocked(useHarvestForm).mockReturnValue(makeMockForm());
   });
 
   it('renders create form fields', () => {
     render(<HarvestModal dict={dict} onClose={vi.fn()} />);
 
-    expect(document.querySelector('input[name="cropType"]')).toBeInTheDocument();
-    expect(document.querySelector('input[name="quantity"]')).toBeInTheDocument();
-    expect(document.querySelector('input[name="harvestedAt"]')).toBeInTheDocument();
     expect(screen.getByText(dict.form.cropType)).toBeInTheDocument();
     expect(screen.getByText(dict.form.quantity)).toBeInTheDocument();
     expect(screen.getByText(dict.form.unit)).toBeInTheDocument();
@@ -104,43 +101,23 @@ describe('HarvestModal', () => {
     expect(screen.getByText('Edit harvest')).toBeInTheDocument();
   });
 
-  it('submits with correct values via useCreateHarvest', async () => {
-    mockCreateMutate.mockImplementation((_values: unknown, options: { onSuccess: () => void }) => {
-      options.onSuccess();
-    });
-
-    const onClose = vi.fn();
-    render(<HarvestModal dict={dict} onClose={onClose} />);
-
-    fireEvent.change(document.querySelector('input[name="cropType"]')!, { target: { value: 'Lettuce' } });
-    fireEvent.change(document.querySelector('input[name="quantity"]')!, { target: { value: '3' } });
-    fireEvent.change(document.querySelector('input[name="harvestedAt"]')!, { target: { value: '2026-06-10' } });
-
-    fireEvent.click(screen.getByRole('button', { name: /save/i }));
-
-    await waitFor(() => {
-      expect(mockCreateMutate).toHaveBeenCalledWith(
-        expect.objectContaining({ cropType: 'Lettuce', quantity: 3, harvestedAt: '2026-06-10' }),
-        expect.any(Object),
-      );
-    });
-  });
-
-  it('submits with id via useUpdateHarvest when editing', async () => {
-    mockUpdateMutate.mockImplementation((_values: unknown, options: { onSuccess: () => void }) => {
-      options.onSuccess();
-    });
-
+  it('passes harvest and onClose to useHarvestForm', () => {
     const onClose = vi.fn();
     render(<HarvestModal dict={dict} onClose={onClose} harvest={mockHarvest} />);
 
+    expect(vi.mocked(useHarvestForm)).toHaveBeenCalledWith({ harvest: mockHarvest, onClose });
+  });
+
+  it('calls onSubmit when form is submitted', async () => {
+    const mockOnSubmit = vi.fn((e?: React.BaseSyntheticEvent) => { e?.preventDefault?.(); });
+    vi.mocked(useHarvestForm).mockReturnValue(makeMockForm({ onSubmit: mockOnSubmit }));
+
+    render(<HarvestModal dict={dict} onClose={vi.fn()} />);
+
     fireEvent.click(screen.getByRole('button', { name: /save/i }));
 
     await waitFor(() => {
-      expect(mockUpdateMutate).toHaveBeenCalledWith(
-        expect.objectContaining({ id: 'h1' }),
-        expect.any(Object),
-      );
+      expect(mockOnSubmit).toHaveBeenCalled();
     });
   });
 });

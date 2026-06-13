@@ -1,4 +1,4 @@
-import type { HarvestUnit } from '@/core/harvests/domain/interfaces/harvest.interface';
+import type { HarvestUnit } from '@/core/harvests/domain/types/harvest.interface';
 
 export interface UpdateHarvestInput {
   id: string;

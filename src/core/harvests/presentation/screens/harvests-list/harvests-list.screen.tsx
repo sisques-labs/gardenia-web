@@ -4,7 +4,7 @@ import { HarvestRow } from '@/core/harvests/presentation/components/harvest-row/
 import { HarvestModal } from '@/core/harvests/presentation/components/harvest-modal/harvest-modal';
 import { useHarvests } from '@/core/harvests/presentation/hooks/use-harvests/use-harvests.hook';
 import { useDeleteHarvest } from '@/core/harvests/presentation/hooks/use-delete-harvest/use-delete-harvest.hook';
-import type { Harvest } from '@/core/harvests/domain/interfaces/harvest.interface';
+import type { Harvest } from '@/core/harvests/domain/types/harvest.interface';
 import { PageHeader } from '@/shared/presentation/components/page-header/page-header';
 import { Button } from '@/shared/presentation/components/ui/button';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';

@@ -1,4 +1,4 @@
-import type { Harvest } from '@/core/harvests/domain/interfaces/harvest.interface';
+import type { Harvest } from '@/core/harvests/domain/types/harvest.interface';
 import type { CreateHarvestInput } from '@/core/harvests/application/interfaces/create-harvest-input.interface';
 import type { UpdateHarvestInput } from '@/core/harvests/application/interfaces/update-harvest-input.interface';
 

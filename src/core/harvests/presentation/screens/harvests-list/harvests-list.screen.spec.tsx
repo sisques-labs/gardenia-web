@@ -1,6 +1,6 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
-import type { Harvest } from '@/core/harvests/domain/interfaces/harvest.interface';
+import type { Harvest } from '@/core/harvests/domain/types/harvest.interface';
 
 vi.mock('@/core/harvests/presentation/hooks/use-harvests/use-harvests.hook', () => ({
   useHarvests: vi.fn(),

@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createElement } from 'react';
-import type { Harvest } from '@/core/harvests/domain/interfaces/harvest.interface';
+import type { Harvest } from '@/core/harvests/domain/types/harvest.interface';
 
 const mockExecute = vi.hoisted(() => vi.fn());
 

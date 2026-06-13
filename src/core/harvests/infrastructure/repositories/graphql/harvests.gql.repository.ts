@@ -2,7 +2,7 @@ import { apolloClient } from '@/shared/infrastructure/http/apollo.client';
 import type { IHarvestsRepository } from '@/core/harvests/application/ports/harvests.repository.port';
 import type { CreateHarvestInput } from '@/core/harvests/application/interfaces/create-harvest-input.interface';
 import type { UpdateHarvestInput } from '@/core/harvests/application/interfaces/update-harvest-input.interface';
-import type { Harvest } from '@/core/harvests/domain/interfaces/harvest.interface';
+import type { Harvest } from '@/core/harvests/domain/types/harvest.interface';
 import { HARVESTS_FIND_BY_CRITERIA } from './queries/harvest-find-by-criteria.query';
 import { HARVEST_FIND_BY_ID } from './queries/harvest-find-by-id.query';
 import { HARVEST_CREATE } from './mutations/harvest-create.mutation';

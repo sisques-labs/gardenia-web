@@ -1,4 +1,4 @@
-import type { Harvest } from '@/core/harvests/domain/interfaces/harvest.interface';
+import type { Harvest } from '@/core/harvests/domain/types/harvest.interface';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {

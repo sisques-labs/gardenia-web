@@ -1,4 +1,6 @@
-export type HarvestUnit = 'KG' | 'G' | 'PIECES' | 'LITERS' | 'ML' | 'BUNCHES';
+export const HARVEST_UNITS = ['KG', 'G', 'PIECES', 'LITERS', 'ML', 'BUNCHES'] as const;
+
+export type HarvestUnit = (typeof HARVEST_UNITS)[number];
 
 export interface Harvest {
   id: string;
