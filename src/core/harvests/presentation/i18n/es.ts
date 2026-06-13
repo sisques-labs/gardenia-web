@@ -11,12 +11,19 @@ const dict = {
     newHarvest: 'Nueva cosecha',
   },
   form: {
+    title: 'Nueva cosecha',
+    editTitle: 'Editar cosecha',
+    submitting: 'Guardando...',
     cropType: 'Tipo de cultivo',
     quantity: 'Cantidad',
     unit: 'Unidad',
     harvestedAt: 'Cosechado el',
     submit: 'Guardar',
     cancel: 'Cancelar',
+  },
+  row: {
+    edit: 'Editar',
+    delete: 'Eliminar',
   },
   units: {
     KG: 'kg',

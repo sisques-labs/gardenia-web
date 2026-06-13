@@ -10,6 +10,12 @@ vi.mock('@/core/harvests/presentation/hooks/use-delete-harvest/use-delete-harves
   useDeleteHarvest: vi.fn(),
 }));
 
+vi.mock('@/core/harvests/presentation/components/harvest-modal/harvest-modal', () => ({
+  HarvestModal: ({ harvest }: { harvest?: { cropType: string } }) => (
+    <div data-testid={harvest ? 'edit-harvest-modal' : 'create-harvest-modal'} />
+  ),
+}));
+
 import { useHarvests } from '@/core/harvests/presentation/hooks/use-harvests/use-harvests.hook';
 import { useDeleteHarvest } from '@/core/harvests/presentation/hooks/use-delete-harvest/use-delete-harvest.hook';
 import { HarvestsListScreen } from './harvests-list.screen';
@@ -47,12 +53,19 @@ const dict = {
     newHarvest: 'New harvest',
   },
   form: {
+    title: 'New harvest',
+    editTitle: 'Edit harvest',
+    submitting: 'Saving...',
     cropType: 'Crop type',
     quantity: 'Quantity',
     unit: 'Unit',
     harvestedAt: 'Harvested on',
     submit: 'Save',
     cancel: 'Cancel',
+  },
+  row: {
+    edit: 'Edit',
+    delete: 'Delete',
   },
   units: {
     KG: 'kg',
@@ -120,5 +133,16 @@ describe('HarvestsListScreen', () => {
     fireEvent.click(deleteButtons[0]);
 
     expect(mockMutate).toHaveBeenCalledWith('h1');
+  });
+
+  it('opens edit modal when edit is triggered on a row', () => {
+    vi.mocked(useHarvests).mockReturnValue({ harvests: mockHarvests, isLoading: false, error: null });
+
+    render(<HarvestsListScreen dict={dict} lang="en" />);
+
+    const editButtons = screen.getAllByRole('button', { name: /edit/i });
+    fireEvent.click(editButtons[0]);
+
+    expect(screen.getByTestId('edit-harvest-modal')).toBeInTheDocument();
   });
 });

@@ -6,12 +6,19 @@ const dict = {
     newHarvest: 'New harvest',
   },
   form: {
+    title: 'New harvest',
+    editTitle: 'Edit harvest',
+    submitting: 'Saving...',
     cropType: 'Crop type',
     quantity: 'Quantity',
     unit: 'Unit',
     harvestedAt: 'Harvested on',
     submit: 'Save',
     cancel: 'Cancel',
+  },
+  row: {
+    edit: 'Edit',
+    delete: 'Delete',
   },
   units: {
     KG: 'kg',

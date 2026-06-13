@@ -23,12 +23,19 @@ const dict = {
     newHarvest: 'New harvest',
   },
   form: {
+    title: 'New harvest',
+    editTitle: 'Edit harvest',
+    submitting: 'Saving...',
     cropType: 'Crop type',
     quantity: 'Quantity',
     unit: 'Unit',
     harvestedAt: 'Harvested on',
     submit: 'Save',
     cancel: 'Cancel',
+  },
+  row: {
+    edit: 'Edit',
+    delete: 'Delete',
   },
   units: {
     KG: 'kg',
@@ -48,31 +55,40 @@ const dict = {
 
 describe('HarvestRow', () => {
   it('renders cropType', () => {
-    render(<HarvestRow harvest={mockHarvest} onDelete={vi.fn()} dict={dict} />);
+    render(<HarvestRow harvest={mockHarvest} onDelete={vi.fn()} onEdit={vi.fn()} dict={dict} />);
     expect(screen.getByText('Tomato')).toBeInTheDocument();
   });
 
   it('renders quantity', () => {
-    render(<HarvestRow harvest={mockHarvest} onDelete={vi.fn()} dict={dict} />);
+    render(<HarvestRow harvest={mockHarvest} onDelete={vi.fn()} onEdit={vi.fn()} dict={dict} />);
     expect(screen.getByText(/2\.5/)).toBeInTheDocument();
   });
 
   it('renders unit label from dict.units', () => {
-    render(<HarvestRow harvest={mockHarvest} onDelete={vi.fn()} dict={dict} />);
+    render(<HarvestRow harvest={mockHarvest} onDelete={vi.fn()} onEdit={vi.fn()} dict={dict} />);
     expect(screen.getByText(/kg/)).toBeInTheDocument();
   });
 
   it('renders harvestedAt', () => {
-    render(<HarvestRow harvest={mockHarvest} onDelete={vi.fn()} dict={dict} />);
+    render(<HarvestRow harvest={mockHarvest} onDelete={vi.fn()} onEdit={vi.fn()} dict={dict} />);
     expect(screen.getByText(/2026-06-01/)).toBeInTheDocument();
   });
 
   it('calls onDelete with harvest.id when delete button is clicked', () => {
     const onDelete = vi.fn();
-    render(<HarvestRow harvest={mockHarvest} onDelete={onDelete} dict={dict} />);
+    render(<HarvestRow harvest={mockHarvest} onDelete={onDelete} onEdit={vi.fn()} dict={dict} />);
 
     fireEvent.click(screen.getByRole('button', { name: /delete/i }));
 
     expect(onDelete).toHaveBeenCalledWith('h1');
+  });
+
+  it('calls onEdit with harvest when edit button is clicked', () => {
+    const onEdit = vi.fn();
+    render(<HarvestRow harvest={mockHarvest} onDelete={vi.fn()} onEdit={onEdit} dict={dict} />);
+
+    fireEvent.click(screen.getByRole('button', { name: /edit/i }));
+
+    expect(onEdit).toHaveBeenCalledWith(mockHarvest);
   });
 });
