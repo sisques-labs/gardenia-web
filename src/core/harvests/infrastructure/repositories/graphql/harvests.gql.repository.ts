@@ -16,7 +16,7 @@ import type { HarvestDeleteResponse } from './responses/harvest-delete.response'
 
 export class HarvestsGqlRepository implements IHarvestsRepository {
   async findByCriteria(): Promise<Harvest[]> {
-    const res = await apolloClient.query<HarvestsFindByCriteriaResponse>({ query: HARVESTS_FIND_BY_CRITERIA });
+    const res = await apolloClient.query<HarvestsFindByCriteriaResponse>({ query: HARVESTS_FIND_BY_CRITERIA, fetchPolicy: 'network-only' });
     return res.data?.harvestsFindByCriteria?.items ?? [];
   }
 
@@ -24,6 +24,7 @@ export class HarvestsGqlRepository implements IHarvestsRepository {
     const res = await apolloClient.query<HarvestFindByIdResponse>({
       query: HARVEST_FIND_BY_ID,
       variables: { input: { id } },
+      fetchPolicy: 'network-only',
     });
     if (!res.data?.harvestFindById) throw new Error(`Harvest not found: ${id}`);
     return res.data.harvestFindById;
