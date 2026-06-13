@@ -1,6 +1,6 @@
 'use client';
 
-import { useForm } from 'react-hook-form';
+import { useForm, type Resolver } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreateHarvest } from '@/core/harvests/presentation/hooks/use-create-harvest/use-create-harvest.hook';
 import { useUpdateHarvest } from '@/core/harvests/presentation/hooks/use-update-harvest/use-update-harvest.hook';
@@ -40,7 +40,7 @@ export function HarvestModal({ dict, onClose, harvest }: Props) {
   const isPending = isCreating || isUpdating;
 
   const form = useForm<HarvestFormValues>({
-    resolver: zodResolver(harvestSchema),
+    resolver: zodResolver(harvestSchema) as Resolver<HarvestFormValues>,
     defaultValues: harvest
       ? {
           cropType: harvest.cropType,
