@@ -43,4 +43,14 @@ describe('useCreateSpace', () => {
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(queryClient.getQueryData<Space[]>(['spaces'])).toEqual([mockNewSpace]);
   });
+
+  it('updates the spaces store and sets it as active', async () => {
+    const { result } = renderHook(() => useCreateSpace(), { wrapper });
+
+    result.current.mutate('New Garden');
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(useSpacesStore.getState().availableSpaces).toContainEqual(mockNewSpace);
+    expect(useSpacesStore.getState().currentSpaceId).toBe('space-new');
+  });
 });
