@@ -1,6 +1,23 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.13.7-alpha.3] - 2026-06-13
+
+### Bug Fixes
+- **plants:** Update species view model to use scientificName (228aa59)
+- **plants:** Replace array index key with stable label key in care grid (599839c)
+## [0.13.7-alpha.2] - 2026-06-13
+
+### Chore
+- Remove package-lock.json and ignore it (975c675)
+## [0.13.7-alpha.1] - 2026-06-13
+
+### Refactor
+- **architecture:** Decouple use cases from zustand stores (20326d8)
+## [0.13.7-alpha.0] - 2026-06-13
+
+### Bug Fixes
+- **docker:** Run container as non-root node user (af8d32b)
 ## [0.13.6] - 2026-06-12
 
 ### CI
