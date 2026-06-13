@@ -14,6 +14,7 @@ import { AuthSocial } from '@/core/auth/presentation/components/auth-social/auth
 import { AuthDivider } from '@/core/auth/presentation/components/auth-divider/auth-divider';
 import { AuthLegal } from '@/core/auth/presentation/components/auth-legal/auth-legal';
 import { PwStrength } from '@/core/auth/presentation/components/pw-strength/pw-strength';
+import { resolveFieldError } from '@/shared/presentation/utils/resolve-field-error';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = { dict: AppDict['auth']['register'] };
@@ -58,7 +59,7 @@ export function RegisterScreen({ dict }: Props) {
           label={dict.email}
           type="email"
           placeholder={dict.emailPlaceholder}
-          error={errors.email?.message ? dict.emailInvalid : undefined}
+          error={resolveFieldError(errors.email?.message, dict)}
           registration={field('email')}
         />
 
@@ -74,7 +75,9 @@ export function RegisterScreen({ dict }: Props) {
             label=""
             type="password"
             placeholder={dict.passwordPlaceholder}
-            error={errors.password?.message ? dict.passwordMin : undefined}
+            error={resolveFieldError(errors.password?.message, dict)}
+            showLabel={dict.showPassword}
+            hideLabel={dict.hidePassword}
             registration={{
               ...field('password'),
               onChange: async (e) => {
@@ -94,7 +97,9 @@ export function RegisterScreen({ dict }: Props) {
           label={dict.confirmPassword}
           type="password"
           placeholder={dict.confirmPasswordPlaceholder}
-          error={errors.confirmPassword?.message ? dict.passwordsMismatch : undefined}
+          error={resolveFieldError(errors.confirmPassword?.message, dict)}
+          showLabel={dict.showPassword}
+          hideLabel={dict.hidePassword}
           registration={field('confirmPassword')}
         />
 

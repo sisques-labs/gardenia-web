@@ -74,6 +74,7 @@ const dict = {
   },
   detail: {
     breadcrumbList: 'Inventory',
+    bancal: 'Plot',
     qrPrint: 'Print QR',
     noImage: 'No image',
     noSpecies: 'Unknown species',
