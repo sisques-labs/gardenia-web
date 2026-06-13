@@ -88,7 +88,7 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
           <div className="flex flex-col gap-4">
             <div className="flex flex-col gap-1">
               <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                BANCAL · {plant.spaceId}
+                {dict.detail.bancal} · {plant.spaceId}
               </p>
               <h1
                 data-testid="plant-name"

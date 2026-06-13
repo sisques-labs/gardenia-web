@@ -38,6 +38,8 @@ const dict = {
   emailInvalid: 'Invalid email',
   passwordMin: 'At least 6 characters',
   passwordsMismatch: 'Passwords do not match',
+  showPassword: 'Show',
+  hidePassword: 'Hide',
   login: 'Already have an account? Sign in',
   terms: 'By continuing, you agree to our Terms of Service.',
 };
