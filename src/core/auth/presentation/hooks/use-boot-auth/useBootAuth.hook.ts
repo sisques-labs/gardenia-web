@@ -15,6 +15,7 @@ const meService = new MeUseCase(authHttpRepository);
 // Sets isBootComplete when settled so children can safely fire GQL queries.
 export function useBootAuth() {
   const accessToken = useAuthStore((s) => s.accessToken);
+  const setCurrentUser = useAuthStore((s) => s.setCurrentUser);
   const setBootComplete = useAuthStore((s) => s.setBootComplete);
 
   useEffect(() => {
@@ -24,14 +25,16 @@ export function useBootAuth() {
       try {
         if (accessToken) {
           if (!useAuthStore.getState().currentUser) {
-            await meService.me();
+            const user = await meService.me();
+            if (!cancelled) setCurrentUser(user);
           }
           return;
         }
 
         const token = await refreshTokenOnce(doRefresh);
         if (token) {
-          await meService.me();
+          const user = await meService.me();
+          if (!cancelled) setCurrentUser(user);
         }
       } catch {
         // silent — unauthenticated users continue to public routes
@@ -47,5 +50,5 @@ export function useBootAuth() {
     return () => {
       cancelled = true;
     };
-  }, [accessToken, setBootComplete]);
+  }, [accessToken, setCurrentUser, setBootComplete]);
 }
