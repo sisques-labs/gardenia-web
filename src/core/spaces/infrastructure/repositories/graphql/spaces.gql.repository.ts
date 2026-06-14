@@ -1,9 +1,11 @@
 import { apolloClient } from '@/shared/infrastructure/http/apollo.client';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
-import type { ISpacesRepository, CreateInvitationInput, MemberInput } from '@/core/spaces/application/ports/spaces.repository.port';
+import type { ISpacesRepository } from '@/core/spaces/application/ports/spaces.repository.port';
+import type { CreateInvitationInput } from '@/core/spaces/application/interfaces/create-invitation-input.interface';
+import type { MemberInput } from '@/core/spaces/application/interfaces/member-input.interface';
 import type { Space } from '@/core/spaces/domain/interfaces/space.interface';
 import type { SpaceDetail } from '@/core/spaces/domain/interfaces/space-detail.interface';
-import type { SpaceInvitation } from '@/core/spaces/domain/interfaces/space-invitation.interface';
+import type { SpaceInvitation } from '@/core/spaces/domain/types/space-invitation.type';
 import { SPACES_FIND_BY_USER } from './queries/spaces-find-by-user.query';
 import { SPACE_FIND_BY_ID } from './queries/space-find-by-id.query';
 import { SPACE_ACCEPT_INVITATION } from './mutations/space-accept-invitation.mutation';
@@ -96,7 +98,7 @@ export class SpacesGqlRepository implements ISpacesRepository {
       variables: {
         input: {
           spaceId: input.spaceId,
-          role: input.role,
+          role: input.role?.toUpperCase(),
           expiresAt: input.expiresAt,
         },
       },

@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AddSpaceMemberUseCase } from '@/core/spaces/application/use-cases/add-space-member/add-space-member.use-case';
 import { spacesGqlRepository } from '@/core/spaces/infrastructure/repositories/graphql/spaces.gql.repository';
-import type { MemberInput } from '@/core/spaces/application/ports/spaces.repository.port';
+import type { MemberInput } from '@/core/spaces/application/interfaces/member-input.interface';
 
 const addSpaceMemberUseCase = new AddSpaceMemberUseCase(spacesGqlRepository);
 

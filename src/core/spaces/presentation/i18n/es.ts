@@ -51,6 +51,7 @@ const dict = {
       copyLink: 'Copiar enlace',
       codeCopied: '¡Código copiado!',
       linkCopied: '¡Enlace copiado!',
+      qrAlt: 'Código QR de invitación al espacio',
       qrHint: 'Comparte este QR o el código de arriba para invitar a alguien',
     },
     members: {

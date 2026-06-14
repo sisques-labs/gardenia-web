@@ -1,4 +1,4 @@
-export type InvitationRole = 'owner' | 'member';
+export type InvitationRole = 'OWNER' | 'MEMBER';
 
 export interface SpaceInvitation {
   id: string;

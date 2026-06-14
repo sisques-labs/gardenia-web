@@ -46,6 +46,7 @@ const dict = {
       copyLink: 'Copy invite link',
       codeCopied: 'Code copied!',
       linkCopied: 'Link copied!',
+      qrAlt: 'QR code for space invitation',
       qrHint: 'Share this QR or the code above to invite someone',
     },
     members: {

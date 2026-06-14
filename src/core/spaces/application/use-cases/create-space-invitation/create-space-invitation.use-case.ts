@@ -1,5 +1,6 @@
-import type { ISpacesRepository, CreateInvitationInput } from '@/core/spaces/application/ports/spaces.repository.port';
-import type { SpaceInvitation } from '@/core/spaces/domain/interfaces/space-invitation.interface';
+import type { ISpacesRepository } from '@/core/spaces/application/ports/spaces.repository.port';
+import type { CreateInvitationInput } from '@/core/spaces/application/interfaces/create-invitation-input.interface';
+import type { SpaceInvitation } from '@/core/spaces/domain/types/space-invitation.type';
 
 export class CreateSpaceInvitationUseCase {
   constructor(private readonly spacesRepository: ISpacesRepository) {}

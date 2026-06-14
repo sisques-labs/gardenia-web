@@ -26,7 +26,7 @@ import { SPACE_ADD_MEMBER } from './mutations/space-add-member.mutation';
 import { SPACE_REMOVE_MEMBER } from './mutations/space-remove-member.mutation';
 import type { Space } from '@/core/spaces/domain/interfaces/space.interface';
 import type { SpaceDetail } from '@/core/spaces/domain/interfaces/space-detail.interface';
-import type { SpaceInvitation } from '@/core/spaces/domain/interfaces/space-invitation.interface';
+import type { SpaceInvitation } from '@/core/spaces/domain/types/space-invitation.type';
 
 const mockSpaces: Space[] = [
   { id: 'space-1', name: 'My Garden', ownerId: 'user-1', createdAt: '2024-01-01' },
@@ -228,7 +228,7 @@ describe('SpacesGqlRepository', () => {
       code: 'full-code-uuid',
       qrId: 'qr-1',
       expiresAt: '2026-12-31T00:00:00.000Z',
-      role: 'member',
+      role: 'MEMBER',
       spaceId: 'space-1',
     };
 
@@ -241,7 +241,7 @@ describe('SpacesGqlRepository', () => {
 
       expect(apolloClient.mutate).toHaveBeenCalledWith({
         mutation: SPACE_CREATE_INVITATION,
-        variables: { input: { spaceId: 'space-1', role: 'member', expiresAt: undefined } },
+        variables: { input: { spaceId: 'space-1', role: 'MEMBER', expiresAt: undefined } },
       });
       expect(result).toEqual(mockInvitation);
     });

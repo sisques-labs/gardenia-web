@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from 'vitest';
 import { CreateSpaceInvitationUseCase } from './create-space-invitation.use-case';
 import type { ISpacesRepository } from '@/core/spaces/application/ports/spaces.repository.port';
-import type { SpaceInvitation } from '@/core/spaces/domain/interfaces/space-invitation.interface';
+import type { SpaceInvitation } from '@/core/spaces/domain/types/space-invitation.type';
 
 const mockInvitation: SpaceInvitation = {
   id: 'inv-1',

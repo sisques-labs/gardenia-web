@@ -1,9 +1,6 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
 import { Copy, Check } from 'lucide-react';
 import { Button } from '@/shared/presentation/components/ui/button';
 import { Input } from '@/shared/presentation/components/ui/input';
@@ -18,18 +15,7 @@ import {
 } from '@/shared/presentation/components/ui/select';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { InDevelopment } from '@/shared/presentation/components/in-development/in-development';
-import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
-import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
-import { useSpaceDetail } from '@/core/spaces/presentation/hooks/use-space-detail/useSpaceDetail.hook';
-import { useCreateInvitation } from '@/core/spaces/presentation/hooks/use-create-invitation/useCreateInvitation.hook';
-import { useAddMember } from '@/core/spaces/presentation/hooks/use-add-member/useAddMember.hook';
-import { useRemoveMember } from '@/core/spaces/presentation/hooks/use-remove-member/useRemoveMember.hook';
-import {
-  createInvitationSchema,
-  type CreateInvitationFormValues,
-} from '@/core/spaces/presentation/schemas/create-invitation.schema';
-import { addMemberSchema, type AddMemberFormValues } from '@/core/spaces/presentation/schemas/add-member.schema';
-import type { SpaceInvitation } from '@/core/spaces/domain/interfaces/space-invitation.interface';
+import { useSpaceSettings } from '@/core/spaces/presentation/hooks/use-space-settings/useSpaceSettings.hook';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {
@@ -37,72 +23,23 @@ type Props = {
   lang: string;
 };
 
-function useCopy() {
-  const [copied, setCopied] = useState<string | null>(null);
-  const copy = (text: string, key: string) => {
-    void navigator.clipboard.writeText(text).then(() => {
-      setCopied(key);
-      setTimeout(() => setCopied(null), 2000);
-    });
-  };
-  return { copied, copy };
-}
-
 export function SpaceSettingsScreen({ dict, lang }: Props) {
-  const spaceId = useSpacesStore((s) => s.currentSpaceId);
-  const currentUserId = useAuthStore((s) => s.currentUser?.userId ?? '');
-
-  const { data: space, isLoading, isError } = useSpaceDetail(spaceId);
-  const { mutate: createInvitation, isPending: invPending, error: invError, data: invitation, reset: resetInv } = useCreateInvitation();
-  const { mutate: addMember, isPending: addPending, error: addError, isSuccess: addSuccess, reset: resetAdd } = useAddMember();
-  const { mutate: removeMember, isPending: removePending, error: removeError, isSuccess: removeSuccess, reset: resetRemove } = useRemoveMember();
-
-  const isOwner = !!space && space.ownerId === currentUserId;
-  const { copied, copy } = useCopy();
-
-  const invForm = useForm<CreateInvitationFormValues>({
-    resolver: zodResolver(createInvitationSchema),
-    defaultValues: { role: 'member' },
-  });
-
-  const addForm = useForm<AddMemberFormValues>({
-    resolver: zodResolver(addMemberSchema),
-  });
-
-  const removeForm = useForm<AddMemberFormValues>({
-    resolver: zodResolver(addMemberSchema),
-  });
-
-  const onCreateInvitation = (values: CreateInvitationFormValues) => {
-    if (!spaceId) return;
-    resetInv();
-    createInvitation({
-      spaceId,
-      role: values.role,
-      expiresAt: values.expiresAt ? new Date(values.expiresAt) : undefined,
-    });
-  };
-
-  const onAddMember = (values: AddMemberFormValues) => {
-    if (!spaceId) return;
-    resetAdd();
-    addMember(
-      { spaceId, targetUserId: values.targetUserId },
-      { onSuccess: () => addForm.reset() },
-    );
-  };
-
-  const onRemoveMember = (values: AddMemberFormValues) => {
-    if (!spaceId) return;
-    resetRemove();
-    removeMember(
-      { spaceId, targetUserId: values.targetUserId },
-      { onSuccess: () => removeForm.reset() },
-    );
-  };
-
-  const inviteLink = (inv: SpaceInvitation) =>
-    `${window.location.origin}/${lang}/invite?code=${encodeURIComponent(inv.code)}`;
+  const {
+    spaceDetail: { data: space, isLoading, isError },
+    isOwner,
+    copied,
+    copy,
+    inviteLink,
+    invForm,
+    addForm,
+    removeForm,
+    onCreateInvitation,
+    onAddMember,
+    onRemoveMember,
+    createInvitation: { isPending: invPending, error: invError, data: invitation },
+    addMember: { isPending: addPending, error: addError, isSuccess: addSuccess },
+    removeMember: { isPending: removePending, error: removeError, isSuccess: removeSuccess },
+  } = useSpaceSettings(lang);
 
   return (
     <div className="flex flex-col">
@@ -213,7 +150,7 @@ export function SpaceSettingsScreen({ dict, lang }: Props) {
                       <Image
                         data-testid="invitation-qr"
                         src={`/api/qrs/${invitation.qrId}/image`}
-                        alt="QR"
+                        alt={dict.invitation.qrAlt}
                         width={128}
                         height={128}
                         unoptimized

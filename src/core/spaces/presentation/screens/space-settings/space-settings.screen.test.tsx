@@ -3,7 +3,7 @@ import { vi } from 'vitest';
 import { SpaceSettingsScreen } from './space-settings.screen';
 
 vi.mock('next/image', () => ({
-  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} />,
+  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => <img {...props} alt={props.alt ?? ''} />,
 }));
 
 vi.mock('@/shared/presentation/components/screen-header/screen-header', () => ({
@@ -18,57 +18,55 @@ vi.mock('@/shared/presentation/components/in-development/in-development', () => 
   ),
 }));
 
-vi.mock('@/core/spaces/infrastructure/store/spaces.store', () => ({
-  useSpacesStore: vi.fn(() => 'space-123'),
-}));
-
-vi.mock('@/core/auth/infrastructure/store/auth.store', () => ({
-  useAuthStore: vi.fn(() => 'user-owner-id'),
-}));
-
 const mockResetInv = vi.fn();
 const mockResetAdd = vi.fn();
 const mockResetRemove = vi.fn();
 
-vi.mock('@/core/spaces/presentation/hooks/use-space-detail/useSpaceDetail.hook', () => ({
-  useSpaceDetail: vi.fn(),
-}));
+vi.mock(
+  '@/core/spaces/presentation/hooks/use-space-settings/useSpaceSettings.hook',
+  () => ({
+    useSpaceSettings: vi.fn(),
+  }),
+);
 
-vi.mock('@/core/spaces/presentation/hooks/use-create-invitation/useCreateInvitation.hook', () => ({
-  useCreateInvitation: vi.fn(() => ({
-    mutate: vi.fn(),
-    isPending: false,
-    error: null,
-    data: undefined,
-    reset: mockResetInv,
-  })),
-}));
+import { useSpaceSettings } from '@/core/spaces/presentation/hooks/use-space-settings/useSpaceSettings.hook';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { createInvitationSchema } from '@/core/spaces/presentation/schemas/create-invitation.schema';
+import { addMemberSchema } from '@/core/spaces/presentation/schemas/add-member.schema';
+import { renderHook } from '@testing-library/react';
 
-vi.mock('@/core/spaces/presentation/hooks/use-add-member/useAddMember.hook', () => ({
-  useAddMember: vi.fn(() => ({
-    mutate: vi.fn(),
-    isPending: false,
-    error: null,
-    isSuccess: false,
-    reset: mockResetAdd,
-  })),
-}));
+const mockUseSpaceSettings = vi.mocked(useSpaceSettings);
 
-vi.mock('@/core/spaces/presentation/hooks/use-remove-member/useRemoveMember.hook', () => ({
-  useRemoveMember: vi.fn(() => ({
-    mutate: vi.fn(),
-    isPending: false,
-    error: null,
-    isSuccess: false,
-    reset: mockResetRemove,
-  })),
-}));
+function makeDefaultHookReturn(overrides: Partial<ReturnType<typeof useSpaceSettings>> = {}): ReturnType<typeof useSpaceSettings> {
+  const { result: invFormResult } = renderHook(() =>
+    useForm({ resolver: zodResolver(createInvitationSchema), defaultValues: { role: 'member' as const } }),
+  );
+  const { result: addFormResult } = renderHook(() =>
+    useForm({ resolver: zodResolver(addMemberSchema) }),
+  );
+  const { result: removeFormResult } = renderHook(() =>
+    useForm({ resolver: zodResolver(addMemberSchema) }),
+  );
 
-import { useSpaceDetail } from '@/core/spaces/presentation/hooks/use-space-detail/useSpaceDetail.hook';
-import { useCreateInvitation } from '@/core/spaces/presentation/hooks/use-create-invitation/useCreateInvitation.hook';
-
-const mockUseSpaceDetail = vi.mocked(useSpaceDetail);
-const mockUseCreateInvitation = vi.mocked(useCreateInvitation);
+  return {
+    spaceDetail: { data: undefined, isLoading: false, isError: false } as ReturnType<typeof useSpaceSettings>['spaceDetail'],
+    isOwner: false,
+    copied: null,
+    copy: vi.fn(),
+    inviteLink: vi.fn((inv) => `http://localhost/en/invite?code=${inv.code}`),
+    invForm: invFormResult.current,
+    addForm: addFormResult.current,
+    removeForm: removeFormResult.current,
+    onCreateInvitation: vi.fn(),
+    onAddMember: vi.fn(),
+    onRemoveMember: vi.fn(),
+    createInvitation: { isPending: false, error: null, data: undefined, reset: mockResetInv } as unknown as ReturnType<typeof useSpaceSettings>['createInvitation'],
+    addMember: { isPending: false, error: null, isSuccess: false, reset: mockResetAdd } as unknown as ReturnType<typeof useSpaceSettings>['addMember'],
+    removeMember: { isPending: false, error: null, isSuccess: false, reset: mockResetRemove } as unknown as ReturnType<typeof useSpaceSettings>['removeMember'],
+    ...overrides,
+  };
+}
 
 const dict = {
   title: 'Space settings',
@@ -91,6 +89,7 @@ const dict = {
     copyLink: 'Copy invite link',
     codeCopied: 'Code copied!',
     linkCopied: 'Link copied!',
+    qrAlt: 'QR code for space invitation',
     qrHint: 'Share this QR or the code above to invite someone',
   },
   members: {
@@ -124,11 +123,9 @@ describe('SpaceSettingsScreen', () => {
   });
 
   it('renders ScreenHeader with the settings title', () => {
-    mockUseSpaceDetail.mockReturnValue({
-      data: undefined,
-      isLoading: true,
-      isError: false,
-    } as ReturnType<typeof useSpaceDetail>);
+    mockUseSpaceSettings.mockReturnValue(
+      makeDefaultHookReturn({ spaceDetail: { data: undefined, isLoading: true, isError: false } as ReturnType<typeof useSpaceSettings>['spaceDetail'] }),
+    );
 
     render(<SpaceSettingsScreen dict={dict} lang="en" />);
     const header = screen.getByTestId('screen-header');
@@ -137,11 +134,9 @@ describe('SpaceSettingsScreen', () => {
   });
 
   it('shows loading skeleton when isLoading is true', () => {
-    mockUseSpaceDetail.mockReturnValue({
-      data: undefined,
-      isLoading: true,
-      isError: false,
-    } as ReturnType<typeof useSpaceDetail>);
+    mockUseSpaceSettings.mockReturnValue(
+      makeDefaultHookReturn({ spaceDetail: { data: undefined, isLoading: true, isError: false } as ReturnType<typeof useSpaceSettings>['spaceDetail'] }),
+    );
 
     const { container } = render(<SpaceSettingsScreen dict={dict} lang="en" />);
     const pulseElements = container.querySelectorAll('.animate-pulse');
@@ -149,27 +144,24 @@ describe('SpaceSettingsScreen', () => {
   });
 
   it('shows error alert when isError is true', () => {
-    mockUseSpaceDetail.mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: true,
-    } as ReturnType<typeof useSpaceDetail>);
+    mockUseSpaceSettings.mockReturnValue(
+      makeDefaultHookReturn({ spaceDetail: { data: undefined, isLoading: false, isError: true } as ReturnType<typeof useSpaceSettings>['spaceDetail'] }),
+    );
 
     render(<SpaceSettingsScreen dict={dict} lang="en" />);
     expect(screen.getByText(dict.errors.loadFailed)).toBeInTheDocument();
   });
 
   it('renders space details when data is loaded', () => {
-    mockUseSpaceDetail.mockReturnValue({
-      data: {
-        id: 'space-123',
-        name: 'My Space',
-        ownerId: 'other-user-id',
-        createdAt: '2024-01-15T10:00:00Z',
-      },
-      isLoading: false,
-      isError: false,
-    } as ReturnType<typeof useSpaceDetail>);
+    mockUseSpaceSettings.mockReturnValue(
+      makeDefaultHookReturn({
+        spaceDetail: {
+          data: { id: 'space-123', name: 'My Space', ownerId: 'other-user-id', createdAt: '2024-01-15T10:00:00Z' },
+          isLoading: false,
+          isError: false,
+        } as ReturnType<typeof useSpaceSettings>['spaceDetail'],
+      }),
+    );
 
     render(<SpaceSettingsScreen dict={dict} lang="en" />);
     expect(screen.getByTestId('space-name')).toHaveTextContent('My Space');
@@ -178,32 +170,32 @@ describe('SpaceSettingsScreen', () => {
   });
 
   it('hides invitation card for non-owner', () => {
-    mockUseSpaceDetail.mockReturnValue({
-      data: {
-        id: 'space-123',
-        name: 'My Space',
-        ownerId: 'other-user-id',
-        createdAt: '2024-01-15T10:00:00Z',
-      },
-      isLoading: false,
-      isError: false,
-    } as ReturnType<typeof useSpaceDetail>);
+    mockUseSpaceSettings.mockReturnValue(
+      makeDefaultHookReturn({
+        isOwner: false,
+        spaceDetail: {
+          data: { id: 'space-123', name: 'My Space', ownerId: 'other-user-id', createdAt: '2024-01-15T10:00:00Z' },
+          isLoading: false,
+          isError: false,
+        } as ReturnType<typeof useSpaceSettings>['spaceDetail'],
+      }),
+    );
 
     render(<SpaceSettingsScreen dict={dict} lang="en" />);
     expect(screen.queryByTestId('invitation-submit')).not.toBeInTheDocument();
   });
 
   it('shows invitation card for owner', () => {
-    mockUseSpaceDetail.mockReturnValue({
-      data: {
-        id: 'space-123',
-        name: 'My Space',
-        ownerId: 'user-owner-id',
-        createdAt: '2024-01-15T10:00:00Z',
-      },
-      isLoading: false,
-      isError: false,
-    } as ReturnType<typeof useSpaceDetail>);
+    mockUseSpaceSettings.mockReturnValue(
+      makeDefaultHookReturn({
+        isOwner: true,
+        spaceDetail: {
+          data: { id: 'space-123', name: 'My Space', ownerId: 'user-owner-id', createdAt: '2024-01-15T10:00:00Z' },
+          isLoading: false,
+          isError: false,
+        } as ReturnType<typeof useSpaceSettings>['spaceDetail'],
+      }),
+    );
 
     render(<SpaceSettingsScreen dict={dict} lang="en" />);
     expect(screen.getByTestId('invitation-submit')).toBeInTheDocument();
@@ -212,16 +204,16 @@ describe('SpaceSettingsScreen', () => {
   });
 
   it('shows add/remove member forms for owner', () => {
-    mockUseSpaceDetail.mockReturnValue({
-      data: {
-        id: 'space-123',
-        name: 'My Space',
-        ownerId: 'user-owner-id',
-        createdAt: '2024-01-15T10:00:00Z',
-      },
-      isLoading: false,
-      isError: false,
-    } as ReturnType<typeof useSpaceDetail>);
+    mockUseSpaceSettings.mockReturnValue(
+      makeDefaultHookReturn({
+        isOwner: true,
+        spaceDetail: {
+          data: { id: 'space-123', name: 'My Space', ownerId: 'user-owner-id', createdAt: '2024-01-15T10:00:00Z' },
+          isLoading: false,
+          isError: false,
+        } as ReturnType<typeof useSpaceSettings>['spaceDetail'],
+      }),
+    );
 
     render(<SpaceSettingsScreen dict={dict} lang="en" />);
     expect(screen.getByTestId('add-member-input')).toBeInTheDocument();
@@ -231,16 +223,16 @@ describe('SpaceSettingsScreen', () => {
   });
 
   it('hides add/remove member forms for non-owner', () => {
-    mockUseSpaceDetail.mockReturnValue({
-      data: {
-        id: 'space-123',
-        name: 'My Space',
-        ownerId: 'other-user-id',
-        createdAt: '2024-01-15T10:00:00Z',
-      },
-      isLoading: false,
-      isError: false,
-    } as ReturnType<typeof useSpaceDetail>);
+    mockUseSpaceSettings.mockReturnValue(
+      makeDefaultHookReturn({
+        isOwner: false,
+        spaceDetail: {
+          data: { id: 'space-123', name: 'My Space', ownerId: 'other-user-id', createdAt: '2024-01-15T10:00:00Z' },
+          isLoading: false,
+          isError: false,
+        } as ReturnType<typeof useSpaceSettings>['spaceDetail'],
+      }),
+    );
 
     render(<SpaceSettingsScreen dict={dict} lang="en" />);
     expect(screen.queryByTestId('add-member-input')).not.toBeInTheDocument();
@@ -248,11 +240,7 @@ describe('SpaceSettingsScreen', () => {
   });
 
   it('shows InDevelopment component in members section', () => {
-    mockUseSpaceDetail.mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: false,
-    } as ReturnType<typeof useSpaceDetail>);
+    mockUseSpaceSettings.mockReturnValue(makeDefaultHookReturn());
 
     render(<SpaceSettingsScreen dict={dict} lang="en" />);
     const inDev = screen.getByTestId('in-development');
@@ -261,32 +249,30 @@ describe('SpaceSettingsScreen', () => {
   });
 
   it('shows invitation result with displayCode and copy buttons', () => {
-    mockUseCreateInvitation.mockReturnValue({
-      mutate: vi.fn(),
-      isPending: false,
-      error: null,
-      data: {
-        id: 'inv-1',
-        displayCode: 'ABC-123',
-        code: 'raw-code-abc123',
-        qrId: null,
-        expiresAt: '2024-12-31T23:59:59Z',
-        role: 'member',
-        spaceId: 'space-123',
-      },
-      reset: mockResetInv,
-    } as unknown as ReturnType<typeof useCreateInvitation>);
-
-    mockUseSpaceDetail.mockReturnValue({
-      data: {
-        id: 'space-123',
-        name: 'My Space',
-        ownerId: 'user-owner-id',
-        createdAt: '2024-01-15T10:00:00Z',
-      },
-      isLoading: false,
-      isError: false,
-    } as ReturnType<typeof useSpaceDetail>);
+    mockUseSpaceSettings.mockReturnValue(
+      makeDefaultHookReturn({
+        isOwner: true,
+        spaceDetail: {
+          data: { id: 'space-123', name: 'My Space', ownerId: 'user-owner-id', createdAt: '2024-01-15T10:00:00Z' },
+          isLoading: false,
+          isError: false,
+        } as ReturnType<typeof useSpaceSettings>['spaceDetail'],
+        createInvitation: {
+          isPending: false,
+          error: null,
+          data: {
+            id: 'inv-1',
+            displayCode: 'ABC-123',
+            code: 'raw-code-abc123',
+            qrId: null,
+            expiresAt: '2024-12-31T23:59:59Z',
+            role: 'member',
+            spaceId: 'space-123',
+          },
+          reset: mockResetInv,
+        } as unknown as ReturnType<typeof useSpaceSettings>['createInvitation'],
+      }),
+    );
 
     render(<SpaceSettingsScreen dict={dict} lang="en" />);
     expect(screen.getByTestId('invitation-result')).toBeInTheDocument();
@@ -295,37 +281,36 @@ describe('SpaceSettingsScreen', () => {
     expect(screen.getByTestId('copy-link-btn')).toBeInTheDocument();
   });
 
-  it('shows QR image when invitation has qrId', () => {
-    mockUseCreateInvitation.mockReturnValue({
-      mutate: vi.fn(),
-      isPending: false,
-      error: null,
-      data: {
-        id: 'inv-1',
-        displayCode: 'ABC-123',
-        code: 'raw-code-abc123',
-        qrId: 'qr-uuid-456',
-        expiresAt: '2024-12-31T23:59:59Z',
-        role: 'member',
-        spaceId: 'space-123',
-      },
-      reset: mockResetInv,
-    } as unknown as ReturnType<typeof useCreateInvitation>);
-
-    mockUseSpaceDetail.mockReturnValue({
-      data: {
-        id: 'space-123',
-        name: 'My Space',
-        ownerId: 'user-owner-id',
-        createdAt: '2024-01-15T10:00:00Z',
-      },
-      isLoading: false,
-      isError: false,
-    } as ReturnType<typeof useSpaceDetail>);
+  it('shows QR image with alt text when invitation has qrId', () => {
+    mockUseSpaceSettings.mockReturnValue(
+      makeDefaultHookReturn({
+        isOwner: true,
+        spaceDetail: {
+          data: { id: 'space-123', name: 'My Space', ownerId: 'user-owner-id', createdAt: '2024-01-15T10:00:00Z' },
+          isLoading: false,
+          isError: false,
+        } as ReturnType<typeof useSpaceSettings>['spaceDetail'],
+        createInvitation: {
+          isPending: false,
+          error: null,
+          data: {
+            id: 'inv-1',
+            displayCode: 'ABC-123',
+            code: 'raw-code-abc123',
+            qrId: 'qr-uuid-456',
+            expiresAt: '2024-12-31T23:59:59Z',
+            role: 'member',
+            spaceId: 'space-123',
+          },
+          reset: mockResetInv,
+        } as unknown as ReturnType<typeof useSpaceSettings>['createInvitation'],
+      }),
+    );
 
     render(<SpaceSettingsScreen dict={dict} lang="en" />);
     const qrImg = screen.getByTestId('invitation-qr');
     expect(qrImg).toBeInTheDocument();
     expect(qrImg).toHaveAttribute('src', '/api/qrs/qr-uuid-456/image');
+    expect(qrImg).toHaveAttribute('alt', dict.invitation.qrAlt);
   });
 });
