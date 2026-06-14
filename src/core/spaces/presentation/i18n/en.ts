@@ -23,7 +23,61 @@ const dict = {
   invite: {
     accepting: 'Joining space...',
     missingCode: 'This invitation link is invalid or missing a code.',
-    error: 'Could not accept the invitation. It may be expired or you may already be a member.',
+    error:
+      'Could not accept the invitation. It may be expired or you may already be a member.',
+  },
+  members: {
+    list: {
+      loading: 'Loading members...',
+      empty: 'No members yet.',
+    },
+  },
+  settings: {
+    title: 'Space settings',
+    details: {
+      title: 'Space details',
+      name: 'Name',
+      owner: 'Owner',
+      createdAt: 'Created',
+    },
+    invitation: {
+      title: 'Create invitation',
+      roleLabel: 'Role',
+      roleMember: 'Member',
+      roleOwner: 'Owner',
+      expiresLabel: 'Expires at (optional)',
+      submit: 'Generate invitation',
+      submitting: 'Generating...',
+      code: 'Code',
+      copyCode: 'Copy code',
+      copyLink: 'Copy invite link',
+      codeCopied: 'Code copied!',
+      linkCopied: 'Link copied!',
+      qrAlt: 'QR code for space invitation',
+      qrHint: 'Share this QR or the code above to invite someone',
+    },
+    members: {
+      title: 'Members',
+      addTitle: 'Add member',
+      addUserId: 'User ID',
+      addUserIdPlaceholder: 'Paste UUID here',
+      addSubmit: 'Add',
+      addSubmitting: 'Adding...',
+      addSuccess: 'Member added successfully',
+      removeTitle: 'Remove member',
+      removeUserId: 'User ID',
+      removeUserIdPlaceholder: 'Paste UUID here',
+      removeSubmit: 'Remove',
+      removeSubmitting: 'Removing...',
+      removeSuccess: 'Member removed successfully',
+      confirmRemove: 'Are you sure you want to remove this member?',
+    },
+    errors: {
+      loadFailed: 'Could not load space details. Try again.',
+      invitationFailed: 'Could not create the invitation. Try again.',
+      addFailed: 'Could not add the member. Try again.',
+      removeFailed: 'Could not remove the member. Try again.',
+    },
   },
 } as const;
 

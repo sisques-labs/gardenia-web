@@ -13,6 +13,8 @@ import { GrowthTimeline } from '@/core/plants/presentation/components/growth-tim
 import { InDevelopment } from '@/shared/presentation/components/in-development/in-development';
 import { usePlant } from '@/core/plants/presentation/hooks/use-plant/use-plant.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
+import { usePlantCareLogs } from '@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-logs.hook';
+import { CareLogSummary } from '@/core/care-log/presentation/components/care-log-summary/care-log-summary';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 const shimmer = 'bg-muted rounded animate-pulse';
@@ -36,15 +38,17 @@ function DetailSkeleton() {
 
 type Props = {
   dict: AppDict['plants'];
+  careLogDict: AppDict['careLog'];
   lang: string;
   spaceId: string | null;
   plantId: string;
 };
 
-export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }: Props) {
+export function PlantDetailScreen({ dict, careLogDict, lang, spaceId: spaceIdProp, plantId }: Props) {
   const storeSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const spaceId = spaceIdProp ?? storeSpaceId;
   const { data: plant, isLoading, isError } = usePlant(spaceId, plantId);
+  const { data: lastCareByType = {} } = usePlantCareLogs(plantId);
 
   if (isLoading) return <DetailSkeleton />;
   if (isError) redirect(`/${lang}/plants`);
@@ -238,6 +242,7 @@ export function PlantDetailScreen({ dict, lang, spaceId: spaceIdProp, plantId }:
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6">
                   {/* Left: care cards + cycle */}
                   <div className="lg:col-span-2 flex flex-col gap-6">
+                    <CareLogSummary lastCareByType={lastCareByType} dict={careLogDict} lang={lang} />
                     <div data-testid="care-grid" className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       {careData.map((care) => (
                         <CareCard key={care.label} {...care} />

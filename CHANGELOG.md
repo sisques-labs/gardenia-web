@@ -1,6 +1,42 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.15.0-alpha.2] - 2026-06-14
+
+### Features
+- **openspec:** Add resolve-space-members-via-memberships change (34e73d8)
+- **spaces:** Add space members data layer and listing component (c50cafa)
+- **spaces:** Wire SpaceMembersList into settings screen (22613f3)
+## [0.15.0-alpha.1] - 2026-06-14
+
+### Bug Fixes
+- **planting-spots:** Address PR #182 review comments (d79e6d7)
+- **planting-spots:** Update PlantingSpotType import path in card test (4bc237e)
+
+### Features
+- **planting-spots:** Add data layer — domain, application, infrastructure, i18n (7e9a699)
+- **planting-spots:** Add presentation layer — hooks, schema, components, screens, pages, nav (760b491)
+
+### Refactor
+- **planting-spots:** Update imports and formatting for consistency (dfab4a0)
+## [0.15.0-alpha.0] - 2026-06-14
+
+### Bug Fixes
+- **care-log:** Align findByCriteria query with API contract (f9293d9)
+- **spaces:** Address PR review comments on space-settings (e5318e3)
+- **spaces:** Fix TS errors from InvitationRole uppercase and schema transform (31f3a09)
+- **spaces:** Simplify expiresAt schema to avoid RHF output type mismatch (4429616)
+
+### Documentation
+- **openspec:** Add care-log-web change proposal, design and tasks (8b18fa0)
+
+### Features
+- **care-log:** Add last-care summary to plant detail screen (fe89e7b)
+- **openspec:** Add space-settings-management change proposal (c47c08c)
+- **spaces:** Add space settings management page (424bf42)
+
+### Refactor
+- **care-log:** Move formatRelativeTime to shared/lib (e70f9d7)
 ## [0.14.0-alpha.0] - 2026-06-13
 
 ### Bug Fixes

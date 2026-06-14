@@ -8,6 +8,8 @@ import type { UsersDict } from '@/core/users/presentation/i18n/en';
 import type { CalendarDict } from '@/core/calendar/presentation/i18n/en';
 import type { ShellDict } from '@/shared/presentation/i18n/shell/en';
 import type { HarvestsDict } from '@/core/harvests/presentation/i18n/en';
+import type { CareLogDict } from '@/core/care-log/presentation/i18n/en';
+import type { PlantingSpotsDict } from '@/core/planting-spots/presentation/i18n/en';
 
 import enAuth from '@/core/auth/presentation/i18n/en';
 import esAuth from '@/core/auth/presentation/i18n/es';
@@ -25,6 +27,10 @@ import enShell from '@/shared/presentation/i18n/shell/en';
 import esShell from '@/shared/presentation/i18n/shell/es';
 import enHarvests from '@/core/harvests/presentation/i18n/en';
 import esHarvests from '@/core/harvests/presentation/i18n/es';
+import enCareLog from '@/core/care-log/presentation/i18n/en';
+import esCareLog from '@/core/care-log/presentation/i18n/es';
+import enPlantingSpots from '@/core/planting-spots/presentation/i18n/en';
+import esPlantingSpots from '@/core/planting-spots/presentation/i18n/es';
 
 export type AppDict = {
   auth: WidenStringLiterals<AuthDict>;
@@ -35,6 +41,8 @@ export type AppDict = {
   calendar: WidenStringLiterals<CalendarDict>;
   shell: WidenStringLiterals<ShellDict>;
   harvests: WidenStringLiterals<HarvestsDict>;
+  careLog: WidenStringLiterals<CareLogDict>;
+  plantingSpots: WidenStringLiterals<PlantingSpotsDict>;
 };
 
 const dictionaries: Record<Locale, AppDict> = {
@@ -47,6 +55,8 @@ const dictionaries: Record<Locale, AppDict> = {
     calendar: enCalendar,
     shell: enShell,
     harvests: enHarvests,
+    careLog: enCareLog,
+    plantingSpots: enPlantingSpots,
   },
   es: {
     auth: esAuth,
@@ -57,6 +67,8 @@ const dictionaries: Record<Locale, AppDict> = {
     calendar: esCalendar,
     shell: esShell,
     harvests: esHarvests,
+    careLog: esCareLog,
+    plantingSpots: esPlantingSpots,
   },
 };
 

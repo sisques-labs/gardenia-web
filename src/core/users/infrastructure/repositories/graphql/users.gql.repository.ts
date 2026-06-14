@@ -4,7 +4,9 @@ import type { UpdateUserInput } from '@/core/users/application/interfaces/update
 import type { User } from '@/core/users/domain/interfaces/user.interface';
 import { USER_FIND_BY_ID } from './queries/user-find-by-id.query';
 import { USER_UPDATE } from './mutations/user-update.mutation';
+import { USERS_FIND_BY_CRITERIA } from './queries/users-find-by-criteria.query';
 import type { UserFindByIdResponse } from './responses/user-find-by-id.response';
+import type { UsersFindByCriteriaResponse } from './responses/users-find-by-criteria.response';
 
 export class UsersGqlRepository implements IUsersRepository {
   async getById(id: string): Promise<User> {
@@ -22,6 +24,14 @@ export class UsersGqlRepository implements IUsersRepository {
       mutation: USER_UPDATE,
       variables: { input },
     });
+  }
+
+  async listSpaceMembers(): Promise<User[]> {
+    const res = await apolloClient.query<UsersFindByCriteriaResponse>({
+      query: USERS_FIND_BY_CRITERIA,
+      fetchPolicy: 'network-only',
+    });
+    return res.data?.usersFindByCriteria?.items ?? [];
   }
 }
 

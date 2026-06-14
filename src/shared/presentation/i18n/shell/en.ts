@@ -24,6 +24,7 @@ const dict = {
     harvests: 'Harvests',
     pests: 'Pests',
     community: 'Community',
+    plantingSpots: 'Planting spots',
   },
 } as const;
 
