@@ -14,15 +14,8 @@ import type { CareLogEntry } from '@/core/care-log/domain/interfaces/care-log-en
 const mockEntry: CareLogEntry = {
   id: 'entry-1',
   plantId: 'plant-1',
-  userId: 'user-1',
-  spaceId: 'space-1',
   activityType: CareLogActivityType.WATERING,
   performedAt: '2024-01-10T10:00:00.000Z',
-  notes: null,
-  quantity: null,
-  unit: null,
-  createdAt: '2024-01-10T10:00:00.000Z',
-  updatedAt: '2024-01-10T10:00:00.000Z',
 };
 
 describe('CareLogGqlRepository', () => {
@@ -35,21 +28,26 @@ describe('CareLogGqlRepository', () => {
 
   it('findByPlantId() llama a careLogFindByCriteria con las variables correctas', async () => {
     vi.mocked(apolloClient.query).mockResolvedValue({
-      data: { careLogFindByCriteria: { items: [mockEntry], total: 1, page: 1, perPage: 50, totalPages: 1 } },
+      data: { careLogFindByCriteria: { items: [mockEntry], total: 1, page: 1, perPage: 50 } },
     } as never);
 
     await repository.findByPlantId('plant-1');
 
     expect(apolloClient.query).toHaveBeenCalledWith(
       expect.objectContaining({
-        variables: { input: { plantId: 'plant-1', page: 1, limit: 50 } },
+        variables: {
+          input: {
+            filters: [{ field: 'plantId', operator: 'EQUALS', value: 'plant-1' }],
+            pagination: { page: 1, perPage: 50 },
+          },
+        },
       }),
     );
   });
 
   it('retorna los items de la respuesta', async () => {
     vi.mocked(apolloClient.query).mockResolvedValue({
-      data: { careLogFindByCriteria: { items: [mockEntry], total: 1, page: 1, perPage: 50, totalPages: 1 } },
+      data: { careLogFindByCriteria: { items: [mockEntry], total: 1, page: 1, perPage: 50 } },
     } as never);
 
     const result = await repository.findByPlantId('plant-1');
@@ -59,14 +57,19 @@ describe('CareLogGqlRepository', () => {
 
   it('respeta el limit personalizado', async () => {
     vi.mocked(apolloClient.query).mockResolvedValue({
-      data: { careLogFindByCriteria: { items: [], total: 0, page: 1, perPage: 10, totalPages: 0 } },
+      data: { careLogFindByCriteria: { items: [], total: 0, page: 1, perPage: 10 } },
     } as never);
 
     await repository.findByPlantId('plant-1', 10);
 
     expect(apolloClient.query).toHaveBeenCalledWith(
       expect.objectContaining({
-        variables: { input: { plantId: 'plant-1', page: 1, limit: 10 } },
+        variables: {
+          input: {
+            filters: [{ field: 'plantId', operator: 'EQUALS', value: 'plant-1' }],
+            pagination: { page: 1, perPage: 10 },
+          },
+        },
       }),
     );
   });

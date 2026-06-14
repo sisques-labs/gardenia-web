@@ -7,15 +7,8 @@ import type { CareLogEntry } from '@/core/care-log/domain/interfaces/care-log-en
 const makeEntry = (overrides: Partial<CareLogEntry> = {}): CareLogEntry => ({
   id: 'entry-1',
   plantId: 'plant-1',
-  userId: 'user-1',
-  spaceId: 'space-1',
   activityType: CareLogActivityType.WATERING,
   performedAt: '2024-01-10T10:00:00.000Z',
-  notes: null,
-  quantity: null,
-  unit: null,
-  createdAt: '2024-01-10T10:00:00.000Z',
-  updatedAt: '2024-01-10T10:00:00.000Z',
   ...overrides,
 });
 

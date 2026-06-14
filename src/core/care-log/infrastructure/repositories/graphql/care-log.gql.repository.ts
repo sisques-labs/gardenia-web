@@ -8,7 +8,12 @@ export class CareLogGqlRepository implements ICareLogRepository {
   async findByPlantId(plantId: string, limit = 50): Promise<CareLogEntry[]> {
     const res = await apolloClient.query<CareLogFindByPlantResponse>({
       query: CARE_LOG_FIND_BY_PLANT,
-      variables: { input: { plantId, page: 1, limit } },
+      variables: {
+        input: {
+          filters: [{ field: 'plantId', operator: 'EQUALS', value: plantId }],
+          pagination: { page: 1, perPage: limit },
+        },
+      },
     });
     return res.data?.careLogFindByCriteria?.items ?? [];
   }

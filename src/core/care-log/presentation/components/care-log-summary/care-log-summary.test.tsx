@@ -24,15 +24,8 @@ const mockDict: CareLogDict = {
 const makeEntry = (activityType: CareLogActivityType, performedAt = '2024-01-10T10:00:00.000Z') => ({
   id: 'entry-1',
   plantId: 'plant-1',
-  userId: 'user-1',
-  spaceId: 'space-1',
   activityType,
   performedAt,
-  notes: null,
-  quantity: null,
-  unit: null,
-  createdAt: performedAt,
-  updatedAt: performedAt,
 });
 
 describe('CareLogSummary', () => {

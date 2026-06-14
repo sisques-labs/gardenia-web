@@ -13,15 +13,8 @@ export enum CareLogActivityType {
 export interface CareLogEntry {
   id: string;
   plantId: string;
-  userId: string;
-  spaceId: string;
   activityType: CareLogActivityType;
   performedAt: string;
-  notes: string | null;
-  quantity: number | null;
-  unit: string | null;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export type LastCareByType = Partial<Record<CareLogActivityType, CareLogEntry>>;

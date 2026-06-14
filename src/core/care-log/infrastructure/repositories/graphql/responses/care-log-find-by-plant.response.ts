@@ -6,6 +6,5 @@ export interface CareLogFindByPlantResponse {
     total: number;
     page: number;
     perPage: number;
-    totalPages: number;
   } | null;
 }
