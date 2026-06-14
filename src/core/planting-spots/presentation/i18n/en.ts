@@ -17,11 +17,11 @@ const dict = {
     cancel: 'Cancel',
   },
   types: {
-    raised_bed: 'Raised bed',
-    pot: 'Pot',
-    container: 'Container',
-    field_section: 'Field section',
-    other: 'Other',
+    RAISED_BED: 'Raised bed',
+    POT: 'Pot',
+    CONTAINER: 'Container',
+    FIELD_SECTION: 'Field section',
+    OTHER: 'Other',
   },
 } as const;
 

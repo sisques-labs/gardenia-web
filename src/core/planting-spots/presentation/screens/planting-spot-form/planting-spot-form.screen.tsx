@@ -1,9 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
+import { Controller } from 'react-hook-form';
 import { Button } from '@/shared/presentation/components/ui/button';
 import { Input } from '@/shared/presentation/components/ui/input';
 import {
@@ -15,11 +12,8 @@ import {
 } from '@/shared/presentation/components/ui/select';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { ConfirmModal } from '@/shared/presentation/components/ui/dialog';
-import { plantingSpotSchema, PLANTING_SPOT_TYPES, type PlantingSpotFormValues } from '@/core/planting-spots/presentation/schemas/planting-spot.schema';
-import { usePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-planting-spot/use-planting-spot.hook';
-import { useCreatePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-create-planting-spot/use-create-planting-spot.hook';
-import { useUpdatePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-update-planting-spot/use-update-planting-spot.hook';
-import { useDeletePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-delete-planting-spot/use-delete-planting-spot.hook';
+import { PLANTING_SPOT_TYPES } from '@/core/planting-spots/presentation/schemas/planting-spot.schema';
+import { usePlantingSpotForm } from '@/core/planting-spots/presentation/hooks/use-planting-spot-form/use-planting-spot-form.hook';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 const shimmer = 'bg-muted rounded animate-pulse';
@@ -45,59 +39,20 @@ type Props = {
 };
 
 export function PlantingSpotFormScreen({ dict, lang, mode, spotId }: Props) {
-  const router = useRouter();
-  const isEdit = mode === 'edit';
-  const [deleteOpen, setDeleteOpen] = useState(false);
-
-  const { spot, isLoading } = usePlantingSpot(spotId ?? '');
-  const createMutation = useCreatePlantingSpot();
-  const updateMutation = useUpdatePlantingSpot();
-  const deleteMutation = useDeletePlantingSpot();
-
   const {
-    register,
-    handleSubmit,
-    control,
-    reset,
-    formState: { errors },
-  } = useForm<PlantingSpotFormValues>({
-    resolver: zodResolver(plantingSpotSchema),
-    defaultValues: { name: '', type: 'raised_bed', description: '' },
-  });
+    form,
+    isLoading,
+    isEdit,
+    isPending,
+    deleteOpen,
+    setDeleteOpen,
+    onSubmit,
+    handleDelete,
+    navigateToList,
+    deleteMutation,
+  } = usePlantingSpotForm({ mode, spotId, lang });
 
-  useEffect(() => {
-    if (spot) {
-      reset({
-        name: spot.name,
-        type: spot.type,
-        description: spot.description ?? '',
-      });
-    }
-  }, [spot, reset]);
-
-  const isPending = createMutation.isPending || updateMutation.isPending;
-
-  function onSubmit(values: PlantingSpotFormValues) {
-    if (isEdit && spotId) {
-      updateMutation.mutate(
-        { id: spotId, ...values },
-        { onSuccess: () => router.push(`/${lang}/planting-spots`) },
-      );
-    } else {
-      createMutation.mutate(values, {
-        onSuccess: () => router.push(`/${lang}/planting-spots`),
-      });
-    }
-  }
-
-  function handleDelete() {
-    if (spotId) {
-      deleteMutation.mutate(spotId, {
-        onSuccess: () => router.push(`/${lang}/planting-spots`),
-      });
-    }
-    setDeleteOpen(false);
-  }
+  const { register, handleSubmit, control, formState: { errors } } = form;
 
   const formDict = dict.form;
   const typesDict = dict.types;
@@ -173,7 +128,7 @@ export function PlantingSpotFormScreen({ dict, lang, mode, spotId }: Props) {
                 <Button
                   type="button"
                   variant="ghost"
-                  onClick={() => router.push(`/${lang}/planting-spots`)}
+                  onClick={navigateToList}
                   disabled={isPending}
                 >
                   {formDict.cancel}

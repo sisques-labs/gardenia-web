@@ -22,11 +22,11 @@ const dict = {
     cancel: 'Cancelar',
   },
   types: {
-    raised_bed: 'Bancal',
-    pot: 'Maceta',
-    container: 'Contenedor',
-    field_section: 'Sección de campo',
-    other: 'Otro',
+    RAISED_BED: 'Bancal',
+    POT: 'Maceta',
+    CONTAINER: 'Contenedor',
+    FIELD_SECTION: 'Sección de campo',
+    OTHER: 'Otro',
   },
 } as const satisfies PlantingSpotsDictTranslated;
 

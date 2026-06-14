@@ -4,36 +4,36 @@ import { PlantingSpotTypeBadge } from './planting-spot-type-badge';
 import type { PlantingSpotType } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
 
 const typeLabels: Record<PlantingSpotType, string> = {
-  raised_bed: 'Raised bed',
-  pot: 'Pot',
-  container: 'Container',
-  field_section: 'Field section',
-  other: 'Other',
+  RAISED_BED: 'Raised bed',
+  POT: 'Pot',
+  CONTAINER: 'Container',
+  FIELD_SECTION: 'Field section',
+  OTHER: 'Other',
 };
 
 describe('PlantingSpotTypeBadge', () => {
-  it('renders localized label for raised_bed', () => {
-    render(<PlantingSpotTypeBadge type="raised_bed" dict={typeLabels} />);
+  it('renders localized label for RAISED_BED', () => {
+    render(<PlantingSpotTypeBadge type="RAISED_BED" dict={typeLabels} />);
     expect(screen.getByText('Raised bed')).toBeInTheDocument();
   });
 
-  it('renders localized label for pot', () => {
-    render(<PlantingSpotTypeBadge type="pot" dict={typeLabels} />);
+  it('renders localized label for POT', () => {
+    render(<PlantingSpotTypeBadge type="POT" dict={typeLabels} />);
     expect(screen.getByText('Pot')).toBeInTheDocument();
   });
 
-  it('renders localized label for container', () => {
-    render(<PlantingSpotTypeBadge type="container" dict={typeLabels} />);
+  it('renders localized label for CONTAINER', () => {
+    render(<PlantingSpotTypeBadge type="CONTAINER" dict={typeLabels} />);
     expect(screen.getByText('Container')).toBeInTheDocument();
   });
 
-  it('renders localized label for field_section', () => {
-    render(<PlantingSpotTypeBadge type="field_section" dict={typeLabels} />);
+  it('renders localized label for FIELD_SECTION', () => {
+    render(<PlantingSpotTypeBadge type="FIELD_SECTION" dict={typeLabels} />);
     expect(screen.getByText('Field section')).toBeInTheDocument();
   });
 
-  it('renders localized label for other', () => {
-    render(<PlantingSpotTypeBadge type="other" dict={typeLabels} />);
+  it('renders localized label for OTHER', () => {
+    render(<PlantingSpotTypeBadge type="OTHER" dict={typeLabels} />);
     expect(screen.getByText('Other')).toBeInTheDocument();
   });
 });

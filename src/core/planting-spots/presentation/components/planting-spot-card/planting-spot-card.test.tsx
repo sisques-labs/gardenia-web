@@ -22,7 +22,7 @@ import { PlantingSpotCard } from './planting-spot-card';
 const mockSpot: PlantingSpot = {
   id: 'spot-1',
   name: 'Main Bed',
-  type: 'raised_bed',
+  type: 'RAISED_BED',
   description: 'A nice raised bed',
   userId: 'u1',
   spaceId: 's1',
@@ -32,11 +32,11 @@ const mockSpot: PlantingSpot = {
 
 const dict = {
   types: {
-    raised_bed: 'Raised bed',
-    pot: 'Pot',
-    container: 'Container',
-    field_section: 'Field section',
-    other: 'Other',
+    RAISED_BED: 'Raised bed',
+    POT: 'Pot',
+    CONTAINER: 'Container',
+    FIELD_SECTION: 'Field section',
+    OTHER: 'Other',
   },
 };
 

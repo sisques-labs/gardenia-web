@@ -1,9 +1,5 @@
-export type PlantingSpotType =
-  | 'raised_bed'
-  | 'pot'
-  | 'container'
-  | 'field_section'
-  | 'other';
+import type { PlantingSpotType } from '../types/planting-spot-type.type';
+export type { PlantingSpotType };
 
 export interface PlantingSpot {
   id: string;

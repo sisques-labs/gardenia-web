@@ -7,7 +7,7 @@ import type { UpdatePlantingSpotInput } from '@/core/planting-spots/application/
 const mockSpot: PlantingSpot = {
   id: 'spot-1',
   name: 'Updated Bed',
-  type: 'pot',
+  type: 'POT',
   description: null,
   userId: 'user-1',
   spaceId: 'space-1',
@@ -18,7 +18,7 @@ const mockSpot: PlantingSpot = {
 const input: UpdatePlantingSpotInput = {
   id: 'spot-1',
   name: 'Updated Bed',
-  type: 'pot',
+  type: 'POT',
 };
 
 const mockRepository: IPlantingSpotsRepository = {

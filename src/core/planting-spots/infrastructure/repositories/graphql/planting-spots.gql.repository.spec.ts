@@ -20,7 +20,7 @@ import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/plant
 const mockSpot: PlantingSpot = {
   id: 'spot-1',
   name: 'Main Bed',
-  type: 'raised_bed',
+  type: 'RAISED_BED',
   description: null,
   userId: 'user-1',
   spaceId: 'space-1',
@@ -131,7 +131,7 @@ describe('PlantingSpotsGqlRepository', () => {
         data: { plantingSpotFindById: mockSpot },
       } as never);
 
-      const input = { name: 'Main Bed', type: 'raised_bed' as const };
+      const input = { name: 'Main Bed', type: 'RAISED_BED' as const };
       const result = await repository.create(input);
 
       expect(apolloClient.mutate).toHaveBeenCalledOnce();
@@ -153,7 +153,7 @@ describe('PlantingSpotsGqlRepository', () => {
       } as never);
 
       await expect(
-        repository.create({ name: 'Test', type: 'pot' }),
+        repository.create({ name: 'Test', type: 'POT' }),
       ).rejects.toThrow('plantingSpotCreate mutation failed');
     });
   });

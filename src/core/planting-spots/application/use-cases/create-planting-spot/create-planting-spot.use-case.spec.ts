@@ -7,7 +7,7 @@ import type { CreatePlantingSpotInput } from '@/core/planting-spots/application/
 const mockSpot: PlantingSpot = {
   id: 'spot-1',
   name: 'Main Bed',
-  type: 'raised_bed',
+  type: 'RAISED_BED',
   description: 'A nice bed',
   userId: 'user-1',
   spaceId: 'space-1',
@@ -17,7 +17,7 @@ const mockSpot: PlantingSpot = {
 
 const input: CreatePlantingSpotInput = {
   name: 'Main Bed',
-  type: 'raised_bed',
+  type: 'RAISED_BED',
   description: 'A nice bed',
 };
 

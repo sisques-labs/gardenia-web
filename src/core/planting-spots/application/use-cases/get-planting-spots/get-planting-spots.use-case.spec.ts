@@ -7,7 +7,7 @@ const mockSpots: PlantingSpot[] = [
   {
     id: 'spot-1',
     name: 'Main Bed',
-    type: 'raised_bed',
+    type: 'RAISED_BED',
     description: null,
     userId: 'user-1',
     spaceId: 'space-1',

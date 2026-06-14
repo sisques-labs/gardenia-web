@@ -31,7 +31,7 @@ import { useCreatePlantingSpot } from './use-create-planting-spot.hook';
 const mockSpot: PlantingSpot = {
   id: 'spot-1',
   name: 'Main Bed',
-  type: 'raised_bed',
+  type: 'RAISED_BED',
   description: null,
   userId: 'u1',
   spaceId: 's1',
@@ -41,7 +41,7 @@ const mockSpot: PlantingSpot = {
 
 const input: CreatePlantingSpotInput = {
   name: 'Main Bed',
-  type: 'raised_bed',
+  type: 'RAISED_BED',
 };
 
 function makeWrapper() {

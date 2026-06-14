@@ -31,7 +31,7 @@ import { useUpdatePlantingSpot } from './use-update-planting-spot.hook';
 const mockSpot: PlantingSpot = {
   id: 'spot-1',
   name: 'Updated Bed',
-  type: 'pot',
+  type: 'POT',
   description: null,
   userId: 'u1',
   spaceId: 's1',
@@ -42,7 +42,7 @@ const mockSpot: PlantingSpot = {
 const input: UpdatePlantingSpotInput = {
   id: 'spot-1',
   name: 'Updated Bed',
-  type: 'pot',
+  type: 'POT',
 };
 
 function makeWrapper() {

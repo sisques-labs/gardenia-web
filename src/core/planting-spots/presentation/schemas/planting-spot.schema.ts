@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 export const PLANTING_SPOT_TYPES = [
-  'raised_bed',
-  'pot',
-  'container',
-  'field_section',
-  'other',
+  'RAISED_BED',
+  'POT',
+  'CONTAINER',
+  'FIELD_SECTION',
+  'OTHER',
 ] as const;
 
 export const plantingSpotSchema = z.object({

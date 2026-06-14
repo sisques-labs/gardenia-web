@@ -25,7 +25,7 @@ const mockSpots: PlantingSpot[] = [
   {
     id: 'spot-1',
     name: 'Main Bed',
-    type: 'raised_bed',
+    type: 'RAISED_BED',
     description: null,
     userId: 'u1',
     spaceId: 's1',
@@ -35,7 +35,7 @@ const mockSpots: PlantingSpot[] = [
   {
     id: 'spot-2',
     name: 'Herb Pot',
-    type: 'pot',
+    type: 'POT',
     description: 'Basil and mint',
     userId: 'u1',
     spaceId: 's1',
@@ -63,11 +63,11 @@ const dict = {
     cancel: 'Cancel',
   },
   types: {
-    raised_bed: 'Raised bed',
-    pot: 'Pot',
-    container: 'Container',
-    field_section: 'Field section',
-    other: 'Other',
+    RAISED_BED: 'Raised bed',
+    POT: 'Pot',
+    CONTAINER: 'Container',
+    FIELD_SECTION: 'Field section',
+    OTHER: 'Other',
   },
 };
 
