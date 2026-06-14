@@ -30,6 +30,12 @@ const dict = {
     missingCode: 'Este enlace de invitación no es válido o no incluye un código.',
     error: 'No se pudo aceptar la invitación. Puede haber caducado o ya ser miembro.',
   },
+  members: {
+    list: {
+      loading: 'Cargando miembros...',
+      empty: 'Sin miembros aún.',
+    },
+  },
 } as const satisfies SpacesDictTranslated;
 
 export default dict;

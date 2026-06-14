@@ -25,6 +25,12 @@ const dict = {
     missingCode: 'This invitation link is invalid or missing a code.',
     error: 'Could not accept the invitation. It may be expired or you may already be a member.',
   },
+  members: {
+    list: {
+      loading: 'Loading members...',
+      empty: 'No members yet.',
+    },
+  },
 } as const;
 
 export default dict;
