@@ -1,5 +1,5 @@
-import type { SpacesDict } from './en';
 import type { WidenStringLiterals } from '@/shared/presentation/i18n/widen-literals';
+import type { SpacesDict } from './en';
 
 type SpacesDictTranslated = WidenStringLiterals<SpacesDict>;
 
@@ -27,8 +27,10 @@ const dict = {
   },
   invite: {
     accepting: 'Uniéndote al espacio...',
-    missingCode: 'Este enlace de invitación no es válido o no incluye un código.',
-    error: 'No se pudo aceptar la invitación. Puede haber caducado o ya ser miembro.',
+    missingCode:
+      'Este enlace de invitación no es válido o no incluye un código.',
+    error:
+      'No se pudo aceptar la invitación. Puede haber caducado o ya ser miembro.',
   },
   members: {
     list: {
@@ -62,7 +64,6 @@ const dict = {
     },
     members: {
       title: 'Miembros',
-      pendingApi: 'La lista de miembros estará disponible en una próxima actualización.',
       addTitle: 'Añadir miembro',
       addUserId: 'ID de usuario',
       addUserIdPlaceholder: 'Pega el UUID aquí',
@@ -78,7 +79,8 @@ const dict = {
       confirmRemove: '¿Seguro que quieres eliminar a este miembro?',
     },
     errors: {
-      loadFailed: 'No se pudieron cargar los detalles del espacio. Inténtalo de nuevo.',
+      loadFailed:
+        'No se pudieron cargar los detalles del espacio. Inténtalo de nuevo.',
       invitationFailed: 'No se pudo crear la invitación. Inténtalo de nuevo.',
       addFailed: 'No se pudo añadir al miembro. Inténtalo de nuevo.',
       removeFailed: 'No se pudo eliminar al miembro. Inténtalo de nuevo.',
