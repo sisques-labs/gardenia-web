@@ -16,6 +16,7 @@ import { CareLogActivityType } from '@/core/care-log/domain/interfaces/care-log-
 import type { LastCareByType } from '@/core/care-log/domain/interfaces/care-log-entry.interface';
 import type { CareLogDict } from '@/core/care-log/presentation/i18n/en';
 import type { WidenStringLiterals } from '@/shared/presentation/i18n/widen-literals';
+import { formatRelativeTime } from '@/shared/lib/format-relative-time';
 
 const ACTIVITY_ICONS: Record<CareLogActivityType, ReactElement> = {
   [CareLogActivityType.WATERING]: <Droplets className="w-4 h-4" />,
@@ -28,18 +29,6 @@ const ACTIVITY_ICONS: Record<CareLogActivityType, ReactElement> = {
   [CareLogActivityType.ROTATION]: <RotateCw className="w-4 h-4" />,
   [CareLogActivityType.OTHER]: <MoreHorizontal className="w-4 h-4" />,
 };
-
-function formatRelativeTime(isoDate: string, locale: string): string {
-  const diffMs = new Date(isoDate).getTime() - Date.now();
-  const diffSecs = Math.round(diffMs / 1000);
-  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
-  const abs = Math.abs(diffSecs);
-  if (abs < 60) return rtf.format(diffSecs, 'second');
-  if (abs < 3600) return rtf.format(Math.round(diffSecs / 60), 'minute');
-  if (abs < 86400) return rtf.format(Math.round(diffSecs / 3600), 'hour');
-  if (abs < 604800) return rtf.format(Math.round(diffSecs / 86400), 'day');
-  return rtf.format(Math.round(diffSecs / 604800), 'week');
-}
 
 type Props = {
   lastCareByType: LastCareByType;
