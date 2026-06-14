@@ -13,6 +13,7 @@ const mockUser: User = {
 const mockRepository: IUsersRepository = {
   getById: vi.fn(),
   update: vi.fn(),
+  listSpaceMembers: vi.fn(),
 };
 
 describe('GetUserUseCase', () => {

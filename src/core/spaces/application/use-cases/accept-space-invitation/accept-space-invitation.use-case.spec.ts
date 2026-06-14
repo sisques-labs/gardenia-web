@@ -22,6 +22,10 @@ const mockRepository: ISpacesRepository = {
   listByUser: vi.fn(),
   create: vi.fn(),
   acceptInvitation: vi.fn(),
+  findById: vi.fn(),
+  createInvitation: vi.fn(),
+  addMember: vi.fn(),
+  removeMember: vi.fn(),
 };
 
 describe('AcceptSpaceInvitationUseCase', () => {

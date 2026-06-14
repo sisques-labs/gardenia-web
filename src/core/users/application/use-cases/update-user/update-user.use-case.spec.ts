@@ -5,6 +5,7 @@ import type { IUsersRepository } from '@/core/users/application/ports/users.repo
 const mockRepository: IUsersRepository = {
   getById: vi.fn(),
   update: vi.fn(),
+  listSpaceMembers: vi.fn(),
 };
 
 describe('UpdateUserUseCase', () => {

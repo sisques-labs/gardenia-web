@@ -4,4 +4,5 @@ import type { UpdateUserInput } from '@/core/users/application/interfaces/update
 export interface IUsersRepository {
   getById(id: string): Promise<User>;
   update(input: UpdateUserInput): Promise<void>;
+  listSpaceMembers(): Promise<User[]>;
 }

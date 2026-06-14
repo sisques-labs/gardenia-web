@@ -27,6 +27,7 @@ const shellDict: AppDict['shell'] = {
     harvests: 'Harvests',
     pests: 'Pests',
     community: 'Community',
+    plantingSpots: 'Planting spots',
   },
 };
 

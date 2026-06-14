@@ -110,9 +110,11 @@ export function SidebarFooter({ dict, locale, onNavigate }: Props) {
                   {dict.userMenu.profile}
                 </Link>
               </DropdownMenuItem>
-              <DropdownMenuItem disabled>
-                <Settings className="h-4 w-4" />
-                {dict.userMenu.settings}
+              <DropdownMenuItem asChild>
+                <Link href={`/${locale}/settings`} onClick={onNavigate}>
+                  <Settings className="h-4 w-4" />
+                  {dict.userMenu.settings}
+                </Link>
               </DropdownMenuItem>
               <DropdownMenuSeparator />
               <DropdownMenuItem danger disabled={isPending} onClick={() => logout()}>
