@@ -18,9 +18,15 @@ import { apolloClient } from '@/shared/infrastructure/http/apollo.client';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { SpacesGqlRepository } from './spaces.gql.repository';
 import { SPACES_FIND_BY_USER } from './queries/spaces-find-by-user.query';
+import { SPACE_FIND_BY_ID } from './queries/space-find-by-id.query';
 import { SPACE_ACCEPT_INVITATION } from './mutations/space-accept-invitation.mutation';
 import { SPACE_CREATE } from './mutations/space-create.mutation';
+import { SPACE_CREATE_INVITATION } from './mutations/space-create-invitation.mutation';
+import { SPACE_ADD_MEMBER } from './mutations/space-add-member.mutation';
+import { SPACE_REMOVE_MEMBER } from './mutations/space-remove-member.mutation';
 import type { Space } from '@/core/spaces/domain/interfaces/space.interface';
+import type { SpaceDetail } from '@/core/spaces/domain/interfaces/space-detail.interface';
+import type { SpaceInvitation } from '@/core/spaces/domain/types/space-invitation.type';
 
 const mockSpaces: Space[] = [
   { id: 'space-1', name: 'My Garden', ownerId: 'user-1', createdAt: '2024-01-01' },
@@ -51,6 +57,11 @@ describe('SpacesGqlRepository', () => {
       expect((SPACES_FIND_BY_USER as DocumentNode).kind).toBe('Document');
     });
 
+    it('SPACE_FIND_BY_ID is a valid GQL document', () => {
+      expect(SPACE_FIND_BY_ID).toBeDefined();
+      expect((SPACE_FIND_BY_ID as DocumentNode).kind).toBe('Document');
+    });
+
     it('SPACE_CREATE is a valid GQL document', () => {
       expect(SPACE_CREATE).toBeDefined();
       expect((SPACE_CREATE as DocumentNode).kind).toBe('Document');
@@ -59,6 +70,21 @@ describe('SpacesGqlRepository', () => {
     it('SPACE_ACCEPT_INVITATION is a valid GQL document', () => {
       expect(SPACE_ACCEPT_INVITATION).toBeDefined();
       expect((SPACE_ACCEPT_INVITATION as DocumentNode).kind).toBe('Document');
+    });
+
+    it('SPACE_CREATE_INVITATION is a valid GQL document', () => {
+      expect(SPACE_CREATE_INVITATION).toBeDefined();
+      expect((SPACE_CREATE_INVITATION as DocumentNode).kind).toBe('Document');
+    });
+
+    it('SPACE_ADD_MEMBER is a valid GQL document', () => {
+      expect(SPACE_ADD_MEMBER).toBeDefined();
+      expect((SPACE_ADD_MEMBER as DocumentNode).kind).toBe('Document');
+    });
+
+    it('SPACE_REMOVE_MEMBER is a valid GQL document', () => {
+      expect(SPACE_REMOVE_MEMBER).toBeDefined();
+      expect((SPACE_REMOVE_MEMBER as DocumentNode).kind).toBe('Document');
     });
   });
 
@@ -160,6 +186,128 @@ describe('SpacesGqlRepository', () => {
     it('propagates errors from apolloClient.mutate', async () => {
       vi.mocked(apolloClient.mutate).mockRejectedValue(new Error('Mutation failed'));
       await expect(repository.create('New Space')).rejects.toThrow('Mutation failed');
+    });
+  });
+
+  describe('findById()', () => {
+    const mockDetail: SpaceDetail = {
+      id: 'space-1',
+      name: 'My Garden',
+      ownerId: 'user-1',
+      createdAt: '2024-01-01T00:00:00.000Z',
+    };
+
+    it('returns SpaceDetail when space is found', async () => {
+      vi.mocked(apolloClient.query).mockResolvedValue({
+        data: { spaceFindById: mockDetail },
+      } as never);
+
+      const result = await repository.findById('space-1');
+
+      expect(apolloClient.query).toHaveBeenCalledWith({
+        query: SPACE_FIND_BY_ID,
+        variables: { input: { id: 'space-1' } },
+        fetchPolicy: 'network-only',
+      });
+      expect(result).toEqual(mockDetail);
+    });
+
+    it('throws when spaceFindById is null', async () => {
+      vi.mocked(apolloClient.query).mockResolvedValue({
+        data: { spaceFindById: null },
+      } as never);
+
+      await expect(repository.findById('space-1')).rejects.toThrow('Space not found: space-1');
+    });
+  });
+
+  describe('createInvitation()', () => {
+    const mockInvitation: SpaceInvitation = {
+      id: 'inv-1',
+      displayCode: 'GAR · 2026 · AB',
+      code: 'full-code-uuid',
+      qrId: 'qr-1',
+      expiresAt: '2026-12-31T00:00:00.000Z',
+      role: 'MEMBER',
+      spaceId: 'space-1',
+    };
+
+    it('returns SpaceInvitation on success', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { spaceCreateInvitation: mockInvitation },
+      } as never);
+
+      const result = await repository.createInvitation({ spaceId: 'space-1', role: 'member' });
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: SPACE_CREATE_INVITATION,
+        variables: { input: { spaceId: 'space-1', role: 'MEMBER', expiresAt: undefined } },
+      });
+      expect(result).toEqual(mockInvitation);
+    });
+
+    it('throws when mutation returns no data', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { spaceCreateInvitation: null },
+      } as never);
+
+      await expect(repository.createInvitation({ spaceId: 'space-1' })).rejects.toThrow(
+        'spaceCreateInvitation mutation failed',
+      );
+    });
+  });
+
+  describe('addMember()', () => {
+    it('resolves when mutation succeeds', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { spaceAddMember: { id: 'space-1', success: true, message: 'Member added' } },
+      } as never);
+
+      await expect(
+        repository.addMember({ spaceId: 'space-1', targetUserId: 'user-2' }),
+      ).resolves.toBeUndefined();
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: SPACE_ADD_MEMBER,
+        variables: { input: { spaceId: 'space-1', targetUserId: 'user-2' } },
+      });
+    });
+
+    it('throws when success is false', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { spaceAddMember: { id: '', success: false, message: 'Already a member' } },
+      } as never);
+
+      await expect(
+        repository.addMember({ spaceId: 'space-1', targetUserId: 'user-2' }),
+      ).rejects.toThrow('Already a member');
+    });
+  });
+
+  describe('removeMember()', () => {
+    it('resolves when mutation succeeds', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { spaceRemoveMember: { id: 'space-1', success: true, message: 'Member removed' } },
+      } as never);
+
+      await expect(
+        repository.removeMember({ spaceId: 'space-1', targetUserId: 'user-2' }),
+      ).resolves.toBeUndefined();
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: SPACE_REMOVE_MEMBER,
+        variables: { input: { spaceId: 'space-1', targetUserId: 'user-2' } },
+      });
+    });
+
+    it('throws when success is false', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { spaceRemoveMember: { id: '', success: false, message: 'Cannot remove last owner' } },
+      } as never);
+
+      await expect(
+        repository.removeMember({ spaceId: 'space-1', targetUserId: 'user-2' }),
+      ).rejects.toThrow('Cannot remove last owner');
     });
   });
 });
