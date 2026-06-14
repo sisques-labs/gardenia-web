@@ -1,9 +1,15 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/presentation/components/ui/card';
-import { PlantingSpotTypeBadge } from '@/core/planting-spots/presentation/components/planting-spot-type-badge/planting-spot-type-badge';
-import type { PlantingSpot, PlantingSpotType } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
+import type { PlantingSpot } from "@/core/planting-spots/domain/interfaces/planting-spot.interface";
+import type { PlantingSpotType } from "@/core/planting-spots/domain/types/planting-spot-type.type";
+import { PlantingSpotTypeBadge } from "@/core/planting-spots/presentation/components/planting-spot-type-badge/planting-spot-type-badge";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@/shared/presentation/components/ui/card";
+import Link from "next/link";
 
 type Props = {
   spot: PlantingSpot;
@@ -23,7 +29,9 @@ export function PlantingSpotCard({ spot, dict, lang }: Props) {
         </CardHeader>
         {spot.description && (
           <CardContent>
-            <p className="text-sm text-muted-foreground line-clamp-2">{spot.description}</p>
+            <p className="text-sm text-muted-foreground line-clamp-2">
+              {spot.description}
+            </p>
           </CardContent>
         )}
       </Card>
