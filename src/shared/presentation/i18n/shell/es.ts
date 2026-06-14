@@ -27,6 +27,7 @@ const dict = {
     harvests: 'Cosechas',
     pests: 'Plagas',
     community: 'Comunidad',
+    plantingSpots: 'Zonas de cultivo',
   },
 } satisfies WidenStringLiterals<ShellDict>;
 
