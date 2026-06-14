@@ -23,7 +23,14 @@ const dict = {
   invite: {
     accepting: 'Joining space...',
     missingCode: 'This invitation link is invalid or missing a code.',
-    error: 'Could not accept the invitation. It may be expired or you may already be a member.',
+    error:
+      'Could not accept the invitation. It may be expired or you may already be a member.',
+  },
+  members: {
+    list: {
+      loading: 'Loading members...',
+      empty: 'No members yet.',
+    },
   },
   settings: {
     title: 'Space settings',
@@ -51,7 +58,6 @@ const dict = {
     },
     members: {
       title: 'Members',
-      pendingApi: 'Member list will be available in a future update.',
       addTitle: 'Add member',
       addUserId: 'User ID',
       addUserIdPlaceholder: 'Paste UUID here',
