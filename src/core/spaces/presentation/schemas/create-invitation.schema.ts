@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const createInvitationSchema = z.object({
   role: z.enum(['owner', 'member']),
-  expiresAt: z.preprocess((v) => (v === '' ? undefined : v), z.string().optional()),
+  expiresAt: z.string().optional().transform((v) => (v === '' ? undefined : v)),
 });
 
 export type CreateInvitationFormValues = z.infer<typeof createInvitationSchema>;

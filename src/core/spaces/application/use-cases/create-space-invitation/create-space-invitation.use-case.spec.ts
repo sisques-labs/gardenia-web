@@ -9,7 +9,7 @@ const mockInvitation: SpaceInvitation = {
   code: 'full-code-uuid',
   qrId: 'qr-1',
   expiresAt: '2026-12-31T00:00:00.000Z',
-  role: 'member',
+  role: 'MEMBER',
   spaceId: 'space-1',
 };
 
