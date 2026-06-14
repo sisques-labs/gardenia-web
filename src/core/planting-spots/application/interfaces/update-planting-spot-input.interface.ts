@@ -1,0 +1,8 @@
+import type { PlantingSpotType } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
+
+export interface UpdatePlantingSpotInput {
+  id: string;
+  name?: string;
+  type?: PlantingSpotType;
+  description?: string | null;
+}
