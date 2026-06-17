@@ -1,6 +1,16 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.17.0-alpha.0] - 2026-06-17
+
+### Bug Fixes
+- **button:** Align all variants to design mockup (53fd67f)
+- **button:** Destructive usa var(--terracotta) directo porque --color-destructive no está en @theme (3269b05)
+- **tests:** Actualizar aserciones de clase a tokens Gardenia (af76c8e)
+
+### Features
+- Apply Gardenia editorial design system to UI components (5e8d3fd)
+- Apply editorial design system to all remaining UI components (4f0bbcb)
 ## [0.16.0-alpha.1] - 2026-06-17
 
 ### Refactor
