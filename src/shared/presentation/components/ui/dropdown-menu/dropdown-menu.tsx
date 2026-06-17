@@ -49,9 +49,9 @@ const DropdownMenuItem = React.forwardRef<
     ref={ref}
     className={cn(
       'relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors',
-      'focus:bg-accent focus:text-accent-foreground',
+      'focus:bg-[var(--paper-2)] focus:text-[var(--ink)]',
       'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
-      danger && 'text-destructive focus:text-destructive',
+      danger && 'text-[var(--terracotta)] focus:text-[var(--terracotta)]',
       className,
     )}
     {...props}
@@ -67,7 +67,7 @@ const DropdownMenuCheckboxItem = React.forwardRef<
     ref={ref}
     className={cn(
       'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors',
-      'focus:bg-accent focus:text-accent-foreground',
+      'focus:bg-[var(--paper-2)] focus:text-[var(--ink)]',
       'data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
       className,
     )}
@@ -103,7 +103,7 @@ const DropdownMenuLabel = React.forwardRef<
 >(({ className, inset, ...props }, ref) => (
   <DropdownMenuPrimitive.Label
     ref={ref}
-    className={cn('px-2 py-1.5 text-xs font-semibold text-muted-foreground', inset && 'pl-8', className)}
+    className={cn('eyebrow px-2 py-1.5', inset && 'pl-8', className)}
     {...props}
   />
 ));
@@ -115,7 +115,7 @@ const DropdownMenuSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DropdownMenuPrimitive.Separator
     ref={ref}
-    className={cn('-mx-1 my-1 h-px bg-border', className)}
+    className={cn('-mx-1 my-1 h-px bg-[var(--rule)]', className)}
     {...props}
   />
 ));

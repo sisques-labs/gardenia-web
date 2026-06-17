@@ -49,9 +49,9 @@ describe('Breadcrumb', () => {
     expect(separator).toBeInTheDocument();
   });
 
-  it('separator has muted-foreground class', () => {
+  it('separator has ink-3 color class', () => {
     const { container } = renderBreadcrumb();
     const separator = container.querySelector('[aria-hidden="true"]');
-    expect(separator).toHaveClass('text-muted-foreground');
+    expect(separator).toHaveClass('text-[var(--ink-3)]');
   });
 });
