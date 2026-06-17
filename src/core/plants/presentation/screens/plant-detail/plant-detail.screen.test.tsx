@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 
@@ -30,6 +31,16 @@ vi.mock('next/link', () => ({
   default: ({ href, children }: { href: string; children: React.ReactNode }) => (
     <a href={href}>{children}</a>
   ),
+}));
+
+const mockDeleteMutate = vi.fn();
+
+vi.mock('@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook', () => ({
+  useDeletePlant: vi.fn(() => ({
+    mutate: mockDeleteMutate,
+    isPending: false,
+    isError: false,
+  })),
 }));
 
 import { usePlant } from '@/core/plants/presentation/hooks/use-plant/use-plant.hook';
@@ -98,6 +109,12 @@ const dict = {
       markWatered: 'Mark watered',
       addPhoto: 'Add photo',
       newNote: 'New note',
+      delete: 'Delete plant',
+      deleteTitle: 'Delete plant',
+      deleteDescription: 'This action cannot be undone. The plant will be permanently removed.',
+      deleteConfirm: 'Delete',
+      deleteCancel: 'Cancel',
+      deleteError: 'Could not delete the plant. Try again.',
     },
     qr: {
       label: 'ETIQUETA · QR',
@@ -367,6 +384,55 @@ describe('PlantDetailScreen', () => {
     const tabs = screen.getAllByRole('tab');
     tabs.forEach((tab) => {
       expect(tab).not.toBeDisabled();
+    });
+  });
+
+  describe('delete flow', () => {
+    it('renders delete button with data-testid="btn-delete-plant"', () => {
+      vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+      render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} lang="en" spaceId="s1" plantId="p1" />);
+
+      expect(screen.getByTestId('btn-delete-plant')).toBeInTheDocument();
+    });
+
+    it('clicking delete button opens ConfirmDialog without calling mutate', async () => {
+      vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+      const user = userEvent.setup();
+
+      render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} lang="en" spaceId="s1" plantId="p1" />);
+
+      await user.click(screen.getByTestId('btn-delete-plant'));
+
+      expect(screen.getByRole('dialog')).toBeInTheDocument();
+      expect(mockDeleteMutate).not.toHaveBeenCalled();
+    });
+
+    it('clicking cancel closes dialog without calling mutate', async () => {
+      vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+      const user = userEvent.setup();
+
+      render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} lang="en" spaceId="s1" plantId="p1" />);
+
+      await user.click(screen.getByTestId('btn-delete-plant'));
+      await user.click(screen.getByRole('button', { name: 'Cancel' }));
+
+      expect(screen.queryByRole('alertdialog')).not.toBeInTheDocument();
+      expect(mockDeleteMutate).not.toHaveBeenCalled();
+    });
+
+    it('clicking confirm calls deletePlant(plantId)', async () => {
+      vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+      mockDeleteMutate.mockImplementation(() => undefined);
+      const user = userEvent.setup();
+
+      render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} lang="en" spaceId="s1" plantId="p1" />);
+
+      await user.click(screen.getByTestId('btn-delete-plant'));
+      await user.click(screen.getByRole('button', { name: 'Delete' }));
+
+      expect(mockDeleteMutate).toHaveBeenCalledOnce();
+      expect(mockDeleteMutate).toHaveBeenCalledWith('p1', expect.any(Object));
     });
   });
 });

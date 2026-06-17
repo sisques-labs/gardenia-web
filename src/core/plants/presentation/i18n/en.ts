@@ -41,6 +41,12 @@ const dict = {
       markWatered: 'Mark watered',
       addPhoto: 'Add photo',
       newNote: 'New note',
+      delete: 'Delete plant',
+      deleteTitle: 'Delete plant',
+      deleteDescription: 'This action cannot be undone. The plant will be permanently removed.',
+      deleteConfirm: 'Delete',
+      deleteCancel: 'Cancel',
+      deleteError: 'Could not delete the plant. Try again.',
     },
     qr: {
       label: 'Label · QR',

@@ -2,8 +2,9 @@
 
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
-import { Droplets, Camera, StickyNote, Sun, Shovel, Scissors } from 'lucide-react';
+import { Droplets, Camera, StickyNote, Sun, Shovel, Scissors, Trash2 } from 'lucide-react';
 import { Button } from '@/shared/presentation/components/ui/button/button';
+import { ConfirmDialog } from '@/shared/presentation/components/ui/confirm-dialog/confirm-dialog';
 import { Card, CardContent } from '@/shared/presentation/components/ui/card/card';
 import { Chip } from '@/shared/presentation/components/ui/chip/chip';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/presentation/components/ui/tabs/tabs';
@@ -12,10 +13,12 @@ import { CareCard } from '@/core/plants/presentation/components/care-card/care-c
 import { GrowthTimeline } from '@/core/plants/presentation/components/growth-timeline/growth-timeline';
 import { InDevelopment } from '@/shared/presentation/components/in-development/in-development';
 import { usePlant } from '@/core/plants/presentation/hooks/use-plant/use-plant.hook';
+import { useDeletePlant } from '@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import { usePlantCareLogs } from '@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-logs.hook';
 import { CareLogSummary } from '@/core/care-log/presentation/components/care-log-summary/care-log-summary';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
+import { useState } from 'react';
 
 const shimmer = 'bg-muted rounded animate-pulse';
 
@@ -49,6 +52,8 @@ export function PlantDetailScreen({ dict, careLogDict, lang, spaceId: spaceIdPro
   const spaceId = spaceIdProp ?? storeSpaceId;
   const { data: plant, isLoading, isError } = usePlant(spaceId, plantId);
   const { data: lastCareByType = {} } = usePlantCareLogs(plantId);
+  const { mutate: deletePlant } = useDeletePlant(spaceId);
+  const [confirmOpen, setConfirmOpen] = useState(false);
 
   if (isLoading) return <DetailSkeleton />;
   if (isError) redirect(`/${lang}/plants`);
@@ -145,7 +150,32 @@ export function PlantDetailScreen({ dict, careLogDict, lang, spaceId: spaceIdPro
                 <StickyNote className="w-4 h-4" />
                 {dict.detail.actions.newNote}
               </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                data-testid="btn-delete-plant"
+                onClick={() => setConfirmOpen(true)}
+              >
+                <Trash2 className="w-4 h-4" />
+                {dict.detail.actions.delete}
+              </Button>
             </div>
+
+            <ConfirmDialog
+              open={confirmOpen}
+              onOpenChange={setConfirmOpen}
+              title={dict.detail.actions.deleteTitle}
+              description={dict.detail.actions.deleteDescription}
+              confirmLabel={dict.detail.actions.deleteConfirm}
+              cancelLabel={dict.detail.actions.deleteCancel}
+              destructive
+              onCancel={() => setConfirmOpen(false)}
+              onConfirm={() => {
+                deletePlant(plantId, {
+                  onSuccess: () => redirect(`/${lang}/plants`),
+                });
+              }}
+            />
           </div>
 
           {/* Right column — QR Card */}

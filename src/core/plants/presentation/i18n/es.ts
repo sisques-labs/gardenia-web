@@ -46,6 +46,12 @@ const dict = {
       markWatered: 'Marcar regado',
       addPhoto: 'Añadir foto',
       newNote: 'Nueva nota',
+      delete: 'Eliminar planta',
+      deleteTitle: 'Eliminar planta',
+      deleteDescription: 'Esta acción no se puede deshacer. La planta se eliminará permanentemente.',
+      deleteConfirm: 'Eliminar',
+      deleteCancel: 'Cancelar',
+      deleteError: 'No se pudo eliminar la planta. Inténtalo de nuevo.',
     },
     qr: {
       label: 'Etiqueta · QR',
