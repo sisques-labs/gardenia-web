@@ -18,7 +18,7 @@ const EventCard = React.forwardRef<HTMLDivElement, EventCardProps>(
       style={accent ? { borderLeftColor: accent, borderLeftWidth: '3px' } : undefined}
       {...props}
     >
-      <p className="text-sm font-semibold text-[var(--ink)]">{title}</p>
+      <p className="headline text-sm">{title}</p>
       <div className="flex items-center gap-1 text-xs text-[var(--ink-3)]">
         <Clock className="h-3 w-3" />
         <span>{time}</span>

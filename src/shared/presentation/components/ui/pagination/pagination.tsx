@@ -33,7 +33,7 @@ const Pagination = React.forwardRef<HTMLDivElement, PaginationProps>(
             className={cn(
               'inline-flex h-8 w-8 items-center justify-center rounded text-sm transition-colors',
               p === page
-                ? 'bg-[var(--forest)] text-[var(--white)] font-semibold'
+                ? 'bg-[var(--forest)] text-[var(--white)] font-semibold tnum'
                 : 'text-[var(--ink-2)] hover:bg-[var(--paper-2)]',
             )}
           >

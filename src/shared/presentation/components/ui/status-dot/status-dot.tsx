@@ -5,7 +5,7 @@ const STATUS_CLASS_MAP = {
   good: 'dot-good',
   warn: 'dot-warn',
   bad: 'dot-bad',
-  inactive: 'bg-muted-foreground',
+  inactive: 'dot',
 } as const;
 
 export type StatusDotStatus = keyof typeof STATUS_CLASS_MAP;

@@ -83,7 +83,7 @@ const CommandPalette = ({
                 <Command.Group
                   key={group}
                   heading={
-                    <span className="px-2 py-1 text-xs font-semibold text-[var(--ink-2)]">
+                    <span className="eyebrow px-2 py-1">
                       {group}
                     </span>
                   }

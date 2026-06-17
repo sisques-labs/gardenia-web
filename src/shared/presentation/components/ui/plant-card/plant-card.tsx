@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { cn } from '@/shared/lib/utils';
-import { Chip } from '../chip/chip';
+import { Chip, type ChipVariant } from '../chip/chip';
 
 export interface PlantCardProps extends React.HTMLAttributes<HTMLDivElement> {
   name: string;
@@ -9,17 +9,42 @@ export interface PlantCardProps extends React.HTMLAttributes<HTMLDivElement> {
   imageUrl?: string;
 }
 
+function getStatusVariant(status: string): ChipVariant {
+  const s = status.toLowerCase();
+  if (s === 'sano' || s === 'healthy' || s === 'good') return 'forest';
+  if (s === 'atención' || s === 'atencion' || s === 'attention' || s === 'warning') return 'honey';
+  if (s === 'riesgo' || s === 'risk' || s === 'danger' || s === 'critical') return 'terra';
+  if (s === 'recuperando' || s === 'recovering') return 'sage';
+  return 'default';
+}
+
+function getInitials(name: string): string {
+  return name
+    .split(' ')
+    .slice(0, 2)
+    .map((w) => w[0]?.toUpperCase() ?? '')
+    .join('');
+}
+
 const PlantCard = React.forwardRef<HTMLDivElement, PlantCardProps>(
   ({ className, name, species, status, imageUrl, ...props }, ref) => (
     <div ref={ref} className={cn('card p-4 flex flex-col gap-2', className)} {...props}>
-      {imageUrl && (
+      {imageUrl ? (
         <img src={imageUrl} alt={name} className="w-full h-40 object-cover rounded" />
+      ) : (
+        <div className="placeholder-img leaf w-full h-40 rounded text-sm font-medium">
+          {getInitials(name)}
+        </div>
       )}
-      <div className="flex flex-col gap-1">
-        <h3 className="text-sm font-semibold text-[var(--ink)]">{name}</h3>
-        {species && <p className="text-xs text-[var(--ink-3)] italic">{species}</p>}
+      <div className="flex flex-col gap-0.5">
+        <h3 className="headline text-base">{name}</h3>
+        {species && (
+          <p className="text-xs italic text-[var(--ink-3)]" style={{ fontFamily: 'var(--font-serif)' }}>
+            {species}
+          </p>
+        )}
       </div>
-      {status && <Chip>{status}</Chip>}
+      {status && <Chip variant={getStatusVariant(status)}>{status}</Chip>}
     </div>
   ),
 );

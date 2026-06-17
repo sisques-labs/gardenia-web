@@ -9,7 +9,7 @@ const Toaster = () => (
     theme="system"
     toastOptions={{
       classNames: {
-        toast: 'bg-background text-foreground border-border',
+        toast: 'bg-[var(--paper)] text-[var(--ink)] border-[var(--rule)]',
       },
     }}
   />

@@ -22,9 +22,9 @@ describe('StatusDot', () => {
     expect(container.firstChild).toHaveClass('dot-bad');
   });
 
-  it('applies muted-foreground class for status="inactive"', () => {
+  it('applies dot class for status="inactive"', () => {
     const { container } = render(<StatusDot status="inactive" />);
-    expect(container.firstChild).toHaveClass('bg-muted-foreground');
+    expect(container.firstChild).toHaveClass('dot');
   });
 
   it('merges additional className', () => {
