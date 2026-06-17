@@ -9,7 +9,7 @@ describe('Button', () => {
 
   it('applies variant classes', () => {
     render(<Button variant="destructive">Delete</Button>);
-    expect(screen.getByRole('button')).toHaveClass('bg-destructive');
+    expect(screen.getByRole('button')).toHaveClass('bg-[var(--terracotta)]');
   });
 
   describe('loading state', () => {
