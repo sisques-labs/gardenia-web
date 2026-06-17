@@ -1,11 +1,17 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import {
+  STORY_PLANT_IMAGE,
+  STORY_PLANT_IMAGE_3,
+  STORY_PLANT_IMAGE_4,
+  STORY_PLANT_IMAGE_ALT,
+} from "../../../../../.storybook/fixtures/images";
 import { PhotoGrid } from "./photo-grid";
 
 const photos = [
-  { src: "https://picsum.photos/seed/gardenia/400/300", alt: "Monstera leaf" },
-  { src: "https://picsum.photos/seed/plant2/400/300", alt: "Pothos vine" },
-  { src: "https://picsum.photos/seed/plant3/400/300", alt: "Fern fronds" },
-  { src: "https://picsum.photos/seed/plant4/400/300", alt: "Succulent" },
+  { src: STORY_PLANT_IMAGE, alt: "Monstera leaf" },
+  { src: STORY_PLANT_IMAGE_ALT, alt: "Pothos vine" },
+  { src: STORY_PLANT_IMAGE_3, alt: "Fern fronds" },
+  { src: STORY_PLANT_IMAGE_4, alt: "Succulent" },
 ];
 
 const meta = {

@@ -1,11 +1,16 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
+import {
+  STORY_PLANT_IMAGE,
+  STORY_PLANT_IMAGE_3,
+  STORY_PLANT_IMAGE_ALT,
+} from "../../../../../.storybook/fixtures/images";
 import { PhotoPicker } from "./photo-picker";
 
 const photos = [
-  { src: "https://picsum.photos/seed/gardenia/400/300", alt: "Photo 1" },
-  { src: "https://picsum.photos/seed/plant2/400/300", alt: "Photo 2" },
-  { src: "https://picsum.photos/seed/plant3/400/300", alt: "Photo 3" },
+  { src: STORY_PLANT_IMAGE, alt: "Photo 1" },
+  { src: STORY_PLANT_IMAGE_ALT, alt: "Photo 2" },
+  { src: STORY_PLANT_IMAGE_3, alt: "Photo 3" },
 ];
 
 const meta: Meta = {

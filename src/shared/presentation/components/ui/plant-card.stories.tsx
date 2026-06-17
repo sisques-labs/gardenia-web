@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { STORY_PLANT_IMAGE } from "../../../../../.storybook/fixtures/images";
 import { PlantCard } from "./plant-card";
 
 const meta = {
@@ -15,7 +16,7 @@ export const Default: Story = {
     name: "Monstera deliciosa",
     species: "Araceae",
     status: "Healthy",
-    imageUrl: "https://picsum.photos/seed/gardenia/400/300",
+    imageUrl: STORY_PLANT_IMAGE,
     className: "w-64",
   },
 };

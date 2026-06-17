@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { STORY_PLANT_IMAGE, STORY_PLANT_IMAGE_ALT } from "../../../../../.storybook/fixtures/images";
 import { Button } from "./button";
 import { MediaCard } from "./media-card";
 
@@ -17,7 +18,7 @@ type Story = StoryObj<typeof meta>;
 export const Vertical: Story = {
   args: {
     variant: "vertical",
-    src: "https://picsum.photos/seed/gardenia/400/300",
+    src: STORY_PLANT_IMAGE,
     alt: "Monstera",
     title: "Monstera deliciosa",
     description: "Swiss cheese plant in the living room.",
@@ -27,7 +28,7 @@ export const Vertical: Story = {
 export const Horizontal: Story = {
   args: {
     variant: "horizontal",
-    src: "https://picsum.photos/seed/plant2/400/300",
+    src: STORY_PLANT_IMAGE_ALT,
     alt: "Pothos",
     title: "Golden Pothos",
     description: "Trailing vine on the bookshelf.",

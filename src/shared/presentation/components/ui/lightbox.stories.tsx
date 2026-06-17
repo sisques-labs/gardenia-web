@@ -1,11 +1,12 @@
 import * as React from "react";
 import type { Meta, StoryObj } from "@storybook/react";
+import { STORY_PLANT_IMAGE, STORY_PLANT_IMAGE_ALT } from "../../../../../.storybook/fixtures/images";
 import { Button } from "./button";
 import { Lightbox } from "./lightbox";
 
 const photos = [
-  { src: "https://picsum.photos/seed/gardenia/400/300", alt: "Monstera leaf" },
-  { src: "https://picsum.photos/seed/plant2/400/300", alt: "Pothos vine" },
+  { src: STORY_PLANT_IMAGE, alt: "Monstera leaf" },
+  { src: STORY_PLANT_IMAGE_ALT, alt: "Pothos vine" },
 ];
 
 const meta: Meta = {
