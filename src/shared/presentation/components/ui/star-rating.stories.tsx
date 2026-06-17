@@ -18,4 +18,7 @@ function ControlledRating() {
 
 export const Default: Story = { args: { value: 4 } };
 export const ReadOnly: Story = { args: { value: 5, readOnly: true } };
-export const Controlled: Story = { render: () => <ControlledRating /> };
+export const Controlled: Story = {
+  args: { value: 3 },
+  render: () => <ControlledRating />,
+};

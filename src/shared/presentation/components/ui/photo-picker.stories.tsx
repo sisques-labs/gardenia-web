@@ -13,18 +13,29 @@ const photos = [
   { src: STORY_PLANT_IMAGE_3, alt: "Photo 3" },
 ];
 
-const meta: Meta = {
+const meta = {
   title: "Media/PhotoPicker",
+  component: PhotoPicker,
   tags: ["autodocs"],
-};
+} satisfies Meta<typeof PhotoPicker>;
 
 export default meta;
-type Story = StoryObj;
+type Story = StoryObj<typeof meta>;
 
 function ControlledPicker() {
   const [selected, setSelected] = React.useState<number[]>([0]);
-  return <PhotoPicker photos={photos} mode="multiple" selected={selected} onSelectionChange={setSelected} />;
+  return (
+    <PhotoPicker
+      photos={photos}
+      mode="multiple"
+      selected={selected}
+      onSelectionChange={setSelected}
+    />
+  );
 }
 
 export const Single: Story = { args: { photos, mode: "single", selected: [1] } };
-export const Multiple: Story = { render: () => <ControlledPicker /> };
+export const Multiple: Story = {
+  args: { photos, mode: "multiple", selected: [0] },
+  render: () => <ControlledPicker />,
+};

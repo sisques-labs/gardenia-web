@@ -17,4 +17,7 @@ function ControlledTags() {
 }
 
 export const Default: Story = { args: { defaultValue: ["herb", "perennial"], className: "w-96" } };
-export const Controlled: Story = { render: () => <ControlledTags /> };
+export const Controlled: Story = {
+  args: { defaultValue: ["herb", "perennial"], className: "w-96" },
+  render: () => <ControlledTags />,
+};

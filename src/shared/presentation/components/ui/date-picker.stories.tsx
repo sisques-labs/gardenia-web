@@ -17,4 +17,7 @@ function ControlledDatePicker() {
 }
 
 export const Default: Story = { args: {} };
-export const Controlled: Story = { render: () => <ControlledDatePicker /> };
+export const Controlled: Story = {
+  args: {},
+  render: () => <ControlledDatePicker />,
+};

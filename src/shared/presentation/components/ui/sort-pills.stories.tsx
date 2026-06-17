@@ -8,13 +8,14 @@ const options = [
   { value: "health", label: "Health" },
 ];
 
-const meta: Meta = {
+const meta = {
   title: "Data/SortPills",
+  component: SortPills,
   tags: ["autodocs"],
-};
+} satisfies Meta<typeof SortPills>;
 
 export default meta;
-type Story = StoryObj;
+type Story = StoryObj<typeof meta>;
 
 function ControlledSort() {
   const [value, setValue] = React.useState("name");
@@ -22,4 +23,7 @@ function ControlledSort() {
 }
 
 export const Default: Story = { args: { options, value: "name" } };
-export const Controlled: Story = { render: () => <ControlledSort /> };
+export const Controlled: Story = {
+  args: { options, value: "name" },
+  render: () => <ControlledSort />,
+};

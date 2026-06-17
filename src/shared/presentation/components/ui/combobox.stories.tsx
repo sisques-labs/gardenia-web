@@ -9,13 +9,14 @@ const options = [
   { value: "fern", label: "Boston Fern" },
 ];
 
-const meta: Meta = {
+const meta = {
   title: "Forms/Combobox",
+  component: Combobox,
   tags: ["autodocs"],
-};
+} satisfies Meta<typeof Combobox>;
 
 export default meta;
-type Story = StoryObj;
+type Story = StoryObj<typeof meta>;
 
 function ControlledCombobox() {
   const [value, setValue] = React.useState("monstera");
@@ -23,4 +24,7 @@ function ControlledCombobox() {
 }
 
 export const Default: Story = { args: { options, className: "w-72" } };
-export const Controlled: Story = { render: () => <ControlledCombobox /> };
+export const Controlled: Story = {
+  args: { options, className: "w-72" },
+  render: () => <ControlledCombobox />,
+};

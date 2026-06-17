@@ -17,4 +17,7 @@ function ControlledSlider() {
 }
 
 export const Default: Story = { args: { defaultValue: 50, showValue: true, className: "w-72" } };
-export const Controlled: Story = { render: () => <ControlledSlider /> };
+export const Controlled: Story = {
+  args: { defaultValue: 50, showValue: true, className: "w-72" },
+  render: () => <ControlledSlider />,
+};
