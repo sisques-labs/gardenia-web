@@ -10,7 +10,7 @@ const alertVariants = cva(
       variant: {
         info: 'bg-accent border-accent text-accent-foreground [&>svg]:text-accent-foreground',
         warning:
-          'bg-[oklch(0.97_0.05_80)] border-[oklch(0.72_0.10_75/40%)] text-foreground [&>svg]:text-[var(--honey-2)]',
+          'bg-[var(--honey-bg)] border-[var(--honey)] text-[var(--ink)] [&>svg]:text-[var(--honey-2)]',
         error:
           'bg-destructive/10 border-destructive/30 text-destructive [&>svg]:text-destructive',
         success:

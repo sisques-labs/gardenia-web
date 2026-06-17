@@ -14,10 +14,8 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
     <div ref={ref} className={cn('card p-4', className)} {...props}>
       <div className="flex items-start justify-between gap-2">
         <div className="min-w-0 flex-1">
-          <p className="eyebrow text-muted-foreground text-xs font-medium uppercase tracking-wide">
-            {label}
-          </p>
-          <p className="headline mt-1 text-2xl font-bold">{value}</p>
+          <p className="eyebrow">{label}</p>
+          <p className="headline tnum mt-1 text-2xl">{value}</p>
           {delta !== undefined && (
             <p
               className={cn(
