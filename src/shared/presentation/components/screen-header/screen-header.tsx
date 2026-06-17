@@ -6,7 +6,7 @@ import {
   BreadcrumbLink,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from '@/shared/presentation/components/ui/breadcrumb';
+} from '@/shared/presentation/components/ui/breadcrumb/breadcrumb';
 
 interface BreadcrumbEntry {
   label: string;

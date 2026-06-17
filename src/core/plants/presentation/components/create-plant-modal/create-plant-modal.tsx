@@ -1,14 +1,14 @@
 'use client';
 
 import { useCreatePlantForm } from '@/core/plants/presentation/hooks/use-create-plant-form/use-create-plant-form.hook';
-import { Button } from '@/shared/presentation/components/ui/button';
+import { Button } from '@/shared/presentation/components/ui/button/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/shared/presentation/components/ui/dialog';
-import { Input } from '@/shared/presentation/components/ui/input';
+} from '@/shared/presentation/components/ui/dialog/dialog';
+import { Input } from '@/shared/presentation/components/ui/input/input';
 import { resolveFieldError } from '@/shared/presentation/utils/resolve-field-error';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 

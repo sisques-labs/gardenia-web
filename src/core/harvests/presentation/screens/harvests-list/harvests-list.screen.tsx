@@ -6,7 +6,7 @@ import { useHarvests } from '@/core/harvests/presentation/hooks/use-harvests/use
 import { useDeleteHarvest } from '@/core/harvests/presentation/hooks/use-delete-harvest/use-delete-harvest.hook';
 import type { Harvest } from '@/core/harvests/domain/types/harvest.interface';
 import { PageHeader } from '@/shared/presentation/components/page-header/page-header';
-import { Button } from '@/shared/presentation/components/ui/button';
+import { Button } from '@/shared/presentation/components/ui/button/button';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import { useState } from 'react';
 

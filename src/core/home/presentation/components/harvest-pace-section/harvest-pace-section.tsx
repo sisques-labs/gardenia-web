@@ -1,5 +1,5 @@
 import { Sprout, CalendarDays, TrendingUp } from 'lucide-react';
-import { StatCard } from '@/shared/presentation/components/ui/stat-card';
+import { StatCard } from '@/shared/presentation/components/ui/stat-card/stat-card';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {

@@ -13,7 +13,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from '@/shared/presentation/components/ui/dropdown-menu';
+} from '@/shared/presentation/components/ui/dropdown-menu/dropdown-menu';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {

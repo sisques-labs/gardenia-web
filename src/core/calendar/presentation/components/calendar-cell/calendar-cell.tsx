@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '@/shared/lib/utils';
-import { Button } from '@/shared/presentation/components/ui/button';
+import { Button } from '@/shared/presentation/components/ui/button/button';
 import { t } from '@/shared/presentation/i18n/interpolate';
 
 type Dict = {

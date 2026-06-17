@@ -1,12 +1,12 @@
 'use client';
 
 import { Globe, Clock } from 'lucide-react';
-import { Button } from '@/shared/presentation/components/ui/button';
-import { Input } from '@/shared/presentation/components/ui/input';
-import { Textarea } from '@/shared/presentation/components/ui/textarea';
-import { Alert } from '@/shared/presentation/components/ui/alert';
-import { FormField } from '@/shared/presentation/components/ui/form-field';
-import { Avatar, AvatarImage, AvatarFallback } from '@/shared/presentation/components/ui/avatar';
+import { Button } from '@/shared/presentation/components/ui/button/button';
+import { Input } from '@/shared/presentation/components/ui/input/input';
+import { Textarea } from '@/shared/presentation/components/ui/textarea/textarea';
+import { Alert } from '@/shared/presentation/components/ui/alert/alert';
+import { FormField } from '@/shared/presentation/components/ui/form-field/form-field';
+import { Avatar, AvatarImage, AvatarFallback } from '@/shared/presentation/components/ui/avatar/avatar';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { useUser } from '@/core/users/presentation/hooks/use-user/use-user.hook';
 import { useUserInitials } from '@/core/users/presentation/hooks/use-user-initials/use-user-initials.hook';

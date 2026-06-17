@@ -3,10 +3,10 @@
 import Image from 'next/image';
 import { redirect } from 'next/navigation';
 import { Droplets, Camera, StickyNote, Sun, Shovel, Scissors } from 'lucide-react';
-import { Button } from '@/shared/presentation/components/ui/button';
-import { Card, CardContent } from '@/shared/presentation/components/ui/card';
-import { Chip } from '@/shared/presentation/components/ui/chip';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/presentation/components/ui/tabs';
+import { Button } from '@/shared/presentation/components/ui/button/button';
+import { Card, CardContent } from '@/shared/presentation/components/ui/card/card';
+import { Chip } from '@/shared/presentation/components/ui/chip/chip';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/presentation/components/ui/tabs/tabs';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { CareCard } from '@/core/plants/presentation/components/care-card/care-card';
 import { GrowthTimeline } from '@/core/plants/presentation/components/growth-timeline/growth-timeline';

@@ -193,3 +193,27 @@
     border-radius:  50%;
   }
 }
+
+/* =============================================================================
+   Animation keyframes — registered as Tailwind v4 @theme utilities
+   ============================================================================= */
+
+@theme {
+  --animate-spin-ring:              spin-ring 0.7s linear infinite;
+  --animate-shimmer:                shimmer 1.4s ease-in-out infinite;
+  --animate-progress-indeterminate: progress-indeterminate 1.2s ease-in-out infinite;
+}
+
+@keyframes spin-ring {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+@keyframes progress-indeterminate {
+  0%   { left: -40%; }
+  100% { left: 100%; }
+}

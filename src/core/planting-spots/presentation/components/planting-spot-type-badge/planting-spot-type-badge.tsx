@@ -1,7 +1,7 @@
 "use client";
 
 import type { PlantingSpotType } from "@/core/planting-spots/domain/types/planting-spot-type.type";
-import { Badge } from "@/shared/presentation/components/ui/badge";
+import { Badge } from "@/shared/presentation/components/ui/badge/badge";
 
 type Props = {
   type: PlantingSpotType;

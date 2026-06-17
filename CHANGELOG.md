@@ -1,6 +1,32 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.16.0-alpha.1] - 2026-06-17
+
+### Refactor
+- **ui:** Colocate shared UI components in per-folder modules (6bd7817)
+## [0.16.0-alpha.0] - 2026-06-17
+
+### Bug Fixes
+- **shared-ui:** Resolve onChange type conflicts and add verify report (b280271)
+- **storybook:** Use offline SVG fixtures for Chromatic media stories (03c9b17)
+- **storybook:** Restore component annotation on args-based stories (b2edd37)
+
+### Chore
+- **shared-ui:** Install Radix overlay packages, cmdk, and add animation keyframes (d0e7b20)
+
+### Documentation
+- **shared-ui:** Add Storybook stories for 46 new components (24119f8)
+
+### Features
+- **shared-ui:** Add Group 1 Feedback Primitives — Spinner, Skeleton, ProgressBar, EmptyState (c09773b)
+- **shared-ui:** Add Group 2 Avatar & User Patterns — InitialsAvatar, AvatarGroup, NumericBadge, UserCard, Pagination (5292a56)
+- **shared-ui:** Add Group 3 Form Extensions — SearchInput, PasswordInput, Slider, TagsInput, Combobox, FileUpload, DatePicker (69c772c)
+- **shared-ui:** Add Group 4 Data & Charts — PlantCard, BarChart, LineAreaChart, DonutChart, Sparkline (02cd466)
+- **shared-ui:** Add Group 5 Layout Patterns — Accordion, Timeline, Stepper, Divider, FilterBar, ActiveFilterChips, FacetPanel, SortPills, CalendarMonth, WeekStrip, EventCard (3d16287)
+- **shared-ui:** Add Group 6 Media — PhotoGrid, MediaCard, PhotoPicker, Lightbox (329c477)
+- **shared-ui:** Add Group 7 Rich Content — Callout, StarRating, HealthDots, KbdShortcut, Blockquote (7be4823)
+- **shared-ui:** Add Group 8 Overlays — Tooltip, ContextMenu, Popover, Drawer, CommandPalette (4b60379)
 ## [0.15.0-alpha.2] - 2026-06-14
 
 ### Features
