@@ -4,16 +4,22 @@ import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/shared/lib/utils';
 
 const buttonVariants = cva(
-  'inline-flex items-center justify-center gap-2 whitespace-nowrap text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50',
+  'inline-flex items-center justify-center gap-1.5 whitespace-nowrap text-sm font-medium focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-[var(--forest-2)] disabled:pointer-events-none disabled:opacity-50',
   {
     variants: {
       variant: {
-        default: 'rounded-full bg-[var(--forest)] text-[var(--paper)] font-semibold shadow hover:bg-[var(--forest-2)]',
-        destructive: 'rounded-md bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90',
-        outline: 'rounded-full border border-[var(--rule)] bg-[var(--paper)] text-[var(--ink-2)] shadow-sm hover:bg-[var(--paper-2)]',
-        secondary: 'rounded-md bg-[var(--paper-2)] text-[var(--ink)] border border-[var(--rule)] shadow-sm hover:bg-[var(--paper-3)]',
-        ghost: 'rounded-md text-[var(--ink-2)] hover:bg-[var(--paper-2)] hover:text-[var(--ink)]',
-        link: 'rounded-none text-[var(--forest)] underline-offset-4 hover:underline',
+        default:
+          'rounded-full bg-[var(--forest)] text-[var(--white)] hover:opacity-90 active:scale-95 transition-all',
+        destructive:
+          'rounded-full bg-destructive text-destructive-foreground hover:opacity-90 transition-opacity',
+        outline:
+          'rounded-full border border-[var(--ink)] text-[var(--ink)] hover:bg-[var(--paper-2)] transition-colors',
+        secondary:
+          'rounded-full bg-[var(--paper-2)] text-[var(--ink)] border border-[var(--rule)] hover:bg-[var(--paper-3)] transition-colors',
+        ghost:
+          'rounded-full text-[var(--ink-3)] hover:bg-[var(--paper-2)] hover:text-[var(--ink)] transition-colors',
+        link:
+          'text-[var(--forest)] underline underline-offset-2 decoration-dotted hover:opacity-80 transition-opacity',
       },
       size: {
         default: 'h-9 px-4 py-2',
