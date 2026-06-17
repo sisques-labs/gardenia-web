@@ -5,14 +5,14 @@ import { PlantCard } from "@/core/plants/presentation/components/plant-card/plan
 import { usePlants } from "@/core/plants/presentation/hooks/use-plants/use-plants.hook";
 import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store";
 import { PageHeader } from "@/shared/presentation/components/page-header/page-header";
-import { Alert } from "@/shared/presentation/components/ui/alert";
-import { Button } from "@/shared/presentation/components/ui/button";
+import { Alert } from "@/shared/presentation/components/ui/alert/alert";
+import { Button } from "@/shared/presentation/components/ui/button/button";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@/shared/presentation/components/ui/tabs";
+} from "@/shared/presentation/components/ui/tabs/tabs";
 import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
 import { useState } from "react";
 

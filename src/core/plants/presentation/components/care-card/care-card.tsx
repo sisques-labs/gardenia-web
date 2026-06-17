@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { Card, CardContent } from '@/shared/presentation/components/ui/card';
+import { Card, CardContent } from '@/shared/presentation/components/ui/card/card';
 
 type CareCardProps = {
   icon: ReactNode;
