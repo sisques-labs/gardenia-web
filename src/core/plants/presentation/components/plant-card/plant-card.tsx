@@ -1,8 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
-import { Chip } from '@/shared/presentation/components/ui/chip';
-import { StatusDot, type StatusDotStatus } from '@/shared/presentation/components/ui/status-dot';
+import { Chip } from '@/shared/presentation/components/ui/chip/chip';
+import { StatusDot, type StatusDotStatus } from '@/shared/presentation/components/ui/status-dot/status-dot';
 
 type Props = {
   plant: Plant;

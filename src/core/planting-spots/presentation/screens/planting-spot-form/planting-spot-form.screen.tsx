@@ -1,17 +1,17 @@
 'use client';
 
 import { Controller } from 'react-hook-form';
-import { Button } from '@/shared/presentation/components/ui/button';
-import { Input } from '@/shared/presentation/components/ui/input';
+import { Button } from '@/shared/presentation/components/ui/button/button';
+import { Input } from '@/shared/presentation/components/ui/input/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/shared/presentation/components/ui/select';
+} from '@/shared/presentation/components/ui/select/select';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
-import { ConfirmModal } from '@/shared/presentation/components/ui/dialog';
+import { ConfirmModal } from '@/shared/presentation/components/ui/dialog/dialog';
 import { PLANTING_SPOT_TYPES } from '@/core/planting-spots/presentation/schemas/planting-spot.schema';
 import { usePlantingSpotForm } from '@/core/planting-spots/presentation/hooks/use-planting-spot-form/use-planting-spot-form.hook';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';

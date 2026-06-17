@@ -1,7 +1,7 @@
 'use client';
 
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Button } from '@/shared/presentation/components/ui/button';
+import { Button } from '@/shared/presentation/components/ui/button/button';
 import { PageHeader } from '@/shared/presentation/components/page-header/page-header';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import { useCalendarStore } from '../../../infrastructure/store/calendar.store';

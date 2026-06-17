@@ -8,7 +8,7 @@ import {
   CardContent,
   CardHeader,
   CardTitle,
-} from "@/shared/presentation/components/ui/card";
+} from "@/shared/presentation/components/ui/card/card";
 import Link from "next/link";
 
 type Props = {

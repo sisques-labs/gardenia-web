@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Newsreader, DM_Sans, Caveat, JetBrains_Mono } from "next/font/google";
 import { Providers } from "@/shared/presentation/providers/providers";
-import { Toaster } from "@/shared/presentation/components/ui/toaster";
+import { Toaster } from "@/shared/presentation/components/ui/toaster/toaster";
 import "./globals.css";
 
 const newsreader = Newsreader({
