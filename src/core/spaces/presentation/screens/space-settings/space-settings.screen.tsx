@@ -3,17 +3,17 @@
 import { SpaceMembersList } from "@/core/spaces/presentation/components/space-members-list/space-members-list.component";
 import { useSpaceSettings } from "@/core/spaces/presentation/hooks/use-space-settings/useSpaceSettings.hook";
 import { ScreenHeader } from "@/shared/presentation/components/screen-header/screen-header";
-import { Alert } from "@/shared/presentation/components/ui/alert";
-import { Button } from "@/shared/presentation/components/ui/button";
-import { Card, CardContent } from "@/shared/presentation/components/ui/card";
-import { Input } from "@/shared/presentation/components/ui/input";
+import { Alert } from "@/shared/presentation/components/ui/alert/alert";
+import { Button } from "@/shared/presentation/components/ui/button/button";
+import { Card, CardContent } from "@/shared/presentation/components/ui/card/card";
+import { Input } from "@/shared/presentation/components/ui/input/input";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/shared/presentation/components/ui/select";
+} from "@/shared/presentation/components/ui/select/select";
 import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
 import { Check, Copy } from "lucide-react";
 import Image from "next/image";

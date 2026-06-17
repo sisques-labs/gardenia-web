@@ -3,10 +3,10 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { Button } from '@/shared/presentation/components/ui/button';
-import { Input } from '@/shared/presentation/components/ui/input';
-import { Alert } from '@/shared/presentation/components/ui/alert';
-import { Card, CardContent } from '@/shared/presentation/components/ui/card';
+import { Button } from '@/shared/presentation/components/ui/button/button';
+import { Input } from '@/shared/presentation/components/ui/input/input';
+import { Alert } from '@/shared/presentation/components/ui/alert/alert';
+import { Card, CardContent } from '@/shared/presentation/components/ui/card/card';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { useCreateSpace } from '@/core/spaces/presentation/hooks/use-create-space/useCreateSpace.hook';
 import { createSpaceSchema, type CreateSpaceFormValues } from '@/core/spaces/presentation/schemas/create-space.schema';

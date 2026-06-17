@@ -1,7 +1,7 @@
 'use client';
 
 import { Bell, ChevronDown, Leaf, BookOpen } from 'lucide-react';
-import { Button } from '@/shared/presentation/components/ui/button';
+import { Button } from '@/shared/presentation/components/ui/button/button';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -9,7 +9,7 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuLabel,
-} from '@/shared/presentation/components/ui/dropdown-menu';
+} from '@/shared/presentation/components/ui/dropdown-menu/dropdown-menu';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';

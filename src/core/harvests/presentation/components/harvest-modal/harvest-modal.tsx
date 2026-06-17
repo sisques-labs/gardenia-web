@@ -3,21 +3,21 @@
 import { useHarvestForm } from '@/core/harvests/presentation/hooks/use-harvest-form/use-harvest-form.hook';
 import { HARVEST_UNITS } from '@/core/harvests/domain/types/harvest.interface';
 import type { Harvest } from '@/core/harvests/domain/types/harvest.interface';
-import { Button } from '@/shared/presentation/components/ui/button';
+import { Button } from '@/shared/presentation/components/ui/button/button';
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-} from '@/shared/presentation/components/ui/dialog';
-import { Input } from '@/shared/presentation/components/ui/input';
+} from '@/shared/presentation/components/ui/dialog/dialog';
+import { Input } from '@/shared/presentation/components/ui/input/input';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/shared/presentation/components/ui/select';
+} from '@/shared/presentation/components/ui/select/select';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {
