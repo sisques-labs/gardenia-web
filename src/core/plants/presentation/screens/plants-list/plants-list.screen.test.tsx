@@ -73,7 +73,7 @@ const dict = {
     qrPrint: 'Print QR',
     noImage: 'No image',
     noSpecies: 'Unknown species',
-    actions: { markWatered: 'Mark watered', addPhoto: 'Add photo', newNote: 'New note' },
+    actions: { markWatered: 'Mark watered', addPhoto: 'Add photo', newNote: 'New note', delete: 'Delete plant', deleteTitle: 'Delete plant', deleteDescription: 'This action cannot be undone. The plant will be permanently removed.', deleteConfirm: 'Delete', deleteCancel: 'Cancel', deleteError: 'Could not delete the plant. Try again.' },
     qr: { label: 'Label · QR', hint: 'Print and stick on the pot', download: 'Download PDF' },
     tabs: { care: 'Care', calendar: 'Calendar', diary: 'Diary', harvests: 'Harvests', pests: 'Pests', associations: 'Associations' },
     sections: {

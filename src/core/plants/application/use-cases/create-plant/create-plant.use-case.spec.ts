@@ -17,6 +17,7 @@ describe('CreatePlantUseCase', () => {
     list: vi.fn(),
     getById: vi.fn(),
     create: vi.fn().mockResolvedValue(mockPlant),
+    delete: vi.fn(),
   };
 
   it('delegates to repository.create and returns the plant', async () => {
