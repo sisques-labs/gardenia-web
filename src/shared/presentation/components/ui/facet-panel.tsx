@@ -12,7 +12,7 @@ export interface Facet {
   options: FacetOption[];
 }
 
-export interface FacetPanelProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface FacetPanelProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   facets: Facet[];
   selected?: Record<string, string[]>;
   onChange?: (key: string, values: string[]) => void;

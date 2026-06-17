@@ -9,7 +9,7 @@ export interface ComboboxOption {
   label: string;
 }
 
-export interface ComboboxProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ComboboxProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   options: ComboboxOption[];
   value?: string;
   onChange?: (value: string) => void;

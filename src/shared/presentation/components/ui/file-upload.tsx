@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Upload } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 
-export interface FileUploadProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface FileUploadProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   accept?: string;
   multiple?: boolean;
   maxSizeMB?: number;

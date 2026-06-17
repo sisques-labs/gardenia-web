@@ -4,7 +4,7 @@ import * as React from 'react';
 import { Star } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 
-export interface StarRatingProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface StarRatingProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   value?: number;
   onChange?: (value: number) => void;
   readOnly?: boolean;

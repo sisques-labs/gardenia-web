@@ -4,7 +4,7 @@ import * as React from 'react';
 import { X } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 
-export interface TagsInputProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface TagsInputProps extends Omit<React.HTMLAttributes<HTMLDivElement>, 'onChange'> {
   value?: string[];
   defaultValue?: string[];
   onChange?: (tags: string[]) => void;
