@@ -11,7 +11,7 @@ const buttonVariants = cva(
         default:
           'rounded-full bg-[var(--forest)] text-[var(--white)] hover:opacity-90 active:scale-95 transition-all',
         destructive:
-          'rounded-full bg-destructive text-destructive-foreground hover:opacity-90 transition-opacity',
+          'rounded-full bg-[var(--terracotta)] text-[var(--white)] hover:opacity-90 transition-opacity',
         outline:
           'rounded-full border border-[var(--ink)] text-[var(--ink)] hover:bg-[var(--paper-2)] transition-colors',
         secondary:
