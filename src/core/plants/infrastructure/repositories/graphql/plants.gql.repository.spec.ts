@@ -13,6 +13,7 @@ import { PlantsGqlRepository } from './plants.gql.repository';
 import { PLANTS_FIND_BY_CRITERIA } from './queries/plants-find-by-criteria.query';
 import { PLANT_FIND_BY_ID } from './queries/plant-find-by-id.query';
 import { PLANT_CREATE } from './mutations/plant-create.mutation';
+import { PLANT_DELETE } from './mutations/plant-delete.mutation';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 
 const mockPlants: Plant[] = [
@@ -67,6 +68,11 @@ describe('PlantsGqlRepository', () => {
     it('PLANT_CREATE is a valid GQL document', () => {
       expect(PLANT_CREATE).toBeDefined();
       expect((PLANT_CREATE as DocumentNode).kind).toBe('Document');
+    });
+
+    it('PLANT_DELETE is a valid GQL document', () => {
+      expect(PLANT_DELETE).toBeDefined();
+      expect((PLANT_DELETE as DocumentNode).kind).toBe('Document');
     });
   });
 
@@ -154,6 +160,33 @@ describe('PlantsGqlRepository', () => {
     it('propagates errors from apolloClient.mutate', async () => {
       vi.mocked(apolloClient.mutate).mockRejectedValue(new Error('Network error'));
       await expect(repository.create({ name: 'Monstera' })).rejects.toThrow('Network error');
+    });
+  });
+
+  describe('delete()', () => {
+    it('calls apolloClient.mutate with PLANT_DELETE and the given id', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({ data: { plantDelete: { success: true, message: 'ok' } } } as never);
+
+      await repository.delete('plant-1');
+
+      expect(apolloClient.mutate).toHaveBeenCalledOnce();
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: PLANT_DELETE,
+        variables: { input: { id: 'plant-1' } },
+      });
+    });
+
+    it('resolves void on success', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({ data: { plantDelete: { success: true, message: 'ok' } } } as never);
+
+      const result = await repository.delete('plant-99');
+
+      expect(result).toBeUndefined();
+    });
+
+    it('propagates errors from apolloClient.mutate', async () => {
+      vi.mocked(apolloClient.mutate).mockRejectedValue(new Error('Plant not found'));
+      await expect(repository.delete('plant-x')).rejects.toThrow('Plant not found');
     });
   });
 });

@@ -5,9 +5,11 @@ import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 import { PLANTS_FIND_BY_CRITERIA } from './queries/plants-find-by-criteria.query';
 import { PLANT_FIND_BY_ID } from './queries/plant-find-by-id.query';
 import { PLANT_CREATE } from './mutations/plant-create.mutation';
+import { PLANT_DELETE } from './mutations/plant-delete.mutation';
 import type { PlantsFindByCriteriaResponse } from './responses/plants-find-by-criteria.response';
 import type { PlantFindByIdResponse } from './responses/plant-find-by-id.response';
 import type { PlantCreateResponse } from './responses/plant-create.response';
+import type { PlantDeleteResponse } from './responses/plant-delete.response';
 
 export class PlantsGqlRepository implements IPlantsRepository {
   async list(): Promise<Plant[]> {
@@ -31,6 +33,13 @@ export class PlantsGqlRepository implements IPlantsRepository {
     });
     if (!res.data?.plantCreate?.success) throw new Error('plantCreate mutation failed');
     return this.getById(res.data.plantCreate.id);
+  }
+
+  async delete(id: string): Promise<void> {
+    await apolloClient.mutate<PlantDeleteResponse>({
+      mutation: PLANT_DELETE,
+      variables: { input: { id } },
+    });
   }
 }
 
