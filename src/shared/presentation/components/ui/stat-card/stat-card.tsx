@@ -28,7 +28,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
           )}
         </div>
         {icon !== undefined && (
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-muted">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-md bg-[var(--paper-2)]">
             {icon}
           </div>
         )}

@@ -8,13 +8,13 @@ const alertVariants = cva(
   {
     variants: {
       variant: {
-        info: 'bg-accent border-accent text-accent-foreground [&>svg]:text-accent-foreground',
+        info: 'bg-[var(--forest-bg)] border-[var(--forest-2)] text-[var(--forest)] [&>svg]:text-[var(--forest)]',
         warning:
           'bg-[var(--honey-bg)] border-[var(--honey)] text-[var(--ink)] [&>svg]:text-[var(--honey-2)]',
         error:
           'bg-destructive/10 border-destructive/30 text-destructive [&>svg]:text-destructive',
         success:
-          'bg-accent/50 border-accent text-accent-foreground [&>svg]:text-accent-foreground',
+          'bg-[var(--forest-bg)] border-[var(--forest-3)] text-[var(--forest)] [&>svg]:text-[var(--forest-2)]',
       },
     },
     defaultVariants: {

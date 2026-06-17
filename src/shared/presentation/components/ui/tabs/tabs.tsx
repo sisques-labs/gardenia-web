@@ -14,8 +14,8 @@ const Tabs = TabsPrimitive.Root;
 const tabsListVariants = cva('inline-flex items-center', {
   variants: {
     variant: {
-      line: 'line border-b border-border',
-      pill: 'pill rounded-lg bg-muted p-1',
+      line: 'line border-b border-[var(--rule)]',
+      pill: 'pill rounded-lg bg-[var(--paper-2)] p-1',
     },
   },
   defaultVariants: {
@@ -47,8 +47,8 @@ const tabsTriggerVariants = cva(
   {
     variants: {
       variant: {
-        line: 'border-b-2 border-transparent data-[state=active]:border-primary data-[state=active]:text-primary',
-        pill: 'rounded-sm data-[state=active]:bg-background data-[state=active]:text-foreground data-[state=active]:shadow-sm',
+        line: 'border-b-2 border-transparent text-[var(--ink-3)] data-[state=active]:border-[var(--forest)] data-[state=active]:text-[var(--forest)]',
+        pill: 'rounded-sm text-[var(--ink-2)] data-[state=active]:bg-[var(--paper)] data-[state=active]:text-[var(--ink)] data-[state=active]:shadow-sm',
       },
     },
     defaultVariants: {

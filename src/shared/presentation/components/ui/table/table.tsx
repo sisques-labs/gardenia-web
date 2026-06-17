@@ -117,11 +117,11 @@ function DataTableInner<TData, TValue = unknown>(
         <table className="w-full text-sm">
           <thead>
             {table.getHeaderGroups().map(headerGroup => (
-              <tr key={headerGroup.id} className="border-b border-border">
+              <tr key={headerGroup.id} className="border-b border-[var(--rule)]">
                 {headerGroup.headers.map(header => (
                   <th
                     key={header.id}
-                    className="h-10 px-4 text-left align-middle text-muted-foreground font-medium"
+                    className="h-10 px-4 text-left align-middle eyebrow"
                     onClick={
                       header.column.getCanSort()
                         ? header.column.getToggleSortingHandler()
@@ -142,8 +142,8 @@ function DataTableInner<TData, TValue = unknown>(
               <tr
                 key={row.id}
                 className={cn(
-                  'border-b border-border transition-colors hover:bg-muted/50',
-                  row.getIsSelected() && 'bg-muted/30',
+                  'border-b border-[var(--rule)] transition-colors hover:bg-[var(--paper-2)]',
+                  row.getIsSelected() && 'bg-[var(--forest-bg)]',
                 )}
               >
                 {row.getVisibleCells().map(cell => (

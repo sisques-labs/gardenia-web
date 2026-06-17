@@ -43,7 +43,7 @@ const Drawer = React.forwardRef<HTMLDivElement, DrawerProps>(
           {...props}
         >
           <div className="flex items-center justify-between border-b border-[var(--rule)] px-4 py-3">
-            <DialogPrimitive.Title className="text-sm font-semibold text-[var(--ink)]">
+            <DialogPrimitive.Title className="eyebrow">
               {title}
             </DialogPrimitive.Title>
             <DialogPrimitive.Close
