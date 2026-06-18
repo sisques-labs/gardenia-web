@@ -78,6 +78,23 @@ const dict = {
       removeSuccess: 'Miembro eliminado correctamente',
       confirmRemove: '¿Seguro que quieres eliminar a este miembro?',
     },
+    geolocation: {
+      title: 'Ubicación',
+      hint: 'Establece las coordenadas y el tipo de entorno para activar la previsión del tiempo.',
+      latitudeLabel: 'Latitud',
+      latitudePlaceholder: 'Ej. 40.4168',
+      longitudeLabel: 'Longitud',
+      longitudePlaceholder: 'Ej. -3.7038',
+      environmentLabel: 'Entorno',
+      environmentIndoor: 'Interior',
+      environmentOutdoor: 'Exterior',
+      environmentMixed: 'Mixto',
+      environmentNone: 'Ninguno',
+      save: 'Guardar ubicación',
+      saving: 'Guardando...',
+      saveSuccess: 'Ubicación guardada correctamente.',
+      saveError: 'No se pudo guardar la ubicación. Inténtalo de nuevo.',
+    },
     errors: {
       loadFailed:
         'No se pudieron cargar los detalles del espacio. Inténtalo de nuevo.',

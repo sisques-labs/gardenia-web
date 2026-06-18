@@ -1,9 +1,10 @@
 'use client';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/shared/presentation/components/ui/card';
-import { Skeleton } from '@/shared/presentation/components/ui/skeleton';
+import { Card, CardContent, CardHeader, CardTitle } from '@/shared/presentation/components/ui/card/card';
+import { Skeleton } from '@/shared/presentation/components/ui/skeleton/skeleton';
 import { useSpaceWeather } from '@/core/spaces/presentation/hooks/use-space-weather/use-space-weather.hook';
 import type { DailyForecast } from '@/core/spaces/domain/interfaces/space-weather.interface';
+import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 const WMO_EMOJI: Record<number, string> = {
   0: '☀️',
@@ -39,9 +40,11 @@ function formatDate(iso: string): string {
 
 interface DailyTileProps {
   forecast: DailyForecast;
+  temperatureUnit: string;
+  precipitationUnit: string;
 }
 
-function DailyTile({ forecast }: DailyTileProps) {
+function DailyTile({ forecast, temperatureUnit, precipitationUnit }: DailyTileProps) {
   return (
     <div className="flex flex-col items-center gap-1 rounded-lg border bg-card p-3 text-center text-sm">
       <span className="text-xs text-muted-foreground font-medium">{formatDate(forecast.date)}</span>
@@ -49,9 +52,9 @@ function DailyTile({ forecast }: DailyTileProps) {
         {weatherEmoji(forecast.weatherCode)}
       </span>
       <span className="font-semibold">
-        {Math.round(forecast.temperatureMin)}° / {Math.round(forecast.temperatureMax)}°
+        {Math.round(forecast.temperatureMin)}{temperatureUnit} / {Math.round(forecast.temperatureMax)}{temperatureUnit}
       </span>
-      <span className="text-xs text-muted-foreground">{forecast.precipitationSum} mm</span>
+      <span className="text-xs text-muted-foreground">{forecast.precipitationSum} {precipitationUnit}</span>
     </div>
   );
 }
@@ -59,20 +62,21 @@ function DailyTile({ forecast }: DailyTileProps) {
 interface SpaceWeatherWidgetProps {
   spaceId: string;
   hasGeolocation?: boolean;
+  weatherDict: AppDict['spaces']['weather'];
 }
 
-export function SpaceWeatherWidget({ spaceId, hasGeolocation = true }: SpaceWeatherWidgetProps) {
+export function SpaceWeatherWidget({ spaceId, hasGeolocation = true, weatherDict }: SpaceWeatherWidgetProps) {
   const { data, isLoading, isError } = useSpaceWeather(hasGeolocation ? spaceId : null);
 
   if (!hasGeolocation) {
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Weather</CardTitle>
+          <CardTitle>{weatherDict.title}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Set a location in space settings to see the weather forecast.
+            {weatherDict.setLocationForWeather}
           </p>
         </CardContent>
       </Card>
@@ -83,7 +87,7 @@ export function SpaceWeatherWidget({ spaceId, hasGeolocation = true }: SpaceWeat
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Weather</CardTitle>
+          <CardTitle>{weatherDict.title}</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
@@ -100,11 +104,11 @@ export function SpaceWeatherWidget({ spaceId, hasGeolocation = true }: SpaceWeat
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Weather</CardTitle>
+          <CardTitle>{weatherDict.title}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-destructive">
-            Could not load weather data. Please try again later.
+            {weatherDict.error}
           </p>
         </CardContent>
       </Card>
@@ -115,11 +119,11 @@ export function SpaceWeatherWidget({ spaceId, hasGeolocation = true }: SpaceWeat
     return (
       <Card>
         <CardHeader>
-          <CardTitle>Weather</CardTitle>
+          <CardTitle>{weatherDict.title}</CardTitle>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            No weather data available for this location.
+            {weatherDict.noData}
           </p>
         </CardContent>
       </Card>
@@ -129,15 +133,20 @@ export function SpaceWeatherWidget({ spaceId, hasGeolocation = true }: SpaceWeat
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Weather</CardTitle>
+        <CardTitle>{weatherDict.title}</CardTitle>
         <p className="text-xs text-muted-foreground">
-          7-day forecast · {data.timezone}
+          {weatherDict.forecast} · {data.timezone}
         </p>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-7">
           {data.daily.map((day) => (
-            <DailyTile key={day.date} forecast={day} />
+            <DailyTile
+              key={day.date}
+              forecast={day}
+              temperatureUnit={weatherDict.temperatureUnit}
+              precipitationUnit={weatherDict.precipitationUnit}
+            />
           ))}
         </div>
       </CardContent>

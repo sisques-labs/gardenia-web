@@ -7,5 +7,5 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
   const locale = isLocale(lang) ? lang : DEFAULT_LOCALE;
   const dict = getDictionary(locale);
 
-  return <SpaceSettingsScreen dict={dict.spaces.settings} memberListDict={dict.spaces.members.list} lang={locale} />;
+  return <SpaceSettingsScreen dict={dict.spaces.settings} weatherDict={dict.spaces.weather} memberListDict={dict.spaces.members.list} lang={locale} />;
 }

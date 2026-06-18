@@ -8,6 +8,9 @@ export const SPACE_FIND_BY_ID = gql`
       ownerId
       createdAt
       updatedAt
+      latitude
+      longitude
+      environment
       weather {
         latitude
         longitude

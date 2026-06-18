@@ -1,6 +1,7 @@
 "use client";
 
 import { SpaceMembersList } from "@/core/spaces/presentation/components/space-members-list/space-members-list.component";
+import { SpaceWeatherWidget } from "@/core/spaces/presentation/components/space-weather-widget/space-weather-widget.component";
 import { useSpaceSettings } from "@/core/spaces/presentation/hooks/use-space-settings/useSpaceSettings.hook";
 import { ScreenHeader } from "@/shared/presentation/components/screen-header/screen-header";
 import { Alert } from "@/shared/presentation/components/ui/alert/alert";
@@ -20,11 +21,12 @@ import Image from "next/image";
 
 type Props = {
   dict: AppDict["spaces"]["settings"];
+  weatherDict: AppDict["spaces"]["weather"];
   memberListDict: AppDict["spaces"]["members"]["list"];
   lang: string;
 };
 
-export function SpaceSettingsScreen({ dict, memberListDict, lang }: Props) {
+export function SpaceSettingsScreen({ dict, weatherDict, memberListDict, lang }: Props) {
   const {
     spaceDetail: { data: space, isLoading, isError },
     isOwner,
@@ -34,9 +36,11 @@ export function SpaceSettingsScreen({ dict, memberListDict, lang }: Props) {
     invForm,
     addForm,
     removeForm,
+    geoForm,
     onCreateInvitation,
     onAddMember,
     onRemoveMember,
+    onUpdateGeolocation,
     createInvitation: {
       isPending: invPending,
       error: invError,
@@ -52,7 +56,14 @@ export function SpaceSettingsScreen({ dict, memberListDict, lang }: Props) {
       error: removeError,
       isSuccess: removeSuccess,
     },
+    updateGeolocation: {
+      isPending: geoPending,
+      error: geoError,
+      isSuccess: geoSuccess,
+    },
   } = useSpaceSettings(lang);
+
+  const hasGeolocation = !!(space?.latitude != null && space?.longitude != null);
 
   return (
     <div className="flex flex-col">
@@ -94,6 +105,104 @@ export function SpaceSettingsScreen({ dict, memberListDict, lang }: Props) {
             )}
           </CardContent>
         </Card>
+
+        {/* Weather */}
+        {space && (
+          <SpaceWeatherWidget
+            spaceId={space.id}
+            hasGeolocation={hasGeolocation}
+            weatherDict={weatherDict}
+          />
+        )}
+
+        {/* Geolocation — owner only */}
+        {isOwner && (
+          <Card>
+            <CardContent className="pt-6 flex flex-col gap-4">
+              <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                {dict.geolocation.title}
+              </p>
+              <p className="text-sm text-muted-foreground">{dict.geolocation.hint}</p>
+              <form
+                onSubmit={geoForm.handleSubmit(onUpdateGeolocation)}
+                className="flex flex-col gap-3"
+              >
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm text-muted-foreground">
+                      {dict.geolocation.latitudeLabel}
+                    </label>
+                    <Input
+                      type="number"
+                      step="any"
+                      placeholder={dict.geolocation.latitudePlaceholder}
+                      data-testid="geolocation-latitude-input"
+                      {...geoForm.register("latitude")}
+                    />
+                    {geoForm.formState.errors.latitude && (
+                      <span className="text-destructive text-xs">
+                        {geoForm.formState.errors.latitude.message}
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex flex-col gap-1">
+                    <label className="text-sm text-muted-foreground">
+                      {dict.geolocation.longitudeLabel}
+                    </label>
+                    <Input
+                      type="number"
+                      step="any"
+                      placeholder={dict.geolocation.longitudePlaceholder}
+                      data-testid="geolocation-longitude-input"
+                      {...geoForm.register("longitude")}
+                    />
+                    {geoForm.formState.errors.longitude && (
+                      <span className="text-destructive text-xs">
+                        {geoForm.formState.errors.longitude.message}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <label className="text-sm text-muted-foreground">
+                    {dict.geolocation.environmentLabel}
+                  </label>
+                  <Select
+                    value={geoForm.watch("environment") ?? ""}
+                    onValueChange={(v) =>
+                      geoForm.setValue(
+                        "environment",
+                        v === "" ? null : (v as "INDOOR" | "OUTDOOR" | "MIXED"),
+                      )
+                    }
+                  >
+                    <SelectTrigger data-testid="geolocation-environment-select">
+                      <SelectValue placeholder={dict.geolocation.environmentNone} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="INDOOR">{dict.geolocation.environmentIndoor}</SelectItem>
+                      <SelectItem value="OUTDOOR">{dict.geolocation.environmentOutdoor}</SelectItem>
+                      <SelectItem value="MIXED">{dict.geolocation.environmentMixed}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {geoError && (
+                  <Alert variant="error" message={dict.geolocation.saveError} />
+                )}
+                {geoSuccess && (
+                  <Alert variant="success" message={dict.geolocation.saveSuccess} />
+                )}
+                <Button
+                  type="submit"
+                  disabled={geoPending}
+                  data-testid="geolocation-save-submit"
+                >
+                  {geoPending ? dict.geolocation.saving : dict.geolocation.save}
+                </Button>
+              </form>
+            </CardContent>
+          </Card>
+        )}
 
         {/* Invitation — owner only */}
         {isOwner && (
