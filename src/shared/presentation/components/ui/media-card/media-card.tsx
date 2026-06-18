@@ -36,7 +36,7 @@ const MediaCard = React.forwardRef<HTMLDivElement, MediaCardProps>(
         )}
       />
       <div className="flex flex-col gap-1 p-3">
-        <h4 className="text-sm font-semibold text-[var(--ink)]">{title}</h4>
+        <h4 className="headline text-sm">{title}</h4>
         {description && <p className="text-xs text-[var(--ink-3)]">{description}</p>}
         {actions && <div className="mt-1">{actions}</div>}
       </div>

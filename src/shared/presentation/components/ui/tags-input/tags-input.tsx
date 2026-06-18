@@ -54,7 +54,7 @@ const TagsInput = React.forwardRef<HTMLDivElement, TagsInputProps>(
       <div
         ref={ref}
         className={cn(
-          'flex flex-wrap gap-1.5 items-center rounded-md border border-input bg-transparent px-3 py-2 text-sm min-h-[36px]',
+          'flex flex-wrap gap-1.5 items-center rounded-md border border-[var(--rule)] bg-[var(--paper-2)] px-3 py-2 text-sm min-h-[36px]',
           className,
         )}
         {...props}

@@ -80,7 +80,7 @@ const DatePicker = React.forwardRef<HTMLDivElement, DatePickerProps>(
             onClick={() => setOpen((o) => !o)}
             onFocus={() => setOpen(true)}
             onKeyDown={handleKeyDown}
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 pr-9 text-sm shadow-sm outline-none placeholder:text-muted-foreground cursor-pointer"
+            className="flex h-9 w-full rounded-md border border-[var(--rule)] bg-[var(--paper-2)] px-3 py-1 pr-9 text-sm shadow-sm outline-none placeholder:text-[var(--ink-3)] cursor-pointer focus:ring-1 focus:ring-[var(--forest-2)]"
           />
           <CalendarIcon className="absolute right-3 h-4 w-4 text-[var(--ink-3)] pointer-events-none" />
         </div>

@@ -43,7 +43,7 @@ const Combobox = React.forwardRef<HTMLDivElement, ComboboxProps>(
               setInputValue(v);
               setOpen(true);
             }}
-            className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-9 w-full rounded-md border border-[var(--rule)] bg-[var(--paper-2)] px-3 py-1 text-sm shadow-sm outline-none placeholder:text-[var(--ink-3)] focus:ring-1 focus:ring-[var(--forest-2)] disabled:cursor-not-allowed disabled:opacity-50"
           />
           {open && (
             <Command.List className="card absolute z-50 mt-1 w-full py-1 max-h-60 overflow-auto text-sm">
