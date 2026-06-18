@@ -15,7 +15,7 @@ const mockRepository: ISpacesRepository = {
 };
 
 const input = {
-  id: 'space-1',
+  spaceId: 'space-1',
   latitude: 40.4,
   longitude: -3.7,
   environment: 'OUTDOOR' as const,
