@@ -43,7 +43,10 @@ vi.mock(
 import { useSpaceSettings } from "@/core/spaces/presentation/hooks/use-space-settings/useSpaceSettings.hook";
 import { addMemberSchema } from "@/core/spaces/presentation/schemas/add-member.schema";
 import { createInvitationSchema } from "@/core/spaces/presentation/schemas/create-invitation.schema";
-import { updateGeolocationSchema } from "@/core/spaces/presentation/schemas/update-geolocation.schema";
+import {
+  updateGeolocationSchema,
+  type UpdateGeolocationFormValues,
+} from "@/core/spaces/presentation/schemas/update-geolocation.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { renderHook } from "@testing-library/react";
 import { useForm } from "react-hook-form";
@@ -66,7 +69,7 @@ function makeDefaultHookReturn(
     useForm({ resolver: zodResolver(addMemberSchema) }),
   );
   const { result: geoFormResult } = renderHook(() =>
-    useForm({
+    useForm<UpdateGeolocationFormValues>({
       resolver: zodResolver(updateGeolocationSchema),
       defaultValues: { latitude: null, longitude: null, environment: null },
     }),

@@ -137,7 +137,9 @@ export function SpaceSettingsScreen({ dict, weatherDict, memberListDict, lang }:
                       step="any"
                       placeholder={dict.geolocation.latitudePlaceholder}
                       data-testid="geolocation-latitude-input"
-                      {...geoForm.register("latitude")}
+                      {...geoForm.register("latitude", {
+                        setValueAs: (v) => (v === "" || v == null ? null : parseFloat(v as string)),
+                      })}
                     />
                     {geoForm.formState.errors.latitude && (
                       <span className="text-destructive text-xs">
@@ -154,7 +156,9 @@ export function SpaceSettingsScreen({ dict, weatherDict, memberListDict, lang }:
                       step="any"
                       placeholder={dict.geolocation.longitudePlaceholder}
                       data-testid="geolocation-longitude-input"
-                      {...geoForm.register("longitude")}
+                      {...geoForm.register("longitude", {
+                        setValueAs: (v) => (v === "" || v == null ? null : parseFloat(v as string)),
+                      })}
                     />
                     {geoForm.formState.errors.longitude && (
                       <span className="text-destructive text-xs">
