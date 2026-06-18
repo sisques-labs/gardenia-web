@@ -86,6 +86,16 @@ const dict = {
       removeFailed: 'No se pudo eliminar al miembro. Inténtalo de nuevo.',
     },
   },
+  weather: {
+    title: 'Tiempo',
+    forecast: 'Previsión de 7 días',
+    temperatureUnit: '°C',
+    precipitationUnit: 'mm',
+    setLocationForWeather: 'Establece una ubicación en los ajustes del espacio para ver la previsión del tiempo.',
+    loading: 'Cargando el tiempo...',
+    error: 'No se pudieron cargar los datos meteorológicos. Inténtalo de nuevo.',
+    noData: 'No hay datos meteorológicos disponibles para esta ubicación.',
+  },
 } as const satisfies SpacesDictTranslated;
 
 export default dict;

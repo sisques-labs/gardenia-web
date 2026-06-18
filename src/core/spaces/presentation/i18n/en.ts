@@ -79,6 +79,16 @@ const dict = {
       removeFailed: 'Could not remove the member. Try again.',
     },
   },
+  weather: {
+    title: 'Weather',
+    forecast: '7-day forecast',
+    temperatureUnit: '°C',
+    precipitationUnit: 'mm',
+    setLocationForWeather: 'Set a location in space settings to see the weather forecast.',
+    loading: 'Loading weather...',
+    error: 'Could not load weather data. Please try again later.',
+    noData: 'No weather data available for this location.',
+  },
 } as const;
 
 export default dict;
