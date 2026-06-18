@@ -24,9 +24,11 @@ import { SPACE_CREATE } from './mutations/space-create.mutation';
 import { SPACE_CREATE_INVITATION } from './mutations/space-create-invitation.mutation';
 import { SPACE_ADD_MEMBER } from './mutations/space-add-member.mutation';
 import { SPACE_REMOVE_MEMBER } from './mutations/space-remove-member.mutation';
+import { SPACE_UPDATE } from './mutations/space-update-geolocation.mutation';
 import type { Space } from '@/core/spaces/domain/interfaces/space.interface';
 import type { SpaceDetail } from '@/core/spaces/domain/interfaces/space-detail.interface';
 import type { SpaceInvitation } from '@/core/spaces/domain/types/space-invitation.type';
+import type { SpaceWeather } from '@/core/spaces/domain/interfaces/space-weather.interface';
 
 const mockSpaces: Space[] = [
   { id: 'space-1', name: 'My Garden', ownerId: 'user-1', createdAt: '2024-01-01' },
@@ -85,6 +87,11 @@ describe('SpacesGqlRepository', () => {
     it('SPACE_REMOVE_MEMBER is a valid GQL document', () => {
       expect(SPACE_REMOVE_MEMBER).toBeDefined();
       expect((SPACE_REMOVE_MEMBER as DocumentNode).kind).toBe('Document');
+    });
+
+    it('SPACE_UPDATE is a valid GQL document', () => {
+      expect(SPACE_UPDATE).toBeDefined();
+      expect((SPACE_UPDATE as DocumentNode).kind).toBe('Document');
     });
   });
 
@@ -308,6 +315,70 @@ describe('SpacesGqlRepository', () => {
       await expect(
         repository.removeMember({ spaceId: 'space-1', targetUserId: 'user-2' }),
       ).rejects.toThrow('Cannot remove last owner');
+    });
+  });
+
+  describe('getSpaceWeather()', () => {
+    const mockWeather: SpaceWeather = {
+      latitude: 40.4,
+      longitude: -3.7,
+      timezone: 'Europe/Madrid',
+      daily: [],
+    };
+
+    it('returns weather from spaceFindById response', async () => {
+      vi.mocked(apolloClient.query).mockResolvedValue({
+        data: { spaceFindById: { weather: mockWeather } },
+      } as never);
+
+      const result = await repository.getSpaceWeather('space-1');
+
+      expect(apolloClient.query).toHaveBeenCalledWith({
+        query: SPACE_FIND_BY_ID,
+        variables: { input: { id: 'space-1' } },
+        fetchPolicy: 'network-only',
+      });
+      expect(result).toEqual(mockWeather);
+    });
+
+    it('returns null when weather is missing', async () => {
+      vi.mocked(apolloClient.query).mockResolvedValue({
+        data: { spaceFindById: { weather: null } },
+      } as never);
+
+      const result = await repository.getSpaceWeather('space-1');
+
+      expect(result).toBeNull();
+    });
+  });
+
+  describe('updateGeolocation()', () => {
+    const input = {
+      id: 'space-1',
+      latitude: 40.4,
+      longitude: -3.7,
+      environment: 'OUTDOOR' as const,
+    };
+
+    it('resolves when mutation succeeds', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { spaceUpdate: { id: 'space-1', success: true, message: 'Updated' } },
+      } as never);
+
+      await expect(repository.updateGeolocation(input)).resolves.toBeUndefined();
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: SPACE_UPDATE,
+        variables: { input },
+      });
+    });
+
+    it('throws when success is false', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { spaceUpdate: { id: '', success: false, message: 'Invalid coordinates' } },
+      } as never);
+
+      await expect(repository.updateGeolocation(input)).rejects.toThrow('Invalid coordinates');
     });
   });
 });
