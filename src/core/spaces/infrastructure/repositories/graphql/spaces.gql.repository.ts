@@ -3,16 +3,20 @@ import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import type { ISpacesRepository } from '@/core/spaces/application/ports/spaces.repository.port';
 import type { CreateInvitationInput } from '@/core/spaces/application/interfaces/create-invitation-input.interface';
 import type { MemberInput } from '@/core/spaces/application/interfaces/member-input.interface';
+import type { UpdateGeolocationInput } from '@/core/spaces/application/interfaces/update-geolocation-input.interface';
 import type { Space } from '@/core/spaces/domain/interfaces/space.interface';
 import type { SpaceDetail } from '@/core/spaces/domain/interfaces/space-detail.interface';
 import type { SpaceInvitation } from '@/core/spaces/domain/types/space-invitation.type';
+import type { SpaceWeather } from '@/core/spaces/domain/interfaces/space-weather.interface';
 import { SPACES_FIND_BY_USER } from './queries/spaces-find-by-user.query';
 import { SPACE_FIND_BY_ID } from './queries/space-find-by-id.query';
+import { SPACE_WEATHER } from './queries/space-weather.query';
 import { SPACE_ACCEPT_INVITATION } from './mutations/space-accept-invitation.mutation';
 import { SPACE_CREATE } from './mutations/space-create.mutation';
 import { SPACE_CREATE_INVITATION } from './mutations/space-create-invitation.mutation';
 import { SPACE_ADD_MEMBER } from './mutations/space-add-member.mutation';
 import { SPACE_REMOVE_MEMBER } from './mutations/space-remove-member.mutation';
+import { SPACE_UPDATE_GEOLOCATION } from './mutations/space-update-geolocation.mutation';
 
 interface SpacesFindByUserData {
   spacesFindByUser: { items: Space[] };
@@ -37,6 +41,14 @@ interface SpaceCreateInvitationData {
 interface SpaceMemberMutationData {
   spaceAddMember?: { id: string; success: boolean; message: string };
   spaceRemoveMember?: { id: string; success: boolean; message: string };
+}
+
+interface SpaceWeatherData {
+  spaceWeather: SpaceWeather | null;
+}
+
+interface SpaceUpdateGeolocationData {
+  spaceUpdateGeolocation: { id: string; success: boolean; message: string };
 }
 
 export class SpacesGqlRepository implements ISpacesRepository {
@@ -126,6 +138,27 @@ export class SpacesGqlRepository implements ISpacesRepository {
     });
     if (!res.data?.spaceRemoveMember?.success) {
       throw new Error(res.data?.spaceRemoveMember?.message ?? 'spaceRemoveMember mutation failed');
+    }
+  }
+
+  async getSpaceWeather(spaceId: string): Promise<SpaceWeather | null> {
+    const res = await apolloClient.query<SpaceWeatherData>({
+      query: SPACE_WEATHER,
+      variables: { input: { spaceId } },
+      fetchPolicy: 'network-only',
+    });
+    return res.data?.spaceWeather ?? null;
+  }
+
+  async updateGeolocation(input: UpdateGeolocationInput): Promise<void> {
+    const res = await apolloClient.mutate<SpaceUpdateGeolocationData>({
+      mutation: SPACE_UPDATE_GEOLOCATION,
+      variables: { input },
+    });
+    if (!res.data?.spaceUpdateGeolocation?.success) {
+      throw new Error(
+        res.data?.spaceUpdateGeolocation?.message ?? 'spaceUpdateGeolocation mutation failed',
+      );
     }
   }
 }
