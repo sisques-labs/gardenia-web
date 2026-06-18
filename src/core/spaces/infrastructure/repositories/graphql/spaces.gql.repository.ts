@@ -10,13 +10,12 @@ import type { SpaceInvitation } from '@/core/spaces/domain/types/space-invitatio
 import type { SpaceWeather } from '@/core/spaces/domain/interfaces/space-weather.interface';
 import { SPACES_FIND_BY_USER } from './queries/spaces-find-by-user.query';
 import { SPACE_FIND_BY_ID } from './queries/space-find-by-id.query';
-import { SPACE_WEATHER } from './queries/space-weather.query';
 import { SPACE_ACCEPT_INVITATION } from './mutations/space-accept-invitation.mutation';
 import { SPACE_CREATE } from './mutations/space-create.mutation';
 import { SPACE_CREATE_INVITATION } from './mutations/space-create-invitation.mutation';
 import { SPACE_ADD_MEMBER } from './mutations/space-add-member.mutation';
 import { SPACE_REMOVE_MEMBER } from './mutations/space-remove-member.mutation';
-import { SPACE_UPDATE_GEOLOCATION } from './mutations/space-update-geolocation.mutation';
+import { SPACE_UPDATE } from './mutations/space-update-geolocation.mutation';
 
 interface SpacesFindByUserData {
   spacesFindByUser: { items: Space[] };
@@ -43,12 +42,8 @@ interface SpaceMemberMutationData {
   spaceRemoveMember?: { id: string; success: boolean; message: string };
 }
 
-interface SpaceWeatherData {
-  spaceWeather: SpaceWeather | null;
-}
-
-interface SpaceUpdateGeolocationData {
-  spaceUpdateGeolocation: { id: string; success: boolean; message: string };
+interface SpaceUpdateData {
+  spaceUpdate: { id: string; success: boolean; message: string };
 }
 
 export class SpacesGqlRepository implements ISpacesRepository {
@@ -142,22 +137,22 @@ export class SpacesGqlRepository implements ISpacesRepository {
   }
 
   async getSpaceWeather(spaceId: string): Promise<SpaceWeather | null> {
-    const res = await apolloClient.query<SpaceWeatherData>({
-      query: SPACE_WEATHER,
-      variables: { input: { spaceId } },
+    const res = await apolloClient.query<SpaceFindByIdData>({
+      query: SPACE_FIND_BY_ID,
+      variables: { input: { id: spaceId } },
       fetchPolicy: 'network-only',
     });
-    return res.data?.spaceWeather ?? null;
+    return res.data?.spaceFindById?.weather ?? null;
   }
 
   async updateGeolocation(input: UpdateGeolocationInput): Promise<void> {
-    const res = await apolloClient.mutate<SpaceUpdateGeolocationData>({
-      mutation: SPACE_UPDATE_GEOLOCATION,
+    const res = await apolloClient.mutate<SpaceUpdateData>({
+      mutation: SPACE_UPDATE,
       variables: { input },
     });
-    if (!res.data?.spaceUpdateGeolocation?.success) {
+    if (!res.data?.spaceUpdate?.success) {
       throw new Error(
-        res.data?.spaceUpdateGeolocation?.message ?? 'spaceUpdateGeolocation mutation failed',
+        res.data?.spaceUpdate?.message ?? 'spaceUpdate mutation failed',
       );
     }
   }

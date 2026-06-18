@@ -8,6 +8,18 @@ export const SPACE_FIND_BY_ID = gql`
       ownerId
       createdAt
       updatedAt
+      weather {
+        latitude
+        longitude
+        timezone
+        daily {
+          date
+          temperatureMin
+          temperatureMax
+          precipitationSum
+          weatherCode
+        }
+      }
     }
   }
 `;

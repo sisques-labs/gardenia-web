@@ -1,18 +1,4 @@
-import { gql } from '@apollo/client';
-
-export const SPACE_WEATHER = gql`
-  query SpaceWeather($input: SpaceWeatherRequestDto!) {
-    spaceWeather(input: $input) {
-      latitude
-      longitude
-      timezone
-      daily {
-        date
-        temperatureMin
-        temperatureMax
-        precipitationSum
-        weatherCode
-      }
-    }
-  }
-`;
+// DEPRECATED: spaceWeather is no longer a root query.
+// Weather data is now resolved as a field on spaceFindById.
+// Use SPACE_FIND_BY_ID from space-find-by-id.query.ts instead.
+export {};
