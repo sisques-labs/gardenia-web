@@ -105,7 +105,7 @@ describe('SpaceWeatherWidget', () => {
     expect(screen.getByText(`${weatherDict.forecast} · ${mockWeather.timezone}`)).toBeInTheDocument();
     expect(screen.getByText('15°C / 29°C')).toBeInTheDocument();
     expect(screen.getByText('2.5 mm')).toBeInTheDocument();
-    expect(screen.getByLabelText('Weather code 0')).toHaveTextContent('☀️');
-    expect(screen.getByLabelText('Weather code 999')).toHaveTextContent('🌡️');
+    expect(screen.getByText('Weather: ☀️')).toBeInTheDocument();
+    expect(screen.getByText('Weather: 🌡️')).toBeInTheDocument();
   });
 });
