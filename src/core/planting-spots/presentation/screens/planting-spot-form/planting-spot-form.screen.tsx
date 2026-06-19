@@ -52,10 +52,17 @@ export function PlantingSpotFormScreen({ dict, lang, mode, spotId }: Props) {
     deleteMutation,
   } = usePlantingSpotForm({ mode, spotId, lang });
 
-  const { register, handleSubmit, control, formState: { errors } } = form;
+  const { register, handleSubmit, control, setValue, watch, formState: { errors } } = form;
 
   const formDict = dict.form;
   const typesDict = dict.types;
+
+  const capacityValue = watch('capacity');
+  const rowValue = watch('row');
+  const columnValue = watch('column');
+  const dimensionsWidthValue = watch('dimensionsWidth');
+  const dimensionsHeightValue = watch('dimensionsHeight');
+  const dimensionsLengthValue = watch('dimensionsLength');
 
   return (
     <div>
@@ -72,6 +79,8 @@ export function PlantingSpotFormScreen({ dict, lang, mode, spotId }: Props) {
       ) : (
         <div className="px-6 py-6 max-w-lg">
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+
+            {/* Name */}
             <div className="flex flex-col gap-1">
               <label className="text-sm text-muted-foreground">{formDict.name}</label>
               <Input {...register('name')} />
@@ -80,6 +89,7 @@ export function PlantingSpotFormScreen({ dict, lang, mode, spotId }: Props) {
               )}
             </div>
 
+            {/* Type */}
             <div className="flex flex-col gap-1">
               <label className="text-sm text-muted-foreground">{formDict.type}</label>
               <Controller
@@ -105,12 +115,150 @@ export function PlantingSpotFormScreen({ dict, lang, mode, spotId }: Props) {
               )}
             </div>
 
+            {/* Description */}
             <div className="flex flex-col gap-1">
               <label className="text-sm text-muted-foreground">{formDict.description}</label>
               <textarea
                 {...register('description')}
                 className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               />
+            </div>
+
+            {/* Capacity */}
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-muted-foreground">{formDict.capacity}</label>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => setValue('capacity', Math.max(1, (capacityValue ?? 1) - 1))}
+                  className="h-9 w-9 flex items-center justify-center rounded-md border border-input bg-transparent text-sm hover:bg-accent"
+                  disabled={!capacityValue || capacityValue <= 1}
+                >
+                  −
+                </button>
+                <Input
+                  type="number"
+                  min={1}
+                  className="w-20 text-center"
+                  value={capacityValue ?? ''}
+                  onChange={(e) => {
+                    const v = e.target.value === '' ? null : parseInt(e.target.value, 10);
+                    setValue('capacity', v && v >= 1 ? v : null);
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setValue('capacity', (capacityValue ?? 0) + 1)}
+                  className="h-9 w-9 flex items-center justify-center rounded-md border border-input bg-transparent text-sm hover:bg-accent"
+                >
+                  +
+                </button>
+                {capacityValue && (
+                  <button
+                    type="button"
+                    onClick={() => setValue('capacity', null)}
+                    className="text-xs text-muted-foreground underline"
+                  >
+                    {formDict.capacityHint.split(' ').slice(0, 2).join(' ')}
+                  </button>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground">{formDict.capacityHint}</p>
+              {errors.capacity && (
+                <span className="text-destructive text-xs">{errors.capacity.message}</span>
+              )}
+            </div>
+
+            {/* Grid position: row + column */}
+            <div className="grid grid-cols-2 gap-3">
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-muted-foreground">{formDict.row}</label>
+                <Input
+                  type="number"
+                  min={1}
+                  value={rowValue ?? ''}
+                  onChange={(e) => {
+                    const v = e.target.value === '' ? null : parseInt(e.target.value, 10);
+                    setValue('row', v && v >= 1 ? v : null);
+                  }}
+                />
+                {errors.row && (
+                  <span className="text-destructive text-xs">{errors.row.message}</span>
+                )}
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-muted-foreground">{formDict.column}</label>
+                <Input
+                  type="number"
+                  min={1}
+                  value={columnValue ?? ''}
+                  onChange={(e) => {
+                    const v = e.target.value === '' ? null : parseInt(e.target.value, 10);
+                    setValue('column', v && v >= 1 ? v : null);
+                  }}
+                />
+                {errors.column && (
+                  <span className="text-destructive text-xs">{errors.column.message}</span>
+                )}
+              </div>
+            </div>
+
+            {/* Dimensions */}
+            <div className="grid grid-cols-3 gap-3">
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-muted-foreground">{formDict.dimensionsWidth}</label>
+                <Input
+                  type="number"
+                  min={0}
+                  step="any"
+                  value={dimensionsWidthValue ?? ''}
+                  onChange={(e) => {
+                    const v = e.target.value === '' ? null : parseFloat(e.target.value);
+                    setValue('dimensionsWidth', v != null && !isNaN(v) ? v : null);
+                  }}
+                />
+                {errors.dimensionsWidth && (
+                  <span className="text-destructive text-xs">{errors.dimensionsWidth.message}</span>
+                )}
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-muted-foreground">{formDict.dimensionsHeight}</label>
+                <Input
+                  type="number"
+                  min={0}
+                  step="any"
+                  value={dimensionsHeightValue ?? ''}
+                  onChange={(e) => {
+                    const v = e.target.value === '' ? null : parseFloat(e.target.value);
+                    setValue('dimensionsHeight', v != null && !isNaN(v) ? v : null);
+                  }}
+                />
+                {errors.dimensionsHeight && (
+                  <span className="text-destructive text-xs">{errors.dimensionsHeight.message}</span>
+                )}
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-muted-foreground">{formDict.dimensionsLength}</label>
+                <Input
+                  type="number"
+                  min={0}
+                  step="any"
+                  value={dimensionsLengthValue ?? ''}
+                  onChange={(e) => {
+                    const v = e.target.value === '' ? null : parseFloat(e.target.value);
+                    setValue('dimensionsLength', v != null && !isNaN(v) ? v : null);
+                  }}
+                />
+                {errors.dimensionsLength && (
+                  <span className="text-destructive text-xs">{errors.dimensionsLength.message}</span>
+                )}
+              </div>
+            </div>
+
+            {/* Soil type */}
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-muted-foreground">{formDict.soilType}</label>
+              <Input {...register('soilType')} placeholder="e.g. Loamy, Sandy…" />
             </div>
 
             <div className="flex items-center justify-between gap-2 pt-2">

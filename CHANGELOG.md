@@ -1,6 +1,40 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.18.0-alpha.1] - 2026-06-19
+
+### Bug Fixes
+- **spaces:** Update GQL queries/mutations to match API weather field resolver pattern (f63a466)
+- **spaces:** Fix TypeScript errors in geolocation schema and repo mocks (9349bec)
+- **test:** Use spaceId in geolocation test fixtures (07d1ef7)
+- **spaces:** Address all PR #197 review comments (1926642)
+- **spaces:** Rename updateGeolocation → update in newly added spec files (bf6cae8)
+- **spaces:** Address PR #197 round 2 review comments (bbbfe12)
+
+### Features
+- **openspec:** Add space-geolocation-weather change spec (826e080)
+- **spaces:** Add geolocation and weather domain types and interfaces (7c6a77c)
+- **spaces:** Add SpaceWeatherWidget component and hook (0d5f98c)
+- **spaces:** Align web with API geolocation and weather feature (3e8378f)
+
+### Testing
+- **spaces:** Add weather and geolocation coverage for CI thresholds (ec28460)
+- **spaces:** Update weather widget test to match new aria pattern (95319d1)
+## [0.18.0-alpha.0] - 2026-06-19
+
+### Bug Fixes
+- **planting-spots:** Map flat dimension fields to nested GQL mutation input (020be66)
+- **tests:** Update planting-spots test fixtures and dicts for CI (ce7dfc5)
+- **tests:** Resolve 3 remaining web CI failures (17345ed)
+
+### Features
+- **planting-spots:** Capacity, grid position, resolved plants, and detail screen (2952c7e)
+
+### Refactor
+- **planting-spots:** Align web with API dimensions split and resolve removal (9d9d2de)
+
+### Testing
+- **planting-spots:** Add coverage tests to meet 67% branch threshold (8b1d411)
 ## [0.17.0-alpha.0] - 2026-06-17
 
 ### Bug Fixes
