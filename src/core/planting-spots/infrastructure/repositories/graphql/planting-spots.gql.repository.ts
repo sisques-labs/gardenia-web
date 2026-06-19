@@ -15,19 +15,18 @@ import type { PlantingSpotUpdateResponse } from './responses/planting-spot-updat
 import type { PlantingSpotDeleteResponse } from './responses/planting-spot-delete.response';
 
 export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
-  async list(resolve = false): Promise<PlantingSpot[]> {
+  async list(): Promise<PlantingSpot[]> {
     const res = await apolloClient.query<PlantingSpotsFindByCriteriaResponse>({
       query: PLANTING_SPOTS_FIND_BY_CRITERIA,
-      variables: resolve ? { input: { resolve: true } } : undefined,
       fetchPolicy: 'network-only',
     });
     return res.data?.plantingSpotsFindByCriteria?.items ?? [];
   }
 
-  async findById(id: string, resolve = false): Promise<PlantingSpot> {
+  async findById(id: string): Promise<PlantingSpot> {
     const res = await apolloClient.query<PlantingSpotFindByIdResponse>({
       query: PLANTING_SPOT_FIND_BY_ID,
-      variables: { input: { id, resolve } },
+      variables: { input: { id } },
       fetchPolicy: 'network-only',
     });
     if (!res.data?.plantingSpotFindById) throw new Error(`PlantingSpot not found: ${id}`);

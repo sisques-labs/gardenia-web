@@ -15,7 +15,9 @@ export const plantingSpotSchema = z.object({
   capacity: z.number().int().min(1).nullable().optional(),
   row: z.number().int().min(1).nullable().optional(),
   column: z.number().int().min(1).nullable().optional(),
-  dimensions: z.string().max(100).nullable().optional(),
+  dimensionsWidth: z.number().min(0).nullable().optional(),
+  dimensionsHeight: z.number().min(0).nullable().optional(),
+  dimensionsLength: z.number().min(0).nullable().optional(),
   soilType: z.string().max(100).nullable().optional(),
 });
 

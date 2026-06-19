@@ -36,7 +36,9 @@ export function usePlantingSpotForm({ mode, spotId, lang }: UseePlantingSpotForm
           capacity: spot.capacity ?? null,
           row: spot.row ?? null,
           column: spot.column ?? null,
-          dimensions: spot.dimensions ?? '',
+          dimensionsWidth: spot.dimensionsWidth ?? null,
+          dimensionsHeight: spot.dimensionsHeight ?? null,
+          dimensionsLength: spot.dimensionsLength ?? null,
           soilType: spot.soilType ?? '',
         }
       : {
@@ -46,7 +48,9 @@ export function usePlantingSpotForm({ mode, spotId, lang }: UseePlantingSpotForm
           capacity: null,
           row: null,
           column: null,
-          dimensions: '',
+          dimensionsWidth: null,
+          dimensionsHeight: null,
+          dimensionsLength: null,
           soilType: '',
         },
   });
@@ -60,7 +64,9 @@ export function usePlantingSpotForm({ mode, spotId, lang }: UseePlantingSpotForm
       capacity: values.capacity ?? null,
       row: values.row ?? null,
       column: values.column ?? null,
-      dimensions: values.dimensions || null,
+      dimensionsWidth: values.dimensionsWidth ?? null,
+      dimensionsHeight: values.dimensionsHeight ?? null,
+      dimensionsLength: values.dimensionsLength ?? null,
       soilType: values.soilType || null,
     };
 

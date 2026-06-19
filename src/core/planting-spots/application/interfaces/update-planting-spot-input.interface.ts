@@ -8,6 +8,8 @@ export interface UpdatePlantingSpotInput {
   capacity?: number | null;
   row?: number | null;
   column?: number | null;
-  dimensions?: string | null;
+  dimensionsWidth?: number | null;
+  dimensionsHeight?: number | null;
+  dimensionsLength?: number | null;
   soilType?: string | null;
 }

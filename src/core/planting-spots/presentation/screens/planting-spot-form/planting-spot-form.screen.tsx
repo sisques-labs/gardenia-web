@@ -60,6 +60,9 @@ export function PlantingSpotFormScreen({ dict, lang, mode, spotId }: Props) {
   const capacityValue = watch('capacity');
   const rowValue = watch('row');
   const columnValue = watch('column');
+  const dimensionsWidthValue = watch('dimensionsWidth');
+  const dimensionsHeightValue = watch('dimensionsHeight');
+  const dimensionsLengthValue = watch('dimensionsLength');
 
   return (
     <div>
@@ -201,9 +204,55 @@ export function PlantingSpotFormScreen({ dict, lang, mode, spotId }: Props) {
             </div>
 
             {/* Dimensions */}
-            <div className="flex flex-col gap-1">
-              <label className="text-sm text-muted-foreground">{formDict.dimensions}</label>
-              <Input {...register('dimensions')} placeholder="e.g. 2.4 × 1.2 m" />
+            <div className="grid grid-cols-3 gap-3">
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-muted-foreground">{formDict.dimensionsWidth}</label>
+                <Input
+                  type="number"
+                  min={0}
+                  step="any"
+                  value={dimensionsWidthValue ?? ''}
+                  onChange={(e) => {
+                    const v = e.target.value === '' ? null : parseFloat(e.target.value);
+                    setValue('dimensionsWidth', v != null && !isNaN(v) ? v : null);
+                  }}
+                />
+                {errors.dimensionsWidth && (
+                  <span className="text-destructive text-xs">{errors.dimensionsWidth.message}</span>
+                )}
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-muted-foreground">{formDict.dimensionsHeight}</label>
+                <Input
+                  type="number"
+                  min={0}
+                  step="any"
+                  value={dimensionsHeightValue ?? ''}
+                  onChange={(e) => {
+                    const v = e.target.value === '' ? null : parseFloat(e.target.value);
+                    setValue('dimensionsHeight', v != null && !isNaN(v) ? v : null);
+                  }}
+                />
+                {errors.dimensionsHeight && (
+                  <span className="text-destructive text-xs">{errors.dimensionsHeight.message}</span>
+                )}
+              </div>
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-muted-foreground">{formDict.dimensionsLength}</label>
+                <Input
+                  type="number"
+                  min={0}
+                  step="any"
+                  value={dimensionsLengthValue ?? ''}
+                  onChange={(e) => {
+                    const v = e.target.value === '' ? null : parseFloat(e.target.value);
+                    setValue('dimensionsLength', v != null && !isNaN(v) ? v : null);
+                  }}
+                />
+                {errors.dimensionsLength && (
+                  <span className="text-destructive text-xs">{errors.dimensionsLength.message}</span>
+                )}
+              </div>
             </div>
 
             {/* Soil type */}

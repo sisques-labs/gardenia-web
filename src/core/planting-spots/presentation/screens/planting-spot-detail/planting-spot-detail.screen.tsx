@@ -45,7 +45,7 @@ type Props = {
 };
 
 export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
-  const { spot, isLoading } = usePlantingSpot(spotId, true);
+  const { spot, isLoading } = usePlantingSpot(spotId);
   const d = dict.detail;
 
   if (isLoading) return <DetailSkeleton />;
@@ -196,9 +196,19 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
                 </span>
               </Row>
 
-              {spot.dimensions && (
-                <Row label={d.infoDimensions}>
-                  <span className="text-sm">{spot.dimensions}</span>
+              {spot.dimensionsWidth != null && (
+                <Row label={d.infoDimensionsWidth}>
+                  <span className="text-sm">{spot.dimensionsWidth}</span>
+                </Row>
+              )}
+              {spot.dimensionsHeight != null && (
+                <Row label={d.infoDimensionsHeight}>
+                  <span className="text-sm">{spot.dimensionsHeight}</span>
+                </Row>
+              )}
+              {spot.dimensionsLength != null && (
+                <Row label={d.infoDimensionsLength}>
+                  <span className="text-sm">{spot.dimensionsLength}</span>
                 </Row>
               )}
 

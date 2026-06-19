@@ -11,7 +11,9 @@ export const PLANTING_SPOTS_FIND_BY_CRITERIA = gql`
         capacity
         row
         column
-        dimensions
+        dimensionsWidth
+        dimensionsHeight
+        dimensionsLength
         soilType
         userId
         spaceId
