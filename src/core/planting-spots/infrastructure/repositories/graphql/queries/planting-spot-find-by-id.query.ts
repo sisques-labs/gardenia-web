@@ -7,8 +7,25 @@ export const PLANTING_SPOT_FIND_BY_ID = gql`
       name
       type
       description
+      capacity
+      row
+      column
+      dimensionsWidth
+      dimensionsHeight
+      dimensionsLength
+      soilType
       userId
       spaceId
+      resolvedPlants {
+        id
+        name
+        plantSpeciesId
+        imageUrl
+        userId
+        spaceId
+        createdAt
+        updatedAt
+      }
       createdAt
       updatedAt
     }
