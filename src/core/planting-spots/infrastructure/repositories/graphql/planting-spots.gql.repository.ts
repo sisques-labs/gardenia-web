@@ -41,9 +41,9 @@ export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
       variables: {
         input: {
           ...rest,
-          dimensions: hasDimensions
-            ? { width: dimensionsWidth ?? null, height: dimensionsHeight ?? null, length: dimensionsLength ?? null }
-            : null,
+          ...(hasDimensions
+            ? { dimensions: { width: dimensionsWidth ?? null, height: dimensionsHeight ?? null, length: dimensionsLength ?? null } }
+            : {}),
         },
       },
     });

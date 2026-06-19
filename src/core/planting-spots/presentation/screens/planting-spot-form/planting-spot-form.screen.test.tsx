@@ -106,7 +106,8 @@ function makeMockForm(name = 'Main Bed') {
   };
   const control = {};
   const formState = { errors: {} };
-  return { register, handleSubmit, control, formState } as never;
+  const watch = vi.fn().mockReturnValue(undefined);
+  return { register, handleSubmit, control, formState, watch } as never;
 }
 
 function buildHookReturn(overrides: Record<string, unknown> = {}) {

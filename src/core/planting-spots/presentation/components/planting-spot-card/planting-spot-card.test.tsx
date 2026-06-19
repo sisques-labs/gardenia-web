@@ -116,9 +116,9 @@ describe('PlantingSpotCard', () => {
     expect(screen.queryByText('A nice raised bed')).not.toBeInTheDocument();
   });
 
-  it('renders a link to the edit page', () => {
+  it('renders a link to the detail page', () => {
     render(<PlantingSpotCard spot={mockSpot} dict={dict} lang="en" />);
     const link = screen.getByRole('link');
-    expect(link).toHaveAttribute('href', '/en/planting-spots/spot-1/edit');
+    expect(link).toHaveAttribute('href', '/en/planting-spots/spot-1');
   });
 });
