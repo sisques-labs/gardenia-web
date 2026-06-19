@@ -365,7 +365,7 @@ describe('SpacesGqlRepository', () => {
         data: { spaceUpdate: { id: 'space-1', success: true, message: 'Updated' } },
       } as never);
 
-      await expect(repository.updateGeolocation(input)).resolves.toBeUndefined();
+      await expect(repository.update(input)).resolves.toBeUndefined();
 
       expect(apolloClient.mutate).toHaveBeenCalledWith({
         mutation: SPACE_UPDATE,
@@ -378,7 +378,7 @@ describe('SpacesGqlRepository', () => {
         data: { spaceUpdate: { id: '', success: false, message: 'Invalid coordinates' } },
       } as never);
 
-      await expect(repository.updateGeolocation(input)).rejects.toThrow('Invalid coordinates');
+      await expect(repository.update(input)).rejects.toThrow('Invalid coordinates');
     });
   });
 });

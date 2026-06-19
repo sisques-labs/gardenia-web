@@ -11,7 +11,7 @@ const mockRepository: ISpacesRepository = {
   addMember: vi.fn(),
   removeMember: vi.fn(),
   getSpaceWeather: vi.fn(),
-  updateGeolocation: vi.fn(),
+  update: vi.fn(),
 };
 
 const input = {
@@ -22,17 +22,17 @@ const input = {
 };
 
 describe('UpdateSpaceGeolocationUseCase', () => {
-  it('delegates to repository.updateGeolocation', async () => {
-    vi.mocked(mockRepository.updateGeolocation).mockResolvedValue(undefined);
+  it('delegates to repository.update', async () => {
+    vi.mocked(mockRepository.update).mockResolvedValue(undefined);
 
     const useCase = new UpdateSpaceGeolocationUseCase(mockRepository);
     await useCase.execute(input);
 
-    expect(mockRepository.updateGeolocation).toHaveBeenCalledWith(input);
+    expect(mockRepository.update).toHaveBeenCalledWith(input);
   });
 
   it('propagates repository errors', async () => {
-    vi.mocked(mockRepository.updateGeolocation).mockRejectedValue(new Error('Update failed'));
+    vi.mocked(mockRepository.update).mockRejectedValue(new Error('Update failed'));
 
     const useCase = new UpdateSpaceGeolocationUseCase(mockRepository);
     await expect(useCase.execute(input)).rejects.toThrow('Update failed');
