@@ -4,10 +4,10 @@ import { PlantingSpotsGqlRepository } from '@/core/planting-spots/infrastructure
 
 const getPlantingSpotUseCase = new GetPlantingSpotUseCase(new PlantingSpotsGqlRepository());
 
-export function usePlantingSpot(id: string) {
+export function usePlantingSpot(id: string, resolve = false) {
   const { data, isLoading, error } = useQuery({
-    queryKey: ['planting-spot', id],
-    queryFn: () => getPlantingSpotUseCase.execute(id),
+    queryKey: ['planting-spot', id, { resolve }],
+    queryFn: () => getPlantingSpotUseCase.execute(id, resolve),
     enabled: !!id,
   });
 

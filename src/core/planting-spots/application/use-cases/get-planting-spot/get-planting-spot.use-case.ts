@@ -4,7 +4,7 @@ import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/plant
 export class GetPlantingSpotUseCase {
   constructor(private readonly repo: IPlantingSpotsRepository) {}
 
-  async execute(id: string): Promise<PlantingSpot> {
-    return this.repo.findById(id);
+  async execute(id: string, resolve = false): Promise<PlantingSpot> {
+    return this.repo.findById(id, resolve);
   }
 }

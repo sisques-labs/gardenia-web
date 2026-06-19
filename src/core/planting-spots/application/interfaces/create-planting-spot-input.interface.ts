@@ -4,4 +4,9 @@ export interface CreatePlantingSpotInput {
   name: string;
   type: PlantingSpotType;
   description?: string | null;
+  capacity?: number | null;
+  row?: number | null;
+  column?: number | null;
+  dimensions?: string | null;
+  soilType?: string | null;
 }
