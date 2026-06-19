@@ -11,7 +11,7 @@ const mockRepository: ISpacesRepository = {
   addMember: vi.fn(),
   removeMember: vi.fn(),
   getSpaceWeather: vi.fn(),
-  updateGeolocation: vi.fn(),
+  update: vi.fn(),
 };
 
 describe('RemoveSpaceMemberUseCase', () => {

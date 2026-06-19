@@ -1,10 +1,6 @@
-export interface DailyForecast {
-  date: string;
-  temperatureMin: number;
-  temperatureMax: number;
-  precipitationSum: number;
-  weatherCode: number;
-}
+import type { DailyForecast } from '@/core/spaces/domain/interfaces/daily-forecast.interface';
+
+export type { DailyForecast };
 
 export interface SpaceWeather {
   latitude: number;

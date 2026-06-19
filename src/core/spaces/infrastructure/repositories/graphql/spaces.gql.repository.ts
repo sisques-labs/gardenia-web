@@ -3,7 +3,7 @@ import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import type { ISpacesRepository } from '@/core/spaces/application/ports/spaces.repository.port';
 import type { CreateInvitationInput } from '@/core/spaces/application/interfaces/create-invitation-input.interface';
 import type { MemberInput } from '@/core/spaces/application/interfaces/member-input.interface';
-import type { UpdateGeolocationInput } from '@/core/spaces/application/interfaces/update-geolocation-input.interface';
+import type { UpdateSpaceInput } from '@/core/spaces/application/interfaces/update-space-input.interface';
 import type { Space } from '@/core/spaces/domain/interfaces/space.interface';
 import type { SpaceDetail } from '@/core/spaces/domain/interfaces/space-detail.interface';
 import type { SpaceInvitation } from '@/core/spaces/domain/types/space-invitation.type';
@@ -145,7 +145,7 @@ export class SpacesGqlRepository implements ISpacesRepository {
     return res.data?.spaceFindById?.weather ?? null;
   }
 
-  async updateGeolocation(input: UpdateGeolocationInput): Promise<void> {
+  async update(input: UpdateSpaceInput): Promise<void> {
     const res = await apolloClient.mutate<SpaceUpdateData>({
       mutation: SPACE_UPDATE,
       variables: { input },

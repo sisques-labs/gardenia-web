@@ -1,6 +1,6 @@
 import type { SpaceEnvironment } from '@/core/spaces/domain/types/space-environment.type';
 
-export interface UpdateGeolocationInput {
+export interface UpdateSpaceInput {
   spaceId: string;
   latitude?: number | null;
   longitude?: number | null;

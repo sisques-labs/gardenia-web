@@ -4,9 +4,9 @@ import type { SpaceInvitation } from '@/core/spaces/domain/types/space-invitatio
 import type { SpaceWeather } from '@/core/spaces/domain/interfaces/space-weather.interface';
 import type { CreateInvitationInput } from '@/core/spaces/application/interfaces/create-invitation-input.interface';
 import type { MemberInput } from '@/core/spaces/application/interfaces/member-input.interface';
-import type { UpdateGeolocationInput } from '@/core/spaces/application/interfaces/update-geolocation-input.interface';
+import type { UpdateSpaceInput } from '@/core/spaces/application/interfaces/update-space-input.interface';
 
-export type { CreateInvitationInput, MemberInput, UpdateGeolocationInput };
+export type { CreateInvitationInput, MemberInput, UpdateSpaceInput };
 
 export interface ISpacesRepository {
   listByUser(): Promise<Space[]>;
@@ -17,5 +17,5 @@ export interface ISpacesRepository {
   addMember(input: MemberInput): Promise<void>;
   removeMember(input: MemberInput): Promise<void>;
   getSpaceWeather(spaceId: string): Promise<SpaceWeather | null>;
-  updateGeolocation(input: UpdateGeolocationInput): Promise<void>;
+  update(input: UpdateSpaceInput): Promise<void>;
 }
