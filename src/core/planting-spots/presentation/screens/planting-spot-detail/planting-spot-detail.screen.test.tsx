@@ -1,0 +1,354 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach } from 'vitest';
+import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
+
+vi.mock('next/navigation', () => ({
+  useRouter: () => ({ push: vi.fn() }),
+}));
+
+vi.mock('next/link', () => ({
+  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
+    <a href={href}>{children}</a>
+  ),
+}));
+
+vi.mock(
+  '@/core/planting-spots/presentation/hooks/use-planting-spot/use-planting-spot.hook',
+  () => ({ usePlantingSpot: vi.fn() }),
+);
+
+vi.mock(
+  '@/core/planting-spots/presentation/components/planting-spot-type-badge/planting-spot-type-badge',
+  () => ({
+    PlantingSpotTypeBadge: ({ type }: { type: string }) => (
+      <span data-testid="type-badge">{type}</span>
+    ),
+  }),
+);
+
+vi.mock('@/shared/presentation/components/ui/tabs/tabs', () => ({
+  Tabs: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+  TabsList: ({ children }: { children: React.ReactNode }) => <div role="tablist">{children}</div>,
+  TabsTrigger: ({ value, children }: { value: string; children: React.ReactNode }) => (
+    <button role="tab" data-value={value}>{children}</button>
+  ),
+  TabsContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
+}));
+
+import { usePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-planting-spot/use-planting-spot.hook';
+import { PlantingSpotDetailScreen } from './planting-spot-detail.screen';
+
+const dict = {
+  list: {
+    title: 'Planting spots',
+    empty: 'No planting spots.',
+    new: 'New planting spot',
+    available: 'Available',
+    full: 'Full',
+    overCapacity: 'Over capacity',
+    plants: 'plants',
+    noCapacity: 'No limit',
+  },
+  form: {
+    titleCreate: 'New planting spot',
+    titleEdit: 'Edit planting spot',
+    name: 'Name',
+    type: 'Type',
+    description: 'Description (optional)',
+    capacity: 'Capacity (optional)',
+    capacityHint: 'Leave empty to set no plant limit',
+    row: 'Row (optional)',
+    column: 'Column (optional)',
+    dimensionsWidth: 'Width (optional)',
+    dimensionsHeight: 'Height (optional)',
+    dimensionsLength: 'Length (optional)',
+    soilType: 'Soil type (optional)',
+    save: 'Save',
+    saving: 'Saving…',
+    delete: 'Delete',
+    deleteConfirm: 'Are you sure you want to delete this planting spot?',
+    cancel: 'Cancel',
+  },
+  detail: {
+    tabActivePlants: 'Active plants',
+    tabRotationHistory: 'Rotation history',
+    tabInfo: 'Spot info',
+    editSpot: 'Edit spot',
+    addPlant: 'Add plant',
+    noActivePlants: 'No plants currently assigned to this spot.',
+    rotationHistoryEmpty: 'No rotation history yet.',
+    infoCapacity: 'Capacity',
+    infoRow: 'Row',
+    infoColumn: 'Column',
+    infoDimensionsWidth: 'Width',
+    infoDimensionsHeight: 'Height',
+    infoDimensionsLength: 'Length',
+    infoSoilType: 'Soil type',
+    infoType: 'Type',
+    infoDescription: 'Description',
+    noLimit: 'No limit',
+    notSet: 'Not set',
+    plantsCount: 'plants',
+    position: 'Position',
+  },
+  types: {
+    RAISED_BED: 'Raised bed',
+    POT: 'Pot',
+    CONTAINER: 'Container',
+    FIELD_SECTION: 'Field section',
+    OTHER: 'Other',
+  },
+};
+
+const baseSpot: PlantingSpot = {
+  id: 'spot-1',
+  name: 'Main Bed',
+  type: 'RAISED_BED',
+  description: null,
+  capacity: null,
+  row: null,
+  column: null,
+  dimensionsWidth: null,
+  dimensionsHeight: null,
+  dimensionsLength: null,
+  soilType: null,
+  userId: 'u1',
+  spaceId: 's1',
+  resolvedPlants: [],
+  createdAt: '2024-01-01',
+  updatedAt: '2024-01-01',
+};
+
+function mockLoading() {
+  vi.mocked(usePlantingSpot).mockReturnValue({ spot: null, isLoading: true, error: null } as never);
+}
+
+function mockSpot(overrides: Partial<PlantingSpot> = {}) {
+  vi.mocked(usePlantingSpot).mockReturnValue({
+    spot: { ...baseSpot, ...overrides },
+    isLoading: false,
+    error: null,
+  } as never);
+}
+
+function mockNoSpot() {
+  vi.mocked(usePlantingSpot).mockReturnValue({ spot: null, isLoading: false, error: null } as never);
+}
+
+describe('PlantingSpotDetailScreen', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('renders skeleton when loading', () => {
+    mockLoading();
+    const { container } = render(
+      <PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />,
+    );
+    expect(container.querySelector('.animate-pulse')).toBeInTheDocument();
+  });
+
+  it('renders nothing when spot is null', () => {
+    mockNoSpot();
+    const { container } = render(
+      <PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />,
+    );
+    expect(container.firstChild).toBeNull();
+  });
+
+  it('renders spot name', () => {
+    mockSpot();
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getAllByText('Main Bed').length).toBeGreaterThan(0);
+  });
+
+  it('renders edit link', () => {
+    mockSpot();
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('Edit spot')).toBeInTheDocument();
+  });
+
+  it('renders empty plants message when no plants', () => {
+    mockSpot({ resolvedPlants: [] });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('No plants currently assigned to this spot.')).toBeInTheDocument();
+  });
+
+  it('does not render capacity bar when capacity is null', () => {
+    mockSpot({ capacity: null });
+    const { container } = render(
+      <PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />,
+    );
+    expect(container.querySelector('.h-2.rounded-full.bg-muted')).not.toBeInTheDocument();
+  });
+
+  it('renders capacity bar when capacity is set', () => {
+    mockSpot({ capacity: 10, resolvedPlants: [] });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('0 / 10 plants')).toBeInTheDocument();
+  });
+
+  it('shows position label with row and column', () => {
+    mockSpot({ capacity: 5, row: 2, column: 3, resolvedPlants: [] });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('Position: F2 · C3')).toBeInTheDocument();
+  });
+
+  it('shows position label with row only', () => {
+    mockSpot({ capacity: 5, row: 1, column: null, resolvedPlants: [] });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('Position: F1')).toBeInTheDocument();
+  });
+
+  it('shows position label with column only', () => {
+    mockSpot({ capacity: 5, row: null, column: 4, resolvedPlants: [] });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('Position: C4')).toBeInTheDocument();
+  });
+
+  it('does not show position label when row and column are null', () => {
+    mockSpot({ capacity: 5, row: null, column: null, resolvedPlants: [] });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.queryByText(/Position:/)).not.toBeInTheDocument();
+  });
+
+  it('renders plant with image when imageUrl is set', () => {
+    mockSpot({
+      resolvedPlants: [
+        {
+          id: 'plant-1',
+          name: 'Tomato',
+          imageUrl: 'https://example.com/tomato.jpg',
+          plantSpeciesId: 'species-1',
+          userId: 'u1',
+          spaceId: 's1',
+          createdAt: '2024-01-01',
+          updatedAt: '2024-01-01',
+        },
+      ],
+    });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    const img = screen.getByRole('img', { name: 'Tomato' });
+    expect(img).toHaveAttribute('src', 'https://example.com/tomato.jpg');
+  });
+
+  it('renders plant emoji when imageUrl is null', () => {
+    mockSpot({
+      resolvedPlants: [
+        {
+          id: 'plant-1',
+          name: 'Basil',
+          imageUrl: null,
+          plantSpeciesId: null,
+          userId: 'u1',
+          spaceId: 's1',
+          createdAt: '2024-01-01',
+          updatedAt: '2024-01-01',
+        },
+      ],
+    });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('🌱')).toBeInTheDocument();
+  });
+
+  it('renders plantSpeciesId when present', () => {
+    mockSpot({
+      resolvedPlants: [
+        {
+          id: 'plant-1',
+          name: 'Tomato',
+          imageUrl: null,
+          plantSpeciesId: 'species-tomato',
+          userId: 'u1',
+          spaceId: 's1',
+          createdAt: '2024-01-01',
+          updatedAt: '2024-01-01',
+        },
+      ],
+    });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('species-tomato')).toBeInTheDocument();
+  });
+
+  it('renders description in info tab when present', () => {
+    mockSpot({ description: 'A lovely raised bed' });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('A lovely raised bed')).toBeInTheDocument();
+  });
+
+  it('shows no limit when capacity is null in info tab', () => {
+    mockSpot({ capacity: null });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('No limit')).toBeInTheDocument();
+  });
+
+  it('shows capacity value in info tab when set', () => {
+    mockSpot({ capacity: 8 });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getAllByText('8 plants').length).toBeGreaterThan(0);
+  });
+
+  it('shows Not set position in info tab when no row/column', () => {
+    mockSpot({ row: null, column: null });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('Not set')).toBeInTheDocument();
+  });
+
+  it('renders dimensions when set', () => {
+    mockSpot({ dimensionsWidth: 1.2, dimensionsHeight: 0.5, dimensionsLength: 2.0 });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('1.2')).toBeInTheDocument();
+    expect(screen.getByText('0.5')).toBeInTheDocument();
+    expect(screen.getByText('2')).toBeInTheDocument();
+  });
+
+  it('renders soil type when set', () => {
+    mockSpot({ soilType: 'Loamy' });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('Loamy')).toBeInTheDocument();
+  });
+
+  it('renders capacity bar in over-capacity state (current > capacity)', () => {
+    mockSpot({
+      capacity: 3,
+      resolvedPlants: [
+        { id: 'p1', name: 'P1', imageUrl: null, plantSpeciesId: null, userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+        { id: 'p2', name: 'P2', imageUrl: null, plantSpeciesId: null, userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+        { id: 'p3', name: 'P3', imageUrl: null, plantSpeciesId: null, userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+        { id: 'p4', name: 'P4', imageUrl: null, plantSpeciesId: null, userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      ],
+    });
+    const { container } = render(
+      <PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />,
+    );
+    expect(container.querySelector('.bg-destructive')).toBeInTheDocument();
+  });
+
+  it('renders capacity bar in full state (current === capacity)', () => {
+    mockSpot({
+      capacity: 2,
+      resolvedPlants: [
+        { id: 'p1', name: 'P1', imageUrl: null, plantSpeciesId: null, userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+        { id: 'p2', name: 'P2', imageUrl: null, plantSpeciesId: null, userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      ],
+    });
+    const { container } = render(
+      <PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />,
+    );
+    expect(container.querySelector('.bg-orange-400')).toBeInTheDocument();
+  });
+
+  it('renders capacity bar in normal state (current < capacity)', () => {
+    mockSpot({
+      capacity: 5,
+      resolvedPlants: [
+        { id: 'p1', name: 'P1', imageUrl: null, plantSpeciesId: null, userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      ],
+    });
+    const { container } = render(
+      <PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />,
+    );
+    expect(container.querySelector('.bg-\\[var\\(--forest\\)\\]')).toBeInTheDocument();
+  });
+});

@@ -121,4 +121,93 @@ describe('PlantingSpotCard', () => {
     const link = screen.getByRole('link');
     expect(link).toHaveAttribute('href', '/en/planting-spots/spot-1');
   });
+
+  describe('capacity display', () => {
+    it('shows available badge when plants < capacity', () => {
+      const spot = { ...mockSpot, capacity: 5, resolvedPlants: [
+        { id: 'p1', name: 'Tomato', userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      ]};
+      render(<PlantingSpotCard spot={spot} dict={dict} lang="en" />);
+      expect(screen.getByText('Available')).toBeInTheDocument();
+      expect(screen.getByText('1 / 5 plants')).toBeInTheDocument();
+    });
+
+    it('shows full badge when plants === capacity', () => {
+      const spot = { ...mockSpot, capacity: 2, resolvedPlants: [
+        { id: 'p1', name: 'T1', userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+        { id: 'p2', name: 'T2', userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      ]};
+      render(<PlantingSpotCard spot={spot} dict={dict} lang="en" />);
+      expect(screen.getByText('Full')).toBeInTheDocument();
+    });
+
+    it('shows over capacity badge when plants > capacity', () => {
+      const spot = { ...mockSpot, capacity: 1, resolvedPlants: [
+        { id: 'p1', name: 'T1', userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+        { id: 'p2', name: 'T2', userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      ]};
+      render(<PlantingSpotCard spot={spot} dict={dict} lang="en" />);
+      expect(screen.getByText('Over capacity')).toBeInTheDocument();
+    });
+
+    it('shows plant count without capacity bar when no capacity and plants > 0', () => {
+      const spot = { ...mockSpot, capacity: null, resolvedPlants: [
+        { id: 'p1', name: 'T1', userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      ]};
+      render(<PlantingSpotCard spot={spot} dict={dict} lang="en" />);
+      expect(screen.getByText('1 plants')).toBeInTheDocument();
+    });
+
+    it('shows nothing for capacity when no capacity and no plants', () => {
+      const spot = { ...mockSpot, capacity: null, resolvedPlants: [] };
+      const { container } = render(<PlantingSpotCard spot={spot} dict={dict} lang="en" />);
+      expect(container.querySelector('.h-1\\.5')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('position display', () => {
+    it('shows row and column when both are set', () => {
+      const spot = { ...mockSpot, row: 2, column: 3 };
+      render(<PlantingSpotCard spot={spot} dict={dict} lang="en" />);
+      expect(screen.getByText('F2 · C3')).toBeInTheDocument();
+    });
+
+    it('shows only row when column is null', () => {
+      const spot = { ...mockSpot, row: 1, column: null };
+      render(<PlantingSpotCard spot={spot} dict={dict} lang="en" />);
+      expect(screen.getByText('F1')).toBeInTheDocument();
+    });
+
+    it('shows only column when row is null', () => {
+      const spot = { ...mockSpot, row: null, column: 5 };
+      render(<PlantingSpotCard spot={spot} dict={dict} lang="en" />);
+      expect(screen.getByText('C5')).toBeInTheDocument();
+    });
+
+    it('does not show position when both row and column are null', () => {
+      const spot = { ...mockSpot, row: null, column: null };
+      render(<PlantingSpotCard spot={spot} dict={dict} lang="en" />);
+      expect(screen.queryByText(/F\d|C\d/)).not.toBeInTheDocument();
+    });
+  });
+
+  describe('CapacityBar', () => {
+    it('renders over-capacity bar class when current > capacity', () => {
+      const spot = { ...mockSpot, capacity: 1, resolvedPlants: [
+        { id: 'p1', name: 'T1', userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+        { id: 'p2', name: 'T2', userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      ]};
+      const { container } = render(<PlantingSpotCard spot={spot} dict={dict} lang="en" />);
+      expect(container.querySelector('.bg-destructive')).toBeInTheDocument();
+    });
+
+    it('renders orange bar class when current === capacity', () => {
+      const spot = { ...mockSpot, capacity: 2, resolvedPlants: [
+        { id: 'p1', name: 'T1', userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+        { id: 'p2', name: 'T2', userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      ]};
+      const { container } = render(<PlantingSpotCard spot={spot} dict={dict} lang="en" />);
+      expect(container.querySelector('.bg-orange-400')).toBeInTheDocument();
+    });
+  });
 });

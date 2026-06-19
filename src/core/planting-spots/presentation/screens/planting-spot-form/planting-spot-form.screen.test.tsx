@@ -177,4 +177,60 @@ describe('PlantingSpotFormScreen', () => {
     const { container } = render(<PlantingSpotFormScreen dict={dict} lang="en" mode="edit" spotId="spot-1" />);
     expect(container.querySelector('.animate-pulse')).toBeInTheDocument();
   });
+
+  it('shows saving text when isPending is true', () => {
+    vi.mocked(usePlantingSpotForm).mockReturnValue(
+      buildHookReturn({ isPending: true }) as never,
+    );
+    render(<PlantingSpotFormScreen dict={dict} lang="en" mode="edit" spotId="spot-1" />);
+    expect(screen.getByRole('button', { name: /saving/i })).toBeInTheDocument();
+  });
+
+  it('shows save text when isPending is false', () => {
+    vi.mocked(usePlantingSpotForm).mockReturnValue(
+      buildHookReturn({ isPending: false }) as never,
+    );
+    render(<PlantingSpotFormScreen dict={dict} lang="en" mode="edit" spotId="spot-1" />);
+    expect(screen.getByRole('button', { name: /^save$/i })).toBeInTheDocument();
+  });
+
+  it('shows clear button when capacityValue is set', () => {
+    function makeMockFormWithCapacity() {
+      const register = () => ({});
+      const handleSubmit = (fn: (v: unknown) => void) => (e: React.FormEvent) => {
+        e.preventDefault();
+        fn({ name: 'Main Bed', type: 'RAISED_BED', description: '' });
+      };
+      const control = {};
+      const formState = { errors: {} };
+      const watch = vi.fn().mockImplementation((field?: string) => {
+        if (field === 'capacity') return 3;
+        return undefined;
+      });
+      const setValue = vi.fn();
+      return { register, handleSubmit, control, formState, watch, setValue } as never;
+    }
+    vi.mocked(usePlantingSpotForm).mockReturnValue(
+      buildHookReturn({ form: makeMockFormWithCapacity() }) as never,
+    );
+    render(<PlantingSpotFormScreen dict={dict} lang="en" mode="edit" spotId="spot-1" />);
+    expect(screen.getByText('Leave empty')).toBeInTheDocument();
+  });
+
+  it('does not render in create mode while isLoading is true', () => {
+    vi.mocked(usePlantingSpotForm).mockReturnValue(
+      buildHookReturn({ isEdit: false, isLoading: true }) as never,
+    );
+    const { container } = render(<PlantingSpotFormScreen dict={dict} lang="en" mode="create" />);
+    expect(container.querySelector('.animate-pulse')).not.toBeInTheDocument();
+    expect(screen.getByText('Name')).toBeInTheDocument();
+  });
+
+  it('delete button is disabled when deleteMutation is pending', () => {
+    vi.mocked(usePlantingSpotForm).mockReturnValue(
+      buildHookReturn({ deleteMutation: { isPending: true } }) as never,
+    );
+    render(<PlantingSpotFormScreen dict={dict} lang="en" mode="edit" spotId="spot-1" />);
+    expect(screen.getByRole('button', { name: /delete/i })).toBeDisabled();
+  });
 });
