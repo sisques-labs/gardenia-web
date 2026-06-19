@@ -44,9 +44,9 @@ import { useSpaceSettings } from "@/core/spaces/presentation/hooks/use-space-set
 import { addMemberSchema } from "@/core/spaces/presentation/schemas/add-member.schema";
 import { createInvitationSchema } from "@/core/spaces/presentation/schemas/create-invitation.schema";
 import {
-  updateGeolocationSchema,
-  type UpdateGeolocationFormValues,
-} from "@/core/spaces/presentation/schemas/update-geolocation.schema";
+  updateSpaceSchema,
+  type UpdateSpaceFormValues,
+} from "@/core/spaces/presentation/schemas/update-space.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { renderHook } from "@testing-library/react";
 import { useForm } from "react-hook-form";
@@ -69,8 +69,8 @@ function makeDefaultHookReturn(
     useForm({ resolver: zodResolver(addMemberSchema) }),
   );
   const { result: geoFormResult } = renderHook(() =>
-    useForm<UpdateGeolocationFormValues>({
-      resolver: zodResolver(updateGeolocationSchema),
+    useForm<UpdateSpaceFormValues>({
+      resolver: zodResolver(updateSpaceSchema),
       defaultValues: { latitude: null, longitude: null, environment: null },
     }),
   );
@@ -88,11 +88,11 @@ function makeDefaultHookReturn(
     invForm: invFormResult.current,
     addForm: addFormResult.current,
     removeForm: removeFormResult.current,
-    geoForm: geoFormResult.current,
+    updateSpaceForm: geoFormResult.current,
     onCreateInvitation: vi.fn(),
     onAddMember: vi.fn(),
     onRemoveMember: vi.fn(),
-    onUpdateGeolocation: vi.fn(),
+    onUpdateSpace: vi.fn(),
     createInvitation: {
       isPending: false,
       error: null,
@@ -111,12 +111,12 @@ function makeDefaultHookReturn(
       isSuccess: false,
       reset: mockResetRemove,
     } as unknown as ReturnType<typeof useSpaceSettings>["removeMember"],
-    updateGeolocation: {
+    updateSpace: {
       isPending: false,
       error: null,
       isSuccess: false,
       reset: mockResetGeo,
-    } as unknown as ReturnType<typeof useSpaceSettings>["updateGeolocation"],
+    } as unknown as ReturnType<typeof useSpaceSettings>["updateSpace"],
     ...overrides,
   };
 }
@@ -148,6 +148,8 @@ const dict = {
   geolocation: {
     title: "Location",
     hint: "Set the coordinates and environment type to enable the weather forecast.",
+    nameLabel: "Space name",
+    namePlaceholder: "e.g. My garden",
     latitudeLabel: "Latitude",
     latitudePlaceholder: "e.g. 40.4168",
     longitudeLabel: "Longitude",

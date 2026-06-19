@@ -13,12 +13,12 @@ import {
 } from '@/shared/presentation/components/ui/select/select';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import type { UseFormReturn } from 'react-hook-form';
-import type { UpdateGeolocationFormValues } from '@/core/spaces/presentation/schemas/update-geolocation.schema';
+import type { UpdateSpaceFormValues } from '@/core/spaces/presentation/schemas/update-space.schema';
 
 interface SpaceGeolocationCardProps {
   dict: AppDict['spaces']['settings'];
-  geoForm: UseFormReturn<UpdateGeolocationFormValues>;
-  onSubmit: (values: UpdateGeolocationFormValues) => void;
+  updateSpaceForm: UseFormReturn<UpdateSpaceFormValues>;
+  onSubmit: (values: UpdateSpaceFormValues) => void;
   isPending: boolean;
   isError: boolean;
   isSuccess: boolean;
@@ -26,7 +26,7 @@ interface SpaceGeolocationCardProps {
 
 export function SpaceGeolocationCard({
   dict,
-  geoForm,
+  updateSpaceForm,
   onSubmit,
   isPending,
   isError,
@@ -39,7 +39,23 @@ export function SpaceGeolocationCard({
           {dict.geolocation.title}
         </p>
         <p className="text-sm text-muted-foreground">{dict.geolocation.hint}</p>
-        <form onSubmit={geoForm.handleSubmit(onSubmit)} className="flex flex-col gap-3">
+        <form onSubmit={updateSpaceForm.handleSubmit(onSubmit)} className="flex flex-col gap-3">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm text-muted-foreground">
+              {dict.geolocation.nameLabel}
+            </label>
+            <Input
+              type="text"
+              placeholder={dict.geolocation.namePlaceholder}
+              data-testid="geolocation-name-input"
+              {...updateSpaceForm.register('name')}
+            />
+            {updateSpaceForm.formState.errors.name && (
+              <span className="text-destructive text-xs">
+                {updateSpaceForm.formState.errors.name.message}
+              </span>
+            )}
+          </div>
           <div className="grid grid-cols-2 gap-3">
             <div className="flex flex-col gap-1">
               <label className="text-sm text-muted-foreground">
@@ -50,13 +66,13 @@ export function SpaceGeolocationCard({
                 step="any"
                 placeholder={dict.geolocation.latitudePlaceholder}
                 data-testid="geolocation-latitude-input"
-                {...geoForm.register('latitude', {
+                {...updateSpaceForm.register('latitude', {
                   setValueAs: (v) => (v === '' || v == null ? null : parseFloat(v as string)),
                 })}
               />
-              {geoForm.formState.errors.latitude && (
+              {updateSpaceForm.formState.errors.latitude && (
                 <span className="text-destructive text-xs">
-                  {geoForm.formState.errors.latitude.message}
+                  {updateSpaceForm.formState.errors.latitude.message}
                 </span>
               )}
             </div>
@@ -69,13 +85,13 @@ export function SpaceGeolocationCard({
                 step="any"
                 placeholder={dict.geolocation.longitudePlaceholder}
                 data-testid="geolocation-longitude-input"
-                {...geoForm.register('longitude', {
+                {...updateSpaceForm.register('longitude', {
                   setValueAs: (v) => (v === '' || v == null ? null : parseFloat(v as string)),
                 })}
               />
-              {geoForm.formState.errors.longitude && (
+              {updateSpaceForm.formState.errors.longitude && (
                 <span className="text-destructive text-xs">
-                  {geoForm.formState.errors.longitude.message}
+                  {updateSpaceForm.formState.errors.longitude.message}
                 </span>
               )}
             </div>
@@ -85,9 +101,9 @@ export function SpaceGeolocationCard({
               {dict.geolocation.environmentLabel}
             </label>
             <Select
-              value={geoForm.watch('environment') ?? ''}
+              value={updateSpaceForm.watch('environment') ?? ''}
               onValueChange={(v) =>
-                geoForm.setValue(
+                updateSpaceForm.setValue(
                   'environment',
                   v === '' ? null : (v as 'INDOOR' | 'OUTDOOR' | 'MIXED'),
                 )

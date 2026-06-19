@@ -81,6 +81,8 @@ const dict = {
     geolocation: {
       title: 'Ubicación',
       hint: 'Establece las coordenadas y el tipo de entorno para activar la previsión del tiempo.',
+      nameLabel: 'Nombre del espacio',
+      namePlaceholder: 'Ej. Mi jardín',
       latitudeLabel: 'Latitud',
       latitudePlaceholder: 'Ej. 40.4168',
       longitudeLabel: 'Longitud',

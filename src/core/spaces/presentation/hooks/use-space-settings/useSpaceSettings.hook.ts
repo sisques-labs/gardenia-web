@@ -9,16 +9,16 @@ import { useSpaceDetail } from '@/core/spaces/presentation/hooks/use-space-detai
 import { useCreateInvitation } from '@/core/spaces/presentation/hooks/use-create-invitation/useCreateInvitation.hook';
 import { useAddMember } from '@/core/spaces/presentation/hooks/use-add-member/useAddMember.hook';
 import { useRemoveMember } from '@/core/spaces/presentation/hooks/use-remove-member/useRemoveMember.hook';
-import { useUpdateGeolocation } from '@/core/spaces/presentation/hooks/use-update-geolocation/use-update-geolocation.hook';
+import { useUpdateSpace } from '@/core/spaces/presentation/hooks/use-update-space/use-update-space.hook';
 import {
   createInvitationSchema,
   type CreateInvitationFormValues,
 } from '@/core/spaces/presentation/schemas/create-invitation.schema';
 import { addMemberSchema, type AddMemberFormValues } from '@/core/spaces/presentation/schemas/add-member.schema';
 import {
-  updateGeolocationSchema,
-  type UpdateGeolocationFormValues,
-} from '@/core/spaces/presentation/schemas/update-geolocation.schema';
+  updateSpaceSchema,
+  type UpdateSpaceFormValues,
+} from '@/core/spaces/presentation/schemas/update-space.schema';
 import type { SpaceInvitation } from '@/core/spaces/domain/types/space-invitation.type';
 
 export function useSpaceSettings(lang: string) {
@@ -29,7 +29,7 @@ export function useSpaceSettings(lang: string) {
   const createInvitationMutation = useCreateInvitation();
   const addMemberMutation = useAddMember();
   const removeMemberMutation = useRemoveMember();
-  const updateGeolocationMutation = useUpdateGeolocation();
+  const updateSpaceMutation = useUpdateSpace();
 
   const isOwner = !!spaceDetail.data && spaceDetail.data.ownerId === currentUserId;
 
@@ -57,20 +57,21 @@ export function useSpaceSettings(lang: string) {
     resolver: zodResolver(addMemberSchema),
   });
 
-  const geoForm = useForm<UpdateGeolocationFormValues>({
-    resolver: zodResolver(updateGeolocationSchema),
-    defaultValues: { latitude: null, longitude: null, environment: null },
+  const updateSpaceForm = useForm<UpdateSpaceFormValues>({
+    resolver: zodResolver(updateSpaceSchema),
+    defaultValues: { name: undefined, latitude: null, longitude: null, environment: null },
   });
 
   useEffect(() => {
     if (spaceDetail.data) {
-      geoForm.reset({
+      updateSpaceForm.reset({
+        name: spaceDetail.data.name,
         latitude: spaceDetail.data.latitude ?? null,
         longitude: spaceDetail.data.longitude ?? null,
-        environment: (spaceDetail.data.environment as UpdateGeolocationFormValues['environment']) ?? null,
+        environment: (spaceDetail.data.environment as UpdateSpaceFormValues['environment']) ?? null,
       });
     }
-  }, [spaceDetail.data, geoForm]);
+  }, [spaceDetail.data, updateSpaceForm]);
 
   const onCreateInvitation = (values: CreateInvitationFormValues) => {
     if (!spaceId) return;
@@ -100,10 +101,10 @@ export function useSpaceSettings(lang: string) {
     );
   };
 
-  const onUpdateGeolocation = (values: UpdateGeolocationFormValues) => {
+  const onUpdateSpace = (values: UpdateSpaceFormValues) => {
     if (!spaceId) return;
-    updateGeolocationMutation.reset();
-    updateGeolocationMutation.mutate({ spaceId, ...values });
+    updateSpaceMutation.reset();
+    updateSpaceMutation.mutate({ spaceId, ...values });
   };
 
   return {
@@ -115,14 +116,14 @@ export function useSpaceSettings(lang: string) {
     invForm,
     addForm,
     removeForm,
-    geoForm,
+    updateSpaceForm,
     onCreateInvitation,
     onAddMember,
     onRemoveMember,
-    onUpdateGeolocation,
+    onUpdateSpace,
     createInvitation: createInvitationMutation,
     addMember: addMemberMutation,
     removeMember: removeMemberMutation,
-    updateGeolocation: updateGeolocationMutation,
+    updateSpace: updateSpaceMutation,
   };
 }

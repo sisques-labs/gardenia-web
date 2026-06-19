@@ -26,11 +26,11 @@ export function SpaceSettingsScreen({ dict, weatherDict, memberListDict, lang }:
     invForm,
     addForm,
     removeForm,
-    geoForm,
+    updateSpaceForm,
     onCreateInvitation,
     onAddMember,
     onRemoveMember,
-    onUpdateGeolocation,
+    onUpdateSpace,
     createInvitation: {
       isPending: invPending,
       error: invError,
@@ -46,10 +46,10 @@ export function SpaceSettingsScreen({ dict, weatherDict, memberListDict, lang }:
       error: removeError,
       isSuccess: removeSuccess,
     },
-    updateGeolocation: {
-      isPending: geoPending,
-      error: geoError,
-      isSuccess: geoSuccess,
+    updateSpace: {
+      isPending: updatePending,
+      error: updateError,
+      isSuccess: updateSuccess,
     },
   } = useSpaceSettings(lang);
 
@@ -78,11 +78,11 @@ export function SpaceSettingsScreen({ dict, weatherDict, memberListDict, lang }:
         {isOwner && (
           <SpaceGeolocationCard
             dict={dict}
-            geoForm={geoForm}
-            onSubmit={onUpdateGeolocation}
-            isPending={geoPending}
-            isError={!!geoError}
-            isSuccess={geoSuccess}
+            updateSpaceForm={updateSpaceForm}
+            onSubmit={onUpdateSpace}
+            isPending={updatePending}
+            isError={!!updateError}
+            isSuccess={updateSuccess}
           />
         )}
 

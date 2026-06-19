@@ -75,6 +75,8 @@ const dict = {
     geolocation: {
       title: 'Location',
       hint: 'Set the coordinates and environment type to enable the weather forecast.',
+      nameLabel: 'Space name',
+      namePlaceholder: 'e.g. My garden',
       latitudeLabel: 'Latitude',
       latitudePlaceholder: 'e.g. 40.4168',
       longitudeLabel: 'Longitude',

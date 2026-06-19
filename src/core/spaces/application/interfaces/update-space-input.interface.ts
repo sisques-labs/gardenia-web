@@ -2,6 +2,7 @@ import type { SpaceEnvironment } from '@/core/spaces/domain/types/space-environm
 
 export interface UpdateSpaceInput {
   spaceId: string;
+  name?: string;
   latitude?: number | null;
   longitude?: number | null;
   environment?: SpaceEnvironment | null;

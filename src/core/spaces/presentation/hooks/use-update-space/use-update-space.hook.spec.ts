@@ -12,7 +12,7 @@ vi.mock(
   }),
 );
 
-import { useUpdateGeolocation } from './use-update-geolocation.hook';
+import { useUpdateSpace } from './use-update-space.hook';
 
 const input = {
   spaceId: 'space-1',
@@ -29,7 +29,7 @@ function makeWrapper() {
   return Wrapper;
 }
 
-describe('useUpdateGeolocation', () => {
+describe('useUpdateSpace', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -37,7 +37,7 @@ describe('useUpdateGeolocation', () => {
   it('calls updateSpaceGeolocationUseCase.execute on mutate', async () => {
     mockExecute.mockResolvedValue(undefined);
 
-    const { result } = renderHook(() => useUpdateGeolocation(), { wrapper: makeWrapper() });
+    const { result } = renderHook(() => useUpdateSpace(), { wrapper: makeWrapper() });
 
     await act(async () => {
       result.current.mutate(input);
@@ -49,7 +49,7 @@ describe('useUpdateGeolocation', () => {
   it('propagates errors from use case', async () => {
     mockExecute.mockRejectedValue(new Error('Update failed'));
 
-    const { result } = renderHook(() => useUpdateGeolocation(), { wrapper: makeWrapper() });
+    const { result } = renderHook(() => useUpdateSpace(), { wrapper: makeWrapper() });
 
     await act(async () => {
       result.current.mutate(input);
