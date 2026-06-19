@@ -34,18 +34,39 @@ export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
   }
 
   async create(input: CreatePlantingSpotInput): Promise<PlantingSpot> {
+    const { dimensionsWidth, dimensionsHeight, dimensionsLength, ...rest } = input;
+    const hasDimensions = dimensionsWidth != null || dimensionsHeight != null || dimensionsLength != null;
     const res = await apolloClient.mutate<PlantingSpotCreateResponse>({
       mutation: PLANTING_SPOT_CREATE,
-      variables: { input },
+      variables: {
+        input: {
+          ...rest,
+          dimensions: hasDimensions
+            ? { width: dimensionsWidth ?? null, height: dimensionsHeight ?? null, length: dimensionsLength ?? null }
+            : null,
+        },
+      },
     });
     if (!res.data?.plantingSpotCreate?.success) throw new Error('plantingSpotCreate mutation failed');
     return this.findById(res.data.plantingSpotCreate.id);
   }
 
   async update(input: UpdatePlantingSpotInput): Promise<PlantingSpot> {
+    const { dimensionsWidth, dimensionsHeight, dimensionsLength, ...rest } = input;
+    const dimensionsUndefined = dimensionsWidth === undefined && dimensionsHeight === undefined && dimensionsLength === undefined;
+    const hasDimensions = !dimensionsUndefined && (dimensionsWidth != null || dimensionsHeight != null || dimensionsLength != null);
     const res = await apolloClient.mutate<PlantingSpotUpdateResponse>({
       mutation: PLANTING_SPOT_UPDATE,
-      variables: { input },
+      variables: {
+        input: {
+          ...rest,
+          ...(dimensionsUndefined ? {} : {
+            dimensions: hasDimensions
+              ? { width: dimensionsWidth ?? null, height: dimensionsHeight ?? null, length: dimensionsLength ?? null }
+              : null,
+          }),
+        },
+      },
     });
     if (!res.data?.plantingSpotUpdate?.success) throw new Error('plantingSpotUpdate mutation failed');
     return this.findById(res.data.plantingSpotUpdate.id);
