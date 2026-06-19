@@ -29,20 +29,54 @@ export function usePlantingSpotForm({ mode, spotId, lang }: UseePlantingSpotForm
   const form = useForm<PlantingSpotFormValues>({
     resolver: zodResolver(plantingSpotSchema),
     values: spot
-      ? { name: spot.name, type: spot.type, description: spot.description ?? '' }
-      : { name: '', type: 'RAISED_BED', description: '' },
+      ? {
+          name: spot.name,
+          type: spot.type,
+          description: spot.description ?? '',
+          capacity: spot.capacity ?? null,
+          row: spot.row ?? null,
+          column: spot.column ?? null,
+          dimensionsWidth: spot.dimensionsWidth ?? null,
+          dimensionsHeight: spot.dimensionsHeight ?? null,
+          dimensionsLength: spot.dimensionsLength ?? null,
+          soilType: spot.soilType ?? '',
+        }
+      : {
+          name: '',
+          type: 'RAISED_BED',
+          description: '',
+          capacity: null,
+          row: null,
+          column: null,
+          dimensionsWidth: null,
+          dimensionsHeight: null,
+          dimensionsLength: null,
+          soilType: '',
+        },
   });
 
   const isPending = createMutation.isPending || updateMutation.isPending;
 
   function onSubmit(values: PlantingSpotFormValues) {
+    const payload = {
+      ...values,
+      description: values.description || null,
+      capacity: values.capacity ?? null,
+      row: values.row ?? null,
+      column: values.column ?? null,
+      dimensionsWidth: values.dimensionsWidth ?? null,
+      dimensionsHeight: values.dimensionsHeight ?? null,
+      dimensionsLength: values.dimensionsLength ?? null,
+      soilType: values.soilType || null,
+    };
+
     if (isEdit && spotId) {
       updateMutation.mutate(
-        { id: spotId, ...values },
+        { id: spotId, ...payload },
         { onSuccess: () => router.push(`/${lang}/planting-spots`) },
       );
     } else {
-      createMutation.mutate(values, {
+      createMutation.mutate(payload, {
         onSuccess: () => router.push(`/${lang}/planting-spots`),
       });
     }

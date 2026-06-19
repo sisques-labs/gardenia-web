@@ -18,6 +18,8 @@ const mockRepository: ISpacesRepository = {
   createInvitation: vi.fn(),
   addMember: vi.fn(),
   removeMember: vi.fn(),
+  getSpaceWeather: vi.fn(),
+  update: vi.fn(),
 };
 
 describe('GetSpaceDetailUseCase', () => {
