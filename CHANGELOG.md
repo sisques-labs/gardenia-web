@@ -1,6 +1,18 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.19.0-alpha.0] - 2026-06-21
+
+### Features
+- **inventory:** Add inventory module to the web (593557b)
+
+### Refactor
+- **inventory:** Address PR review — table component + file splits (a13557c)
+- **inventory:** Use shared Button in table action cells (a9991c5)
+- **shared:** Move trimOptional to src/shared/lib (4e08236)
+
+### Testing
+- **inventory:** Cover form hook, modals and list screen (bf06302)
 ## [0.18.0-alpha.1] - 2026-06-19
 
 ### Bug Fixes
