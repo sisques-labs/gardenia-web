@@ -5,6 +5,8 @@ const dict = {
     newItem: 'New item',
     lowStockBadge: 'Low stock',
     expiringBadge: 'Expiring soon',
+    statusColumn: 'Status',
+    actionsColumn: 'Actions',
     deleteConfirm: 'Are you sure you want to delete this item?',
   },
   filters: {

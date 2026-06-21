@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { InventoryItemRow } from '@/core/inventory/presentation/components/inventory-item-row/inventory-item-row';
+import { InventoryTable } from '@/core/inventory/presentation/components/inventory-table/inventory-table';
 import { InventoryItemModal } from '@/core/inventory/presentation/components/inventory-item-modal/inventory-item-modal';
 import { AdjustQuantityModal } from '@/core/inventory/presentation/components/adjust-quantity-modal/adjust-quantity-modal';
 import { InventoryFilters } from '@/core/inventory/presentation/components/inventory-filters/inventory-filters';
@@ -85,18 +85,13 @@ export function InventoryListScreen({ dict, lang: _lang }: Props) {
         ) : filteredItems.length === 0 ? (
           <p className="text-muted-foreground text-sm">{dict.list.empty}</p>
         ) : (
-          <div className="flex flex-col gap-4">
-            {filteredItems.map((item) => (
-              <InventoryItemRow
-                key={item.id}
-                item={item}
-                dict={dict}
-                onEdit={(i) => setEditingItem(i)}
-                onAdjust={(i) => setAdjustingItem(i)}
-                onDelete={(id) => deleteItem(id)}
-              />
-            ))}
-          </div>
+          <InventoryTable
+            items={filteredItems}
+            dict={dict}
+            onEdit={(i) => setEditingItem(i)}
+            onAdjust={(i) => setAdjustingItem(i)}
+            onDelete={(id) => deleteItem(id)}
+          />
         )}
       </div>
 

@@ -9,46 +9,13 @@ import {
 import { useCreateInventoryItem } from '@/core/inventory/presentation/hooks/use-create-inventory-item/use-create-inventory-item.hook';
 import { useUpdateInventoryItem } from '@/core/inventory/presentation/hooks/use-update-inventory-item/use-update-inventory-item.hook';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
-import type { CreateInventoryItemInput } from '@/core/inventory/application/interfaces/create-inventory-item-input.interface';
-import type { UpdateInventoryItemInput } from '@/core/inventory/application/interfaces/update-inventory-item-input.interface';
+import { toCreateInventoryItemInput } from './to-create-inventory-item-input';
+import { toUpdateInventoryItemInput } from './to-update-inventory-item-input';
 
 type UseInventoryItemFormOptions = {
   item?: InventoryItem;
   onClose: () => void;
 };
-
-const trimmed = (value?: string): string | undefined => {
-  const v = value?.trim();
-  return v ? v : undefined;
-};
-
-function toCreateInput(values: InventoryItemFormValues): CreateInventoryItemInput {
-  return {
-    itemType: values.itemType,
-    name: values.name.trim(),
-    brand: trimmed(values.brand),
-    notes: trimmed(values.notes),
-    quantity: values.quantity,
-    unit: values.unit,
-    lowStockThreshold: values.lowStockThreshold,
-    acquiredAt: trimmed(values.acquiredAt),
-    expiresAt: trimmed(values.expiresAt),
-  };
-}
-
-function toUpdateInput(id: string, values: InventoryItemFormValues): UpdateInventoryItemInput {
-  return {
-    id,
-    itemType: values.itemType,
-    name: values.name.trim(),
-    brand: trimmed(values.brand) ?? null,
-    notes: trimmed(values.notes) ?? null,
-    unit: values.unit,
-    lowStockThreshold: values.lowStockThreshold ?? null,
-    acquiredAt: trimmed(values.acquiredAt) ?? null,
-    expiresAt: trimmed(values.expiresAt) ?? null,
-  };
-}
 
 export function useInventoryItemForm({ item, onClose }: UseInventoryItemFormOptions) {
   const isEditing = !!item;
@@ -88,9 +55,9 @@ export function useInventoryItemForm({ item, onClose }: UseInventoryItemFormOpti
 
   const onSubmit = handleSubmit((values) => {
     if (isEditing && item) {
-      updateItem(toUpdateInput(item.id, values), { onSuccess: onClose });
+      updateItem(toUpdateInventoryItemInput(item.id, values), { onSuccess: onClose });
     } else {
-      createItem(toCreateInput(values), { onSuccess: onClose });
+      createItem(toCreateInventoryItemInput(values), { onSuccess: onClose });
     }
   });
 

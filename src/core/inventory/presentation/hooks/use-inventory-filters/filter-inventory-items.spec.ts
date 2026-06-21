@@ -1,10 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import {
-  filterInventoryItems,
-  isLowStock,
-  isExpiringSoon,
-  type InventoryFiltersState,
-} from './use-inventory-filters.hook';
+import { filterInventoryItems } from './filter-inventory-items';
+import type { InventoryFiltersState } from './inventory-filters-state.interface';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
 
 function makeItem(overrides: Partial<InventoryItem>): InventoryItem {
@@ -35,30 +31,6 @@ const baseState: InventoryFiltersState = {
   lowStockOnly: false,
   expiringSoonOnly: false,
 };
-
-describe('isLowStock', () => {
-  it('is true when quantity <= threshold', () => {
-    expect(isLowStock(makeItem({ quantity: 1, lowStockThreshold: 2 }))).toBe(true);
-  });
-  it('is false when no threshold set', () => {
-    expect(isLowStock(makeItem({ quantity: 0, lowStockThreshold: null }))).toBe(false);
-  });
-  it('is false when quantity above threshold', () => {
-    expect(isLowStock(makeItem({ quantity: 5, lowStockThreshold: 2 }))).toBe(false);
-  });
-});
-
-describe('isExpiringSoon', () => {
-  it('is true when expiresAt within the window', () => {
-    expect(isExpiringSoon(makeItem({ expiresAt: '2026-06-10' }), NOW)).toBe(true);
-  });
-  it('is false when expiresAt far in the future', () => {
-    expect(isExpiringSoon(makeItem({ expiresAt: '2026-12-01' }), NOW)).toBe(false);
-  });
-  it('is false when no expiry date', () => {
-    expect(isExpiringSoon(makeItem({ expiresAt: null }), NOW)).toBe(false);
-  });
-});
 
 describe('filterInventoryItems', () => {
   const items = [
@@ -92,11 +64,7 @@ describe('filterInventoryItems', () => {
   });
 
   it('combines filters', () => {
-    const result = filterInventoryItems(
-      items,
-      { ...baseState, type: 'SEEDS', lowStockOnly: true },
-      NOW,
-    );
+    const result = filterInventoryItems(items, { ...baseState, type: 'SEEDS', lowStockOnly: true }, NOW);
     expect(result.map((i) => i.id)).toEqual(['a']);
   });
 });

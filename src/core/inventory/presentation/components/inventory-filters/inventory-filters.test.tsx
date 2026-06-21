@@ -2,7 +2,7 @@ import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import enInventory from '@/core/inventory/presentation/i18n/en';
-import type { InventoryFiltersState } from '@/core/inventory/presentation/hooks/use-inventory-filters/use-inventory-filters.hook';
+import type { InventoryFiltersState } from '@/core/inventory/presentation/hooks/use-inventory-filters/inventory-filters-state.interface';
 import { InventoryFilters } from './inventory-filters';
 
 const dict = enInventory as AppDict['inventory'];

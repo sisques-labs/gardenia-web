@@ -10,6 +10,8 @@ const dict = {
     newItem: 'Nuevo artículo',
     lowStockBadge: 'Stock bajo',
     expiringBadge: 'Caduca pronto',
+    statusColumn: 'Estado',
+    actionsColumn: 'Acciones',
     deleteConfirm: '¿Seguro que quieres eliminar este artículo?',
   },
   filters: {

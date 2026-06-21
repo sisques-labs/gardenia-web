@@ -1,7 +1,7 @@
 'use client';
 
 import { INVENTORY_ITEM_TYPES } from '@/core/inventory/domain/types/inventory-item.interface';
-import type { InventoryFiltersState } from '@/core/inventory/presentation/hooks/use-inventory-filters/use-inventory-filters.hook';
+import type { InventoryFiltersState } from '@/core/inventory/presentation/hooks/use-inventory-filters/inventory-filters-state.interface';
 import { SearchInput } from '@/shared/presentation/components/ui/search-input/search-input';
 import { Switch } from '@/shared/presentation/components/ui/switch/switch';
 import {
