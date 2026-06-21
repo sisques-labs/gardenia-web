@@ -1,6 +1,6 @@
 import type { InventoryItemFormValues } from '@/core/inventory/presentation/schemas/inventory-item.schema';
 import type { CreateInventoryItemInput } from '@/core/inventory/application/interfaces/create-inventory-item-input.interface';
-import { trimOptional } from './trim-optional';
+import { trimOptional } from '@/shared/lib/trim-optional';
 
 export function toCreateInventoryItemInput(
   values: InventoryItemFormValues,

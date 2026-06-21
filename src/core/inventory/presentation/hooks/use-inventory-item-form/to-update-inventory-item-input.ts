@@ -1,6 +1,6 @@
 import type { InventoryItemFormValues } from '@/core/inventory/presentation/schemas/inventory-item.schema';
 import type { UpdateInventoryItemInput } from '@/core/inventory/application/interfaces/update-inventory-item-input.interface';
-import { trimOptional } from './trim-optional';
+import { trimOptional } from '@/shared/lib/trim-optional';
 
 /** `quantity` is intentionally excluded — stock changes only via adjust. */
 export function toUpdateInventoryItemInput(
