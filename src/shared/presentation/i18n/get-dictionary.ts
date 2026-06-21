@@ -10,6 +10,7 @@ import type { ShellDict } from '@/shared/presentation/i18n/shell/en';
 import type { HarvestsDict } from '@/core/harvests/presentation/i18n/en';
 import type { CareLogDict } from '@/core/care-log/presentation/i18n/en';
 import type { PlantingSpotsDict } from '@/core/planting-spots/presentation/i18n/en';
+import type { InventoryDict } from '@/core/inventory/presentation/i18n/en';
 
 import enAuth from '@/core/auth/presentation/i18n/en';
 import esAuth from '@/core/auth/presentation/i18n/es';
@@ -31,6 +32,8 @@ import enCareLog from '@/core/care-log/presentation/i18n/en';
 import esCareLog from '@/core/care-log/presentation/i18n/es';
 import enPlantingSpots from '@/core/planting-spots/presentation/i18n/en';
 import esPlantingSpots from '@/core/planting-spots/presentation/i18n/es';
+import enInventory from '@/core/inventory/presentation/i18n/en';
+import esInventory from '@/core/inventory/presentation/i18n/es';
 
 export type AppDict = {
   auth: WidenStringLiterals<AuthDict>;
@@ -43,6 +46,7 @@ export type AppDict = {
   harvests: WidenStringLiterals<HarvestsDict>;
   careLog: WidenStringLiterals<CareLogDict>;
   plantingSpots: WidenStringLiterals<PlantingSpotsDict>;
+  inventory: WidenStringLiterals<InventoryDict>;
 };
 
 const dictionaries: Record<Locale, AppDict> = {
@@ -57,6 +61,7 @@ const dictionaries: Record<Locale, AppDict> = {
     harvests: enHarvests,
     careLog: enCareLog,
     plantingSpots: enPlantingSpots,
+    inventory: enInventory,
   },
   es: {
     auth: esAuth,
@@ -69,6 +74,7 @@ const dictionaries: Record<Locale, AppDict> = {
     harvests: esHarvests,
     careLog: esCareLog,
     plantingSpots: esPlantingSpots,
+    inventory: esInventory,
   },
 };
 
