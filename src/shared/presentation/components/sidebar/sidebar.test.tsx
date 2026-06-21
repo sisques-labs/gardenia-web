@@ -21,10 +21,11 @@ const shellDict: AppDict['shell'] = {
   nav: {
     home: 'Home',
     map: 'Map',
-    inventory: 'Inventory',
+    plants: 'Plants',
     calendar: 'Calendar',
     journal: 'Journal',
     harvests: 'Harvests',
+    inventory: 'Inventory',
     pests: 'Pests',
     community: 'Community',
     plantingSpots: 'Planting spots',

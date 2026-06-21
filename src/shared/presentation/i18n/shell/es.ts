@@ -21,10 +21,11 @@ const dict = {
   nav: {
     home: 'Inicio',
     map: 'Mapa',
-    inventory: 'Inventario',
+    plants: 'Plantas',
     calendar: 'Calendario',
     journal: 'Diario',
     harvests: 'Cosechas',
+    inventory: 'Inventario',
     pests: 'Plagas',
     community: 'Comunidad',
     plantingSpots: 'Zonas de cultivo',
