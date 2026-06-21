@@ -2,6 +2,7 @@ import type { ColumnDef } from '@tanstack/react-table';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import { Badge } from '@/shared/presentation/components/ui/badge/badge';
+import { Button } from '@/shared/presentation/components/ui/button/button';
 import { isLowStock } from '@/core/inventory/presentation/hooks/use-inventory-filters/is-low-stock';
 import { isExpiringSoon } from '@/core/inventory/presentation/hooks/use-inventory-filters/is-expiring-soon';
 
@@ -66,31 +67,35 @@ export function getInventoryColumns({
       cell: ({ row }) => {
         const item = row.original;
         return (
-          <div className="flex justify-end gap-3">
-            <button
+          <div className="flex justify-end gap-1">
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               aria-label={dict.row.adjust}
               onClick={() => onAdjust(item)}
-              className="text-sm font-medium hover:opacity-80"
             >
               {dict.row.adjust}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               aria-label={dict.row.edit}
               onClick={() => onEdit(item)}
-              className="text-sm font-medium hover:opacity-80"
             >
               {dict.row.edit}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               aria-label={dict.row.delete}
               onClick={() => onDelete(item.id)}
-              className="text-destructive hover:text-destructive/80 text-sm font-medium"
+              className="text-[var(--terracotta)] hover:text-[var(--terracotta)]"
             >
               {dict.row.delete}
-            </button>
+            </Button>
           </div>
         );
       },
