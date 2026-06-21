@@ -1,0 +1,73 @@
+const dict = {
+  list: {
+    title: 'Inventory',
+    empty: 'No supplies yet',
+    newItem: 'New item',
+    lowStockBadge: 'Low stock',
+    expiringBadge: 'Expiring soon',
+    statusColumn: 'Status',
+    actionsColumn: 'Actions',
+    deleteConfirm: 'Are you sure you want to delete this item?',
+  },
+  filters: {
+    searchPlaceholder: 'Search by name...',
+    allTypes: 'All types',
+    lowStockOnly: 'Low stock',
+    expiringSoon: 'Expiring soon',
+  },
+  form: {
+    title: 'New item',
+    editTitle: 'Edit item',
+    submitting: 'Saving...',
+    submit: 'Save',
+    cancel: 'Cancel',
+    itemType: 'Type',
+    name: 'Name',
+    brand: 'Brand',
+    notes: 'Notes',
+    quantity: 'Quantity',
+    unit: 'Unit',
+    lowStockThreshold: 'Low-stock threshold',
+    acquiredAt: 'Acquired on',
+    expiresAt: 'Expires on',
+  },
+  adjust: {
+    title: 'Adjust quantity',
+    currentQuantity: 'Current quantity',
+    delta: 'Adjustment (+ restock / − consume)',
+    reason: 'Reason',
+    submit: 'Apply',
+    submitting: 'Applying...',
+    cancel: 'Cancel',
+  },
+  row: {
+    edit: 'Edit',
+    adjust: 'Adjust',
+    delete: 'Delete',
+  },
+  types: {
+    SEEDS: 'Seeds',
+    FERTILIZER: 'Fertilizer',
+    SUBSTRATE: 'Substrate',
+    PHYTOSANITARY: 'Phytosanitary',
+    OTHER: 'Other',
+  },
+  units: {
+    UNITS: 'units',
+    G: 'g',
+    KG: 'kg',
+    ML: 'ml',
+    L: 'l',
+    PACKETS: 'packets',
+  },
+  errors: {
+    loadFailed: 'Could not load the inventory. Try again.',
+    createFailed: 'Could not create the item. Try again.',
+    updateFailed: 'Could not update the item. Try again.',
+    deleteFailed: 'Could not delete the item. Try again.',
+    adjustFailed: 'Could not adjust the quantity. Try again.',
+  },
+} as const;
+
+export default dict;
+export type InventoryDict = typeof dict;
