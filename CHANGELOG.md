@@ -1,6 +1,13 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.20.0-alpha.0] - 2026-06-22
+
+### Features
+- **pagination:** Add ellipsis range, variants and table footer (8fc3528)
+
+### Refactor
+- **pagination:** Pass ref as prop instead of forwardRef (React 19) (ce3d43b)
 ## [0.19.0-alpha.0] - 2026-06-21
 
 ### Features
