@@ -89,19 +89,28 @@ export interface PaginationProps extends React.HTMLAttributes<HTMLElement> {
   siblings?: number;
   /** Pages pinned at each edge. */
   boundaries?: number;
+  ref?: React.Ref<HTMLElement>;
 }
 
-const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
-  ({ className, page, totalPages, onPageChange, siblings = 1, boundaries = 1, ...props }, ref) => {
-    const pages = usePageRange(page, totalPages, siblings, boundaries);
+function Pagination({
+  ref,
+  className,
+  page,
+  totalPages,
+  onPageChange,
+  siblings = 1,
+  boundaries = 1,
+  ...props
+}: PaginationProps) {
+  const pages = usePageRange(page, totalPages, siblings, boundaries);
 
-    return (
-      <nav
-        ref={ref}
-        aria-label="Pagination"
-        className={cn('flex items-center gap-1', className)}
-        {...props}
-      >
+  return (
+    <nav
+      ref={ref}
+      aria-label="Pagination"
+      className={cn('flex items-center gap-1', className)}
+      {...props}
+    >
         <PageButton
           aria-label="Previous page"
           disabled={page <= 1}
@@ -139,20 +148,19 @@ const Pagination = React.forwardRef<HTMLElement, PaginationProps>(
           <ChevronRight className="h-[15px] w-[15px]" />
         </PageButton>
       </nav>
-    );
-  },
-);
-Pagination.displayName = 'Pagination';
+  );
+}
 
 // ─── Simple pagination (previous / next, no numbers) ─────────────────────────
 export interface SimplePaginationProps extends React.HTMLAttributes<HTMLDivElement> {
   page: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  ref?: React.Ref<HTMLDivElement>;
 }
 
-const SimplePagination = React.forwardRef<HTMLDivElement, SimplePaginationProps>(
-  ({ className, page, totalPages, onPageChange, ...props }, ref) => (
+function SimplePagination({ ref, className, page, totalPages, onPageChange, ...props }: SimplePaginationProps) {
+  return (
     <div ref={ref} className={cn('flex items-center gap-2.5', className)} {...props}>
       <PageButton
         square={false}
@@ -178,17 +186,15 @@ const SimplePagination = React.forwardRef<HTMLDivElement, SimplePaginationProps>
         <ChevronRight className="h-[15px] w-[15px]" />
       </PageButton>
     </div>
-  ),
-);
-SimplePagination.displayName = 'SimplePagination';
+  );
+}
 
 // ─── Compact pagination (circular arrows) ────────────────────────────────────
-const CompactPagination = React.forwardRef<HTMLDivElement, SimplePaginationProps>(
-  ({ className, page, totalPages, onPageChange, ...props }, ref) => {
-    const arrow =
-      'inline-flex h-8 w-8 items-center justify-center rounded-full border-[1.5px] border-[var(--rule)] bg-[var(--paper)] text-[var(--ink-2)] transition-colors hover:bg-[var(--paper-2)] disabled:cursor-not-allowed disabled:opacity-40';
-    return (
-      <div ref={ref} className={cn('flex items-center gap-2', className)} {...props}>
+function CompactPagination({ ref, className, page, totalPages, onPageChange, ...props }: SimplePaginationProps) {
+  const arrow =
+    'inline-flex h-8 w-8 items-center justify-center rounded-full border-[1.5px] border-[var(--rule)] bg-[var(--paper)] text-[var(--ink-2)] transition-colors hover:bg-[var(--paper-2)] disabled:cursor-not-allowed disabled:opacity-40';
+  return (
+    <div ref={ref} className={cn('flex items-center gap-2', className)} {...props}>
         <button
           type="button"
           aria-label="Previous page"
@@ -211,10 +217,8 @@ const CompactPagination = React.forwardRef<HTMLDivElement, SimplePaginationProps
           <ChevronRight className="h-[15px] w-[15px]" />
         </button>
       </div>
-    );
-  },
-);
-CompactPagination.displayName = 'CompactPagination';
+  );
+}
 
 // ─── Load more (feeds / infinite lists) ──────────────────────────────────────
 export interface LoadMoreProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -225,14 +229,14 @@ export interface LoadMoreProps extends React.HTMLAttributes<HTMLDivElement> {
   label?: string;
   /** Message shown once everything is loaded. */
   doneLabel?: string;
+  ref?: React.Ref<HTMLDivElement>;
 }
 
-const LoadMore = React.forwardRef<HTMLDivElement, LoadMoreProps>(
-  ({ className, loaded, total, onLoadMore, label = 'Load more', doneLabel = 'No more items', ...props }, ref) => {
-    const done = loaded >= total;
-    const pct = total > 0 ? Math.min((loaded / total) * 100, 100) : 0;
-    return (
-      <div ref={ref} className={cn('w-full text-center', className)} {...props}>
+function LoadMore({ ref, className, loaded, total, onLoadMore, label = 'Load more', doneLabel = 'No more items', ...props }: LoadMoreProps) {
+  const done = loaded >= total;
+  const pct = total > 0 ? Math.min((loaded / total) * 100, 100) : 0;
+  return (
+    <div ref={ref} className={cn('w-full text-center', className)} {...props}>
         {done ? (
           <div className="font-hand text-lg text-[var(--terracotta)]">{doneLabel}</div>
         ) : (
@@ -257,10 +261,8 @@ const LoadMore = React.forwardRef<HTMLDivElement, LoadMoreProps>(
           </div>
         </div>
       </div>
-    );
-  },
-);
-LoadMore.displayName = 'LoadMore';
+  );
+}
 
 // ─── Table footer (summary + per-page + numbered) ────────────────────────────
 export interface TablePaginationFooterProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -274,23 +276,23 @@ export interface TablePaginationFooterProps extends React.HTMLAttributes<HTMLDiv
   /** When provided, renders the "per page" selector. */
   onPageSizeChange?: (pageSize: number) => void;
   pageSizeOptions?: number[];
+  ref?: React.Ref<HTMLDivElement>;
 }
 
-const TablePaginationFooter = React.forwardRef<HTMLDivElement, TablePaginationFooterProps>(
-  (
-    {
-      className,
-      page,
-      pageSize,
-      total,
-      onPageChange,
-      onPageSizeChange,
-      pageSizeOptions = [12, 24, 48, 96],
-      ...props
-    },
+function TablePaginationFooter(
+  {
     ref,
-  ) => {
-    const totalPages = Math.max(1, Math.ceil(total / pageSize));
+    className,
+    page,
+    pageSize,
+    total,
+    onPageChange,
+    onPageSizeChange,
+    pageSizeOptions = [12, 24, 48, 96],
+    ...props
+  }: TablePaginationFooterProps,
+) {
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
     const from = total === 0 ? 0 : (page - 1) * pageSize + 1;
     const to = Math.min(page * pageSize, total);
 
@@ -328,10 +330,8 @@ const TablePaginationFooter = React.forwardRef<HTMLDivElement, TablePaginationFo
           <Pagination page={page} totalPages={totalPages} onPageChange={onPageChange} />
         </div>
       </div>
-    );
-  },
-);
-TablePaginationFooter.displayName = 'TablePaginationFooter';
+  );
+}
 
 export {
   Pagination,
