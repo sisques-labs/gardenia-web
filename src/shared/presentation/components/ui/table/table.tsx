@@ -13,6 +13,20 @@ import {
 import { ChevronUp, ChevronDown, ChevronsUpDown } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { Checkbox } from '../checkbox/checkbox';
+import { TablePaginationFooter } from '../pagination/pagination';
+
+export interface DataTablePagination {
+  /** Active page (1-based). */
+  page: number;
+  /** Items per page. */
+  pageSize: number;
+  /** Total number of items across all pages. */
+  total: number;
+  onPageChange: (page: number) => void;
+  /** When provided, renders the "per page" selector. */
+  onPageSizeChange?: (pageSize: number) => void;
+  pageSizeOptions?: number[];
+}
 
 export interface DataTableProps<TData, TValue = unknown> {
   columns: ColumnDef<TData, TValue>[];
@@ -21,6 +35,8 @@ export interface DataTableProps<TData, TValue = unknown> {
   onSelectionChange?: (rows: TData[]) => void;
   sorting?: SortingState;
   onSortingChange?: (sorting: SortingState) => void;
+  /** When provided, renders a pagination footer below the table. */
+  pagination?: DataTablePagination;
   className?: string;
 }
 
@@ -50,7 +66,7 @@ export function SortableHeader({
 }
 
 function DataTableInner<TData, TValue = unknown>(
-  { columns, data, enableRowSelection = true, onSelectionChange, sorting: sortingProp, onSortingChange, className }: DataTableProps<TData, TValue>,
+  { columns, data, enableRowSelection = true, onSelectionChange, sorting: sortingProp, onSortingChange, pagination, className }: DataTableProps<TData, TValue>,
   _ref: React.ForwardedRef<HTMLDivElement>,
 ) {
   const [sortingInternal, setSortingInternal] = React.useState<SortingState>([]);
@@ -156,6 +172,7 @@ function DataTableInner<TData, TValue = unknown>(
           </tbody>
         </table>
       </div>
+      {pagination && <TablePaginationFooter {...pagination} />}
     </div>
   );
 }

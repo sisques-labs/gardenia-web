@@ -105,9 +105,22 @@ describe('DataTable', () => {
     );
   });
 
-  it('does not render pagination controls', () => {
+  it('does not render pagination controls by default', () => {
     render(<DataTable columns={columns} data={data} />);
-    expect(screen.queryByText(/previous/i)).not.toBeInTheDocument();
-    expect(screen.queryByText(/next/i)).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Previous page')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Next page')).not.toBeInTheDocument();
+  });
+
+  it('renders the pagination footer when pagination prop is provided', () => {
+    const onPageChange = vi.fn();
+    render(
+      <DataTable
+        columns={columns}
+        data={data}
+        pagination={{ page: 1, pageSize: 12, total: 50, onPageChange }}
+      />,
+    );
+    expect(screen.getByText('1–12 of 50')).toBeInTheDocument();
+    expect(screen.getByLabelText('Next page')).toBeInTheDocument();
   });
 });
