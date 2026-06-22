@@ -120,3 +120,30 @@ function SelectableTable() {
 export const WithRowSelection: Story = {
   render: () => <SelectableTable />,
 };
+
+function PaginatedTable() {
+  const total = 247;
+  const [page, setPage] = React.useState(1);
+  const [pageSize, setPageSize] = React.useState(12);
+  return (
+    <DataTable
+      columns={columns}
+      data={plantData}
+      enableRowSelection={false}
+      pagination={{
+        page,
+        pageSize,
+        total,
+        onPageChange: setPage,
+        onPageSizeChange: (size) => {
+          setPageSize(size);
+          setPage(1);
+        },
+      }}
+    />
+  );
+}
+
+export const WithPagination: Story = {
+  render: () => <PaginatedTable />,
+};
