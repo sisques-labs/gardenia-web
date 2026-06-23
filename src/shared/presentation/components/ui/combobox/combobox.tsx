@@ -50,23 +50,25 @@ const Combobox = ({ ref, className, options, value, onChange, placeholder = 'Sea
         />
         {open && (
           <Command.List id={listId} className="card absolute z-50 mt-1 w-full py-1 max-h-60 overflow-auto text-sm">
-            {options
-              .filter((o) =>
-                o.label.toLowerCase().includes(inputValue.toLowerCase()),
-              )
-              .map((o) => (
-                <Command.Item
-                  key={o.value}
-                  value={o.value}
-                  onSelect={handleSelect}
-                  className="px-3 py-1.5 cursor-pointer hover:bg-[var(--paper-2)] aria-selected:bg-[var(--paper-2)]"
-                >
-                  {o.label}
-                </Command.Item>
-              ))}
-            {options.filter((o) => o.label.toLowerCase().includes(inputValue.toLowerCase())).length === 0 && (
-              <p className="px-3 py-1.5 text-[var(--ink-3)]">No results</p>
-            )}
+            {(() => {
+              const search = inputValue.toLowerCase();
+              const items: React.ReactNode[] = [];
+              for (const o of options) {
+                if (o.label.toLowerCase().includes(search)) {
+                  items.push(
+                    <Command.Item
+                      key={o.value}
+                      value={o.value}
+                      onSelect={handleSelect}
+                      className="px-3 py-1.5 cursor-pointer hover:bg-[var(--paper-2)] aria-selected:bg-[var(--paper-2)]"
+                    >
+                      {o.label}
+                    </Command.Item>,
+                  );
+                }
+              }
+              return items.length > 0 ? items : <p className="px-3 py-1.5 text-[var(--ink-3)]">No results</p>;
+            })()}
           </Command.List>
         )}
       </Command>
