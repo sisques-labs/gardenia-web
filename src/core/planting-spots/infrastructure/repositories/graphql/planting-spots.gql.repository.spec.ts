@@ -69,31 +69,32 @@ describe('PlantingSpotsGqlRepository', () => {
   describe('list()', () => {
     it('calls apolloClient.query with PLANTING_SPOTS_FIND_BY_CRITERIA and returns mapped items', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { plantingSpotsFindByCriteria: { items: mockSpots } },
+        data: { plantingSpotsFindByCriteria: { items: mockSpots, total: 1, page: 1, perPage: 20, totalPages: 1 } },
       } as never);
 
-      const result = await repository.list();
+      const result = await repository.list(1, 20);
 
       expect(apolloClient.query).toHaveBeenCalledOnce();
       expect(apolloClient.query).toHaveBeenCalledWith({
         query: PLANTING_SPOTS_FIND_BY_CRITERIA,
+        variables: { input: { pagination: { page: 1, perPage: 20 } } },
         fetchPolicy: 'network-only',
       });
-      expect(result).toEqual(mockSpots);
+      expect(result).toEqual({ items: mockSpots, total: 1, page: 1, perPage: 20, totalPages: 1 });
     });
 
-    it('returns empty array when items is empty', async () => {
+    it('returns empty result when items is empty', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { plantingSpotsFindByCriteria: { items: [] } },
+        data: { plantingSpotsFindByCriteria: { items: [], total: 0, page: 1, perPage: 20, totalPages: 1 } },
       } as never);
 
-      const result = await repository.list();
-      expect(result).toEqual([]);
+      const result = await repository.list(1, 20);
+      expect(result).toEqual({ items: [], total: 0, page: 1, perPage: 20, totalPages: 1 });
     });
 
     it('propagates errors from apolloClient.query', async () => {
       vi.mocked(apolloClient.query).mockRejectedValue(new Error('Network error'));
-      await expect(repository.list()).rejects.toThrow('Network error');
+      await expect(repository.list(1, 20)).rejects.toThrow('Network error');
     });
   });
 

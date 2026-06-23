@@ -18,6 +18,11 @@ vi.mock('next/link', () => ({
   ),
 }));
 
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(() => ({ push: vi.fn() })),
+  useSearchParams: vi.fn(() => new URLSearchParams()),
+}));
+
 import { usePlantingSpots } from '@/core/planting-spots/presentation/hooks/use-planting-spots/use-planting-spots.hook';
 import { PlantingSpotsListScreen } from './planting-spots-list.screen';
 
@@ -114,7 +119,7 @@ describe('PlantingSpotsListScreen', () => {
   });
 
   it('renders the page title from dict', () => {
-    vi.mocked(usePlantingSpots).mockReturnValue({ spots: [], isLoading: false, error: null });
+    vi.mocked(usePlantingSpots).mockReturnValue({ spots: [], total: 0, totalPages: 1, currentPage: 1, isLoading: false, error: null });
 
     render(<PlantingSpotsListScreen dict={dict} lang="en" />);
 
@@ -122,7 +127,7 @@ describe('PlantingSpotsListScreen', () => {
   });
 
   it('renders skeleton grid when loading', () => {
-    vi.mocked(usePlantingSpots).mockReturnValue({ spots: [], isLoading: true, error: null });
+    vi.mocked(usePlantingSpots).mockReturnValue({ spots: [], total: 0, totalPages: 1, currentPage: 1, isLoading: true, error: null });
 
     const { container } = render(<PlantingSpotsListScreen dict={dict} lang="en" />);
 
@@ -130,7 +135,7 @@ describe('PlantingSpotsListScreen', () => {
   });
 
   it('renders empty state message when no spots', () => {
-    vi.mocked(usePlantingSpots).mockReturnValue({ spots: [], isLoading: false, error: null });
+    vi.mocked(usePlantingSpots).mockReturnValue({ spots: [], total: 0, totalPages: 1, currentPage: 1, isLoading: false, error: null });
 
     render(<PlantingSpotsListScreen dict={dict} lang="en" />);
 
@@ -138,7 +143,7 @@ describe('PlantingSpotsListScreen', () => {
   });
 
   it('renders one PlantingSpotCard per spot', () => {
-    vi.mocked(usePlantingSpots).mockReturnValue({ spots: mockSpots, isLoading: false, error: null });
+    vi.mocked(usePlantingSpots).mockReturnValue({ spots: mockSpots, total: 2, totalPages: 1, currentPage: 1, isLoading: false, error: null });
 
     render(<PlantingSpotsListScreen dict={dict} lang="en" />);
 
@@ -148,7 +153,7 @@ describe('PlantingSpotsListScreen', () => {
   });
 
   it('renders new planting spot button with correct href', () => {
-    vi.mocked(usePlantingSpots).mockReturnValue({ spots: [], isLoading: false, error: null });
+    vi.mocked(usePlantingSpots).mockReturnValue({ spots: [], total: 0, totalPages: 1, currentPage: 1, isLoading: false, error: null });
 
     render(<PlantingSpotsListScreen dict={dict} lang="en" />);
 
