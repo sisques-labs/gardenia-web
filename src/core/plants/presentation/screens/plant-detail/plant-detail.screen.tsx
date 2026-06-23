@@ -1,8 +1,9 @@
 'use client';
 
 import Image from 'next/image';
-import { redirect } from 'next/navigation';
-import { Droplets, Camera, StickyNote, Sun, Shovel, Scissors } from 'lucide-react';
+import { redirect, useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { Droplets, Camera, StickyNote, Sun, Shovel, Scissors, Trash2 } from 'lucide-react';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import { Card, CardContent } from '@/shared/presentation/components/ui/card/card';
 import { Chip } from '@/shared/presentation/components/ui/chip/chip';
@@ -12,9 +13,12 @@ import { CareCard } from '@/core/plants/presentation/components/care-card/care-c
 import { GrowthTimeline } from '@/core/plants/presentation/components/growth-timeline/growth-timeline';
 import { InDevelopment } from '@/shared/presentation/components/in-development/in-development';
 import { usePlant } from '@/core/plants/presentation/hooks/use-plant/use-plant.hook';
+import { useDeletePlant } from '@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import { usePlantCareLogs } from '@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-logs.hook';
 import { CareLogSummary } from '@/core/care-log/presentation/components/care-log-summary/care-log-summary';
+import { ConfirmDialog } from '@/shared/presentation/components/ui/confirm-dialog/confirm-dialog';
+import { Alert } from '@/shared/presentation/components/ui/alert/alert';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 const shimmer = 'bg-muted rounded animate-pulse';
@@ -45,14 +49,24 @@ type Props = {
 };
 
 export function PlantDetailScreen({ dict, careLogDict, lang, spaceId: spaceIdProp, plantId }: Props) {
+  const router = useRouter();
   const storeSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const spaceId = spaceIdProp ?? storeSpaceId;
   const { data: plant, isLoading, isError } = usePlant(spaceId, plantId);
   const { data: lastCareByType = {} } = usePlantCareLogs(plantId);
+  const deletePlant = useDeletePlant(spaceId);
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   if (isLoading) return <DetailSkeleton />;
   if (isError) redirect(`/${lang}/plants`);
   if (!plant) return null;
+
+  function handleDeleteConfirm() {
+    deletePlant.mutate(plantId, {
+      onSuccess: () => router.push(`/${lang}/plants`),
+      onSettled: () => setIsDeleteOpen(false),
+    });
+  }
 
   return (
     <div className="flex flex-col">
@@ -145,7 +159,20 @@ export function PlantDetailScreen({ dict, careLogDict, lang, spaceId: spaceIdPro
                 <StickyNote className="w-4 h-4" />
                 {dict.detail.actions.newNote}
               </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                data-testid="btn-delete-plant"
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                onClick={() => setIsDeleteOpen(true)}
+              >
+                <Trash2 className="w-4 h-4" />
+                {dict.delete.button}
+              </Button>
             </div>
+            {deletePlant.isError && (
+              <Alert variant="error" message={dict.delete.error} />
+            )}
           </div>
 
           {/* Right column — QR Card */}
@@ -294,6 +321,18 @@ export function PlantDetailScreen({ dict, careLogDict, lang, spaceId: spaceIdPro
           </TabsContent>
         </Tabs>
       </div>
+
+      <ConfirmDialog
+        open={isDeleteOpen}
+        onOpenChange={setIsDeleteOpen}
+        title={dict.delete.confirmTitle}
+        description={dict.delete.confirmDescription}
+        confirmLabel={dict.delete.confirm}
+        cancelLabel={dict.delete.cancel}
+        destructive
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setIsDeleteOpen(false)}
+      />
     </div>
   );
 }

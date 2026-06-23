@@ -1,8 +1,10 @@
 import Link from 'next/link';
 import Image from 'next/image';
+import { Trash2 } from 'lucide-react';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 import { Chip } from '@/shared/presentation/components/ui/chip/chip';
 import { StatusDot, type StatusDotStatus } from '@/shared/presentation/components/ui/status-dot/status-dot';
+import { Button } from '@/shared/presentation/components/ui/button/button';
 
 type Props = {
   plant: Plant;
@@ -12,9 +14,11 @@ type Props = {
   status?: StatusDotStatus;
   /** Optional category tag for the Chip badge */
   tag?: string;
+  /** Called when the user confirms deletion */
+  onDelete?: (plant: Plant) => void;
 };
 
-export function PlantCard({ plant, lang, noSpecies, status, tag }: Props) {
+export function PlantCard({ plant, lang, noSpecies, status, tag, onDelete }: Props) {
   return (
     <Link
       href={`/${lang}/plants/${plant.id}`}
@@ -43,6 +47,22 @@ export function PlantCard({ plant, lang, noSpecies, status, tag }: Props) {
             {plant.species?.scientificName ?? noSpecies}
           </p>
         </div>
+        {onDelete && (
+          <Button
+            variant="ghost"
+            size="sm"
+            data-testid="btn-delete-plant"
+            className="shrink-0 text-muted-foreground hover:text-destructive"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onDelete(plant);
+            }}
+          >
+            <Trash2 className="w-4 h-4" />
+            <span className="sr-only">Delete</span>
+          </Button>
+        )}
       </div>
 
       {/* Footer */}

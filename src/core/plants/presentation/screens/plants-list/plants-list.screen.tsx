@@ -1,12 +1,15 @@
 "use client";
 
+import { useState } from "react";
 import { CreatePlantModal } from "@/core/plants/presentation/components/create-plant-modal/create-plant-modal";
 import { PlantCard } from "@/core/plants/presentation/components/plant-card/plant-card";
 import { usePlants } from "@/core/plants/presentation/hooks/use-plants/use-plants.hook";
+import { useDeletePlant } from "@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook";
 import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store";
 import { PageHeader } from "@/shared/presentation/components/page-header/page-header";
 import { Alert } from "@/shared/presentation/components/ui/alert/alert";
 import { Button } from "@/shared/presentation/components/ui/button/button";
+import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
 import {
   Tabs,
   TabsContent,
@@ -14,10 +17,9 @@ import {
   TabsTrigger,
 } from "@/shared/presentation/components/ui/tabs/tabs";
 import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
-import { useState } from "react";
+import type { Plant } from "@/core/plants/domain/interfaces/plant.interface";
 
 const shimmer = "bg-muted rounded animate-pulse";
-
 
 function PlantCardSkeleton() {
   return (
@@ -43,7 +45,9 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
   const storeSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const spaceId = spaceIdProp ?? storeSpaceId;
   const { data: plants, isLoading } = usePlants(spaceId);
+  const deletePlant = useDeletePlant(spaceId);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [plantToDelete, setPlantToDelete] = useState<Plant | null>(null);
 
   const plantCount = plants?.length ?? 0;
   const speciesCount = plants
@@ -52,6 +56,13 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
         return ids;
       }, new Set<string>()).size
     : 0;
+
+  function handleDeleteConfirm() {
+    if (!plantToDelete) return;
+    deletePlant.mutate(plantToDelete.id, {
+      onSettled: () => setPlantToDelete(null),
+    });
+  }
 
   return (
     <div>
@@ -105,6 +116,9 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
 
         {/* Content */}
         <TabsContent value="all" className="pt-6 pb-6">
+          {deletePlant.isError && (
+            <Alert variant="error" message={dict.delete.error} className="mb-4" />
+          )}
           {isLoading ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {Array.from({ length: 6 }).map((_, i) => (
@@ -121,6 +135,7 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
                   plant={plant}
                   lang={lang}
                   noSpecies={dict.detail.noSpecies}
+                  onDelete={setPlantToDelete}
                 />
               ))}
             </div>
@@ -135,6 +150,18 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
           onClose={() => setIsCreateOpen(false)}
         />
       )}
+
+      <ConfirmDialog
+        open={!!plantToDelete}
+        onOpenChange={(open) => { if (!open) setPlantToDelete(null); }}
+        title={dict.delete.confirmTitle}
+        description={dict.delete.confirmDescription}
+        confirmLabel={dict.delete.confirm}
+        cancelLabel={dict.delete.cancel}
+        destructive
+        onConfirm={handleDeleteConfirm}
+        onCancel={() => setPlantToDelete(null)}
+      />
     </div>
   );
 }
