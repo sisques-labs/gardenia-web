@@ -21,16 +21,14 @@ const spinnerVariants = cva(
 export interface SpinnerProps
   extends React.HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof spinnerVariants> {
+  ref?: React.Ref<HTMLSpanElement>;
   label?: string;
 }
 
-const Spinner = React.forwardRef<HTMLSpanElement, SpinnerProps>(
-  ({ className, size, label = 'Loading…', ...props }, ref) => (
-    <span ref={ref} role="status" className={cn(spinnerVariants({ size }), className)} {...props}>
-      <span className="sr-only">{label}</span>
-    </span>
-  ),
+const Spinner = ({ className, size, label = 'Loading…', ref, ...props }: SpinnerProps) => (
+  <span ref={ref} role="status" className={cn(spinnerVariants({ size }), className)} {...props}>
+    <span className="sr-only">{label}</span>
+  </span>
 );
-Spinner.displayName = 'Spinner';
 
 export { Spinner };

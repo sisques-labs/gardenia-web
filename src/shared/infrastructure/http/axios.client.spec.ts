@@ -21,12 +21,17 @@ vi.mock('@/core/auth/infrastructure/http/refresh-mutex', () => ({
   refreshTokenOnce: vi.fn(),
 }));
 
+vi.mock('./http-logger', () => ({
+  logHttpError: vi.fn(),
+}));
+
 // ──────────────────────────────────────────────
 // Imports after mocks
 // ──────────────────────────────────────────────
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import { refreshTokenOnce } from '@/core/auth/infrastructure/http/refresh-mutex';
+import { logHttpError } from './http-logger';
 
 // ──────────────────────────────────────────────
 // Helpers
@@ -176,5 +181,90 @@ describe('axios.client — response interceptor', () => {
     expect(refreshTokenOnce).not.toHaveBeenCalled();
     expect(clearAuth).not.toHaveBeenCalled();
     expect(redirectToLogin).not.toHaveBeenCalled();
+  });
+});
+
+// ──────────────────────────────────────────────
+// T8: timeout and structured error logging tests
+// ──────────────────────────────────────────────
+
+describe('axios.client — timeout', () => {
+  it('http instance has a timeout set', async () => {
+    mockSpacesStore();
+    mockAuthStore(null);
+    const { http } = await import('./axios.client');
+    expect(http.defaults.timeout).toBeGreaterThan(0);
+  });
+
+  it('bareHttp instance has a timeout set', async () => {
+    const { bareHttp } = await import('./axios.client');
+    expect(bareHttp.defaults.timeout).toBeGreaterThan(0);
+  });
+});
+
+describe('axios.client — structured error logging', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockSpacesStore();
+  });
+
+  it('logHttpError is called with status and url on non-401 error', async () => {
+    mockAuthStore('tok');
+    const { http } = await import('./axios.client');
+    const errorHandler = getErrorInterceptorHandler(http);
+
+    const config = { url: '/plants', _startTime: Date.now() - 50, headers: {} };
+    const error = {
+      config,
+      response: { status: 500 },
+      isAxiosError: true,
+      message: 'Internal Server Error',
+    };
+
+    await expect(errorHandler(error)).rejects.toBeDefined();
+
+    expect(vi.mocked(logHttpError)).toHaveBeenCalledOnce();
+    const [log] = vi.mocked(logHttpError).mock.calls[0];
+    expect(log.status).toBe(500);
+    expect(log.url).toBe('/plants');
+    expect(log.durationMs).toBeGreaterThanOrEqual(0);
+  });
+
+  it('logHttpError is called on timeout (no response, undefined status)', async () => {
+    mockAuthStore('tok');
+    const { http } = await import('./axios.client');
+    const errorHandler = getErrorInterceptorHandler(http);
+
+    const config = { url: '/plants', _startTime: Date.now() - 10_100, headers: {}, _retry: true };
+    const error = {
+      config,
+      response: undefined,
+      code: 'ECONNABORTED',
+      isAxiosError: true,
+      message: 'timeout of 10000ms exceeded',
+    };
+
+    await expect(errorHandler(error)).rejects.toBeDefined();
+
+    expect(vi.mocked(logHttpError)).toHaveBeenCalledOnce();
+    const [log] = vi.mocked(logHttpError).mock.calls[0];
+    expect(log.status).toBeUndefined();
+    expect(log.durationMs).toBeGreaterThanOrEqual(10_000);
+  });
+
+  it('logHttpError is called on 401 error', async () => {
+    mockAuthStore('tok');
+    vi.mocked(refreshTokenOnce).mockResolvedValue(null);
+
+    const { http } = await import('./axios.client');
+    const errorHandler = getErrorInterceptorHandler(http);
+
+    const error = make401Error('/plants');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    (error.config as any)._startTime = Date.now() - 20;
+
+    await expect(errorHandler(error)).rejects.toBeDefined();
+
+    expect(vi.mocked(logHttpError)).toHaveBeenCalledOnce();
   });
 });

@@ -33,30 +33,28 @@ const VARIANT_ICONS = {
 export interface AlertProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof alertVariants> {
+  ref?: React.Ref<HTMLDivElement>;
   variant: 'info' | 'warning' | 'error' | 'success';
   message: string;
   title?: string;
 }
 
-const Alert = React.forwardRef<HTMLDivElement, AlertProps>(
-  ({ className, variant = 'info', message, title, ...props }, ref) => {
-    const Icon = VARIANT_ICONS[variant ?? 'info'];
-    return (
-      <div
-        ref={ref}
-        role="alert"
-        className={cn(alertVariants({ variant }), className)}
-        {...props}
-      >
-        <Icon className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
-        <div className="flex flex-col gap-1">
-          {title && <p className="font-medium leading-none">{title}</p>}
-          <p>{message}</p>
-        </div>
+const Alert = ({ className, variant = 'info', message, title, ref, ...props }: AlertProps) => {
+  const Icon = VARIANT_ICONS[variant ?? 'info'];
+  return (
+    <div
+      ref={ref}
+      role="alert"
+      className={cn(alertVariants({ variant }), className)}
+      {...props}
+    >
+      <Icon className="mt-0.5 h-4 w-4 shrink-0" aria-hidden="true" />
+      <div className="flex flex-col gap-1">
+        {title && <p className="font-medium leading-none">{title}</p>}
+        <p>{message}</p>
       </div>
-    );
-  },
-);
-Alert.displayName = 'Alert';
+    </div>
+  );
+};
 
 export { Alert, alertVariants };

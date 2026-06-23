@@ -36,6 +36,14 @@ const dict = {
     cancel: 'Cancelar',
     error: 'No se pudo crear la planta. Inténtalo de nuevo.',
   },
+  delete: {
+    button: 'Eliminar planta',
+    confirmTitle: 'Eliminar planta',
+    confirmDescription: 'Esta acción no se puede deshacer. La planta se eliminará permanentemente.',
+    confirm: 'Eliminar',
+    cancel: 'Cancelar',
+    error: 'No se pudo eliminar la planta. Inténtalo de nuevo.',
+  },
   detail: {
     breadcrumbList: 'Inventario',
     bancal: 'Bancal',

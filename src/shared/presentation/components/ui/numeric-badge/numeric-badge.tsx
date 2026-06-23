@@ -21,20 +21,18 @@ const numericBadgeVariants = cva(
 export interface NumericBadgeProps
   extends React.HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof numericBadgeVariants> {
+  ref?: React.Ref<HTMLSpanElement>;
   count: number;
   max?: number;
 }
 
-const NumericBadge = React.forwardRef<HTMLSpanElement, NumericBadgeProps>(
-  ({ className, count, max = 99, variant, ...props }, ref) => {
-    const display = count > max ? `${max}+` : String(count);
-    return (
-      <span ref={ref} className={cn(numericBadgeVariants({ variant }), className)} {...props}>
-        {display}
-      </span>
-    );
-  },
-);
-NumericBadge.displayName = 'NumericBadge';
+const NumericBadge = ({ ref, className, count, max = 99, variant, ...props }: NumericBadgeProps) => {
+  const display = count > max ? `${max}+` : String(count);
+  return (
+    <span ref={ref} className={cn(numericBadgeVariants({ variant }), className)} {...props}>
+      {display}
+    </span>
+  );
+};
 
 export { NumericBadge };

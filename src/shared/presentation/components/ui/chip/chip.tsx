@@ -13,23 +13,21 @@ const CHIP_VARIANT_MAP = {
 export type ChipVariant = keyof typeof CHIP_VARIANT_MAP;
 
 export interface ChipProps extends React.HTMLAttributes<HTMLSpanElement> {
+  ref?: React.Ref<HTMLSpanElement>;
   variant?: ChipVariant;
 }
 
-const Chip = React.forwardRef<HTMLSpanElement, ChipProps>(
-  ({ className, variant = 'default', children, ...props }, ref) => {
-    const variantClass = CHIP_VARIANT_MAP[variant];
-    return (
-      <span
-        ref={ref}
-        className={cn('chip', variantClass || undefined, className)}
-        {...props}
-      >
-        {children}
-      </span>
-    );
-  },
-);
-Chip.displayName = 'Chip';
+const Chip = ({ className, variant = 'default', children, ref, ...props }: ChipProps) => {
+  const variantClass = CHIP_VARIANT_MAP[variant];
+  return (
+    <span
+      ref={ref}
+      className={cn('chip', variantClass || undefined, className)}
+      {...props}
+    >
+      {children}
+    </span>
+  );
+};
 
 export { Chip };

@@ -29,6 +29,7 @@ export interface DataTablePagination {
 }
 
 export interface DataTableProps<TData, TValue = unknown> {
+  ref?: React.Ref<HTMLDivElement>;
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   enableRowSelection?: boolean;
@@ -66,8 +67,7 @@ export function SortableHeader({
 }
 
 function DataTableInner<TData, TValue = unknown>(
-  { columns, data, enableRowSelection = true, onSelectionChange, sorting: sortingProp, onSortingChange, pagination, className }: DataTableProps<TData, TValue>,
-  _ref: React.ForwardedRef<HTMLDivElement>,
+  { ref, columns, data, enableRowSelection = true, onSelectionChange, sorting: sortingProp, onSortingChange, pagination, className }: DataTableProps<TData, TValue>,
 ) {
   const [sortingInternal, setSortingInternal] = React.useState<SortingState>([]);
   const isControlledSort = sortingProp !== undefined;
@@ -128,7 +128,7 @@ function DataTableInner<TData, TValue = unknown>(
   });
 
   return (
-    <div ref={_ref} className={cn('card overflow-hidden', className)}>
+    <div ref={ref} className={cn('card overflow-hidden', className)}>
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
@@ -177,6 +177,6 @@ function DataTableInner<TData, TValue = unknown>(
   );
 }
 
-export const DataTable = React.forwardRef(DataTableInner) as <TData, TValue = unknown>(
-  props: DataTableProps<TData, TValue> & { ref?: React.ForwardedRef<HTMLDivElement> },
+export const DataTable = DataTableInner as <TData, TValue = unknown>(
+  props: DataTableProps<TData, TValue>,
 ) => React.ReactElement;
