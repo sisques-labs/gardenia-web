@@ -2,6 +2,8 @@ import axios from 'axios';
 import { refreshTokenOnce } from '@/core/auth/infrastructure/http/refresh-mutex';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
+import { logHttpError } from './http-logger';
+import { HTTP_TIMEOUT_MS } from '@/shared/config/env';
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api';
 const AUTH_SKIP = ['/auth/login', '/auth/register'];
@@ -11,6 +13,7 @@ const SPACE_SKIP = '/auth/';
 export const bareHttp = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
+  timeout: HTTP_TIMEOUT_MS,
 });
 
 export async function doRefresh(): Promise<string> {
@@ -22,6 +25,7 @@ export async function doRefresh(): Promise<string> {
 export const http = axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
+  timeout: HTTP_TIMEOUT_MS,
 });
 
 http.interceptors.request.use((config) => {
@@ -34,6 +38,8 @@ http.interceptors.request.use((config) => {
     const spaceId = useSpacesStore.getState().currentSpaceId;
     if (spaceId) config.headers.set('X-Space-ID', spaceId);
   }
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (config as any)._startTime = Date.now();
   return config;
 });
 
@@ -41,6 +47,14 @@ http.interceptors.response.use(
   (response) => response,
   async (error) => {
     const originalRequest = error.config;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const startTime: number = (originalRequest as any)?._startTime ?? Date.now();
+    logHttpError({
+      status: error.response?.status as number | undefined,
+      url: originalRequest?.url as string | undefined,
+      durationMs: Date.now() - startTime,
+    });
+
     if (error.response?.status !== 401 || originalRequest._retry) {
       return Promise.reject(error);
     }

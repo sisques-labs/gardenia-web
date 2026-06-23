@@ -7,12 +7,21 @@ import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import { refreshTokenOnce } from '@/core/auth/infrastructure/http/refresh-mutex';
 import { doRefresh } from '@/shared/infrastructure/http/axios.client';
-import { GRAPHQL_URL } from '@/shared/config/env';
+import { GRAPHQL_URL, HTTP_TIMEOUT_MS } from '@/shared/config/env';
+import { logHttpError } from './http-logger';
+
+// ── fetchWithTimeout ────────────────────────────────────────────────────────
+function fetchWithTimeout(input: RequestInfo | URL, init?: RequestInit): Promise<Response> {
+  const controller = new AbortController();
+  const id = setTimeout(() => controller.abort(), HTTP_TIMEOUT_MS);
+  return fetch(input, { ...init, signal: controller.signal }).finally(() => clearTimeout(id));
+}
 
 // ── httpLink ────────────────────────────────────────────────────────────────
 const httpLink = createHttpLink({
   uri: GRAPHQL_URL,
   credentials: 'include',
+  fetch: fetchWithTimeout,
 });
 
 // ── authLink ────────────────────────────────────────────────────────────────
@@ -89,8 +98,29 @@ export const onErrorLink: ApolloLink = new ErrorLink(({ error, operation, forwar
   });
 });
 
-// ── Apollo client — link order: authLink → spaceLink → onErrorLink → httpLink
+// ── loggingLink ─────────────────────────────────────────────────────────────
+// Logs non-recoverable HTTP errors (after onErrorLink has had a chance to retry).
+export const loggingLink: ApolloLink = new ApolloLink((operation, forward) => {
+  const startTime = Date.now();
+  return new Observable<FetchResult>((observer) => {
+    const sub = forward(operation).subscribe({
+      next: (value) => observer.next(value),
+      error: (err) => {
+        logHttpError({
+          status: (err as { statusCode?: number }).statusCode,
+          url: GRAPHQL_URL,
+          durationMs: Date.now() - startTime,
+        });
+        observer.error(err);
+      },
+      complete: () => observer.complete(),
+    });
+    return () => sub.unsubscribe();
+  });
+});
+
+// ── Apollo client — link order: authLink → spaceLink → onErrorLink → loggingLink → httpLink
 export const apolloClient = new ApolloClient({
-  link: from([authLink, spaceLink, onErrorLink, httpLink]),
+  link: from([authLink, spaceLink, onErrorLink, loggingLink, httpLink]),
   cache: new InMemoryCache(),
 });

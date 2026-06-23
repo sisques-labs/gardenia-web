@@ -23,6 +23,10 @@ vi.mock('@/core/auth/infrastructure/http/refresh-mutex', () => ({
   refreshTokenOnce: vi.fn(),
 }));
 
+vi.mock('./http-logger', () => ({
+  logHttpError: vi.fn(),
+}));
+
 vi.mock('@/shared/infrastructure/http/axios.client', async (importOriginal) => {
   const original = await importOriginal<typeof import('@/shared/infrastructure/http/axios.client')>();
   return {
@@ -41,6 +45,7 @@ import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import { refreshTokenOnce } from '@/core/auth/infrastructure/http/refresh-mutex';
 import { doRefresh } from '@/shared/infrastructure/http/axios.client';
+import { logHttpError } from './http-logger';
 
 // ──────────────────────────────────────────────
 // Helpers
@@ -395,5 +400,65 @@ describe('onErrorLink', () => {
 
     expect(refreshTokenOnce).toHaveBeenCalledOnce();
     expect(retryHeaders['Authorization']).toBe('Bearer new-token');
+  });
+});
+
+// ──────────────────────────────────────────────
+// 1.5 — loggingLink
+// ──────────────────────────────────────────────
+describe('loggingLink', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockSpacesStore(null);
+    mockAuthStore(null);
+  });
+
+  it('does not call logHttpError on successful operation', async () => {
+    const { loggingLink } = await import('./apollo.client');
+    const terminal = new ApolloLink(() =>
+      new Observable<FetchResult>((observer) => {
+        observer.next({ data: { test: true } });
+        observer.complete();
+      }),
+    );
+
+    const chain = ApolloLink.from([loggingLink, terminal]);
+    await executeLinkCollect(chain);
+
+    expect(vi.mocked(logHttpError)).not.toHaveBeenCalled();
+  });
+
+  it('calls logHttpError with status and durationMs on error', async () => {
+    const { loggingLink } = await import('./apollo.client');
+    const terminal = new ApolloLink(() =>
+      new Observable<FetchResult>((observer) => {
+        observer.error(Object.assign(new Error('Server Error'), { statusCode: 500 }));
+      }),
+    );
+
+    const chain = ApolloLink.from([loggingLink, terminal]);
+    await expect(executeLinkCollect(chain)).rejects.toBeDefined();
+
+    expect(vi.mocked(logHttpError)).toHaveBeenCalledOnce();
+    const [log] = vi.mocked(logHttpError).mock.calls[0];
+    expect(log.status).toBe(500);
+    expect(log.durationMs).toBeGreaterThanOrEqual(0);
+  });
+
+  it('calls logHttpError with undefined status on timeout (AbortError)', async () => {
+    const { loggingLink } = await import('./apollo.client');
+    const terminal = new ApolloLink(() =>
+      new Observable<FetchResult>((observer) => {
+        const err = new DOMException('The operation was aborted.', 'AbortError');
+        observer.error(err);
+      }),
+    );
+
+    const chain = ApolloLink.from([loggingLink, terminal]);
+    await expect(executeLinkCollect(chain)).rejects.toBeDefined();
+
+    expect(vi.mocked(logHttpError)).toHaveBeenCalledOnce();
+    const [log] = vi.mocked(logHttpError).mock.calls[0];
+    expect(log.status).toBeUndefined();
   });
 });
