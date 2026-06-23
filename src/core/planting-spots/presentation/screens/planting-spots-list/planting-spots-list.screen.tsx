@@ -1,14 +1,13 @@
 'use client';
 
-import { useCallback } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { PlantingSpotCard } from '@/core/planting-spots/presentation/components/planting-spot-card/planting-spot-card';
 import { usePlantingSpots } from '@/core/planting-spots/presentation/hooks/use-planting-spots/use-planting-spots.hook';
 import { buttonVariants } from '@/shared/presentation/components/ui/button/button';
 import { PlantingSpotsListSkeleton } from '@/core/planting-spots/presentation/components/planting-spots-list-skeleton/planting-spots-list-skeleton';
 import { Pagination } from '@/shared/presentation/components/ui/pagination/pagination';
+import { useUrlPagination } from '@/shared/presentation/hooks/use-url-pagination/use-url-pagination.hook';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 const PAGE_SIZE = 12;
@@ -20,23 +19,7 @@ type Props = {
 
 export function PlantingSpotsListScreen({ dict, lang }: Props) {
   const { spots, isLoading } = usePlantingSpots();
-
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const page = Math.max(1, Number(searchParams.get('page') ?? 1));
-
-  const handlePageChange = useCallback(
-    (p: number) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set('page', String(p));
-      router.push(`?${params.toString()}`);
-    },
-    [router, searchParams],
-  );
-
-  const totalPages = Math.max(1, Math.ceil(spots.length / PAGE_SIZE));
-  const currentPage = Math.min(page, totalPages);
-  const pagedSpots = spots.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
+  const { currentPage, totalPages, pagedItems: pagedSpots, onPageChange } = useUrlPagination(spots, PAGE_SIZE);
 
   return (
     <div>
@@ -68,7 +51,7 @@ export function PlantingSpotsListScreen({ dict, lang }: Props) {
                 <Pagination
                   page={currentPage}
                   totalPages={totalPages}
-                  onPageChange={handlePageChange}
+                  onPageChange={onPageChange}
                 />
               </div>
             )}

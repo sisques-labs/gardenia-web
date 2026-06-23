@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useCallback } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
 import { CreatePlantModal } from "@/core/plants/presentation/components/create-plant-modal/create-plant-modal";
 import { PlantCard } from "@/core/plants/presentation/components/plant-card/plant-card";
 import { usePlants } from "@/core/plants/presentation/hooks/use-plants/use-plants.hook";
@@ -13,6 +12,7 @@ import { Button } from "@/shared/presentation/components/ui/button/button";
 import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
 import { PlantsListSkeleton } from "@/core/plants/presentation/components/plants-list-skeleton/plants-list-skeleton";
 import { Pagination } from "@/shared/presentation/components/ui/pagination/pagination";
+import { useUrlPagination } from "@/shared/presentation/hooks/use-url-pagination/use-url-pagination.hook";
 import {
   Tabs,
   TabsContent,
@@ -36,18 +36,7 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
   const { plantToDelete, requestDelete, confirmDelete, cancelDelete, isError } = useDeletePlantConfirm(spaceId);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const page = Math.max(1, Number(searchParams.get("page") ?? 1));
-
-  const handlePageChange = useCallback(
-    (p: number) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set("page", String(p));
-      router.push(`?${params.toString()}`);
-    },
-    [router, searchParams],
-  );
+  const { currentPage, totalPages, pagedItems: pagedPlants, onPageChange } = useUrlPagination(plants ?? [], PAGE_SIZE);
 
   const plantCount = plants?.length ?? 0;
   const speciesCount = plants
@@ -56,10 +45,6 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
         return ids;
       }, new Set<string>()).size
     : 0;
-
-  const totalPages = Math.max(1, Math.ceil(plantCount / PAGE_SIZE));
-  const currentPage = Math.min(page, totalPages);
-  const pagedPlants = plants?.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
     <div>
@@ -120,12 +105,12 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
             <PlantsListSkeleton />
           ) : !plants || plants.length === 0 ? (
             <Alert variant="info" message={dict.list.empty} />
-          ) : pagedPlants?.length === 0 ? (
+          ) : pagedPlants.length === 0 ? (
             <Alert variant="info" message={dict.list.empty} />
           ) : (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {pagedPlants?.map((plant) => (
+                {pagedPlants.map((plant) => (
                   <PlantCard
                     key={plant.id}
                     plant={plant}
@@ -140,7 +125,7 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
                   <Pagination
                     page={currentPage}
                     totalPages={totalPages}
-                    onPageChange={handlePageChange}
+                    onPageChange={onPageChange}
                   />
                 </div>
               )}
