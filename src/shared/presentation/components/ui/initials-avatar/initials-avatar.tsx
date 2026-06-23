@@ -38,30 +38,28 @@ const avatarVariants = cva(
 export interface InitialsAvatarProps
   extends React.HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof avatarVariants> {
+  ref?: React.Ref<HTMLSpanElement>;
   name: string;
 }
 
-const InitialsAvatar = React.forwardRef<HTMLSpanElement, InitialsAvatarProps>(
-  ({ className, name, size, ...props }, ref) => {
-    const colorKey = PALETTE[hashName(name)];
-    const colorStyle =
-      colorKey === 'plum' || colorKey === 'sky'
-        ? { backgroundColor: `var(--${colorKey}-bg, var(--paper-2))`, color: `var(--${colorKey}, var(--ink))` }
-        : { backgroundColor: `var(--${colorKey}-bg)`, color: `var(--${colorKey})` };
+const InitialsAvatar = ({ className, name, size, ref, ...props }: InitialsAvatarProps) => {
+  const colorKey = PALETTE[hashName(name)];
+  const colorStyle =
+    colorKey === 'plum' || colorKey === 'sky'
+      ? { backgroundColor: `var(--${colorKey}-bg, var(--paper-2))`, color: `var(--${colorKey}, var(--ink))` }
+      : { backgroundColor: `var(--${colorKey}-bg)`, color: `var(--${colorKey})` };
 
-    return (
-      <span
-        ref={ref}
-        className={cn(avatarVariants({ size }), className)}
-        style={colorStyle}
-        aria-label={name}
-        {...props}
-      >
-        {getInitials(name)}
-      </span>
-    );
-  },
-);
-InitialsAvatar.displayName = 'InitialsAvatar';
+  return (
+    <span
+      ref={ref}
+      className={cn(avatarVariants({ size }), className)}
+      style={colorStyle}
+      aria-label={name}
+      {...props}
+    >
+      {getInitials(name)}
+    </span>
+  );
+};
 
 export { InitialsAvatar };
