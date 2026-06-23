@@ -1,6 +1,21 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.22.0-alpha.0] - 2026-06-23
+
+### Bug Fixes
+- **tests:** Update mocks for PaginatedResult and next/navigation (dd10d9d)
+- **tests:** Update remaining specs for PaginatedResult signature (60c74a8)
+
+### Features
+- **GARDENIA-19:** Add client-side pagination to plants and planting spots listings (d1295d7)
+- **GARDENIA-19:** Switch planting spots to server-side pagination (48f6c06)
+
+### Refactor
+- Extract list skeletons into own components and use as Suspense fallback (8e3185b)
+- Extract pagination logic into shared useUrlPagination hook (4fc2a18)
+- Move default page size (20) into useUrlPagination hook (aa4ffc2)
+- Extract useUrlPage hook, remove duplicated URL logic from screen (1b61cab)
 ## [0.21.0-alpha.5] - 2026-06-23
 
 ### Bug Fixes
