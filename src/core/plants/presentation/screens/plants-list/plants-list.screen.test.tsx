@@ -36,6 +36,11 @@ vi.mock('next/link', () => ({
   ),
 }));
 
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(() => ({ push: vi.fn() })),
+  useSearchParams: vi.fn(() => new URLSearchParams()),
+}));
+
 import { usePlants } from '@/core/plants/presentation/hooks/use-plants/use-plants.hook';
 import { PlantsListScreen } from './plants-list.screen';
 

@@ -46,7 +46,7 @@ describe('usePlantingSpots', () => {
   });
 
   it('returns spots data on mount', async () => {
-    mockExecute.mockResolvedValue(mockSpots);
+    mockExecute.mockResolvedValue({ items: mockSpots, total: 1, page: 1, perPage: 20, totalPages: 1 });
 
     const { result } = renderHook(() => usePlantingSpots(), { wrapper: makeWrapper() });
 
@@ -63,7 +63,7 @@ describe('usePlantingSpots', () => {
   });
 
   it('returns empty array when use-case returns empty', async () => {
-    mockExecute.mockResolvedValue([]);
+    mockExecute.mockResolvedValue({ items: [], total: 0, page: 1, perPage: 20, totalPages: 1 });
 
     const { result } = renderHook(() => usePlantingSpots(), { wrapper: makeWrapper() });
 
