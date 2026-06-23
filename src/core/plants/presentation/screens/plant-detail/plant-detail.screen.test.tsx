@@ -6,6 +6,7 @@ const mockRedirect = vi.fn();
 
 vi.mock('next/navigation', () => ({
   redirect: (url: string) => mockRedirect(url),
+  useRouter: vi.fn(() => ({ push: vi.fn() })),
 }));
 
 vi.mock('@/core/plants/presentation/hooks/use-plant/use-plant.hook', () => ({
@@ -24,6 +25,10 @@ vi.mock('@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-l
 
 vi.mock('@/core/care-log/presentation/components/care-log-summary/care-log-summary', () => ({
   CareLogSummary: () => null,
+}));
+
+vi.mock('@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook', () => ({
+  useDeletePlant: vi.fn(() => ({ mutate: vi.fn(), isError: false })),
 }));
 
 vi.mock('next/link', () => ({
@@ -138,6 +143,14 @@ const dict = {
     pestTracking: {
       title: 'PEST TRACKING',
     },
+  },
+  delete: {
+    button: 'Delete plant',
+    confirmTitle: 'Delete plant',
+    confirmDescription: 'This action cannot be undone.',
+    confirm: 'Delete',
+    cancel: 'Cancel',
+    error: 'Could not delete the plant. Try again.',
   },
   plantDetail: {
     actions: {

@@ -12,6 +12,10 @@ vi.mock('@/core/spaces/infrastructure/store/spaces.store', () => ({
   ),
 }));
 
+vi.mock('@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook', () => ({
+  useDeletePlant: vi.fn(() => ({ mutate: vi.fn(), isError: false })),
+}));
+
 vi.mock('@/core/plants/presentation/components/create-plant-modal/create-plant-modal', () => ({
   CreatePlantModal: ({ onClose }: { onClose: () => void }) => (
     <div data-testid="create-plant-modal">
@@ -109,6 +113,14 @@ const dict = {
     pestTracking: {
       title: 'PEST TRACKING',
     },
+  },
+  delete: {
+    button: 'Delete plant',
+    confirmTitle: 'Delete plant',
+    confirmDescription: 'This action cannot be undone.',
+    confirm: 'Delete',
+    cancel: 'Cancel',
+    error: 'Could not delete the plant. Try again.',
   },
   plantDetail: {
     actions: {
