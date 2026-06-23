@@ -3,6 +3,7 @@ import type { IPlantingSpotsRepository } from '@/core/planting-spots/application
 import type { CreatePlantingSpotInput } from '@/core/planting-spots/application/interfaces/create-planting-spot-input.interface';
 import type { UpdatePlantingSpotInput } from '@/core/planting-spots/application/interfaces/update-planting-spot-input.interface';
 import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
+import type { PaginatedResult } from '@/shared/domain/interfaces/paginated-result.interface';
 import { PLANTING_SPOTS_FIND_BY_CRITERIA } from './queries/planting-spots-find-by-criteria.query';
 import { PLANTING_SPOT_FIND_BY_ID } from './queries/planting-spot-find-by-id.query';
 import { PLANTING_SPOT_CREATE } from './mutations/planting-spot-create.mutation';
@@ -15,12 +16,20 @@ import type { PlantingSpotUpdateResponse } from './responses/planting-spot-updat
 import type { PlantingSpotDeleteResponse } from './responses/planting-spot-delete.response';
 
 export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
-  async list(): Promise<PlantingSpot[]> {
+  async list(page: number, perPage: number): Promise<PaginatedResult<PlantingSpot>> {
     const res = await apolloClient.query<PlantingSpotsFindByCriteriaResponse>({
       query: PLANTING_SPOTS_FIND_BY_CRITERIA,
+      variables: { input: { pagination: { page, perPage } } },
       fetchPolicy: 'network-only',
     });
-    return res.data?.plantingSpotsFindByCriteria?.items ?? [];
+    const data = res.data?.plantingSpotsFindByCriteria;
+    return {
+      items: data?.items ?? [],
+      total: data?.total ?? 0,
+      page: data?.page ?? page,
+      perPage: data?.perPage ?? perPage,
+      totalPages: data?.totalPages ?? 1,
+    };
   }
 
   async findById(id: string): Promise<PlantingSpot> {
