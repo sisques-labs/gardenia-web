@@ -21,8 +21,6 @@ import {
 } from "@/shared/presentation/components/ui/tabs/tabs";
 import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
 
-const PAGE_SIZE = 12;
-
 type Props = {
   dict: AppDict["plants"];
   lang: string;
@@ -36,7 +34,7 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
   const { plantToDelete, requestDelete, confirmDelete, cancelDelete, isError } = useDeletePlantConfirm(spaceId);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  const { currentPage, totalPages, pagedItems: pagedPlants, onPageChange } = useUrlPagination(plants ?? [], PAGE_SIZE);
+  const { currentPage, totalPages, pagedItems: pagedPlants, onPageChange } = useUrlPagination(plants ?? []);
 
   const plantCount = plants?.length ?? 0;
   const speciesCount = plants

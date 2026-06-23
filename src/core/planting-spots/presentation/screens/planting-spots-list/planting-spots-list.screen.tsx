@@ -10,8 +10,6 @@ import { Pagination } from '@/shared/presentation/components/ui/pagination/pagin
 import { useUrlPagination } from '@/shared/presentation/hooks/use-url-pagination/use-url-pagination.hook';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
-const PAGE_SIZE = 12;
-
 type Props = {
   dict: AppDict['plantingSpots'];
   lang: string;
@@ -19,7 +17,7 @@ type Props = {
 
 export function PlantingSpotsListScreen({ dict, lang }: Props) {
   const { spots, isLoading } = usePlantingSpots();
-  const { currentPage, totalPages, pagedItems: pagedSpots, onPageChange } = useUrlPagination(spots, PAGE_SIZE);
+  const { currentPage, totalPages, pagedItems: pagedSpots, onPageChange } = useUrlPagination(spots);
 
   return (
     <div>

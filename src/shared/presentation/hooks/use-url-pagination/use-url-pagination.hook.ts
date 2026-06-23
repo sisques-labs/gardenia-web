@@ -8,7 +8,9 @@ export interface UseUrlPaginationReturn<T> {
   onPageChange: (page: number) => void;
 }
 
-export function useUrlPagination<T>(items: T[], pageSize: number): UseUrlPaginationReturn<T> {
+const DEFAULT_PAGE_SIZE = 20;
+
+export function useUrlPagination<T>(items: T[], pageSize = DEFAULT_PAGE_SIZE): UseUrlPaginationReturn<T> {
   const router = useRouter();
   const searchParams = useSearchParams();
 
