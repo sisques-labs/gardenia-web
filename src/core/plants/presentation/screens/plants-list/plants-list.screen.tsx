@@ -11,6 +11,7 @@ import { PageHeader } from "@/shared/presentation/components/page-header/page-he
 import { Alert } from "@/shared/presentation/components/ui/alert/alert";
 import { Button } from "@/shared/presentation/components/ui/button/button";
 import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
+import { PlantsListSkeleton } from "@/core/plants/presentation/components/plants-list-skeleton/plants-list-skeleton";
 import { Pagination } from "@/shared/presentation/components/ui/pagination/pagination";
 import {
   Tabs,
@@ -21,22 +22,6 @@ import {
 import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
 
 const PAGE_SIZE = 12;
-
-const shimmer = "bg-muted rounded animate-pulse";
-
-function PlantCardSkeleton() {
-  return (
-    <div className="rounded-lg border p-4">
-      <div className="flex items-center gap-3 mb-3">
-        <div className={`w-12 h-12 rounded-full ${shimmer}`} />
-        <div className="flex-1 flex flex-col gap-2">
-          <div className={`h-4 w-3/4 ${shimmer}`} />
-          <div className={`h-3 w-1/2 ${shimmer}`} />
-        </div>
-      </div>
-    </div>
-  );
-}
 
 type Props = {
   dict: AppDict["plants"];
@@ -132,11 +117,7 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
             <Alert variant="error" message={dict.delete.error} className="mb-4" />
           )}
           {isLoading ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <PlantCardSkeleton key={i} />
-              ))}
-            </div>
+            <PlantsListSkeleton />
           ) : !plants || plants.length === 0 ? (
             <Alert variant="info" message={dict.list.empty} />
           ) : pagedPlants?.length === 0 ? (

@@ -40,6 +40,12 @@ conventions:
         singleton export: {context}GqlRepository
       REST (legacy — {name}-http.repository.ts, being replaced by GQL)
     screens: "{name}.screen.tsx — file name; component exported as {Name}Screen (PascalCase). No schemas, no business logic inline — import from schemas/ and hooks/."
+    skeletons: |
+      {name}-skeleton/{name}-skeleton.tsx — loading skeleton for a screen or list.
+      Exported as {Name}Skeleton (PascalCase). Lives alongside other components in
+      presentation/components/{name}-skeleton/.
+      MUST be used as the fallback prop of the <Suspense> that wraps the screen in
+      app/[lang]/…/page.tsx. Never define skeletons inline inside a screen component.
     schemas: "{name}.schema.ts — Zod schema + inferred type. Lives in presentation/schemas/."
     hooks: "hooks/{hook-name}/{hookName}.hook.ts — one folder per hook; exported function named use{Name}"
     providers: "{context}.providers.tsx"
