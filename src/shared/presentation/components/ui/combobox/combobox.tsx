@@ -20,6 +20,7 @@ export interface ComboboxProps extends Omit<React.HTMLAttributes<HTMLDivElement>
 const Combobox = ({ ref, className, options, value, onChange, placeholder = 'Search…', ...props }: ComboboxProps) => {
   const [open, setOpen] = React.useState(false);
   const [inputValue, setInputValue] = React.useState('');
+  const listId = React.useId();
 
   const handleSelect = (selectedValue: string) => {
     onChange?.(selectedValue);
@@ -33,6 +34,8 @@ const Combobox = ({ ref, className, options, value, onChange, placeholder = 'Sea
         <Command.Input
           role="combobox"
           aria-expanded={open}
+          aria-controls={listId}
+          aria-haspopup="listbox"
           value={inputValue}
           placeholder={placeholder}
           onFocus={() => setOpen(true)}
@@ -46,7 +49,7 @@ const Combobox = ({ ref, className, options, value, onChange, placeholder = 'Sea
           className="flex h-9 w-full rounded-md border border-[var(--rule)] bg-[var(--paper-2)] px-3 py-1 text-sm shadow-sm outline-none placeholder:text-[var(--ink-3)] focus:ring-1 focus:ring-[var(--forest-2)] disabled:cursor-not-allowed disabled:opacity-50"
         />
         {open && (
-          <Command.List className="card absolute z-50 mt-1 w-full py-1 max-h-60 overflow-auto text-sm">
+          <Command.List id={listId} className="card absolute z-50 mt-1 w-full py-1 max-h-60 overflow-auto text-sm">
             {options
               .filter((o) =>
                 o.label.toLowerCase().includes(inputValue.toLowerCase()),
