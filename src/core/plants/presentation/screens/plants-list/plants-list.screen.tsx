@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { CreatePlantModal } from "@/core/plants/presentation/components/create-plant-modal/create-plant-modal";
 import { PlantCard } from "@/core/plants/presentation/components/plant-card/plant-card";
 import { usePlants } from "@/core/plants/presentation/hooks/use-plants/use-plants.hook";
@@ -10,6 +11,7 @@ import { PageHeader } from "@/shared/presentation/components/page-header/page-he
 import { Alert } from "@/shared/presentation/components/ui/alert/alert";
 import { Button } from "@/shared/presentation/components/ui/button/button";
 import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
+import { Pagination } from "@/shared/presentation/components/ui/pagination/pagination";
 import {
   Tabs,
   TabsContent,
@@ -17,6 +19,8 @@ import {
   TabsTrigger,
 } from "@/shared/presentation/components/ui/tabs/tabs";
 import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
+
+const PAGE_SIZE = 12;
 
 const shimmer = "bg-muted rounded animate-pulse";
 
@@ -47,6 +51,19 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
   const { plantToDelete, requestDelete, confirmDelete, cancelDelete, isError } = useDeletePlantConfirm(spaceId);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const page = Math.max(1, Number(searchParams.get("page") ?? 1));
+
+  const handlePageChange = useCallback(
+    (p: number) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("page", String(p));
+      router.push(`?${params.toString()}`);
+    },
+    [router, searchParams],
+  );
+
   const plantCount = plants?.length ?? 0;
   const speciesCount = plants
     ? plants.reduce((ids, plant) => {
@@ -54,6 +71,10 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
         return ids;
       }, new Set<string>()).size
     : 0;
+
+  const totalPages = Math.max(1, Math.ceil(plantCount / PAGE_SIZE));
+  const currentPage = Math.min(page, totalPages);
+  const pagedPlants = plants?.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   return (
     <div>
@@ -118,18 +139,31 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
             </div>
           ) : !plants || plants.length === 0 ? (
             <Alert variant="info" message={dict.list.empty} />
+          ) : pagedPlants?.length === 0 ? (
+            <Alert variant="info" message={dict.list.empty} />
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {plants.map((plant) => (
-                <PlantCard
-                  key={plant.id}
-                  plant={plant}
-                  lang={lang}
-                  noSpecies={dict.detail.noSpecies}
-                  onDelete={requestDelete}
-                />
-              ))}
-            </div>
+            <>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                {pagedPlants?.map((plant) => (
+                  <PlantCard
+                    key={plant.id}
+                    plant={plant}
+                    lang={lang}
+                    noSpecies={dict.detail.noSpecies}
+                    onDelete={requestDelete}
+                  />
+                ))}
+              </div>
+              {totalPages > 1 && (
+                <div className="mt-6 flex justify-center">
+                  <Pagination
+                    page={currentPage}
+                    totalPages={totalPages}
+                    onPageChange={handlePageChange}
+                  />
+                </div>
+              )}
+            </>
           )}
         </TabsContent>
       </Tabs>
