@@ -94,7 +94,7 @@ describe('PlantingSpotsGqlRepository', () => {
 
     it('propagates errors from apolloClient.query', async () => {
       vi.mocked(apolloClient.query).mockRejectedValue(new Error('Network error'));
-      await expect(repository.list()).rejects.toThrow('Network error');
+      await expect(repository.list(1, 20)).rejects.toThrow('Network error');
     });
   });
 
