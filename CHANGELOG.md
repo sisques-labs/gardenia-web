@@ -1,6 +1,48 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.21.0-alpha.5] - 2026-06-23
+
+### Bug Fixes
+- Add required ARIA props to combobox role (15d74a5)
+
+### Performance
+- Combine filter+map into single pass in combobox (3813197)
+## [0.21.0-alpha.4] - 2026-06-23
+
+### Documentation
+- Rewrite README to accurately describe the Next.js project (da1b766)
+## [0.21.0-alpha.3] - 2026-06-23
+
+### Bug Fixes
+- Plant list not refreshing after adding a new plant (3a05dcf)
+
+### Testing
+- Update plants repository spec to expect network-only fetch policy (68a33ad)
+## [0.21.0-alpha.2] - 2026-06-23
+
+### Features
+- **http:** Add timeouts and structured error logging to HTTP clients (GARDENIA-22) (1431ce5)
+## [0.21.0-alpha.1] - 2026-06-23
+
+### Bug Fixes
+- **plants:** Update test mocks for delete method and i18n dict (562152a)
+
+### Features
+- **plants:** Implement delete plant with confirmation dialog (GARDENIA-16) (aa8fc5b)
+
+### Refactor
+- **plants:** Extract delete confirm logic into useDeletePlantConfirm hook (f9eebf3)
+## [0.21.0-alpha.0] - 2026-06-23
+
+### Bug Fixes
+- **donut-chart:** Precompute segment offsets to avoid mutation during render (7468bbd)
+
+### Features
+- Migrate forwardRef to ref-as-prop (batch 1) (f051dd5)
+- **ui:** Migrate forwardRef to ref-as-prop pattern (batch 1) (f5440c4)
+- **ui:** Migrate forwardRef to ref-as-prop pattern (batch 2) (713afd9)
+- **ui:** Migrate forwardRef to ref-as-prop pattern (batch 3 - complete) (a1be0bf)
 ## [0.20.0-alpha.0] - 2026-06-22
 
 ### Features

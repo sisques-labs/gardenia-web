@@ -24,48 +24,46 @@ export interface Step {
 }
 
 export interface StepperProps extends React.HTMLAttributes<HTMLDivElement> {
+  ref?: React.Ref<HTMLDivElement>;
   steps: Step[];
   currentStep: number;
 }
 
-const Stepper = React.forwardRef<HTMLDivElement, StepperProps>(
-  ({ className, steps, currentStep, ...props }, ref) => (
-    <div ref={ref} className={cn('flex items-center', className)} {...props}>
-      {steps.map((step, i) => {
-        const state: StepState =
-          i < currentStep ? 'completed' : i === currentStep ? 'active' : 'upcoming';
+const Stepper = ({ className, steps, currentStep, ref, ...props }: StepperProps) => (
+  <div ref={ref} className={cn('flex items-center', className)} {...props}>
+    {steps.map((step, i) => {
+      const state: StepState =
+        i < currentStep ? 'completed' : i === currentStep ? 'active' : 'upcoming';
 
-        return (
-          <React.Fragment key={step.id}>
-            <div
-              data-step
-              data-state={state}
-              aria-current={state === 'active' ? 'step' : undefined}
-              className="flex flex-col items-center gap-1"
-            >
-              <div className={stepVariants({ state })}>
-                {state === 'completed' ? <Check className="h-3.5 w-3.5" /> : i + 1}
-              </div>
-              <span className={cn(
-                'text-xs',
-                state === 'active' ? 'text-[var(--forest)] font-medium' :
-                state === 'completed' ? 'text-[var(--ink-2)]' : 'text-[var(--ink-3)]'
-              )}>
-                {step.label}
-              </span>
+      return (
+        <React.Fragment key={step.id}>
+          <div
+            data-step
+            data-state={state}
+            aria-current={state === 'active' ? 'step' : undefined}
+            className="flex flex-col items-center gap-1"
+          >
+            <div className={stepVariants({ state })}>
+              {state === 'completed' ? <Check className="h-3.5 w-3.5" /> : i + 1}
             </div>
-            {i < steps.length - 1 && (
-              <div className={cn(
-                'flex-1 h-0.5 mx-2',
-                i < currentStep ? 'bg-[var(--forest)]' : 'bg-[var(--rule)]'
-              )} />
-            )}
-          </React.Fragment>
-        );
-      })}
-    </div>
-  ),
+            <span className={cn(
+              'text-xs',
+              state === 'active' ? 'text-[var(--forest)] font-medium' :
+              state === 'completed' ? 'text-[var(--ink-2)]' : 'text-[var(--ink-3)]'
+            )}>
+              {step.label}
+            </span>
+          </div>
+          {i < steps.length - 1 && (
+            <div className={cn(
+              'flex-1 h-0.5 mx-2',
+              i < currentStep ? 'bg-[var(--forest)]' : 'bg-[var(--rule)]'
+            )} />
+          )}
+        </React.Fragment>
+      );
+    })}
+  </div>
 );
-Stepper.displayName = 'Stepper';
 
 export { Stepper };

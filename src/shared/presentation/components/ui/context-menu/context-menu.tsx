@@ -18,10 +18,7 @@ export interface ContextMenuProps {
   contentClassName?: string;
 }
 
-const ContextMenuContent = React.forwardRef<
-  React.ElementRef<typeof ContextMenuPrimitive.Content>,
-  React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Content>
->(({ className, ...props }, ref) => (
+const ContextMenuContent = ({ className, ref, ...props }: React.ComponentPropsWithoutRef<typeof ContextMenuPrimitive.Content> & { ref?: React.Ref<React.ElementRef<typeof ContextMenuPrimitive.Content>> }) => (
   <ContextMenuPrimitive.Portal>
     <ContextMenuPrimitive.Content
       ref={ref}
@@ -32,8 +29,7 @@ const ContextMenuContent = React.forwardRef<
       {...props}
     />
   </ContextMenuPrimitive.Portal>
-));
-ContextMenuContent.displayName = 'ContextMenuContent';
+);
 
 const ContextMenu = ({ items, children, contentClassName }: ContextMenuProps) => (
   <ContextMenuPrimitive.Root>
@@ -53,6 +49,5 @@ const ContextMenu = ({ items, children, contentClassName }: ContextMenuProps) =>
     </ContextMenuContent>
   </ContextMenuPrimitive.Root>
 );
-ContextMenu.displayName = 'ContextMenu';
 
 export { ContextMenu };

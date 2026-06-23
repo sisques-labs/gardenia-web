@@ -19,57 +19,55 @@ function getMonthGrid(year: number, month: number): (number | null)[] {
 }
 
 export interface CalendarMonthProps extends React.HTMLAttributes<HTMLDivElement> {
+  ref?: React.Ref<HTMLDivElement>;
   year: number;
   month: number;
   onDateClick?: (isoDate: string) => void;
 }
 
-const CalendarMonth = React.forwardRef<HTMLDivElement, CalendarMonthProps>(
-  ({ className, year, month, onDateClick, ...props }, ref) => {
-    const today = new Date();
-    const cells = getMonthGrid(year, month);
+const CalendarMonth = ({ className, year, month, onDateClick, ref, ...props }: CalendarMonthProps) => {
+  const today = new Date();
+  const cells = getMonthGrid(year, month);
 
-    return (
-      <div ref={ref} className={cn('select-none', className)} {...props}>
-        {/* Day headers */}
-        <div className="grid grid-cols-7 mb-1">
-          {DAY_HEADERS.map((d) => (
-            <span
-              key={d}
-              data-day-header
-              className="text-center text-xs font-medium text-[var(--ink-3)] py-1"
-            >
-              {d}
-            </span>
-          ))}
-        </div>
-
-        {/* Day cells */}
-        <div className="grid grid-cols-7 gap-0.5">
-          {cells.map((day, i) =>
-            day === null ? (
-              <span key={`blank-${i}`} />
-            ) : (
-              <button
-                key={day}
-                type="button"
-                data-day-cell
-                onClick={() => onDateClick?.(toISO(year, month, day))}
-                className={cn(
-                  'h-8 w-8 mx-auto text-sm rounded hover:bg-[var(--paper-2)] transition-colors',
-                  toISO(year, month, day) === toISO(today.getFullYear(), today.getMonth() + 1, today.getDate()) &&
-                    'font-bold text-[var(--forest)]',
-                )}
-              >
-                {day}
-              </button>
-            ),
-          )}
-        </div>
+  return (
+    <div ref={ref} className={cn('select-none', className)} {...props}>
+      {/* Day headers */}
+      <div className="grid grid-cols-7 mb-1">
+        {DAY_HEADERS.map((d) => (
+          <span
+            key={d}
+            data-day-header
+            className="text-center text-xs font-medium text-[var(--ink-3)] py-1"
+          >
+            {d}
+          </span>
+        ))}
       </div>
-    );
-  },
-);
-CalendarMonth.displayName = 'CalendarMonth';
+
+      {/* Day cells */}
+      <div className="grid grid-cols-7 gap-0.5">
+        {cells.map((day, i) =>
+          day === null ? (
+            <span key={`blank-${i}`} />
+          ) : (
+            <button
+              key={day}
+              type="button"
+              data-day-cell
+              onClick={() => onDateClick?.(toISO(year, month, day))}
+              className={cn(
+                'h-8 w-8 mx-auto text-sm rounded hover:bg-[var(--paper-2)] transition-colors',
+                toISO(year, month, day) === toISO(today.getFullYear(), today.getMonth() + 1, today.getDate()) &&
+                  'font-bold text-[var(--forest)]',
+              )}
+            >
+              {day}
+            </button>
+          ),
+        )}
+      </div>
+    </div>
+  );
+};
 
 export { CalendarMonth };

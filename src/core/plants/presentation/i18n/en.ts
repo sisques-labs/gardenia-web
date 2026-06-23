@@ -31,6 +31,14 @@ const dict = {
     cancel: 'Cancel',
     error: 'Could not create the plant. Try again.',
   },
+  delete: {
+    button: 'Delete plant',
+    confirmTitle: 'Delete plant',
+    confirmDescription: 'This action cannot be undone. The plant will be permanently removed.',
+    confirm: 'Delete',
+    cancel: 'Cancel',
+    error: 'Could not delete the plant. Try again.',
+  },
   detail: {
     breadcrumbList: 'Inventory',
     bancal: 'Plot',

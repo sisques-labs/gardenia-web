@@ -7,4 +7,5 @@ export interface IPlantsRepository {
   list(): Promise<Plant[]>;
   getById(id: string): Promise<Plant>;
   create(input: CreatePlantInput): Promise<Plant>;
+  delete(id: string): Promise<void>;
 }
