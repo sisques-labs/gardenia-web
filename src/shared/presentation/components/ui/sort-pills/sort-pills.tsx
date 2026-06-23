@@ -23,27 +23,25 @@ export interface SortPillOption {
 }
 
 export interface SortPillsProps extends React.HTMLAttributes<HTMLDivElement> {
+  ref?: React.Ref<HTMLDivElement>;
   options: SortPillOption[];
   value?: string;
   onSort?: (value: string) => void;
 }
 
-const SortPills = React.forwardRef<HTMLDivElement, SortPillsProps>(
-  ({ className, options, value, onSort, ...props }, ref) => (
-    <div ref={ref} className={cn('flex flex-wrap gap-2', className)} {...props}>
-      {options.map((opt) => (
-        <button
-          key={opt.value}
-          type="button"
-          onClick={() => onSort?.(opt.value)}
-          className={pillVariants({ active: opt.value === value })}
-        >
-          {opt.label}
-        </button>
-      ))}
-    </div>
-  ),
+const SortPills = ({ className, options, value, onSort, ref, ...props }: SortPillsProps) => (
+  <div ref={ref} className={cn('flex flex-wrap gap-2', className)} {...props}>
+    {options.map((opt) => (
+      <button
+        key={opt.value}
+        type="button"
+        onClick={() => onSort?.(opt.value)}
+        className={pillVariants({ active: opt.value === value })}
+      >
+        {opt.label}
+      </button>
+    ))}
+  </div>
 );
-SortPills.displayName = 'SortPills';
 
 export { SortPills };

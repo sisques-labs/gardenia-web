@@ -20,49 +20,47 @@ function addDays(dateStr: string, days: number): Date {
 }
 
 export interface WeekStripProps extends React.HTMLAttributes<HTMLDivElement> {
+  ref?: React.Ref<HTMLDivElement>;
   weekStartDate: string;
   activeDate?: string;
   onDateClick?: (isoDate: string) => void;
 }
 
-const WeekStrip = React.forwardRef<HTMLDivElement, WeekStripProps>(
-  ({ className, weekStartDate, activeDate, onDateClick, ...props }, ref) => {
-    const today = toISO(new Date());
-    const days = Array.from({ length: 7 }, (_, i) => {
-      const d = addDays(weekStartDate, i);
-      return { iso: toISO(d), day: d.getDate(), weekday: SHORT_DAYS[d.getDay()] };
-    });
+const WeekStrip = ({ className, weekStartDate, activeDate, onDateClick, ref, ...props }: WeekStripProps) => {
+  const today = toISO(new Date());
+  const days = Array.from({ length: 7 }, (_, i) => {
+    const d = addDays(weekStartDate, i);
+    return { iso: toISO(d), day: d.getDate(), weekday: SHORT_DAYS[d.getDay()] };
+  });
 
-    return (
-      <div ref={ref} className={cn('flex gap-1', className)} {...props}>
-        {days.map(({ iso, day, weekday }) => {
-          const isActive = iso === activeDate;
-          const isToday = iso === today;
+  return (
+    <div ref={ref} className={cn('flex gap-1', className)} {...props}>
+      {days.map(({ iso, day, weekday }) => {
+        const isActive = iso === activeDate;
+        const isToday = iso === today;
 
-          return (
-            <button
-              key={iso}
-              type="button"
-              data-day-cell
-              onClick={() => onDateClick?.(iso)}
-              className={cn(
-                'flex flex-col items-center gap-0.5 rounded p-2 text-sm transition-colors flex-1',
-                isActive
-                  ? 'bg-[var(--forest)] text-[var(--white)]'
-                  : isToday
-                  ? 'text-[var(--forest)] font-semibold hover:bg-[var(--paper-2)]'
-                  : 'text-[var(--ink-2)] hover:bg-[var(--paper-2)]',
-              )}
-            >
-              <span className="text-xs">{weekday}</span>
-              <span className="font-medium">{day}</span>
-            </button>
-          );
-        })}
-      </div>
-    );
-  },
-);
-WeekStrip.displayName = 'WeekStrip';
+        return (
+          <button
+            key={iso}
+            type="button"
+            data-day-cell
+            onClick={() => onDateClick?.(iso)}
+            className={cn(
+              'flex flex-col items-center gap-0.5 rounded p-2 text-sm transition-colors flex-1',
+              isActive
+                ? 'bg-[var(--forest)] text-[var(--white)]'
+                : isToday
+                ? 'text-[var(--forest)] font-semibold hover:bg-[var(--paper-2)]'
+                : 'text-[var(--ink-2)] hover:bg-[var(--paper-2)]',
+            )}
+          >
+            <span className="text-xs">{weekday}</span>
+            <span className="font-medium">{day}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+};
 
 export { WeekStrip };
