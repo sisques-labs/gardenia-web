@@ -1,14 +1,13 @@
 'use client';
 
-import { useCallback } from 'react';
 import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { PlantingSpotCard } from '@/core/planting-spots/presentation/components/planting-spot-card/planting-spot-card';
 import { usePlantingSpots } from '@/core/planting-spots/presentation/hooks/use-planting-spots/use-planting-spots.hook';
 import { buttonVariants } from '@/shared/presentation/components/ui/button/button';
 import { PlantingSpotsListSkeleton } from '@/core/planting-spots/presentation/components/planting-spots-list-skeleton/planting-spots-list-skeleton';
 import { Pagination } from '@/shared/presentation/components/ui/pagination/pagination';
+import { useUrlPage } from '@/shared/presentation/hooks/use-url-page/use-url-page.hook';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {
@@ -17,20 +16,8 @@ type Props = {
 };
 
 export function PlantingSpotsListScreen({ dict, lang }: Props) {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const page = Math.max(1, Number(searchParams.get('page') ?? 1));
-
+  const { page, onPageChange } = useUrlPage();
   const { spots, totalPages, currentPage, isLoading } = usePlantingSpots(page);
-
-  const onPageChange = useCallback(
-    (p: number) => {
-      const params = new URLSearchParams(searchParams.toString());
-      params.set('page', String(p));
-      router.push(`?${params.toString()}`);
-    },
-    [router, searchParams],
-  );
 
   return (
     <div>
