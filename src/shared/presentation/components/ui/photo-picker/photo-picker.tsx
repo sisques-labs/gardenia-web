@@ -10,66 +10,64 @@ export interface PhotoPickerPhoto {
 }
 
 export interface PhotoPickerProps extends React.HTMLAttributes<HTMLDivElement> {
+  ref?: React.Ref<HTMLDivElement>;
   photos: PhotoPickerPhoto[];
   mode?: 'single' | 'multiple';
   selected?: number[];
   onSelectionChange?: (indexes: number[]) => void;
 }
 
-const PhotoPicker = React.forwardRef<HTMLDivElement, PhotoPickerProps>(
-  ({ className, photos, mode = 'single', selected, onSelectionChange, ...props }, ref) => {
-    const isControlled = selected !== undefined;
-    const [internalSelected, setInternalSelected] = React.useState<number[]>([]);
-    const selectedSet = new Set(isControlled ? selected : internalSelected);
+const PhotoPicker = ({ className, photos, mode = 'single', selected, onSelectionChange, ref, ...props }: PhotoPickerProps) => {
+  const isControlled = selected !== undefined;
+  const [internalSelected, setInternalSelected] = React.useState<number[]>([]);
+  const selectedSet = new Set(isControlled ? selected : internalSelected);
 
-    const toggle = (i: number) => {
-      let next: number[];
-      if (mode === 'single') {
-        next = [i];
-      } else {
-        next = selectedSet.has(i)
-          ? (isControlled ? selected! : internalSelected).filter((x) => x !== i)
-          : [...(isControlled ? selected! : internalSelected), i];
-      }
-      if (!isControlled) setInternalSelected(next);
-      onSelectionChange?.(next);
-    };
+  const toggle = (i: number) => {
+    let next: number[];
+    if (mode === 'single') {
+      next = [i];
+    } else {
+      next = selectedSet.has(i)
+        ? (isControlled ? selected! : internalSelected).filter((x) => x !== i)
+        : [...(isControlled ? selected! : internalSelected), i];
+    }
+    if (!isControlled) setInternalSelected(next);
+    onSelectionChange?.(next);
+  };
 
-    return (
-      <div
-        ref={ref}
-        className={cn('grid grid-cols-3 gap-2', className)}
-        {...props}
-      >
-        {photos.map((photo, i) => {
-          const isSelected = selectedSet.has(i);
-          return (
-            <div
-              key={`${photo.src}-${i}`}
-              data-selected={isSelected ? 'true' : undefined}
-              className={cn(
-                'relative overflow-hidden rounded cursor-pointer aspect-square',
-                isSelected && 'ring-2 ring-[var(--forest)] ring-offset-1',
-              )}
-              onClick={() => toggle(i)}
-            >
-              <img
-                src={photo.src}
-                alt={photo.alt}
-                className="w-full h-full object-cover"
-              />
-              {isSelected && (
-                <div className="absolute top-1 right-1 bg-[var(--forest)] text-white rounded-full p-0.5">
-                  <Check className="h-3 w-3" />
-                </div>
-              )}
-            </div>
-          );
-        })}
-      </div>
-    );
-  },
-);
-PhotoPicker.displayName = 'PhotoPicker';
+  return (
+    <div
+      ref={ref}
+      className={cn('grid grid-cols-3 gap-2', className)}
+      {...props}
+    >
+      {photos.map((photo, i) => {
+        const isSelected = selectedSet.has(i);
+        return (
+          <div
+            key={`${photo.src}-${i}`}
+            data-selected={isSelected ? 'true' : undefined}
+            className={cn(
+              'relative overflow-hidden rounded cursor-pointer aspect-square',
+              isSelected && 'ring-2 ring-[var(--forest)] ring-offset-1',
+            )}
+            onClick={() => toggle(i)}
+          >
+            <img
+              src={photo.src}
+              alt={photo.alt}
+              className="w-full h-full object-cover"
+            />
+            {isSelected && (
+              <div className="absolute top-1 right-1 bg-[var(--forest)] text-white rounded-full p-0.5">
+                <Check className="h-3 w-3" />
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+};
 
 export { PhotoPicker };

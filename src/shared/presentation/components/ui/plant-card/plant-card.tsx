@@ -3,6 +3,7 @@ import { cn } from '@/shared/lib/utils';
 import { Chip, type ChipVariant } from '../chip/chip';
 
 export interface PlantCardProps extends React.HTMLAttributes<HTMLDivElement> {
+  ref?: React.Ref<HTMLDivElement>;
   name: string;
   species?: string;
   status?: string;
@@ -26,28 +27,25 @@ function getInitials(name: string): string {
     .join('');
 }
 
-const PlantCard = React.forwardRef<HTMLDivElement, PlantCardProps>(
-  ({ className, name, species, status, imageUrl, ...props }, ref) => (
-    <div ref={ref} className={cn('card p-4 flex flex-col gap-2', className)} {...props}>
-      {imageUrl ? (
-        <img src={imageUrl} alt={name} className="w-full h-40 object-cover rounded" />
-      ) : (
-        <div className="placeholder-img leaf w-full h-40 rounded text-sm font-medium">
-          {getInitials(name)}
-        </div>
-      )}
-      <div className="flex flex-col gap-0.5">
-        <h3 className="headline text-base">{name}</h3>
-        {species && (
-          <p className="text-xs italic text-[var(--ink-3)]" style={{ fontFamily: 'var(--font-serif)' }}>
-            {species}
-          </p>
-        )}
+const PlantCard = ({ ref, className, name, species, status, imageUrl, ...props }: PlantCardProps) => (
+  <div ref={ref} className={cn('card p-4 flex flex-col gap-2', className)} {...props}>
+    {imageUrl ? (
+      <img src={imageUrl} alt={name} className="w-full h-40 object-cover rounded" />
+    ) : (
+      <div className="placeholder-img leaf w-full h-40 rounded text-sm font-medium">
+        {getInitials(name)}
       </div>
-      {status && <Chip variant={getStatusVariant(status)}>{status}</Chip>}
+    )}
+    <div className="flex flex-col gap-0.5">
+      <h3 className="headline text-base">{name}</h3>
+      {species && (
+        <p className="text-xs italic text-[var(--ink-3)]" style={{ fontFamily: 'var(--font-serif)' }}>
+          {species}
+        </p>
+      )}
     </div>
-  ),
+    {status && <Chip variant={getStatusVariant(status)}>{status}</Chip>}
+  </div>
 );
-PlantCard.displayName = 'PlantCard';
 
 export { PlantCard };
