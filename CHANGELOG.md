@@ -1,6 +1,13 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.21.0-alpha.5] - 2026-06-23
+
+### Bug Fixes
+- Add required ARIA props to combobox role (15d74a5)
+
+### Performance
+- Combine filter+map into single pass in combobox (3813197)
 ## [0.21.0-alpha.4] - 2026-06-23
 
 ### Documentation
