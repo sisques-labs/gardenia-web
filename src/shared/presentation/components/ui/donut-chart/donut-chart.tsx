@@ -31,7 +31,14 @@ const DonutChart = ({ className, segments, centerLabel, size = 120, ref, ...prop
   const cx = size / 2;
   const cy = size / 2;
 
-  let currentOffset = circumference * 0.25; // start at top (-90deg → offset = circumference/4)
+  const segmentsWithOffsets = segments.reduce<{ seg: DonutChartSegment; arcLen: number; offset: number; index: number }[]>(
+    (acc, seg, i) => {
+      const arcLen = (seg.value / total) * circumference;
+      const prevOffset = acc.length === 0 ? circumference * 0.25 : acc[acc.length - 1].offset - acc[acc.length - 1].arcLen;
+      return [...acc, { seg, arcLen, offset: prevOffset, index: i }];
+    },
+    [],
+  );
 
   return (
     <svg
@@ -54,12 +61,7 @@ const DonutChart = ({ className, segments, centerLabel, size = 120, ref, ...prop
         strokeWidth={strokeWidth}
       />
 
-      {segments.map((seg, i) => {
-        const arcLen = (seg.value / total) * circumference;
-        const offset = currentOffset;
-        currentOffset -= arcLen;
-
-        return (
+      {segmentsWithOffsets.map(({ seg, arcLen, offset, index }) => (
           <circle
             key={seg.label}
             data-segment
@@ -67,14 +69,13 @@ const DonutChart = ({ className, segments, centerLabel, size = 120, ref, ...prop
             cy={cy}
             r={r}
             fill="none"
-            stroke={seg.color ?? SEGMENT_COLORS[i % SEGMENT_COLORS.length]}
+            stroke={seg.color ?? SEGMENT_COLORS[index % SEGMENT_COLORS.length]}
             strokeWidth={strokeWidth}
             strokeDasharray={`${arcLen} ${circumference - arcLen}`}
             strokeDashoffset={offset}
             strokeLinecap="round"
           />
-        );
-      })}
+      ))}
 
       {centerLabel && (
         <text
