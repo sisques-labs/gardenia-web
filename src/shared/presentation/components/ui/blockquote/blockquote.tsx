@@ -18,22 +18,20 @@ const blockquoteVariants = cva('border-l-4 pl-4', {
 export interface BlockquoteProps
   extends Omit<React.HTMLAttributes<HTMLElement>, 'cite'>,
     VariantProps<typeof blockquoteVariants> {
+  ref?: React.Ref<HTMLQuoteElement>;
   cite?: string;
   children: React.ReactNode;
 }
 
-const Blockquote = React.forwardRef<HTMLQuoteElement, BlockquoteProps>(
-  ({ className, variant, cite, children, ...props }, ref) => (
-    <blockquote ref={ref} className={cn(blockquoteVariants({ variant }), className)} {...props}>
-      {children}
-      {cite && (
-        <footer className="mt-1 text-sm text-[var(--ink-3)]">
-          <cite>{cite}</cite>
-        </footer>
-      )}
-    </blockquote>
-  ),
+const Blockquote = ({ className, variant, cite, children, ref, ...props }: BlockquoteProps) => (
+  <blockquote ref={ref} className={cn(blockquoteVariants({ variant }), className)} {...props}>
+    {children}
+    {cite && (
+      <footer className="mt-1 text-sm text-[var(--ink-3)]">
+        <cite>{cite}</cite>
+      </footer>
+    )}
+  </blockquote>
 );
-Blockquote.displayName = 'Blockquote';
 
 export { Blockquote };

@@ -21,29 +21,27 @@ const skeletonVariants = cva(
 export interface SkeletonProps
   extends React.HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof skeletonVariants> {
+  ref?: React.Ref<HTMLDivElement>;
   width?: string | number;
   height?: string | number;
 }
 
-const Skeleton = React.forwardRef<HTMLDivElement, SkeletonProps>(
-  ({ className, variant, width, height, style, ...props }, ref) => {
-    const dimensionStyle: React.CSSProperties = {
-      ...(width !== undefined ? { width: typeof width === 'number' ? `${width}px` : width } : {}),
-      ...(height !== undefined ? { height: typeof height === 'number' ? `${height}px` : height } : {}),
-      ...style,
-    };
+const Skeleton = ({ className, variant, width, height, style, ref, ...props }: SkeletonProps) => {
+  const dimensionStyle: React.CSSProperties = {
+    ...(width !== undefined ? { width: typeof width === 'number' ? `${width}px` : width } : {}),
+    ...(height !== undefined ? { height: typeof height === 'number' ? `${height}px` : height } : {}),
+    ...style,
+  };
 
-    return (
-      <div
-        ref={ref}
-        aria-hidden="true"
-        className={cn(skeletonVariants({ variant }), className)}
-        style={dimensionStyle}
-        {...props}
-      />
-    );
-  },
-);
-Skeleton.displayName = 'Skeleton';
+  return (
+    <div
+      ref={ref}
+      aria-hidden="true"
+      className={cn(skeletonVariants({ variant }), className)}
+      style={dimensionStyle}
+      {...props}
+    />
+  );
+};
 
 export { Skeleton };

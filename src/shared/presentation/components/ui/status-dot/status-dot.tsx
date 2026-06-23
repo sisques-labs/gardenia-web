@@ -11,23 +11,21 @@ const STATUS_CLASS_MAP = {
 export type StatusDotStatus = keyof typeof STATUS_CLASS_MAP;
 
 export interface StatusDotProps extends React.HTMLAttributes<HTMLSpanElement> {
+  ref?: React.Ref<HTMLSpanElement>;
   status: StatusDotStatus;
 }
 
-const StatusDot = React.forwardRef<HTMLSpanElement, StatusDotProps>(
-  ({ className, status, ...props }, ref) => (
-    <span
-      ref={ref}
-      aria-hidden="true"
-      className={cn(
-        'inline-block h-2 w-2 rounded-full',
-        STATUS_CLASS_MAP[status],
-        className,
-      )}
-      {...props}
-    />
-  ),
+const StatusDot = ({ className, status, ref, ...props }: StatusDotProps) => (
+  <span
+    ref={ref}
+    aria-hidden="true"
+    className={cn(
+      'inline-block h-2 w-2 rounded-full',
+      STATUS_CLASS_MAP[status],
+      className,
+    )}
+    {...props}
+  />
 );
-StatusDot.displayName = 'StatusDot';
 
 export { StatusDot };
