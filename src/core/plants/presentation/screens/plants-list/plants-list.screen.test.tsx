@@ -12,8 +12,14 @@ vi.mock('@/core/spaces/infrastructure/store/spaces.store', () => ({
   ),
 }));
 
-vi.mock('@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook', () => ({
-  useDeletePlant: vi.fn(() => ({ mutate: vi.fn(), isError: false })),
+vi.mock('@/core/plants/presentation/hooks/use-delete-plant-confirm/use-delete-plant-confirm.hook', () => ({
+  useDeletePlantConfirm: vi.fn(() => ({
+    plantToDelete: null,
+    requestDelete: vi.fn(),
+    confirmDelete: vi.fn(),
+    cancelDelete: vi.fn(),
+    isError: false,
+  })),
 }));
 
 vi.mock('@/core/plants/presentation/components/create-plant-modal/create-plant-modal', () => ({
