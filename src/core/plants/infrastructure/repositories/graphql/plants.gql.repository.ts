@@ -12,7 +12,10 @@ import type { PlantCreateResponse } from './responses/plant-create.response';
 
 export class PlantsGqlRepository implements IPlantsRepository {
   async list(): Promise<Plant[]> {
-    const res = await apolloClient.query<PlantsFindByCriteriaResponse>({ query: PLANTS_FIND_BY_CRITERIA });
+    const res = await apolloClient.query<PlantsFindByCriteriaResponse>({
+      query: PLANTS_FIND_BY_CRITERIA,
+      fetchPolicy: 'network-only',
+    });
     return res.data?.plantsFindByCriteria?.items ?? [];
   }
 

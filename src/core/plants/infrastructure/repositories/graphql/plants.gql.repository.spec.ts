@@ -79,7 +79,7 @@ describe('PlantsGqlRepository', () => {
       const result = await repository.list();
 
       expect(apolloClient.query).toHaveBeenCalledOnce();
-      expect(apolloClient.query).toHaveBeenCalledWith({ query: PLANTS_FIND_BY_CRITERIA });
+      expect(apolloClient.query).toHaveBeenCalledWith({ query: PLANTS_FIND_BY_CRITERIA, fetchPolicy: 'network-only' });
       expect(result).toEqual(mockPlants);
     });
 
