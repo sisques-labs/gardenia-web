@@ -98,6 +98,29 @@ conventions:
     - infrastructure may import domain + shared http
     - presentation may import application use-cases, infrastructure/store, domain interfaces
 
+  components:
+    split_trigger: |
+      Qualitative rule, not a line count. Split a feature component into
+      subcomponents and/or extract a custom hook when it mixes responsibilities:
+      data fetching + business logic + presentation happening in the same
+      component. A long-but-single-responsibility component (e.g. pure markup)
+      is fine; a short component juggling fetch + transform + render is not.
+    props: "interface {Name}Props (extends React.HTMLAttributes<HTMLElement> when it wraps a DOM element); ref passed as a regular prop (React 19 ref-as-prop), not forwardRef."
+    exports: "Named export only (export { Name }), no default exports."
+
+  state_management:
+    decision_axis: "Data origin decides the tool — not scope, not convenience."
+    rules:
+      - source: "Server data (REST/GraphQL)"
+        tool: "TanStack Query (useQuery/useMutation wrapped in presentation/hooks/)"
+      - source: "Client state shared across unrelated components/screens"
+        tool: "Zustand store (infrastructure/store/{name}.store.ts)"
+      - source: "State local to a single component or form"
+        tool: "useState/useReducer inside the component"
+    anti_patterns:
+      - "Never mirror server data into Zustand — TanStack Query is the single source of truth for anything that comes from the API"
+      - "Never reach into a Zustand store for state only one component needs"
+
 git:
   base_branch: main
   strategy: "feature branches → PR → main"
