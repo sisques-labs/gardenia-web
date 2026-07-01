@@ -27,6 +27,19 @@ describe('CareScheduleRow', () => {
     expect(screen.getByText('Watering')).toBeInTheDocument();
   });
 
+  it('shows the due date as DD-MM-YYYY, without the time', () => {
+    render(
+      <CareScheduleRow
+        careSchedule={{ ...baseCareSchedule, nextDueAt: '2026-07-01T15:17:17.390Z' }}
+        dict={en}
+        onComplete={vi.fn()}
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    );
+    expect(screen.getByText(`${en.row.dueLabel} 01-07-2026`)).toBeInTheDocument();
+  });
+
   it('shows an overdue badge when nextDueAt is in the past and active', () => {
     render(<CareScheduleRow careSchedule={baseCareSchedule} dict={en} onComplete={vi.fn()} onEdit={vi.fn()} onDelete={vi.fn()} />);
     expect(screen.getByText('Overdue')).toBeInTheDocument();

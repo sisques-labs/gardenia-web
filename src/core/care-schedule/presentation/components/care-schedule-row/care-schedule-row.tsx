@@ -12,6 +12,7 @@ import {
 import type { ReactElement } from 'react';
 import type { CareSchedule, CareScheduleActivityType } from '@/core/care-schedule/domain/types/care-schedule.interface';
 import { toISODate } from '@/core/care-schedule/presentation/utils/to-iso-date/to-iso-date.util';
+import { formatDueDate } from '@/core/care-schedule/presentation/utils/format-due-date/format-due-date.util';
 import { Chip } from '@/shared/presentation/components/ui/chip/chip';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
@@ -55,7 +56,7 @@ export function CareScheduleRow({ careSchedule, dict, plantName, onComplete, onE
             )}
           </div>
           <span className="text-xs text-muted-foreground">
-            {dict.row.dueLabel} {careSchedule.nextDueAt}
+            {dict.row.dueLabel} {formatDueDate(careSchedule.nextDueAt)}
           </span>
         </div>
       </div>
