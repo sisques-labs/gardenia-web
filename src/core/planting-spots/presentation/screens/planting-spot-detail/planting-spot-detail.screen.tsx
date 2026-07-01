@@ -12,20 +12,9 @@ import { Button, buttonVariants } from '@/shared/presentation/components/ui/butt
 import { usePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-planting-spot/use-planting-spot.hook';
 import { PlantingSpotTypeBadge } from '@/core/planting-spots/presentation/components/planting-spot-type-badge/planting-spot-type-badge';
 import { PlantingSpotDetailSkeleton } from '@/core/planting-spots/presentation/components/planting-spot-detail-skeleton/planting-spot-detail-skeleton';
+import { CapacityBar } from '@/core/planting-spots/presentation/components/capacity-bar/capacity-bar';
+import { Row } from '@/core/planting-spots/presentation/components/row/row';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
-
-function CapacityBar({ current, capacity }: { current: number; capacity: number }) {
-  const pct = Math.min((current / capacity) * 100, 100);
-  const over = current > capacity;
-  return (
-    <div className="w-full h-2 rounded-full bg-muted overflow-hidden">
-      <div
-        className={`h-full rounded-full transition-all ${over ? 'bg-destructive' : pct >= 100 ? 'bg-orange-400' : 'bg-[var(--forest)]'}`}
-        style={{ width: `${pct}%` }}
-      />
-    </div>
-  );
-}
 
 type Props = {
   dict: AppDict['plantingSpots'];
@@ -210,15 +199,6 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
           </TabsContent>
         </Tabs>
       </div>
-    </div>
-  );
-}
-
-function Row({ label, children }: { label: string; children: React.ReactNode }) {
-  return (
-    <div className="flex items-start gap-4">
-      <span className="text-sm text-muted-foreground w-32 flex-shrink-0">{label}</span>
-      <div className="flex-1">{children}</div>
     </div>
   );
 }
