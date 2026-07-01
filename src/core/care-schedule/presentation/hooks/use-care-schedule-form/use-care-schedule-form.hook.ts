@@ -8,7 +8,15 @@ import {
 } from '@/core/care-schedule/presentation/schemas/care-schedule.schema';
 import { useCreateCareSchedule } from '@/core/care-schedule/presentation/hooks/use-create-care-schedule/use-create-care-schedule.hook';
 import { useUpdateCareSchedule } from '@/core/care-schedule/presentation/hooks/use-update-care-schedule/use-update-care-schedule.hook';
+import { toISODate } from '@/core/care-schedule/presentation/utils/to-iso-date/to-iso-date.util';
 import type { CareSchedule } from '@/core/care-schedule/domain/types/care-schedule.interface';
+
+// The date input only carries a 'YYYY-MM-DD' day; build a midday local instant so the
+// UTC-converted ISO string sent to the API never rolls over to the adjacent calendar day.
+function toFullIsoDateTime(dayOnly: string): string {
+  const [year, month, day] = dayOnly.split('-').map(Number);
+  return new Date(year, month - 1, day, 12, 0, 0).toISOString();
+}
 
 type UseCareScheduleFormOptions = {
   careSchedule?: CareSchedule;
@@ -35,12 +43,14 @@ export function useCareScheduleForm({ careSchedule, lockedPlantId, onClose }: Us
           quantity: careSchedule.quantity ?? undefined,
           unit: careSchedule.unit ?? undefined,
           notes: careSchedule.notes ?? undefined,
+          nextDueAt: toISODate(new Date(careSchedule.nextDueAt)),
         }
       : {
           plantId: lockedPlantId ?? '',
           activityType: 'WATERING' as const,
           isRecurring: true,
           intervalDays: 7,
+          nextDueAt: toISODate(new Date()),
         },
   });
 
@@ -75,6 +85,7 @@ export function useCareScheduleForm({ careSchedule, lockedPlantId, onClose }: Us
           quantity: values.quantity,
           unit: values.unit,
           notes: values.notes,
+          nextDueAt: toFullIsoDateTime(values.nextDueAt),
         },
         { onSuccess: onClose },
       );

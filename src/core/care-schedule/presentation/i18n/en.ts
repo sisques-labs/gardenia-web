@@ -23,6 +23,7 @@ const dict = {
     plant: 'Plant',
     plantPlaceholder: 'Select a plant',
     activityType: 'Activity',
+    nextDueAt: 'Due date',
     recurring: 'Repeats',
     intervalDays: 'Every (days)',
     quantity: 'Quantity',

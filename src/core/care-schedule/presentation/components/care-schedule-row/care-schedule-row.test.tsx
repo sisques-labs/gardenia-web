@@ -45,6 +45,36 @@ describe('CareScheduleRow', () => {
     expect(screen.queryByText('Overdue')).toBeNull();
   });
 
+  it('does not show an overdue badge when nextDueAt is earlier today (only the date matters, not the time)', () => {
+    const earlierToday = new Date();
+    earlierToday.setHours(0, 0, 1, 0);
+    render(
+      <CareScheduleRow
+        careSchedule={{ ...baseCareSchedule, nextDueAt: earlierToday.toISOString() }}
+        dict={en}
+        onComplete={vi.fn()}
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    );
+    expect(screen.queryByText('Overdue')).toBeNull();
+  });
+
+  it('shows an overdue badge when nextDueAt was yesterday', () => {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    render(
+      <CareScheduleRow
+        careSchedule={{ ...baseCareSchedule, nextDueAt: yesterday.toISOString() }}
+        dict={en}
+        onComplete={vi.fn()}
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    );
+    expect(screen.getByText('Overdue')).toBeInTheDocument();
+  });
+
   it('does not show an overdue badge when nextDueAt is in the future', () => {
     render(
       <CareScheduleRow

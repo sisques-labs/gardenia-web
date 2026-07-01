@@ -101,6 +101,16 @@ export function CareScheduleModal({ dict, onClose, careSchedule, lockedPlantId }
             </Select>
           </div>
 
+          {!isEditing && (
+            <div className="flex flex-col gap-1">
+              <label className="text-sm text-ink-2">{dict.form.nextDueAt}</label>
+              <Input type="date" {...register('nextDueAt')} />
+              {errors.nextDueAt && (
+                <span className="text-destructive text-xs">{errors.nextDueAt.message}</span>
+              )}
+            </div>
+          )}
+
           <div className="flex items-center gap-2">
             <Checkbox
               id="care-schedule-recurring"

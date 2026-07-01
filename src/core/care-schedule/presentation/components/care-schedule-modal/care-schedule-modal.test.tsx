@@ -84,6 +84,16 @@ describe('CareScheduleModal', () => {
     expect(screen.queryByText(en.form.plant)).toBeNull();
   });
 
+  it('shows the due date field when creating', () => {
+    render(<CareScheduleModal dict={en} onClose={vi.fn()} lockedPlantId="plant-1" />);
+    expect(screen.getByText(en.form.nextDueAt)).toBeInTheDocument();
+  });
+
+  it('hides the due date field when editing (the API cannot change it after creation)', () => {
+    render(<CareScheduleModal dict={en} onClose={vi.fn()} careSchedule={mockCareSchedule} />);
+    expect(screen.queryByText(en.form.nextDueAt)).toBeNull();
+  });
+
   it('shows the plant picker when creating without a lockedPlantId', () => {
     render(<CareScheduleModal dict={en} onClose={vi.fn()} />);
     expect(screen.getByText(en.form.plant)).toBeInTheDocument();

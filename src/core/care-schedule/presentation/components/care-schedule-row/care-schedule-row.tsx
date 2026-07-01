@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import type { ReactElement } from 'react';
 import type { CareSchedule, CareScheduleActivityType } from '@/core/care-schedule/domain/types/care-schedule.interface';
+import { toISODate } from '@/core/care-schedule/presentation/utils/to-iso-date/to-iso-date.util';
 import { Chip } from '@/shared/presentation/components/ui/chip/chip';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
@@ -36,7 +37,8 @@ type Props = {
 };
 
 export function CareScheduleRow({ careSchedule, dict, plantName, onComplete, onEdit, onDelete }: Props) {
-  const isOverdue = careSchedule.active && new Date(careSchedule.nextDueAt).getTime() < new Date().getTime();
+  // Compare calendar days only — a task due "today" is not overdue just because its time-of-day already passed.
+  const isOverdue = careSchedule.active && toISODate(new Date(careSchedule.nextDueAt)) < toISODate(new Date());
 
   return (
     <div className="flex items-center justify-between rounded-lg border p-4">

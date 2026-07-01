@@ -28,6 +28,7 @@ const dict = {
     plant: 'Planta',
     plantPlaceholder: 'Selecciona una planta',
     activityType: 'Actividad',
+    nextDueAt: 'Fecha de vencimiento',
     recurring: 'Se repite',
     intervalDays: 'Cada (días)',
     quantity: 'Cantidad',
