@@ -14,6 +14,7 @@ import { PlantingSpotTypeBadge } from '@/core/planting-spots/presentation/compon
 import { PlantingSpotDetailSkeleton } from '@/core/planting-spots/presentation/components/planting-spot-detail-skeleton/planting-spot-detail-skeleton';
 import { CapacityBar } from '@/core/planting-spots/presentation/components/capacity-bar/capacity-bar';
 import { Row } from '@/core/planting-spots/presentation/components/row/row';
+import { getPlantingSpotPositionLabel } from '@/core/planting-spots/presentation/utils/get-planting-spot-position-label/get-planting-spot-position-label.util';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {
@@ -31,15 +32,7 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
 
   const plantCount = spot.resolvedPlants?.length ?? 0;
   const hasCapacity = spot.capacity != null;
-
-  const positionLabel =
-    spot.row != null && spot.column != null
-      ? `F${spot.row} · C${spot.column}`
-      : spot.row != null
-        ? `F${spot.row}`
-        : spot.column != null
-          ? `C${spot.column}`
-          : null;
+  const positionLabel = getPlantingSpotPositionLabel(spot);
 
   return (
     <div>

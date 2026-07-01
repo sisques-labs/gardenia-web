@@ -232,7 +232,7 @@ describe('PlantsListScreen', () => {
       { id: 'p1', name: 'Monstera', userId: 'u1', spaceId: 's1', plantSpeciesId: 'sp1', createdAt: '', updatedAt: '' },
       { id: 'p2', name: 'Pothos', userId: 'u1', spaceId: 's1', plantSpeciesId: 'sp2', createdAt: '', updatedAt: '' },
     ];
-    vi.mocked(usePlants).mockReturnValue({ data: plantsWithSpecies, isLoading: false, isError: false } as ReturnType<typeof usePlants>);
+    vi.mocked(usePlants).mockReturnValue({ data: plantsWithSpecies, isLoading: false, isError: false, speciesCount: 2 } as ReturnType<typeof usePlants>);
 
     render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
 

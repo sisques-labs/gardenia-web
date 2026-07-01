@@ -74,4 +74,25 @@ describe('usePlants', () => {
     await waitFor(() => expect(result.current.isError).toBe(true));
     expect(result.current.error).toBeInstanceOf(Error);
   });
+
+  it('returns speciesCount as the number of distinct plantSpeciesId values', async () => {
+    mockExecute.mockResolvedValue([
+      { ...mockPlants[0], plantSpeciesId: 'sp1' },
+      { ...mockPlants[1], plantSpeciesId: 'sp2' },
+      { id: 'p3', name: 'Monstera 2', userId: 'u1', spaceId: 's1', plantSpeciesId: 'sp1', createdAt: '', updatedAt: '' },
+    ]);
+
+    const { result } = renderHook(() => usePlants('space-1'), { wrapper: makeWrapper() });
+
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(result.current.speciesCount).toBe(2);
+  });
+
+  it('returns speciesCount 0 when data is not loaded yet', () => {
+    mockExecute.mockReturnValue(new Promise(() => {}));
+
+    const { result } = renderHook(() => usePlants('space-1'), { wrapper: makeWrapper() });
+
+    expect(result.current.speciesCount).toBe(0);
+  });
 });

@@ -82,6 +82,7 @@ function makeDefaultHookReturn(
       isError: false,
     } as ReturnType<typeof useSpaceSettings>["spaceDetail"],
     isOwner: false,
+    hasGeolocation: false,
     copied: null,
     copy: vi.fn(),
     inviteLink: vi.fn((inv) => `http://localhost/en/invite?code=${inv.code}`),

@@ -32,6 +32,7 @@ export function useSpaceSettings(lang: string) {
   const updateSpaceMutation = useUpdateSpace();
 
   const isOwner = !!spaceDetail.data && spaceDetail.data.ownerId === currentUserId;
+  const hasGeolocation = spaceDetail.data?.latitude != null && spaceDetail.data?.longitude != null;
 
   const [copied, setCopied] = useState<string | null>(null);
   const copy = (text: string, key: string) => {
@@ -110,6 +111,7 @@ export function useSpaceSettings(lang: string) {
   return {
     spaceDetail,
     isOwner,
+    hasGeolocation,
     copied,
     copy,
     inviteLink,

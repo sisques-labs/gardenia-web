@@ -20,6 +20,7 @@ export function SpaceSettingsScreen({ dict, weatherDict, memberListDict, lang }:
   const {
     spaceDetail: { data: space, isLoading, isError },
     isOwner,
+    hasGeolocation,
     copied,
     copy,
     inviteLink,
@@ -52,8 +53,6 @@ export function SpaceSettingsScreen({ dict, weatherDict, memberListDict, lang }:
       isSuccess: updateSuccess,
     },
   } = useSpaceSettings(lang);
-
-  const hasGeolocation = !!(space?.latitude != null && space?.longitude != null);
 
   return (
     <div className="flex flex-col">
