@@ -57,7 +57,6 @@ const dict = {
   },
   panel: {
     todayPrefix: 'Hoy',
-    inDevLabel: 'Tareas del día',
     monthAbbreviations: {
       january: 'ene',
       february: 'feb',

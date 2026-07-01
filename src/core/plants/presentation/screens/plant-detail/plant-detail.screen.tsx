@@ -17,6 +17,7 @@ import { useDeletePlant } from '@/core/plants/presentation/hooks/use-delete-plan
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import { usePlantCareLogs } from '@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-logs.hook';
 import { CareLogSummary } from '@/core/care-log/presentation/components/care-log-summary/care-log-summary';
+import { CareScheduleList } from '@/core/care-schedule/presentation/components/care-schedule-list/care-schedule-list';
 import { ConfirmDialog } from '@/shared/presentation/components/ui/confirm-dialog/confirm-dialog';
 import { Alert } from '@/shared/presentation/components/ui/alert/alert';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
@@ -43,12 +44,13 @@ function DetailSkeleton() {
 type Props = {
   dict: AppDict['plants'];
   careLogDict: AppDict['careLog'];
+  careScheduleDict: AppDict['careSchedule'];
   lang: string;
   spaceId: string | null;
   plantId: string;
 };
 
-export function PlantDetailScreen({ dict, careLogDict, lang, spaceId: spaceIdProp, plantId }: Props) {
+export function PlantDetailScreen({ dict, careLogDict, careScheduleDict, lang, spaceId: spaceIdProp, plantId }: Props) {
   const router = useRouter();
   const storeSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const spaceId = spaceIdProp ?? storeSpaceId;
@@ -301,7 +303,7 @@ export function PlantDetailScreen({ dict, careLogDict, lang, spaceId: spaceIdPro
           </TabsContent>
 
           <TabsContent value="calendar">
-            <InDevelopment />
+            <CareScheduleList plantId={plantId} dict={careScheduleDict} />
           </TabsContent>
 
           <TabsContent value="diary">
