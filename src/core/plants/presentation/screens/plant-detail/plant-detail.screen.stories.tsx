@@ -24,6 +24,11 @@ const mockPlant: Plant = {
   updatedAt: "2026-05-01",
 };
 
+function withSpaceSeed(Story: () => React.ReactElement) {
+  useSpacesStore.setState({ currentSpaceId: "space-1", isResolved: true });
+  return <Story />;
+}
+
 const meta = {
   title: "Screens/PlantDetail",
   component: PlantDetailScreen,
@@ -38,10 +43,7 @@ const meta = {
   },
   parameters: { layout: "fullscreen" },
   decorators: [
-    (Story) => {
-      useSpacesStore.setState({ currentSpaceId: "space-1", isResolved: true });
-      return <Story />;
-    },
+    withSpaceSeed,
     withQueryClient((qc) => qc.setQueryData(["plant", "space-1", "plant-1"], mockPlant)),
   ],
 } satisfies Meta<typeof PlantDetailScreen>;
@@ -51,6 +53,10 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
+// Redeclares withSpaceSeed alongside the unseeded QueryClient: story-level
+// decorators replace the meta's decorators array entirely, so the space seed
+// must be repeated here — otherwise usePlant/usePlantCareLogs fall back to
+// whatever currentSpaceId is left in localStorage from a previous story.
 export const Loading: Story = {
-  decorators: [withQueryClient()],
+  decorators: [withSpaceSeed, withQueryClient()],
 };
