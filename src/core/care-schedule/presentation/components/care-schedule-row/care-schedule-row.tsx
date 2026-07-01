@@ -14,6 +14,7 @@ import type { CareSchedule, CareScheduleActivityType } from '@/core/care-schedul
 import { toISODate } from '@/core/care-schedule/presentation/utils/to-iso-date/to-iso-date.util';
 import { formatDueDate } from '@/core/care-schedule/presentation/utils/format-due-date/format-due-date.util';
 import { Chip } from '@/shared/presentation/components/ui/chip/chip';
+import { EntityRow, EntityRowAction } from '@/shared/presentation/components/ui/entity-row/entity-row';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 const ACTIVITY_ICONS: Record<CareScheduleActivityType, ReactElement> = {
@@ -42,7 +43,19 @@ export function CareScheduleRow({ careSchedule, dict, plantName, onComplete, onE
   const isOverdue = careSchedule.active && toISODate(new Date(careSchedule.nextDueAt)) < toISODate(new Date());
 
   return (
-    <div className="flex items-center justify-between rounded-lg border p-4">
+    <EntityRow
+      actions={
+        <>
+          {careSchedule.active && (
+            <EntityRowAction label={dict.row.complete} onClick={() => onComplete(careSchedule.id)} variant="accent" />
+          )}
+          {onEdit && (
+            <EntityRowAction label={dict.row.edit} onClick={() => onEdit(careSchedule)} />
+          )}
+          <EntityRowAction label={dict.row.delete} onClick={() => onDelete(careSchedule.id)} variant="destructive" />
+        </>
+      }
+    >
       <div className="flex items-center gap-3">
         <span className="text-[var(--forest)]">{ACTIVITY_ICONS[careSchedule.activityType]}</span>
         <div className="flex flex-col gap-1">
@@ -60,36 +73,6 @@ export function CareScheduleRow({ careSchedule, dict, plantName, onComplete, onE
           </span>
         </div>
       </div>
-      <div className="flex gap-2">
-        {careSchedule.active && (
-          <button
-            type="button"
-            aria-label={dict.row.complete}
-            onClick={() => onComplete(careSchedule.id)}
-            className="text-sm font-medium text-[var(--forest)] hover:opacity-80"
-          >
-            {dict.row.complete}
-          </button>
-        )}
-        {onEdit && (
-          <button
-            type="button"
-            aria-label={dict.row.edit}
-            onClick={() => onEdit(careSchedule)}
-            className="text-sm font-medium hover:opacity-80"
-          >
-            {dict.row.edit}
-          </button>
-        )}
-        <button
-          type="button"
-          aria-label={dict.row.delete}
-          onClick={() => onDelete(careSchedule.id)}
-          className="text-destructive hover:text-destructive/80 text-sm font-medium"
-        >
-          {dict.row.delete}
-        </button>
-      </div>
-    </div>
+    </EntityRow>
   );
 }

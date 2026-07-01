@@ -11,7 +11,7 @@ import { useInventoryFilters } from '@/core/inventory/presentation/hooks/use-inv
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
 import { PageHeader } from '@/shared/presentation/components/page-header/page-header';
 import { Button } from '@/shared/presentation/components/ui/button/button';
-import { InventoryRowSkeleton } from '@/core/inventory/presentation/components/inventory-row-skeleton/inventory-row-skeleton';
+import { RowSkeleton } from '@/shared/presentation/components/ui/row-skeleton/row-skeleton';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {
@@ -63,7 +63,7 @@ export function InventoryListScreen({ dict, lang: _lang }: Props) {
         {isLoading ? (
           <div className="flex flex-col gap-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <InventoryRowSkeleton key={i} />
+              <RowSkeleton key={i} />
             ))}
           </div>
         ) : filteredItems.length === 0 ? (

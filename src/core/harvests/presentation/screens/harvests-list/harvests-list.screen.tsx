@@ -7,7 +7,7 @@ import { useDeleteHarvest } from '@/core/harvests/presentation/hooks/use-delete-
 import type { Harvest } from '@/core/harvests/domain/types/harvest.interface';
 import { PageHeader } from '@/shared/presentation/components/page-header/page-header';
 import { Button } from '@/shared/presentation/components/ui/button/button';
-import { HarvestRowSkeleton } from '@/core/harvests/presentation/components/harvest-row-skeleton/harvest-row-skeleton';
+import { RowSkeleton } from '@/shared/presentation/components/ui/row-skeleton/row-skeleton';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import { useState } from 'react';
 
@@ -37,7 +37,7 @@ export function HarvestsListScreen({ dict, lang: _lang }: Props) {
         {isLoading ? (
           <div className="flex flex-col gap-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <HarvestRowSkeleton key={i} />
+              <RowSkeleton key={i} />
             ))}
           </div>
         ) : harvests.length === 0 ? (

@@ -6,13 +6,7 @@ import {
   INVENTORY_UNITS,
 } from '@/core/inventory/domain/types/inventory-item.interface';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
-import { Button } from '@/shared/presentation/components/ui/button/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/shared/presentation/components/ui/dialog/dialog';
+import { FormModal } from '@/shared/presentation/components/ui/form-modal/form-modal';
 import { Input } from '@/shared/presentation/components/ui/input/input';
 import { Textarea } from '@/shared/presentation/components/ui/textarea/textarea';
 import {
@@ -40,15 +34,15 @@ export function InventoryItemModal({ dict, onClose, item }: Props) {
   } = form;
 
   return (
-    <Dialog open onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
-      <DialogContent className="max-w-md gap-4">
-        <DialogHeader>
-          <DialogTitle className="text-ink">
-            {isEditing ? dict.form.editTitle : dict.form.title}
-          </DialogTitle>
-        </DialogHeader>
-
-        <form onSubmit={onSubmit} className="flex flex-col gap-4">
+    <FormModal
+      title={isEditing ? dict.form.editTitle : dict.form.title}
+      onClose={onClose}
+      onSubmit={onSubmit}
+      isPending={isPending}
+      cancelLabel={dict.form.cancel}
+      submitLabel={dict.form.submit}
+      submittingLabel={dict.form.submitting}
+    >
           <div className="flex flex-col gap-1">
             <label className="text-sm text-ink-2">{dict.form.itemType}</label>
             <Select value={selectedType} onValueChange={setType}>
@@ -122,17 +116,6 @@ export function InventoryItemModal({ dict, onClose, item }: Props) {
             <label className="text-sm text-ink-2">{dict.form.notes}</label>
             <Textarea rows={3} {...register('notes')} />
           </div>
-
-          <div className="flex gap-2 justify-end">
-            <Button type="button" variant="ghost" onClick={onClose} disabled={isPending}>
-              {dict.form.cancel}
-            </Button>
-            <Button type="submit" disabled={isPending}>
-              {isPending ? dict.form.submitting : dict.form.submit}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+    </FormModal>
   );
 }
