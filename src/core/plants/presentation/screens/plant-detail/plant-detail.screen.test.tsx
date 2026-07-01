@@ -3,7 +3,6 @@ import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 import careScheduleDict from '@/core/care-schedule/presentation/i18n/en';
-import type { CareSchedule } from '@/core/care-schedule/domain/types/care-schedule.interface';
 
 const mockRedirect = vi.fn();
 
@@ -30,24 +29,8 @@ vi.mock('@/core/care-log/presentation/components/care-log-summary/care-log-summa
   CareLogSummary: () => null,
 }));
 
-vi.mock('@/core/care-schedule/presentation/hooks/use-care-schedules/use-care-schedules.hook', () => ({
-  useCareSchedules: vi.fn(() => ({ careSchedules: [], isLoading: false })),
-}));
-
-vi.mock('@/core/care-schedule/presentation/hooks/use-complete-care-schedule/use-complete-care-schedule.hook', () => ({
-  useCompleteCareSchedule: vi.fn(() => ({ mutate: vi.fn() })),
-}));
-
-vi.mock('@/core/care-schedule/presentation/hooks/use-delete-care-schedule/use-delete-care-schedule.hook', () => ({
-  useDeleteCareSchedule: vi.fn(() => ({ mutate: vi.fn() })),
-}));
-
-vi.mock('@/core/care-schedule/presentation/components/care-schedule-modal/care-schedule-modal', () => ({
-  CareScheduleModal: ({ onClose }: { onClose: () => void }) => (
-    <div data-testid="care-schedule-modal-mock">
-      <button onClick={onClose}>close</button>
-    </div>
-  ),
+vi.mock('@/core/care-schedule/presentation/components/care-schedule-list/care-schedule-list', () => ({
+  CareScheduleList: vi.fn(() => null),
 }));
 
 vi.mock('@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook', () => ({
@@ -61,6 +44,7 @@ vi.mock('next/link', () => ({
 }));
 
 import { usePlant } from '@/core/plants/presentation/hooks/use-plant/use-plant.hook';
+import { CareScheduleList } from '@/core/care-schedule/presentation/components/care-schedule-list/care-schedule-list';
 import { PlantDetailScreen } from './plant-detail.screen';
 
 const mockPlant: Plant = {
@@ -406,60 +390,16 @@ describe('PlantDetailScreen', () => {
     });
   });
 
-  describe('calendar tab — care schedules', () => {
-    const mockCareSchedule: CareSchedule = {
-      id: 'cs-1',
-      plantId: 'p1',
-      activityType: 'WATERING',
-      intervalDays: 3,
-      quantity: null,
-      unit: null,
-      notes: null,
-      nextDueAt: '2026-07-05',
-      lastCompletedAt: null,
-      active: true,
-      userId: 'u1',
-      spaceId: 's1',
-      createdAt: '2026-07-01',
-      updatedAt: '2026-07-01',
-    };
+  it('renders CareScheduleList in the calendar tab with the plant id and dict', async () => {
+    const user = userEvent.setup();
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
 
-    it('shows the empty state when the plant has no care schedules', async () => {
-      const user = userEvent.setup();
-      vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
+    await user.click(screen.getByRole('tab', { name: 'Calendar' }));
 
-      render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
-
-      await user.click(screen.getByRole('tab', { name: 'Calendar' }));
-
-      expect(await screen.findByText(careScheduleDict.tab.empty)).toBeInTheDocument();
-    });
-
-    it('lists a row per care schedule for the plant', async () => {
-      const user = userEvent.setup();
-      vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-      const { useCareSchedules } = await import(
-        '@/core/care-schedule/presentation/hooks/use-care-schedules/use-care-schedules.hook'
-      );
-      vi.mocked(useCareSchedules).mockReturnValue({ careSchedules: [mockCareSchedule], isLoading: false } as never);
-
-      render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
-
-      await user.click(screen.getByRole('tab', { name: 'Calendar' }));
-
-      expect(await screen.findByText(careScheduleDict.row.activityTypes.WATERING)).toBeInTheDocument();
-    });
-
-    it('opens the create modal, locked to this plant, when "+ new task" is clicked', async () => {
-      const user = userEvent.setup();
-      vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-
-      render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
-
-      await user.click(screen.getByRole('tab', { name: 'Calendar' }));
-      await user.click(await screen.findByRole('button', { name: new RegExp(careScheduleDict.tab.newTask, 'i') }));
-
-      expect(screen.getByTestId('care-schedule-modal-mock')).toBeInTheDocument();
-    });
+    expect(vi.mocked(CareScheduleList)).toHaveBeenCalledWith(
+      expect.objectContaining({ plantId: 'p1', dict: careScheduleDict }),
+      undefined,
+    );
   });
 });
