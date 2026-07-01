@@ -1,8 +1,9 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CalendarScreen } from './calendar.screen';
 import { useCalendarStore } from '../../../infrastructure/store/calendar.store';
 import { toISODate } from '../../utils/to-iso-date/to-iso-date.util';
+import careScheduleDict from '@/core/care-schedule/presentation/i18n/en';
 
 vi.mock('../../components/calendar-grid/calendar-grid', () => ({
   CalendarGrid: (props: Record<string, unknown>) => (
@@ -25,6 +26,35 @@ vi.mock('../../components/day-tasks-panel/day-tasks-panel', () => ({
 
 vi.mock('../../components/calendar-view-switcher/calendar-view-switcher', () => ({
   CalendarViewSwitcher: () => <div data-testid="view-switcher-mock" />,
+}));
+
+vi.mock('@/core/care-schedule/presentation/hooks/use-care-schedules/use-care-schedules.hook', () => ({
+  useCareSchedules: vi.fn(() => ({ careSchedules: [], isLoading: false })),
+}));
+
+vi.mock('@/core/care-schedule/presentation/hooks/use-complete-care-schedule/use-complete-care-schedule.hook', () => ({
+  useCompleteCareSchedule: vi.fn(() => ({ mutate: vi.fn() })),
+}));
+
+vi.mock('@/core/care-schedule/presentation/hooks/use-delete-care-schedule/use-delete-care-schedule.hook', () => ({
+  useDeleteCareSchedule: vi.fn(() => ({ mutate: vi.fn() })),
+}));
+
+vi.mock('@/core/plants/presentation/hooks/use-plants/use-plants.hook', () => ({
+  usePlants: vi.fn(() => ({ data: [] })),
+}));
+
+vi.mock('@/core/spaces/infrastructure/store/spaces.store', () => ({
+  useSpacesStore: vi.fn((selector: (s: { currentSpaceId: string | null }) => unknown) =>
+    selector({ currentSpaceId: 's1' })),
+}));
+
+vi.mock('@/core/care-schedule/presentation/components/care-schedule-modal/care-schedule-modal', () => ({
+  CareScheduleModal: ({ onClose }: { onClose: () => void }) => (
+    <div data-testid="care-schedule-modal-mock">
+      <button onClick={onClose}>close</button>
+    </div>
+  ),
 }));
 
 const today = new Date();
@@ -51,7 +81,6 @@ const dict = {
   },
   panel: {
     todayPrefix: 'Hoy',
-    inDevLabel: 'Tareas del día',
     monthAbbreviations: {
       january: 'ene', february: 'feb', march: 'mar', april: 'abr', may: 'may', june: 'jun',
       july: 'jul', august: 'ago', september: 'sep', october: 'oct', november: 'nov', december: 'dic',
@@ -69,22 +98,22 @@ beforeEach(() => {
 
 describe('CalendarScreen', () => {
   it('renders PageHeader with the screen title in eyebrow', () => {
-    render(<CalendarScreen dict={dict} />);
+    render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
     expect(screen.getByText(/Calendario/)).toBeInTheDocument();
   });
 
   it('renders PageHeader title with month and year', () => {
-    render(<CalendarScreen dict={dict} />);
+    render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
     expect(screen.getByRole('heading', { name: /Mayo 2026/ })).toBeInTheDocument();
   });
 
   it('renders PageHeader subtitle with season', () => {
-    render(<CalendarScreen dict={dict} />);
+    render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
     expect(screen.getByText(/primavera/i)).toBeInTheDocument();
   });
 
   it('renders CalendarGrid with store year, month and selectedDate', () => {
-    render(<CalendarScreen dict={dict} />);
+    render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
     expect(screen.getByTestId('calendar-grid-mock')).toBeInTheDocument();
     expect(screen.getByTestId('grid-year').textContent).toBe('2026');
     expect(screen.getByTestId('grid-month').textContent).toBe('4');
@@ -92,29 +121,47 @@ describe('CalendarScreen', () => {
   });
 
   it('renders DayTasksPanel with selectedDate from store', () => {
-    render(<CalendarScreen dict={dict} />);
+    render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
     expect(screen.getByTestId('day-tasks-panel-mock')).toBeInTheDocument();
     expect(screen.getByTestId('panel-selected').textContent).toBe(todayISO);
   });
 
   it('prev-month button calls store prevMonth', async () => {
     const spy = vi.spyOn(useCalendarStore.getState(), 'prevMonth');
-    render(<CalendarScreen dict={dict} />);
+    render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
     screen.getByRole('button', { name: /mes anterior/i }).click();
     expect(spy).toHaveBeenCalledOnce();
   });
 
   it('next-month button calls store nextMonth', async () => {
     const spy = vi.spyOn(useCalendarStore.getState(), 'nextMonth');
-    render(<CalendarScreen dict={dict} />);
+    render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
     screen.getByRole('button', { name: /mes siguiente/i }).click();
     expect(spy).toHaveBeenCalledOnce();
   });
 
   it('onSelectDate callback calls store setSelectedDate', async () => {
     const spy = vi.spyOn(useCalendarStore.getState(), 'setSelectedDate');
-    render(<CalendarScreen dict={dict} />);
+    render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
     screen.getByText('select').click();
     expect(spy).toHaveBeenCalledWith('2026-07-04');
+  });
+
+  it('does not show the create modal initially', () => {
+    render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
+    expect(screen.queryByTestId('care-schedule-modal-mock')).toBeNull();
+  });
+
+  it('opens the create modal when "+ Añadir tarea" is clicked', () => {
+    render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
+    fireEvent.click(screen.getByRole('button', { name: /nueva tarea/i }));
+    expect(screen.getByTestId('care-schedule-modal-mock')).toBeInTheDocument();
+  });
+
+  it('closes the create modal when onClose is called', () => {
+    render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
+    fireEvent.click(screen.getByRole('button', { name: /nueva tarea/i }));
+    fireEvent.click(screen.getByText('close'));
+    expect(screen.queryByTestId('care-schedule-modal-mock')).toBeNull();
   });
 });

@@ -17,6 +17,12 @@ import { useDeletePlant } from '@/core/plants/presentation/hooks/use-delete-plan
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import { usePlantCareLogs } from '@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-logs.hook';
 import { CareLogSummary } from '@/core/care-log/presentation/components/care-log-summary/care-log-summary';
+import { useCareSchedules } from '@/core/care-schedule/presentation/hooks/use-care-schedules/use-care-schedules.hook';
+import { useCompleteCareSchedule } from '@/core/care-schedule/presentation/hooks/use-complete-care-schedule/use-complete-care-schedule.hook';
+import { useDeleteCareSchedule } from '@/core/care-schedule/presentation/hooks/use-delete-care-schedule/use-delete-care-schedule.hook';
+import { CareScheduleRow } from '@/core/care-schedule/presentation/components/care-schedule-row/care-schedule-row';
+import { CareScheduleModal } from '@/core/care-schedule/presentation/components/care-schedule-modal/care-schedule-modal';
+import type { CareSchedule } from '@/core/care-schedule/domain/types/care-schedule.interface';
 import { ConfirmDialog } from '@/shared/presentation/components/ui/confirm-dialog/confirm-dialog';
 import { Alert } from '@/shared/presentation/components/ui/alert/alert';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
@@ -43,19 +49,25 @@ function DetailSkeleton() {
 type Props = {
   dict: AppDict['plants'];
   careLogDict: AppDict['careLog'];
+  careScheduleDict: AppDict['careSchedule'];
   lang: string;
   spaceId: string | null;
   plantId: string;
 };
 
-export function PlantDetailScreen({ dict, careLogDict, lang, spaceId: spaceIdProp, plantId }: Props) {
+export function PlantDetailScreen({ dict, careLogDict, careScheduleDict, lang, spaceId: spaceIdProp, plantId }: Props) {
   const router = useRouter();
   const storeSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const spaceId = spaceIdProp ?? storeSpaceId;
   const { data: plant, isLoading, isError } = usePlant(spaceId, plantId);
   const { data: lastCareByType = {} } = usePlantCareLogs(plantId);
+  const { careSchedules } = useCareSchedules({ plantId });
+  const { mutate: completeCareSchedule } = useCompleteCareSchedule();
+  const { mutate: deleteCareSchedule } = useDeleteCareSchedule();
   const deletePlant = useDeletePlant(spaceId);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isCareScheduleCreateOpen, setIsCareScheduleCreateOpen] = useState(false);
+  const [editingCareSchedule, setEditingCareSchedule] = useState<CareSchedule | null>(null);
 
   if (isLoading) return <DetailSkeleton />;
   if (isError) redirect(`/${lang}/plants`);
@@ -301,7 +313,44 @@ export function PlantDetailScreen({ dict, careLogDict, lang, spaceId: spaceIdPro
           </TabsContent>
 
           <TabsContent value="calendar">
-            <InDevelopment />
+            <div className="pt-6 flex flex-col gap-4">
+              <div className="flex justify-end">
+                <Button size="sm" onClick={() => setIsCareScheduleCreateOpen(true)}>
+                  + {careScheduleDict.tab.newTask}
+                </Button>
+              </div>
+              {careSchedules.length === 0 ? (
+                <p className="text-sm text-muted-foreground">{careScheduleDict.tab.empty}</p>
+              ) : (
+                <div className="flex flex-col gap-3">
+                  {careSchedules.map((careSchedule) => (
+                    <CareScheduleRow
+                      key={careSchedule.id}
+                      careSchedule={careSchedule}
+                      dict={careScheduleDict}
+                      onComplete={(id) => completeCareSchedule({ id })}
+                      onEdit={setEditingCareSchedule}
+                      onDelete={(id) => deleteCareSchedule(id)}
+                    />
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {isCareScheduleCreateOpen && (
+              <CareScheduleModal
+                dict={careScheduleDict}
+                lockedPlantId={plantId}
+                onClose={() => setIsCareScheduleCreateOpen(false)}
+              />
+            )}
+            {editingCareSchedule && (
+              <CareScheduleModal
+                dict={careScheduleDict}
+                careSchedule={editingCareSchedule}
+                onClose={() => setEditingCareSchedule(null)}
+              />
+            )}
           </TabsContent>
 
           <TabsContent value="diary">
