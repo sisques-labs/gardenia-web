@@ -11,19 +11,8 @@ import {
 import { Button, buttonVariants } from '@/shared/presentation/components/ui/button/button';
 import { usePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-planting-spot/use-planting-spot.hook';
 import { PlantingSpotTypeBadge } from '@/core/planting-spots/presentation/components/planting-spot-type-badge/planting-spot-type-badge';
+import { PlantingSpotDetailSkeleton } from '@/core/planting-spots/presentation/components/planting-spot-detail-skeleton/planting-spot-detail-skeleton';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
-
-const shimmer = 'bg-muted rounded animate-pulse';
-
-function DetailSkeleton() {
-  return (
-    <div className="px-6 py-6 flex flex-col gap-4">
-      <div className={`h-6 w-1/3 ${shimmer}`} />
-      <div className={`h-4 w-1/2 ${shimmer}`} />
-      <div className={`h-40 w-full ${shimmer}`} />
-    </div>
-  );
-}
 
 function CapacityBar({ current, capacity }: { current: number; capacity: number }) {
   const pct = Math.min((current / capacity) * 100, 100);
@@ -48,7 +37,7 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
   const { spot, isLoading } = usePlantingSpot(spotId);
   const d = dict.detail;
 
-  if (isLoading) return <DetailSkeleton />;
+  if (isLoading) return <PlantingSpotDetailSkeleton />;
   if (!spot) return null;
 
   const plantCount = spot.resolvedPlants?.length ?? 0;
