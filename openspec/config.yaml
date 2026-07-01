@@ -121,6 +121,26 @@ conventions:
       - "Never mirror server data into Zustand — TanStack Query is the single source of truth for anything that comes from the API"
       - "Never reach into a Zustand store for state only one component needs"
 
+  storybook:
+    mandatory: true
+    scope: "Every component under src/shared/presentation/components/ui/ and src/core/{context}/presentation/components/, and every screen under src/core/{context}/presentation/screens/, MUST have a co-located {name}.stories.tsx. No exceptions for 'small' or 'internal' components."
+    naming: "{name}.stories.tsx — co-located next to {name}.tsx / {name}.screen.tsx. title groups by category, e.g. 'Domain/PlantCard', 'Calendar/DayTasksPanel', 'Screens/PlantDetail'."
+    pure_components: "Components that only take props (no internal TanStack Query/Zustand calls) are storied directly — pass fixture data via args, no decorators needed."
+    hook_backed_components_and_screens: |
+      For components/screens that call TanStack Query hooks or Zustand stores internally
+      (most screens, some feature components like modals), do NOT mock the hook module.
+      Seed the REAL hook with fixture data instead, so the story exercises actual
+      production code:
+        - TanStack Query: wrap the story in a decorator that creates a fresh QueryClient
+          and calls queryClient.setQueryData(queryKey, fixtureData) before render, so
+          useQuery/useSuspenseQuery resolve from cache instead of hitting the network.
+        - Zustand: call the store's setState(...) directly (e.g. useSpacesStore.setState({...}))
+          before the story renders to seed the state the component reads.
+        - Next.js router/searchParams: @storybook/nextjs mocks next/navigation
+          automatically; use the `nextjs.navigation` story parameter to set route state
+          per story when a screen depends on it.
+    definition_of_done: "A component or screen is not done until its .stories.tsx exists and Storybook builds — this applies from day one, no backlog."
+
 git:
   base_branch: main
   strategy: "feature branches → PR → main"
