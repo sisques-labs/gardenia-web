@@ -34,4 +34,6 @@ const Blockquote = ({ className, variant, cite, children, ref, ...props }: Block
   </blockquote>
 );
 
+Blockquote.displayName = 'Blockquote';
+
 export { Blockquote };

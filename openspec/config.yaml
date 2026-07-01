@@ -47,7 +47,7 @@ conventions:
       MUST be used as the fallback prop of the <Suspense> that wraps the screen in
       app/[lang]/…/page.tsx. Never define skeletons inline inside a screen component.
     schemas: "{name}.schema.ts — Zod schema + inferred type. Lives in presentation/schemas/."
-    hooks: "hooks/{hook-name}/{hookName}.hook.ts — one folder per hook; exported function named use{Name}"
+    hooks: "hooks/{hook-name}/{hook-name}.hook.ts — one folder per hook, kebab-case file name; exported function named use{Name}"
     providers: "{context}.providers.tsx"
     models: "{name}.model.ts"
     interfaces: "{name}.interface.ts"

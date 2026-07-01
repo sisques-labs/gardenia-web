@@ -38,4 +38,6 @@ const Callout = ({ className, variant, icon, title, children, ref, ...props }: C
   </div>
 );
 
+Callout.displayName = 'Callout';
+
 export { Callout };

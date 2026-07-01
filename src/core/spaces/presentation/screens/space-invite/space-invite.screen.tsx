@@ -3,7 +3,7 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
-import { useAcceptInvitation } from '@/core/spaces/presentation/hooks/use-accept-invitation/useAcceptInvitation.hook';
+import { useAcceptInvitation } from '@/core/spaces/presentation/hooks/use-accept-invitation/use-accept-invitation.hook';
 import {
   claimInviteAccept,
   isAlreadyMemberError,

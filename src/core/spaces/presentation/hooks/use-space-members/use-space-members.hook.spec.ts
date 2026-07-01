@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
-import { useSpaceMembers } from './useSpaceMembers.hook';
+import { useSpaceMembers } from './use-space-members.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import type { User } from '@/core/users/domain/interfaces/user.interface';
 

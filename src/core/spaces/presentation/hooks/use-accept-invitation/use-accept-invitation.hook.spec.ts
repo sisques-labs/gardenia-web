@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
-import { useAcceptInvitation } from './useAcceptInvitation.hook';
+import { useAcceptInvitation } from './use-accept-invitation.hook';
 
 const { mockSpaceId, mockExecute } = vi.hoisted(() => ({
   mockSpaceId: 'space-joined',

@@ -7,7 +7,7 @@ import { SidebarFooter } from './sidebar-footer';
 import type { SpacesState } from '@/core/spaces/infrastructure/store/spaces.store';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
-vi.mock('@/core/spaces/presentation/hooks/use-spaces/useSpaces.hook', () => ({
+vi.mock('@/core/spaces/presentation/hooks/use-spaces/use-spaces.hook', () => ({
   useSpaces: vi.fn(),
 }));
 vi.mock('@/core/spaces/infrastructure/store/spaces.store', () => ({
@@ -24,7 +24,7 @@ vi.mock('@/core/auth/presentation/hooks/use-logout/useLogout.hook', () => ({
   }),
 }));
 
-import { useSpaces } from '@/core/spaces/presentation/hooks/use-spaces/useSpaces.hook';
+import { useSpaces } from '@/core/spaces/presentation/hooks/use-spaces/use-spaces.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 
 const dict = {

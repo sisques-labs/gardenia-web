@@ -48,4 +48,6 @@ const Sparkline = ({ className, data, width = 80, height = 24, ref, ...props }: 
   );
 };
 
+Sparkline.displayName = 'Sparkline';
+
 export { Sparkline };

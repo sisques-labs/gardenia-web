@@ -1,6 +1,6 @@
 'use client';
 
-import { useSpaceMembers } from '@/core/spaces/presentation/hooks/use-space-members/useSpaceMembers.hook';
+import { useSpaceMembers } from '@/core/spaces/presentation/hooks/use-space-members/use-space-members.hook';
 
 type Props = {
   dict: {

@@ -15,14 +15,14 @@ vi.mock("@/shared/presentation/components/screen-header/screen-header", () => ({
 }));
 
 vi.mock(
-  "@/core/spaces/presentation/components/space-members-list/space-members-list.component",
+  "@/core/spaces/presentation/components/space-members-list/space-members-list",
   () => ({
     SpaceMembersList: () => <div data-testid="space-members-list" />,
   }),
 );
 
 vi.mock(
-  "@/core/spaces/presentation/components/space-weather-widget/space-weather-widget.component",
+  "@/core/spaces/presentation/components/space-weather-widget/space-weather-widget",
   () => ({
     SpaceWeatherWidget: () => <div data-testid="space-weather-widget" />,
   }),
@@ -34,13 +34,13 @@ const mockResetRemove = vi.fn();
 const mockResetGeo = vi.fn();
 
 vi.mock(
-  "@/core/spaces/presentation/hooks/use-space-settings/useSpaceSettings.hook",
+  "@/core/spaces/presentation/hooks/use-space-settings/use-space-settings.hook",
   () => ({
     useSpaceSettings: vi.fn(),
   }),
 );
 
-import { useSpaceSettings } from "@/core/spaces/presentation/hooks/use-space-settings/useSpaceSettings.hook";
+import { useSpaceSettings } from "@/core/spaces/presentation/hooks/use-space-settings/use-space-settings.hook";
 import { addMemberSchema } from "@/core/spaces/presentation/schemas/add-member.schema";
 import { createInvitationSchema } from "@/core/spaces/presentation/schemas/create-invitation.schema";
 import {

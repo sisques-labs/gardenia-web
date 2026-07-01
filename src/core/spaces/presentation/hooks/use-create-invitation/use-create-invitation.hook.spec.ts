@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
-import { useCreateInvitation } from './useCreateInvitation.hook';
+import { useCreateInvitation } from './use-create-invitation.hook';
 import type { SpaceInvitation } from '@/core/spaces/domain/types/space-invitation.type';
 
 const mockInvitation: SpaceInvitation = {

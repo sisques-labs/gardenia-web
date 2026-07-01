@@ -35,4 +35,6 @@ const NumericBadge = ({ ref, className, count, max = 99, variant, ...props }: Nu
   );
 };
 
+NumericBadge.displayName = 'NumericBadge';
+
 export { NumericBadge };

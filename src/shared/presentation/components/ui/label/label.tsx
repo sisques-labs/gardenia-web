@@ -21,4 +21,6 @@ const Label = ({ className, ref, ...props }: LabelProps) => (
   />
 );
 
+Label.displayName = 'Label';
+
 export { Label };

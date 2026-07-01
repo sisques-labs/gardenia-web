@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/shared/presentation/
 import { Skeleton } from '@/shared/presentation/components/ui/skeleton/skeleton';
 import { useSpaceWeather } from '@/core/spaces/presentation/hooks/use-space-weather/use-space-weather.hook';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
-import { DailyTile } from './daily-tile.component';
+import { DailyTile } from './daily-tile';
 
 interface SpaceWeatherWidgetProps {
   spaceId: string;

@@ -1,6 +1,6 @@
 'use client';
 
-import { SpaceMembersList } from '@/core/spaces/presentation/components/space-members-list/space-members-list.component';
+import { SpaceMembersList } from '@/core/spaces/presentation/components/space-members-list/space-members-list';
 import { Alert } from '@/shared/presentation/components/ui/alert/alert';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import { Card, CardContent } from '@/shared/presentation/components/ui/card/card';

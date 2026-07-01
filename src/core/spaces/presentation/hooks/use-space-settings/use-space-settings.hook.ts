@@ -5,10 +5,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
-import { useSpaceDetail } from '@/core/spaces/presentation/hooks/use-space-detail/useSpaceDetail.hook';
-import { useCreateInvitation } from '@/core/spaces/presentation/hooks/use-create-invitation/useCreateInvitation.hook';
-import { useAddMember } from '@/core/spaces/presentation/hooks/use-add-member/useAddMember.hook';
-import { useRemoveMember } from '@/core/spaces/presentation/hooks/use-remove-member/useRemoveMember.hook';
+import { useSpaceDetail } from '@/core/spaces/presentation/hooks/use-space-detail/use-space-detail.hook';
+import { useCreateInvitation } from '@/core/spaces/presentation/hooks/use-create-invitation/use-create-invitation.hook';
+import { useAddMember } from '@/core/spaces/presentation/hooks/use-add-member/use-add-member.hook';
+import { useRemoveMember } from '@/core/spaces/presentation/hooks/use-remove-member/use-remove-member.hook';
 import { useUpdateSpace } from '@/core/spaces/presentation/hooks/use-update-space/use-update-space.hook';
 import {
   createInvitationSchema,

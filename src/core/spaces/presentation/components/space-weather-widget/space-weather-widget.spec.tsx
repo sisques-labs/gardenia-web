@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { SpaceWeather } from '@/core/spaces/domain/interfaces/space-weather.interface';
-import { SpaceWeatherWidget } from './space-weather-widget.component';
+import { SpaceWeatherWidget } from './space-weather-widget';
 
 const mockUseSpaceWeather = vi.fn();
 

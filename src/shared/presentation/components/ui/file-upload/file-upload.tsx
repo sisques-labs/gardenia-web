@@ -78,4 +78,6 @@ const FileUpload = ({ className, accept, multiple, maxSizeMB, onChange, ref, ...
   );
 };
 
+FileUpload.displayName = 'FileUpload';
+
 export { FileUpload };

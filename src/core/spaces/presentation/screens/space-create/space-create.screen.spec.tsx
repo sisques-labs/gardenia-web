@@ -6,7 +6,7 @@ vi.mock('next/navigation', () => ({
   useRouter: vi.fn(() => ({ replace: vi.fn() })),
 }));
 
-vi.mock('@/core/spaces/presentation/hooks/use-create-space/useCreateSpace.hook', () => ({
+vi.mock('@/core/spaces/presentation/hooks/use-create-space/use-create-space.hook', () => ({
   useCreateSpace: vi.fn(() => ({ mutate: vi.fn(), isPending: false, error: null })),
 }));
 

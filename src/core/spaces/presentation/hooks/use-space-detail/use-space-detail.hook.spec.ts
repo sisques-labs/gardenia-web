@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { createElement, type ReactNode } from 'react';
-import { useSpaceDetail } from './useSpaceDetail.hook';
+import { useSpaceDetail } from './use-space-detail.hook';
 import type { SpaceDetail } from '@/core/spaces/domain/interfaces/space-detail.interface';
 
 const mockDetail: SpaceDetail = {

@@ -40,4 +40,6 @@ const Timeline = ({ className, events, ref, ...props }: TimelineProps) => (
   </ol>
 );
 
+Timeline.displayName = 'Timeline';
+
 export { Timeline };

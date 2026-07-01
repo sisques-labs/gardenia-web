@@ -31,4 +31,8 @@ const AvatarFallback = ({ className, ref, ...props }: React.ComponentPropsWithou
   />
 );
 
+Avatar.displayName = 'Avatar';
+AvatarImage.displayName = 'AvatarImage';
+AvatarFallback.displayName = 'AvatarFallback';
+
 export { Avatar, AvatarImage, AvatarFallback };

@@ -62,4 +62,6 @@ const LineAreaChart = ({ className, data, height = 200, ref, ...props }: LineAre
   );
 };
 
+LineAreaChart.displayName = 'LineAreaChart';
+
 export { LineAreaChart };

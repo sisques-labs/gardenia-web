@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { SpaceMembersList } from './space-members-list.component';
+import { SpaceMembersList } from './space-members-list';
 import type { User } from '@/core/users/domain/interfaces/user.interface';
 
 const { mockUseSpaceMembers } = vi.hoisted(() => ({
@@ -8,7 +8,7 @@ const { mockUseSpaceMembers } = vi.hoisted(() => ({
 }));
 
 vi.mock(
-  '@/core/spaces/presentation/hooks/use-space-members/useSpaceMembers.hook',
+  '@/core/spaces/presentation/hooks/use-space-members/use-space-members.hook',
   () => ({ useSpaceMembers: mockUseSpaceMembers }),
 );
 

@@ -81,4 +81,6 @@ const Button = ({ className, variant, size, asChild = false, loading = false, di
   );
 };
 
+Button.displayName = 'Button';
+
 export { Button, buttonVariants };
