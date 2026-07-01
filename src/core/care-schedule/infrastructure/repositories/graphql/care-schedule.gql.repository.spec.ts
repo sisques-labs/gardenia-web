@@ -89,12 +89,12 @@ describe('CareScheduleGqlRepository', () => {
       });
     });
 
-    it('translates active + dueBefore to active EQUALS and due_before LESS_THAN_OR_EQUAL filters, both as strings', async () => {
+    it('translates active + dueOnDay to an active EQUALS filter plus a next_due_at range bracketing that day', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
         data: { careSchedulesFindByCriteria: { items: [] } },
       } as never);
 
-      await repository.findByCriteria({ active: true, dueBefore: '2026-07-05' });
+      await repository.findByCriteria({ active: true, dueOnDay: '2026-07-05' });
 
       expect(apolloClient.query).toHaveBeenCalledWith({
         query: CARE_SCHEDULES_FIND_BY_CRITERIA,
@@ -102,7 +102,8 @@ describe('CareScheduleGqlRepository', () => {
           input: {
             filters: [
               { field: 'active', operator: 'EQUALS', value: 'true' },
-              { field: 'due_before', operator: 'LESS_THAN_OR_EQUAL', value: '2026-07-05T23:59:59.999' },
+              { field: 'next_due_at', operator: 'GREATER_THAN_OR_EQUAL', value: '2026-07-05T00:00:00.000' },
+              { field: 'next_due_at', operator: 'LESS_THAN_OR_EQUAL', value: '2026-07-05T23:59:59.999' },
             ],
           },
         },

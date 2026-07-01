@@ -27,10 +27,12 @@ function toApiFilters(filters?: CareScheduleFilters) {
   if (filters.plantId) apiFilters.push({ field: 'plant_id', operator: 'EQUALS', value: filters.plantId });
   if (filters.activityType) apiFilters.push({ field: 'activity_type', operator: 'EQUALS', value: filters.activityType });
   if (filters.active !== undefined) apiFilters.push({ field: 'active', operator: 'EQUALS', value: String(filters.active) });
-  // dueBefore is a plain 'YYYY-MM-DD' day; extend to end-of-day so schedules due later that same
-  // day (nextDueAt defaults to "now") aren't excluded by a midnight-of-day comparison.
-  if (filters.dueBefore) {
-    apiFilters.push({ field: 'due_before', operator: 'LESS_THAN_OR_EQUAL', value: `${filters.dueBefore}T23:59:59.999` });
+  // dueOnDay is a plain 'YYYY-MM-DD' day; bracket it as [start-of-day, end-of-day] range filters
+  // directly on next_due_at (the API's generic Criteria mechanism supports >=/<= on any real
+  // column), so only schedules due on that exact day are returned — not earlier ones too.
+  if (filters.dueOnDay) {
+    apiFilters.push({ field: 'next_due_at', operator: 'GREATER_THAN_OR_EQUAL', value: `${filters.dueOnDay}T00:00:00.000` });
+    apiFilters.push({ field: 'next_due_at', operator: 'LESS_THAN_OR_EQUAL', value: `${filters.dueOnDay}T23:59:59.999` });
   }
 
   return apiFilters.length ? { filters: apiFilters } : undefined;

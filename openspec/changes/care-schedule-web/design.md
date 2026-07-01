@@ -327,4 +327,17 @@ Reemplaza `<InDevelopment />` en `TabsContent value="calendar"` por un mini `Car
 
 ## 11. Open Questions
 
-- ¿El panel del día debería incluir schedules **vencidos antes** de la fecha seleccionada (no solo los que vencen ese día exacto)? Se opta por sí — `dueBefore: selectedDate` con `active: true` (igual semántica que el endpoint REST `dueBefore` de la API, pensado para "qué toca hacer ya"), consistente con el README de la API ("what's due in this space").
+- ¿El panel del día debería incluir schedules **vencidos antes** de la fecha seleccionada (no solo los que vencen ese día exacto)? Se optó inicialmente por sí (`dueBefore` acumulativo) — **revertido tras feedback de usuario** (ver Amendment 1): al navegar a otro día, seguían apareciendo tareas de días anteriores. El panel del día ahora filtra por el día exacto (`dueOnDay`).
+
+## Amendment 1 — `dueOnDay` reemplaza a `dueBefore` (post-implementación)
+
+Tras probar la feature, se reportó que cambiar de día en el calendario seguía mostrando tareas de días previos, porque `dueBefore` era acumulativo por diseño ("todo lo pendiente hasta esa fecha"). Se cambia a filtrado por día exacto:
+
+- `CareScheduleFilters.dueBefore?: string` → `CareScheduleFilters.dueOnDay?: string` (mismo formato `'YYYY-MM-DD'`).
+- En `CareScheduleGqlRepository`, en vez del filtro virtual `due_before` (`next_due_at <=`), se envían dos filtros directos sobre la columna real `next_due_at` (la API soporta `GREATER_THAN_OR_EQUAL`/`LESS_THAN_OR_EQUAL` genéricamente sobre cualquier columna, no solo vía el virtual `due_before`):
+  ```ts
+  { field: 'next_due_at', operator: 'GREATER_THAN_OR_EQUAL', value: `${dueOnDay}T00:00:00.000` }
+  { field: 'next_due_at', operator: 'LESS_THAN_OR_EQUAL', value: `${dueOnDay}T23:59:59.999` }
+  ```
+- `calendar.screen.tsx`: `useCareSchedules({ active: true, dueBefore: selectedDate })` → `useCareSchedules({ active: true, dueOnDay: selectedDate })`.
+- **Trade-off aceptado**: un schedule activo cuyo `nextDueAt` quedó en el pasado sin completarse (p. ej. el usuario nunca abrió esa fecha) ya no aparece al navegar a "hoy" — solo aparece si se visita exactamente el día en que venció. No hay, de momento, una vista de "atrasadas" agregada; queda fuera de alcance de este cambio.

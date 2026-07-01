@@ -30,7 +30,7 @@ export function CalendarScreen({ dict, careScheduleDict }: Props) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const spaceId = useSpacesStore((s) => s.currentSpaceId);
-  const { careSchedules, isLoading } = useCareSchedules({ active: true, dueBefore: selectedDate });
+  const { careSchedules, isLoading } = useCareSchedules({ active: true, dueOnDay: selectedDate });
   const { data: plants } = usePlants(spaceId);
   const { mutate: completeCareSchedule } = useCompleteCareSchedule();
   const { mutate: deleteCareSchedule } = useDeleteCareSchedule();

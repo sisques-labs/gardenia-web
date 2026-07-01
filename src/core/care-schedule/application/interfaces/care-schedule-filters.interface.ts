@@ -4,5 +4,6 @@ export interface CareScheduleFilters {
   plantId?: string;
   activityType?: CareScheduleActivityType;
   active?: boolean;
-  dueBefore?: string;
+  /** Restrict to schedules whose nextDueAt falls on this exact calendar day ('YYYY-MM-DD'). */
+  dueOnDay?: string;
 }
