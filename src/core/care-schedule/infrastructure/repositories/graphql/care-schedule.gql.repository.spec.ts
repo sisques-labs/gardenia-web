@@ -89,7 +89,7 @@ describe('CareScheduleGqlRepository', () => {
       });
     });
 
-    it('translates active + dueBefore to active EQUALS and due_before LESS_THAN_OR_EQUAL filters', async () => {
+    it('translates active + dueBefore to active EQUALS and due_before LESS_THAN_OR_EQUAL filters, both as strings', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
         data: { careSchedulesFindByCriteria: { items: [] } },
       } as never);
@@ -101,10 +101,26 @@ describe('CareScheduleGqlRepository', () => {
         variables: {
           input: {
             filters: [
-              { field: 'active', operator: 'EQUALS', value: true },
-              { field: 'due_before', operator: 'LESS_THAN_OR_EQUAL', value: '2026-07-05' },
+              { field: 'active', operator: 'EQUALS', value: 'true' },
+              { field: 'due_before', operator: 'LESS_THAN_OR_EQUAL', value: '2026-07-05T23:59:59.999' },
             ],
           },
+        },
+        fetchPolicy: 'network-only',
+      });
+    });
+
+    it('sends active: false as the string "false", not an empty/falsy value', async () => {
+      vi.mocked(apolloClient.query).mockResolvedValue({
+        data: { careSchedulesFindByCriteria: { items: [] } },
+      } as never);
+
+      await repository.findByCriteria({ active: false });
+
+      expect(apolloClient.query).toHaveBeenCalledWith({
+        query: CARE_SCHEDULES_FIND_BY_CRITERIA,
+        variables: {
+          input: { filters: [{ field: 'active', operator: 'EQUALS', value: 'false' }] },
         },
         fetchPolicy: 'network-only',
       });

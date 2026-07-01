@@ -18,14 +18,20 @@ import type { CareScheduleCompleteResponse } from './responses/care-schedule-com
 import type { CareScheduleDeleteResponse } from './responses/care-schedule-delete.response';
 
 // Filters use the API's snake_case column names — this mapping is confined to this repository.
+// BaseFilterInput.value is a GraphQL String scalar, so every value must be sent as a string
+// (a raw boolean fails variable coercion: "String cannot represent a non string value").
 function toApiFilters(filters?: CareScheduleFilters) {
   if (!filters) return undefined;
 
-  const apiFilters: { field: string; operator: string; value: unknown }[] = [];
+  const apiFilters: { field: string; operator: string; value: string }[] = [];
   if (filters.plantId) apiFilters.push({ field: 'plant_id', operator: 'EQUALS', value: filters.plantId });
   if (filters.activityType) apiFilters.push({ field: 'activity_type', operator: 'EQUALS', value: filters.activityType });
-  if (filters.active !== undefined) apiFilters.push({ field: 'active', operator: 'EQUALS', value: filters.active });
-  if (filters.dueBefore) apiFilters.push({ field: 'due_before', operator: 'LESS_THAN_OR_EQUAL', value: filters.dueBefore });
+  if (filters.active !== undefined) apiFilters.push({ field: 'active', operator: 'EQUALS', value: String(filters.active) });
+  // dueBefore is a plain 'YYYY-MM-DD' day; extend to end-of-day so schedules due later that same
+  // day (nextDueAt defaults to "now") aren't excluded by a midnight-of-day comparison.
+  if (filters.dueBefore) {
+    apiFilters.push({ field: 'due_before', operator: 'LESS_THAN_OR_EQUAL', value: `${filters.dueBefore}T23:59:59.999` });
+  }
 
   return apiFilters.length ? { filters: apiFilters } : undefined;
 }
