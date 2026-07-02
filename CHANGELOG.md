@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-## [0.23.0-beta.1] - 2026-07-02
+## [0.23.0-beta.2] - 2026-07-02
 
 ### Bug Fixes
 - **care-schedule:** Send string filter values so the day panel query works (f5771b5)
@@ -13,6 +13,7 @@ All notable changes to this project will be documented in this file.
 - **storybook:** Install @storybook/addon-docs to fix Docs page rendering (442302e)
 - **storybook:** Stop PlantDetail's Loading story from redirect-looping (c669712)
 - Memoize AdjustQuantityModal's beforeForm JSX prop (bf27abe)
+- Forward Set-Cookie headers through the /api and /graphql proxy (b8e274a)
 
 ### Build
 - **deps:** Bump @radix-ui/react-select from 2.2.6 to 2.3.2 (a73a4f2)
@@ -29,6 +30,7 @@ All notable changes to this project will be documented in this file.
 
 ### CI
 - **chromatic:** Skip visual regression job for dependabot PRs (f36a685)
+- Dispatch gardenia-e2e run after alpha/beta release (838dff7)
 
 ### Documentation
 - **openspec:** Propose care-schedule-web integration change (8d7cf32)
