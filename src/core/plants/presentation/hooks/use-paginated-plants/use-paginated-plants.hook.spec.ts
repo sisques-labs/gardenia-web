@@ -16,7 +16,7 @@ vi.mock('@/core/plants/infrastructure/repositories/graphql/plants.gql.repository
   PlantsGqlRepository: class {},
 }));
 
-import { usePlants } from './use-plants.hook';
+import { usePaginatedPlants } from './use-paginated-plants.hook';
 
 const mockPlants: Plant[] = [
   { id: 'p1', name: 'Monstera', userId: 'u1', spaceId: 's1', createdAt: '', updatedAt: '' },
@@ -31,45 +31,51 @@ function makeWrapper() {
   return Wrapper;
 }
 
-describe('usePlants', () => {
+describe('usePaginatedPlants', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('returns plants data when spaceId is provided', async () => {
-    mockExecute.mockResolvedValue({ items: mockPlants, total: 2, page: 1, perPage: 10, totalPages: 1 });
+  it('returns the paginated result when spaceId is provided', async () => {
+    mockExecute.mockResolvedValue({ items: mockPlants, total: 2, page: 1, perPage: 20, totalPages: 1 });
 
-    const { result } = renderHook(() => usePlants('space-1'), { wrapper: makeWrapper() });
+    const { result } = renderHook(() => usePaginatedPlants('space-1'), { wrapper: makeWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
-    expect(result.current.data).toEqual(mockPlants);
+    expect(result.current.data?.items).toEqual(mockPlants);
+    expect(result.current.data?.total).toBe(2);
   });
 
-  it('is in loading state initially when spaceId is provided', () => {
-    mockExecute.mockReturnValue(new Promise(() => {}));
+  it('forwards page, perPage and filters to the use case', async () => {
+    mockExecute.mockResolvedValue({ items: [], total: 0, page: 2, perPage: 5, totalPages: 0 });
+    const filters = [{ field: 'NAME' as never, operator: 'LIKE' as never, value: 'rose' }];
 
-    const { result } = renderHook(() => usePlants('space-1'), { wrapper: makeWrapper() });
+    renderHook(() => usePaginatedPlants('space-1', { page: 2, perPage: 5, filters }), {
+      wrapper: makeWrapper(),
+    });
 
-    expect(result.current.isLoading).toBe(true);
+    await waitFor(() => expect(mockExecute).toHaveBeenCalledWith({ filters, pagination: { page: 2, perPage: 5 } }));
+  });
+
+  it('defaults to page 1 and perPage 20 when no options are given', async () => {
+    mockExecute.mockResolvedValue({ items: [], total: 0, page: 1, perPage: 20, totalPages: 0 });
+
+    renderHook(() => usePaginatedPlants('space-1'), { wrapper: makeWrapper() });
+
+    await waitFor(() => expect(mockExecute).toHaveBeenCalledWith({ filters: [], pagination: { page: 1, perPage: 20 } }));
   });
 
   it('is disabled (not fetching) when spaceId is null', () => {
-    const { result } = renderHook(() => usePlants(null), { wrapper: makeWrapper() });
+    const { result } = renderHook(() => usePaginatedPlants(null), { wrapper: makeWrapper() });
 
     expect(result.current.isFetching).toBe(false);
     expect(result.current.data).toBeUndefined();
   });
 
-  it('is disabled (not fetching) when spaceId is empty string', () => {
-    const { result } = renderHook(() => usePlants(''), { wrapper: makeWrapper() });
-
-    expect(result.current.isFetching).toBe(false);
-  });
-
   it('propagates errors from use case', async () => {
     mockExecute.mockRejectedValue(new Error('Network error'));
 
-    const { result } = renderHook(() => usePlants('space-1'), { wrapper: makeWrapper() });
+    const { result } = renderHook(() => usePaginatedPlants('space-1'), { wrapper: makeWrapper() });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
     expect(result.current.error).toBeInstanceOf(Error);
@@ -81,9 +87,9 @@ describe('usePlants', () => {
       { ...mockPlants[1], plantSpeciesId: 'sp2' },
       { id: 'p3', name: 'Monstera 2', userId: 'u1', spaceId: 's1', plantSpeciesId: 'sp1', createdAt: '', updatedAt: '' },
     ];
-    mockExecute.mockResolvedValue({ items, total: items.length, page: 1, perPage: 10, totalPages: 1 });
+    mockExecute.mockResolvedValue({ items, total: items.length, page: 1, perPage: 20, totalPages: 1 });
 
-    const { result } = renderHook(() => usePlants('space-1'), { wrapper: makeWrapper() });
+    const { result } = renderHook(() => usePaginatedPlants('space-1'), { wrapper: makeWrapper() });
 
     await waitFor(() => expect(result.current.isSuccess).toBe(true));
     expect(result.current.speciesCount).toBe(2);
@@ -92,7 +98,7 @@ describe('usePlants', () => {
   it('returns speciesCount 0 when data is not loaded yet', () => {
     mockExecute.mockReturnValue(new Promise(() => {}));
 
-    const { result } = renderHook(() => usePlants('space-1'), { wrapper: makeWrapper() });
+    const { result } = renderHook(() => usePaginatedPlants('space-1'), { wrapper: makeWrapper() });
 
     expect(result.current.speciesCount).toBe(0);
   });
