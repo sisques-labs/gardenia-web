@@ -70,4 +70,6 @@ const CalendarMonth = ({ className, year, month, onDateClick, ref, ...props }: C
   );
 };
 
+CalendarMonth.displayName = 'CalendarMonth';
+
 export { CalendarMonth };

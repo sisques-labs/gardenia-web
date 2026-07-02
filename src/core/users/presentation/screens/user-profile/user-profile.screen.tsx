@@ -12,29 +12,8 @@ import { useUser } from '@/core/users/presentation/hooks/use-user/use-user.hook'
 import { useUserInitials } from '@/core/users/presentation/hooks/use-user-initials/use-user-initials.hook';
 import { useUpdateUserProfileForm } from '@/core/users/presentation/hooks/use-update-user-profile-form/use-update-user-profile-form.hook';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
+import { UserProfileSkeleton } from '@/core/users/presentation/components/user-profile-skeleton/user-profile-skeleton';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
-
-const shimmer = 'bg-muted rounded animate-pulse';
-
-function ProfileSkeleton() {
-  return (
-    <div className="p-6 flex flex-col gap-6">
-      <div className="flex items-center gap-4">
-        <div className={`h-16 w-16 rounded-full ${shimmer}`} />
-        <div className="flex flex-col gap-2">
-          <div className={`h-5 w-32 ${shimmer}`} />
-          <div className={`h-4 w-24 ${shimmer}`} />
-        </div>
-      </div>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className="flex flex-col gap-2">
-          <div className={`h-4 w-20 ${shimmer}`} />
-          <div className={`h-9 w-full ${shimmer}`} />
-        </div>
-      ))}
-    </div>
-  );
-}
 
 type Props = {
   dict: AppDict['users'];
@@ -50,7 +29,7 @@ export function UserProfileScreen({ dict, lang }: Props) {
   const t = dict.profile;
 
   if (!isBootComplete || !currentUser || isLoading) {
-    return <ProfileSkeleton />;
+    return <UserProfileSkeleton />;
   }
 
   if (isError || !user) {

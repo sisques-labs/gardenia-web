@@ -17,38 +17,22 @@ import { useDeletePlant } from '@/core/plants/presentation/hooks/use-delete-plan
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import { usePlantCareLogs } from '@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-logs.hook';
 import { CareLogSummary } from '@/core/care-log/presentation/components/care-log-summary/care-log-summary';
+import { CareScheduleList } from '@/core/care-schedule/presentation/components/care-schedule-list/care-schedule-list';
 import { ConfirmDialog } from '@/shared/presentation/components/ui/confirm-dialog/confirm-dialog';
 import { Alert } from '@/shared/presentation/components/ui/alert/alert';
+import { PlantDetailSkeleton } from '@/core/plants/presentation/components/plant-detail-skeleton/plant-detail-skeleton';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
-
-const shimmer = 'bg-muted rounded animate-pulse';
-
-function DetailSkeleton() {
-  return (
-    <div className="p-6 flex flex-col gap-6">
-      <div className="flex items-center gap-4">
-        <div className={`h-7 w-48 ${shimmer}`} />
-      </div>
-      <div className={`h-48 w-full ${shimmer}`} />
-      <div className={`h-5 w-32 ${shimmer}`} />
-      <div className="grid grid-cols-2 gap-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className={`h-24 w-full ${shimmer}`} />
-        ))}
-      </div>
-    </div>
-  );
-}
 
 type Props = {
   dict: AppDict['plants'];
   careLogDict: AppDict['careLog'];
+  careScheduleDict: AppDict['careSchedule'];
   lang: string;
   spaceId: string | null;
   plantId: string;
 };
 
-export function PlantDetailScreen({ dict, careLogDict, lang, spaceId: spaceIdProp, plantId }: Props) {
+export function PlantDetailScreen({ dict, careLogDict, careScheduleDict, lang, spaceId: spaceIdProp, plantId }: Props) {
   const router = useRouter();
   const storeSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const spaceId = spaceIdProp ?? storeSpaceId;
@@ -57,7 +41,7 @@ export function PlantDetailScreen({ dict, careLogDict, lang, spaceId: spaceIdPro
   const deletePlant = useDeletePlant(spaceId);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
-  if (isLoading) return <DetailSkeleton />;
+  if (isLoading) return <PlantDetailSkeleton />;
   if (isError) redirect(`/${lang}/plants`);
   if (!plant) return null;
 
@@ -301,7 +285,7 @@ export function PlantDetailScreen({ dict, careLogDict, lang, spaceId: spaceIdPro
           </TabsContent>
 
           <TabsContent value="calendar">
-            <InDevelopment />
+            <CareScheduleList plantId={plantId} dict={careScheduleDict} />
           </TabsContent>
 
           <TabsContent value="diary">

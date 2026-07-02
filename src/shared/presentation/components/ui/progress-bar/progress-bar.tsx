@@ -78,4 +78,6 @@ const ProgressBar = ({ ref, className, variant = 'determinate', value = 0, steps
   );
 };
 
+ProgressBar.displayName = 'ProgressBar';
+
 export { ProgressBar };

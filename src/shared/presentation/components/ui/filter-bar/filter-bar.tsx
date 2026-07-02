@@ -72,4 +72,6 @@ const FilterBar = ({ className, onSearch, onFilterChange, onSortChange, onViewCh
   );
 };
 
+FilterBar.displayName = 'FilterBar';
+
 export { FilterBar };

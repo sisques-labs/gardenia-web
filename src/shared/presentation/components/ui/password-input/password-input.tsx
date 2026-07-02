@@ -30,4 +30,6 @@ const PasswordInput = ({ className, ref, ...props }: PasswordInputProps) => {
   );
 };
 
+PasswordInput.displayName = 'PasswordInput';
+
 export { PasswordInput };

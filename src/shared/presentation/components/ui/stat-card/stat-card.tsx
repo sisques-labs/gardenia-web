@@ -36,4 +36,6 @@ const StatCard = ({ className, label, value, delta, deltaPositive, icon, ref, ..
   </div>
 );
 
+StatCard.displayName = 'StatCard';
+
 export { StatCard };

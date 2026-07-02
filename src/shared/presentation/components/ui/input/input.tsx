@@ -17,4 +17,6 @@ const Input = ({ className, type, ref, ...props }: InputProps) => {
   );
 };
 
+Input.displayName = 'Input';
+
 export { Input };

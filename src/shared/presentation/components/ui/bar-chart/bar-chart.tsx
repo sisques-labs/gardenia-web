@@ -65,4 +65,6 @@ const BarChart = ({ className, data, height = 200, ref, ...props }: BarChartProp
   );
 };
 
+BarChart.displayName = 'BarChart';
+
 export { BarChart };

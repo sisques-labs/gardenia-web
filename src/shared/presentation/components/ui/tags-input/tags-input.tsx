@@ -88,4 +88,6 @@ const TagsInput = ({ className, value, defaultValue, onChange, placeholder = 'Ad
   );
 };
 
+TagsInput.displayName = 'TagsInput';
+
 export { TagsInput };

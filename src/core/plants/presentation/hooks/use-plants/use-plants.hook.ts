@@ -5,9 +5,18 @@ import { PlantsGqlRepository } from '@/core/plants/infrastructure/repositories/g
 const plantsUseCase = new GetPlantsUseCase(new PlantsGqlRepository());
 
 export function usePlants(spaceId: string | null) {
-  return useQuery({
+  const query = useQuery({
     queryKey: ['plants', spaceId],
     queryFn: () => plantsUseCase.execute(),
     enabled: !!spaceId,
   });
+
+  const speciesCount = query.data
+    ? query.data.reduce((ids, plant) => {
+        if (plant.plantSpeciesId) ids.add(plant.plantSpeciesId);
+        return ids;
+      }, new Set<string>()).size
+    : 0;
+
+  return { ...query, speciesCount };
 }

@@ -114,6 +114,14 @@ const ConfirmModal = ({
   </Dialog>
 );
 
+DialogOverlay.displayName = 'DialogOverlay';
+DialogContent.displayName = 'DialogContent';
+DialogHeader.displayName = 'DialogHeader';
+DialogFooter.displayName = 'DialogFooter';
+DialogTitle.displayName = 'DialogTitle';
+DialogDescription.displayName = 'DialogDescription';
+ConfirmModal.displayName = 'ConfirmModal';
+
 export {
   Dialog,
   DialogTrigger,

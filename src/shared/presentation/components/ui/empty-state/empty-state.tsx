@@ -30,4 +30,6 @@ const EmptyState = ({ className, icon, title, description, action, ref, ...props
   </div>
 );
 
+EmptyState.displayName = 'EmptyState';
+
 export { EmptyState };

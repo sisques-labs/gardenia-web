@@ -31,4 +31,6 @@ const Spinner = ({ className, size, label = 'Loading…', ref, ...props }: Spinn
   </span>
 );
 
+Spinner.displayName = 'Spinner';
+
 export { Spinner };

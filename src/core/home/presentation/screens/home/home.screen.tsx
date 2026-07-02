@@ -3,15 +3,15 @@
 import { Suspense } from 'react';
 import { HomeTopBar } from '@/core/home/presentation/components/home-top-bar/home-top-bar';
 import { TodayTasksSection } from '@/core/home/presentation/components/today-tasks-section/today-tasks-section';
-import { TodayTasksSkeleton } from '@/core/home/presentation/components/today-tasks-section/today-tasks-section.skeleton';
+import { TodayTasksSkeleton } from '@/core/home/presentation/components/today-tasks-section-skeleton/today-tasks-section-skeleton';
 import { GrowingNowSection } from '@/core/home/presentation/components/growing-now-section/growing-now-section';
-import { GrowingNowSkeleton } from '@/core/home/presentation/components/growing-now-section/growing-now-section.skeleton';
+import { GrowingNowSkeleton } from '@/core/home/presentation/components/growing-now-section-skeleton/growing-now-section-skeleton';
 import { MiniMapSection } from '@/core/home/presentation/components/mini-map-section/mini-map-section';
-import { MiniMapSkeleton } from '@/core/home/presentation/components/mini-map-section/mini-map-section.skeleton';
+import { MiniMapSkeleton } from '@/core/home/presentation/components/mini-map-section-skeleton/mini-map-section-skeleton';
 import { HarvestPaceSection } from '@/core/home/presentation/components/harvest-pace-section/harvest-pace-section';
-import { HarvestPaceSkeleton } from '@/core/home/presentation/components/harvest-pace-section/harvest-pace-section.skeleton';
+import { HarvestPaceSkeleton } from '@/core/home/presentation/components/harvest-pace-section-skeleton/harvest-pace-section-skeleton';
 import { JournalSection } from '@/core/home/presentation/components/journal-section/journal-section';
-import { JournalSkeleton } from '@/core/home/presentation/components/journal-section/journal-section.skeleton';
+import { JournalSkeleton } from '@/core/home/presentation/components/journal-section-skeleton/journal-section-skeleton';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {

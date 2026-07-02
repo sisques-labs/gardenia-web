@@ -137,4 +137,6 @@ const DatePicker = ({ className, value, onChange, minDate, maxDate, placeholder 
   );
 };
 
+DatePicker.displayName = 'DatePicker';
+
 export { DatePicker };

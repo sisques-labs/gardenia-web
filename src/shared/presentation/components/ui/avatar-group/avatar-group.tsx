@@ -37,4 +37,6 @@ const AvatarGroup = ({ className, items, max = 4, size = 'md', ref, ...props }: 
   );
 };
 
+AvatarGroup.displayName = 'AvatarGroup';
+
 export { AvatarGroup };

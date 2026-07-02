@@ -16,4 +16,6 @@ const Textarea = ({ className, ref, ...props }: TextareaProps) => {
   );
 };
 
+Textarea.displayName = 'Textarea';
+
 export { Textarea };

@@ -107,6 +107,14 @@ const SelectSeparator = ({ className, ref, ...props }: React.ComponentPropsWitho
   />
 );
 
+SelectTrigger.displayName = 'SelectTrigger';
+SelectContent.displayName = 'SelectContent';
+SelectLabel.displayName = 'SelectLabel';
+SelectItem.displayName = 'SelectItem';
+SelectSeparator.displayName = 'SelectSeparator';
+SelectScrollUpButton.displayName = 'SelectScrollUpButton';
+SelectScrollDownButton.displayName = 'SelectScrollDownButton';
+
 export {
   Select,
   SelectGroup,

@@ -93,4 +93,6 @@ const DonutChart = ({ className, segments, centerLabel, size = 120, ref, ...prop
   );
 };
 
+DonutChart.displayName = 'DonutChart';
+
 export { DonutChart };

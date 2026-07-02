@@ -333,6 +333,12 @@ function TablePaginationFooter(
   );
 }
 
+Pagination.displayName = 'Pagination';
+SimplePagination.displayName = 'SimplePagination';
+CompactPagination.displayName = 'CompactPagination';
+LoadMore.displayName = 'LoadMore';
+TablePaginationFooter.displayName = 'TablePaginationFooter';
+
 export {
   Pagination,
   SimplePagination,

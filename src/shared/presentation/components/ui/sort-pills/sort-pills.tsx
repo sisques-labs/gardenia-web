@@ -44,4 +44,6 @@ const SortPills = ({ className, options, value, onSort, ref, ...props }: SortPil
   </div>
 );
 
+SortPills.displayName = 'SortPills';
+
 export { SortPills };

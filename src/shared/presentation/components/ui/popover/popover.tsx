@@ -38,4 +38,7 @@ const Popover = ({ trigger, children, open, onOpenChange, contentClassName }: Po
   </PopoverRoot>
 );
 
+Popover.displayName = 'Popover';
+PopoverContent.displayName = 'PopoverContent';
+
 export { Popover, PopoverRoot, PopoverTrigger, PopoverContent };

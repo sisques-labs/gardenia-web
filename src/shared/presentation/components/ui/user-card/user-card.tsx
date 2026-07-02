@@ -43,4 +43,6 @@ const UserCard = ({ ref, className, name, secondary, orientation, size, ...props
   </div>
 );
 
+UserCard.displayName = 'UserCard';
+
 export { UserCard };

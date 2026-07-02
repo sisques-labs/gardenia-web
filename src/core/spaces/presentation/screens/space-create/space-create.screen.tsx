@@ -8,7 +8,7 @@ import { Input } from '@/shared/presentation/components/ui/input/input';
 import { Alert } from '@/shared/presentation/components/ui/alert/alert';
 import { Card, CardContent } from '@/shared/presentation/components/ui/card/card';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
-import { useCreateSpace } from '@/core/spaces/presentation/hooks/use-create-space/useCreateSpace.hook';
+import { useCreateSpace } from '@/core/spaces/presentation/hooks/use-create-space/use-create-space.hook';
 import { createSpaceSchema, type CreateSpaceFormValues } from '@/core/spaces/presentation/schemas/create-space.schema';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 

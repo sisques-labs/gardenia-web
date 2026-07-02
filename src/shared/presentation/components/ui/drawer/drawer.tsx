@@ -60,4 +60,6 @@ const Drawer = ({ className, open, onClose, side = 'right', title, children, ref
   </DialogPrimitive.Root>
 );
 
+Drawer.displayName = 'Drawer';
+
 export { Drawer };

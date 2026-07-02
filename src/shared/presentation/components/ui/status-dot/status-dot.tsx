@@ -28,4 +28,6 @@ const StatusDot = ({ className, status, ref, ...props }: StatusDotProps) => (
   />
 );
 
+StatusDot.displayName = 'StatusDot';
+
 export { StatusDot };

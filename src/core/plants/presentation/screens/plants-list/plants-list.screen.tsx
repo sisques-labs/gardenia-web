@@ -30,19 +30,13 @@ type Props = {
 export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
   const storeSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const spaceId = spaceIdProp ?? storeSpaceId;
-  const { data: plants, isLoading } = usePlants(spaceId);
+  const { data: plants, isLoading, speciesCount } = usePlants(spaceId);
   const { plantToDelete, requestDelete, confirmDelete, cancelDelete, isError } = useDeletePlantConfirm(spaceId);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const { currentPage, totalPages, pagedItems: pagedPlants, onPageChange } = useUrlPagination(plants ?? []);
 
   const plantCount = plants?.length ?? 0;
-  const speciesCount = plants
-    ? plants.reduce((ids, plant) => {
-        if (plant.plantSpeciesId) ids.add(plant.plantSpeciesId);
-        return ids;
-      }, new Set<string>()).size
-    : 0;
 
   return (
     <div>

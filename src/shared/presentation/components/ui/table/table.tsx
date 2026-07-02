@@ -65,6 +65,7 @@ export function SortableHeader({
     </button>
   );
 }
+SortableHeader.displayName = 'SortableHeader';
 
 function DataTableInner<TData, TValue = unknown>(
   { ref, columns, data, enableRowSelection = true, onSelectionChange, sorting: sortingProp, onSortingChange, pagination, className }: DataTableProps<TData, TValue>,
@@ -176,6 +177,8 @@ function DataTableInner<TData, TValue = unknown>(
     </div>
   );
 }
+
+DataTableInner.displayName = 'DataTable';
 
 export const DataTable = DataTableInner as <TData, TValue = unknown>(
   props: DataTableProps<TData, TValue>,
