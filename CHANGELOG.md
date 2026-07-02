@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-## [0.23.0-beta.0] - 2026-07-02
+## [0.23.0-beta.1] - 2026-07-02
 
 ### Bug Fixes
 - **care-schedule:** Send string filter values so the day panel query works (f5771b5)
@@ -47,6 +47,7 @@ All notable changes to this project will be documented in this file.
 - Move remaining business logic out of screens into hooks/utils (0152899)
 - **care-schedule:** Extract CareScheduleList to shrink PlantDetailScreen (7216cfb)
 - Deduplicate repeated component patterns into shared/ui (3347504)
+- **ui:** Merge PageHeader into ScreenHeader (ff1feb4)
 ## [0.22.0] - 2026-06-23
 
 ### Bug Fixes
