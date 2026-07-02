@@ -9,7 +9,7 @@ import { useInventoryItems } from '@/core/inventory/presentation/hooks/use-inven
 import { useDeleteInventoryItem } from '@/core/inventory/presentation/hooks/use-delete-inventory-item/use-delete-inventory-item.hook';
 import { useInventoryFilters } from '@/core/inventory/presentation/hooks/use-inventory-filters/use-inventory-filters.hook';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
-import { PageHeader } from '@/shared/presentation/components/page-header/page-header';
+import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import { RowSkeleton } from '@/shared/presentation/components/ui/row-skeleton/row-skeleton';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
@@ -37,7 +37,7 @@ export function InventoryListScreen({ dict, lang: _lang }: Props) {
 
   return (
     <div>
-      <PageHeader
+      <ScreenHeader
         title={dict.list.title}
         actions={
           <Button

@@ -75,4 +75,24 @@ describe('ScreenHeader', () => {
     render(<ScreenHeader title="Spaces" />);
     expect(screen.queryByTestId('screen-header-actions')).not.toBeInTheDocument();
   });
+
+  it('renders eyebrow when provided', () => {
+    render(<ScreenHeader title="Test" eyebrow="CALENDARIO · VISTA MENSUAL" />);
+    expect(screen.getByText('CALENDARIO · VISTA MENSUAL')).toBeInTheDocument();
+  });
+
+  it('does not render eyebrow when omitted', () => {
+    render(<ScreenHeader title="Test" />);
+    expect(screen.queryByText(/VISTA/)).not.toBeInTheDocument();
+  });
+
+  it('renders subtitle when provided', () => {
+    render(<ScreenHeader title="Test" subtitle="· primavera" />);
+    expect(screen.getByText('· primavera')).toBeInTheDocument();
+  });
+
+  it('does not render subtitle when omitted', () => {
+    render(<ScreenHeader title="Test" />);
+    expect(screen.queryByText(/primavera/)).not.toBeInTheDocument();
+  });
 });
