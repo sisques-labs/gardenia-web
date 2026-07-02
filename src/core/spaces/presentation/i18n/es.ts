@@ -26,11 +26,25 @@ const dict = {
     noSpace: 'Sin espacio activo',
   },
   invite: {
-    accepting: 'Uniéndote al espacio...',
     missingCode:
       'Este enlace de invitación no es válido o no incluye un código.',
-    error:
-      'No se pudo aceptar la invitación. Puede haber caducado o ya ser miembro.',
+    previewLoading: 'Cargando invitación...',
+    joinPromptAuthenticated: 'Te han invitado a {spaceName} como {role}.',
+    joinPromptUnauthenticated:
+      'Te han invitado a {spaceName} como {role}. Inicia sesión para continuar.',
+    signInCta: 'Iniciar sesión para continuar',
+    joinCta: 'Unirme',
+    joining: 'Uniéndote...',
+    success: 'Te has unido a {spaceName}.',
+    roleMember: 'miembro',
+    roleOwner: 'propietario',
+    errors: {
+      InvitationNotFoundException: 'No se encontró esta invitación.',
+      InvitationExpiredException:
+        'Esta invitación ha caducado. Pide al propietario del espacio un nuevo enlace.',
+      DuplicateMembershipException: 'Ya eres miembro de este espacio.',
+      fallback: 'No se pudo aceptar la invitación. Inténtalo de nuevo.',
+    },
   },
   members: {
     list: {

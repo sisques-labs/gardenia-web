@@ -17,6 +17,7 @@ const mockRepository: ISpacesRepository = {
   listByUser: vi.fn(),
   create: vi.fn(),
   acceptInvitation: vi.fn(),
+  getInvitationPreview: vi.fn(),
   findById: vi.fn(),
   createInvitation: vi.fn(),
   addMember: vi.fn(),
