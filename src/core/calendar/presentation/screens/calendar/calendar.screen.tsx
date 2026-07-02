@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/shared/presentation/components/ui/button/button';
-import { PageHeader } from '@/shared/presentation/components/page-header/page-header';
+import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import { useCareSchedules } from '@/core/care-schedule/presentation/hooks/use-care-schedules/use-care-schedules.hook';
 import { useCompleteCareSchedule } from '@/core/care-schedule/presentation/hooks/use-complete-care-schedule/use-complete-care-schedule.hook';
@@ -40,7 +40,7 @@ export function CalendarScreen({ dict, careScheduleDict }: Props) {
 
   return (
     <div className="flex flex-col h-full">
-      <PageHeader
+      <ScreenHeader
         eyebrow={`${dict.screenTitle} · ${dict.monthlyView}`}
         title={`${monthName} ${currentYear}`}
         subtitle={`· ${seasonLabel}`}

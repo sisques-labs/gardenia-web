@@ -97,17 +97,17 @@ beforeEach(() => {
 });
 
 describe('CalendarScreen', () => {
-  it('renders PageHeader with the screen title in eyebrow', () => {
+  it('renders ScreenHeader with the screen title in eyebrow', () => {
     render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
     expect(screen.getByText(/Calendario/)).toBeInTheDocument();
   });
 
-  it('renders PageHeader title with month and year', () => {
+  it('renders ScreenHeader title with month and year', () => {
     render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
     expect(screen.getByRole('heading', { name: /Mayo 2026/ })).toBeInTheDocument();
   });
 
-  it('renders PageHeader subtitle with season', () => {
+  it('renders ScreenHeader subtitle with season', () => {
     render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
     expect(screen.getByText(/primavera/i)).toBeInTheDocument();
   });

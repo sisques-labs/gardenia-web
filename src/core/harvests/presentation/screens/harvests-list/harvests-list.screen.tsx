@@ -5,7 +5,7 @@ import { HarvestModal } from '@/core/harvests/presentation/components/harvest-mo
 import { useHarvests } from '@/core/harvests/presentation/hooks/use-harvests/use-harvests.hook';
 import { useDeleteHarvest } from '@/core/harvests/presentation/hooks/use-delete-harvest/use-delete-harvest.hook';
 import type { Harvest } from '@/core/harvests/domain/types/harvest.interface';
-import { PageHeader } from '@/shared/presentation/components/page-header/page-header';
+import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import { RowSkeleton } from '@/shared/presentation/components/ui/row-skeleton/row-skeleton';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
@@ -24,7 +24,7 @@ export function HarvestsListScreen({ dict, lang: _lang }: Props) {
 
   return (
     <div>
-      <PageHeader
+      <ScreenHeader
         title={dict.list.title}
         actions={
           <Button size="sm" className="ml-1 bg-forest hover:bg-forest-2 text-white gap-1" onClick={() => setIsCreateOpen(true)}>

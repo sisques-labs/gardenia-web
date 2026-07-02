@@ -16,11 +16,12 @@ interface BreadcrumbEntry {
 interface ScreenHeaderProps {
   title: string;
   eyebrow?: string;
+  subtitle?: string;
   breadcrumbs?: BreadcrumbEntry[];
   actions?: ReactNode;
 }
 
-export function ScreenHeader({ title, eyebrow, breadcrumbs, actions }: ScreenHeaderProps) {
+export function ScreenHeader({ title, eyebrow, subtitle, breadcrumbs, actions }: ScreenHeaderProps) {
   return (
     <header className="flex flex-col gap-1 px-6 py-4 border-b border-[var(--rule)]">
       {breadcrumbs && breadcrumbs.length > 0 && (
@@ -44,7 +45,17 @@ export function ScreenHeader({ title, eyebrow, breadcrumbs, actions }: ScreenHea
 
       {eyebrow && <p className="eyebrow">{eyebrow}</p>}
       <div className="flex items-center">
-        <h1 className="headline text-[var(--ink)]">{title}</h1>
+        <div className="flex items-baseline gap-2">
+          <h1 className="headline text-[var(--ink)]">{title}</h1>
+          {subtitle && (
+            <span
+              className="text-base italic text-[var(--terracotta)]"
+              style={{ fontFamily: 'var(--hand)' }}
+            >
+              {subtitle}
+            </span>
+          )}
+        </div>
         {actions && (
           <div data-testid="screen-header-actions" className="ml-auto flex items-center gap-2">
             {actions}

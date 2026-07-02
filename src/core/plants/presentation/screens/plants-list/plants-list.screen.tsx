@@ -6,7 +6,7 @@ import { PlantCard } from "@/core/plants/presentation/components/plant-card/plan
 import { usePlants } from "@/core/plants/presentation/hooks/use-plants/use-plants.hook";
 import { useDeletePlantConfirm } from "@/core/plants/presentation/hooks/use-delete-plant-confirm/use-delete-plant-confirm.hook";
 import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store";
-import { PageHeader } from "@/shared/presentation/components/page-header/page-header";
+import { ScreenHeader } from "@/shared/presentation/components/screen-header/screen-header";
 import { Alert } from "@/shared/presentation/components/ui/alert/alert";
 import { Button } from "@/shared/presentation/components/ui/button/button";
 import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
@@ -40,7 +40,7 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
 
   return (
     <div>
-      <PageHeader
+      <ScreenHeader
         eyebrow={`${dict.nav} · ${plantCount} ${dict.list.statsPlants} · ${speciesCount} ${dict.list.statsSpecies}`}
         title={dict.list.title}
         actions={
