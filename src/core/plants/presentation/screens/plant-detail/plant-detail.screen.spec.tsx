@@ -86,6 +86,15 @@ const dict = {
       flower: 'Flower',
       tree: 'Tree',
     },
+    card: {
+      delete: 'Delete plant',
+      health: {
+        good: 'Healthy',
+        warn: 'Needs attention',
+        bad: 'At risk',
+        inactive: 'Inactive',
+      },
+    },
   },
   create: {
     title: 'New plant',
