@@ -15,4 +15,6 @@ const Toaster = () => (
   />
 );
 
+Toaster.displayName = 'Toaster';
+
 export { Toaster };

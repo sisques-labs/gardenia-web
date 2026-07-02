@@ -17,3 +17,4 @@ export function FormField({ label, error, children, className }: FormFieldProps)
     </div>
   );
 }
+FormField.displayName = 'FormField';

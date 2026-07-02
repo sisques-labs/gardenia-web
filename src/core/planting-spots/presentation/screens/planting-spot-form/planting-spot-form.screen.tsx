@@ -14,22 +14,9 @@ import { ScreenHeader } from '@/shared/presentation/components/screen-header/scr
 import { ConfirmModal } from '@/shared/presentation/components/ui/dialog/dialog';
 import { PLANTING_SPOT_TYPES } from '@/core/planting-spots/presentation/schemas/planting-spot.schema';
 import { usePlantingSpotForm } from '@/core/planting-spots/presentation/hooks/use-planting-spot-form/use-planting-spot-form.hook';
+import { PlantingSpotFormSkeleton } from '@/core/planting-spots/presentation/components/planting-spot-form-skeleton/planting-spot-form-skeleton';
+import { NumberField } from '@/core/planting-spots/presentation/components/number-field/number-field';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
-
-const shimmer = 'bg-muted rounded animate-pulse';
-
-function FormSkeleton() {
-  return (
-    <div className="px-6 py-6 flex flex-col gap-4">
-      <div className={`h-5 w-1/3 ${shimmer}`} />
-      <div className={`h-9 w-full ${shimmer}`} />
-      <div className={`h-5 w-1/4 ${shimmer}`} />
-      <div className={`h-9 w-full ${shimmer}`} />
-      <div className={`h-5 w-1/3 ${shimmer}`} />
-      <div className={`h-20 w-full ${shimmer}`} />
-    </div>
-  );
-}
 
 type Props = {
   dict: AppDict['plantingSpots'];
@@ -75,7 +62,7 @@ export function PlantingSpotFormScreen({ dict, lang, mode, spotId }: Props) {
       />
 
       {isEdit && isLoading ? (
-        <FormSkeleton />
+        <PlantingSpotFormSkeleton />
       ) : (
         <div className="px-6 py-6 max-w-lg">
           <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -171,88 +158,51 @@ export function PlantingSpotFormScreen({ dict, lang, mode, spotId }: Props) {
 
             {/* Grid position: row + column */}
             <div className="grid grid-cols-2 gap-3">
-              <div className="flex flex-col gap-1">
-                <label className="text-sm text-muted-foreground">{formDict.row}</label>
-                <Input
-                  type="number"
-                  min={1}
-                  value={rowValue ?? ''}
-                  onChange={(e) => {
-                    const v = e.target.value === '' ? null : parseInt(e.target.value, 10);
-                    setValue('row', v && v >= 1 ? v : null);
-                  }}
-                />
-                {errors.row && (
-                  <span className="text-destructive text-xs">{errors.row.message}</span>
-                )}
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-sm text-muted-foreground">{formDict.column}</label>
-                <Input
-                  type="number"
-                  min={1}
-                  value={columnValue ?? ''}
-                  onChange={(e) => {
-                    const v = e.target.value === '' ? null : parseInt(e.target.value, 10);
-                    setValue('column', v && v >= 1 ? v : null);
-                  }}
-                />
-                {errors.column && (
-                  <span className="text-destructive text-xs">{errors.column.message}</span>
-                )}
-              </div>
+              <NumberField
+                label={formDict.row}
+                value={rowValue}
+                onChange={(v) => setValue('row', v)}
+                min={1}
+                error={errors.row?.message}
+              />
+              <NumberField
+                label={formDict.column}
+                value={columnValue}
+                onChange={(v) => setValue('column', v)}
+                min={1}
+                error={errors.column?.message}
+              />
             </div>
 
             {/* Dimensions */}
             <div className="grid grid-cols-3 gap-3">
-              <div className="flex flex-col gap-1">
-                <label className="text-sm text-muted-foreground">{formDict.dimensionsWidth}</label>
-                <Input
-                  type="number"
-                  min={0}
-                  step="any"
-                  value={dimensionsWidthValue ?? ''}
-                  onChange={(e) => {
-                    const v = e.target.value === '' ? null : parseFloat(e.target.value);
-                    setValue('dimensionsWidth', v != null && !isNaN(v) ? v : null);
-                  }}
-                />
-                {errors.dimensionsWidth && (
-                  <span className="text-destructive text-xs">{errors.dimensionsWidth.message}</span>
-                )}
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-sm text-muted-foreground">{formDict.dimensionsHeight}</label>
-                <Input
-                  type="number"
-                  min={0}
-                  step="any"
-                  value={dimensionsHeightValue ?? ''}
-                  onChange={(e) => {
-                    const v = e.target.value === '' ? null : parseFloat(e.target.value);
-                    setValue('dimensionsHeight', v != null && !isNaN(v) ? v : null);
-                  }}
-                />
-                {errors.dimensionsHeight && (
-                  <span className="text-destructive text-xs">{errors.dimensionsHeight.message}</span>
-                )}
-              </div>
-              <div className="flex flex-col gap-1">
-                <label className="text-sm text-muted-foreground">{formDict.dimensionsLength}</label>
-                <Input
-                  type="number"
-                  min={0}
-                  step="any"
-                  value={dimensionsLengthValue ?? ''}
-                  onChange={(e) => {
-                    const v = e.target.value === '' ? null : parseFloat(e.target.value);
-                    setValue('dimensionsLength', v != null && !isNaN(v) ? v : null);
-                  }}
-                />
-                {errors.dimensionsLength && (
-                  <span className="text-destructive text-xs">{errors.dimensionsLength.message}</span>
-                )}
-              </div>
+              <NumberField
+                label={formDict.dimensionsWidth}
+                value={dimensionsWidthValue}
+                onChange={(v) => setValue('dimensionsWidth', v)}
+                min={0}
+                integer={false}
+                step="any"
+                error={errors.dimensionsWidth?.message}
+              />
+              <NumberField
+                label={formDict.dimensionsHeight}
+                value={dimensionsHeightValue}
+                onChange={(v) => setValue('dimensionsHeight', v)}
+                min={0}
+                integer={false}
+                step="any"
+                error={errors.dimensionsHeight?.message}
+              />
+              <NumberField
+                label={formDict.dimensionsLength}
+                value={dimensionsLengthValue}
+                onChange={(v) => setValue('dimensionsLength', v)}
+                min={0}
+                integer={false}
+                step="any"
+                error={errors.dimensionsLength?.message}
+              />
             </div>
 
             {/* Soil type */}

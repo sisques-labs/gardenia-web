@@ -41,4 +41,7 @@ const Tooltip = ({ content, side = 'top', children, contentClassName }: TooltipP
   </TooltipProvider>
 );
 
+Tooltip.displayName = 'Tooltip';
+TooltipContent.displayName = 'TooltipContent';
+
 export { Tooltip, TooltipProvider, TooltipRoot, TooltipTrigger, TooltipContent };

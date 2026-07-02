@@ -54,4 +54,6 @@ const StarRating = ({ className, value = 0, onChange, readOnly = false, max = 5,
   </div>
 );
 
+StarRating.displayName = 'StarRating';
+
 export { StarRating };

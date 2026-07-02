@@ -1,6 +1,6 @@
 import { isLocale, DEFAULT_LOCALE } from '@/shared/presentation/i18n/locale';
 import { getDictionary } from '@/shared/presentation/i18n/get-dictionary';
-import { SpaceMembersList } from '@/core/spaces/presentation/components/space-members-list/space-members-list.component';
+import { SpaceMembersList } from '@/core/spaces/presentation/components/space-members-list/space-members-list';
 
 export default async function SpaceMembersPage({
   params,

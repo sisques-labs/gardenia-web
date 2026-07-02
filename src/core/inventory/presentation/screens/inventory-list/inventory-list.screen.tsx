@@ -9,26 +9,10 @@ import { useInventoryItems } from '@/core/inventory/presentation/hooks/use-inven
 import { useDeleteInventoryItem } from '@/core/inventory/presentation/hooks/use-delete-inventory-item/use-delete-inventory-item.hook';
 import { useInventoryFilters } from '@/core/inventory/presentation/hooks/use-inventory-filters/use-inventory-filters.hook';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
-import { PageHeader } from '@/shared/presentation/components/page-header/page-header';
+import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { Button } from '@/shared/presentation/components/ui/button/button';
+import { RowSkeleton } from '@/shared/presentation/components/ui/row-skeleton/row-skeleton';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
-
-const shimmer = 'bg-muted rounded animate-pulse';
-
-function InventoryRowSkeleton() {
-  return (
-    <div className="rounded-lg border p-4">
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col gap-2 flex-1">
-          <div className={`h-4 w-1/3 ${shimmer}`} />
-          <div className={`h-3 w-1/4 ${shimmer}`} />
-          <div className={`h-3 w-1/4 ${shimmer}`} />
-        </div>
-        <div className={`h-8 w-16 ${shimmer}`} />
-      </div>
-    </div>
-  );
-}
 
 type Props = {
   dict: AppDict['inventory'];
@@ -53,7 +37,7 @@ export function InventoryListScreen({ dict, lang: _lang }: Props) {
 
   return (
     <div>
-      <PageHeader
+      <ScreenHeader
         title={dict.list.title}
         actions={
           <Button
@@ -79,7 +63,7 @@ export function InventoryListScreen({ dict, lang: _lang }: Props) {
         {isLoading ? (
           <div className="flex flex-col gap-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <InventoryRowSkeleton key={i} />
+              <RowSkeleton key={i} />
             ))}
           </div>
         ) : filteredItems.length === 0 ? (

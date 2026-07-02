@@ -41,4 +41,6 @@ const Divider = ({ ref, className, orientation, label, ...props }: DividerProps)
   );
 };
 
+Divider.displayName = 'Divider';
+
 export { Divider };

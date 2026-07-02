@@ -6,7 +6,7 @@ import { PlantCard } from "@/core/plants/presentation/components/plant-card/plan
 import { usePlants } from "@/core/plants/presentation/hooks/use-plants/use-plants.hook";
 import { useDeletePlantConfirm } from "@/core/plants/presentation/hooks/use-delete-plant-confirm/use-delete-plant-confirm.hook";
 import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store";
-import { PageHeader } from "@/shared/presentation/components/page-header/page-header";
+import { ScreenHeader } from "@/shared/presentation/components/screen-header/screen-header";
 import { Alert } from "@/shared/presentation/components/ui/alert/alert";
 import { Button } from "@/shared/presentation/components/ui/button/button";
 import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
@@ -30,23 +30,17 @@ type Props = {
 export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
   const storeSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const spaceId = spaceIdProp ?? storeSpaceId;
-  const { data: plants, isLoading } = usePlants(spaceId);
+  const { data: plants, isLoading, speciesCount } = usePlants(spaceId);
   const { plantToDelete, requestDelete, confirmDelete, cancelDelete, isError } = useDeletePlantConfirm(spaceId);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   const { currentPage, totalPages, pagedItems: pagedPlants, onPageChange } = useUrlPagination(plants ?? []);
 
   const plantCount = plants?.length ?? 0;
-  const speciesCount = plants
-    ? plants.reduce((ids, plant) => {
-        if (plant.plantSpeciesId) ids.add(plant.plantSpeciesId);
-        return ids;
-      }, new Set<string>()).size
-    : 0;
 
   return (
     <div>
-      <PageHeader
+      <ScreenHeader
         eyebrow={`${dict.nav} · ${plantCount} ${dict.list.statsPlants} · ${speciesCount} ${dict.list.statsSpecies}`}
         title={dict.list.title}
         actions={

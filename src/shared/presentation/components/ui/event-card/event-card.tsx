@@ -32,4 +32,6 @@ const EventCard = ({ className, title, time, location, accent, ref, ...props }: 
   </div>
 );
 
+EventCard.displayName = 'EventCard';
+
 export { EventCard };

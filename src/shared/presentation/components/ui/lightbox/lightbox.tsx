@@ -88,4 +88,6 @@ const Lightbox = ({ className, photos, initialIndex = 0, open, onClose, ref, ...
   );
 };
 
+Lightbox.displayName = 'Lightbox';
+
 export { Lightbox };

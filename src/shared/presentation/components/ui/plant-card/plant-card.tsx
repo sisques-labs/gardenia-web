@@ -48,4 +48,6 @@ const PlantCard = ({ ref, className, name, species, status, imageUrl, ...props }
   </div>
 );
 
+PlantCard.displayName = 'PlantCard';
+
 export { PlantCard };

@@ -48,6 +48,13 @@ const BreadcrumbSeparator = ({ className, ...props }: React.ComponentPropsWithou
   </li>
 );
 
+Breadcrumb.displayName = 'Breadcrumb';
+BreadcrumbList.displayName = 'BreadcrumbList';
+BreadcrumbItem.displayName = 'BreadcrumbItem';
+BreadcrumbLink.displayName = 'BreadcrumbLink';
+BreadcrumbPage.displayName = 'BreadcrumbPage';
+BreadcrumbSeparator.displayName = 'BreadcrumbSeparator';
+
 export {
   Breadcrumb,
   BreadcrumbList,

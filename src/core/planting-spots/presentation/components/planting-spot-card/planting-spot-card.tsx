@@ -3,6 +3,8 @@
 import type { PlantingSpot } from "@/core/planting-spots/domain/interfaces/planting-spot.interface";
 import type { PlantingSpotType } from "@/core/planting-spots/domain/types/planting-spot-type.type";
 import { PlantingSpotTypeBadge } from "@/core/planting-spots/presentation/components/planting-spot-type-badge/planting-spot-type-badge";
+import { CapacityBar } from "@/core/planting-spots/presentation/components/capacity-bar/capacity-bar";
+import { getPlantingSpotPositionLabel } from "@/core/planting-spots/presentation/utils/get-planting-spot-position-label/get-planting-spot-position-label.util";
 import {
   Card,
   CardContent,
@@ -17,19 +19,6 @@ type Props = {
   dict: AppDict['plantingSpots'];
   lang: string;
 };
-
-function CapacityBar({ current, capacity }: { current: number; capacity: number }) {
-  const pct = Math.min((current / capacity) * 100, 100);
-  const over = current > capacity;
-  return (
-    <div className="w-full h-1.5 rounded-full bg-muted overflow-hidden">
-      <div
-        className={`h-full rounded-full transition-all ${over ? 'bg-destructive' : pct >= 100 ? 'bg-orange-400' : 'bg-[var(--forest)]'}`}
-        style={{ width: `${pct}%` }}
-      />
-    </div>
-  );
-}
 
 function CapacityBadge({ current, capacity, dict }: { current: number; capacity: number; dict: AppDict['plantingSpots'] }) {
   if (current > capacity) {
@@ -56,7 +45,7 @@ function CapacityBadge({ current, capacity, dict }: { current: number; capacity:
 export function PlantingSpotCard({ spot, dict, lang }: Props) {
   const plantCount = spot.resolvedPlants?.length ?? 0;
   const hasCapacity = spot.capacity != null;
-  const hasPosition = spot.row != null || spot.column != null;
+  const positionLabel = getPlantingSpotPositionLabel(spot);
 
   return (
     <Link href={`/${lang}/planting-spots/${spot.id}`} className="block">
@@ -68,13 +57,9 @@ export function PlantingSpotCard({ spot, dict, lang }: Props) {
           </div>
 
           {/* Position badge */}
-          {hasPosition && (
+          {positionLabel && (
             <p className="text-xs text-muted-foreground mt-0.5">
-              {spot.row != null && spot.column != null
-                ? `F${spot.row} · C${spot.column}`
-                : spot.row != null
-                  ? `F${spot.row}`
-                  : `C${spot.column}`}
+              {positionLabel}
             </p>
           )}
         </CardHeader>
@@ -99,7 +84,7 @@ export function PlantingSpotCard({ spot, dict, lang }: Props) {
                   dict={dict}
                 />
               </div>
-              <CapacityBar current={plantCount} capacity={spot.capacity!} />
+              <CapacityBar current={plantCount} capacity={spot.capacity!} size="sm" />
             </div>
           ) : plantCount > 0 ? (
             <p className="text-xs text-muted-foreground">

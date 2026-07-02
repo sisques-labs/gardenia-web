@@ -2,6 +2,7 @@ import type { Preview } from "@storybook/react";
 import { withThemeByClassName } from "@storybook/addon-themes";
 import * as React from "react";
 import "../app/globals.css";
+import { withQueryClient } from "./decorators/with-query-client";
 
 // Layer 2: font variables. next/font does not run inside Storybook, so we inject
 // the same CSS variable names the app exposes, each falling back to the matching
@@ -19,6 +20,11 @@ const FontVars = () => (
 
 const preview: Preview = {
   decorators: [
+    // Layer 1: fresh QueryClient per story so any hook-backed component/screen
+    // renders without crashing. Stories that need specific data override this
+    // with their own withQueryClient(seed) decorator (nested providers shadow
+    // this one for that story only).
+    withQueryClient(),
     // Layer 3: palette toggle — applies classes to <body>, matching runtime.
     withThemeByClassName({
       themes: {
@@ -47,6 +53,10 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
+    // The app is App Router only (app/). Without this, @storybook/nextjs falls
+    // back to Pages Router mocks and any next/navigation hook (useRouter,
+    // useSearchParams, usePathname) throws NextjsRouterMocksNotAvailable.
+    nextjs: { appDirectory: true },
   },
 };
 

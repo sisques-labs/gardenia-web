@@ -38,4 +38,6 @@ const ActiveFilterChips = ({ className, filters, onRemove, ref, ...props }: Acti
   );
 };
 
+ActiveFilterChips.displayName = 'ActiveFilterChips';
+
 export { ActiveFilterChips };
