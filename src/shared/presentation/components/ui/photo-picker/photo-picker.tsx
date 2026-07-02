@@ -70,4 +70,6 @@ const PhotoPicker = ({ className, photos, mode = 'single', selected, onSelection
   );
 };
 
+PhotoPicker.displayName = 'PhotoPicker';
+
 export { PhotoPicker };

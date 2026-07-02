@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import * as React from 'react';
 import * as AvatarPrimitive from '@radix-ui/react-avatar';
@@ -30,5 +30,9 @@ const AvatarFallback = ({ className, ref, ...props }: React.ComponentPropsWithou
     {...props}
   />
 );
+
+Avatar.displayName = 'Avatar';
+AvatarImage.displayName = 'AvatarImage';
+AvatarFallback.displayName = 'AvatarFallback';
 
 export { Avatar, AvatarImage, AvatarFallback };

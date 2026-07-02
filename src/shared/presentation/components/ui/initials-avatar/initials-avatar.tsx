@@ -62,4 +62,6 @@ const InitialsAvatar = ({ className, name, size, ref, ...props }: InitialsAvatar
   );
 };
 
+InitialsAvatar.displayName = 'InitialsAvatar';
+
 export { InitialsAvatar };

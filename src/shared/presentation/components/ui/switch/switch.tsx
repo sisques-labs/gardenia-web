@@ -21,4 +21,6 @@ const Switch = ({ className, ref, ...props }: React.ComponentPropsWithoutRef<typ
   </SwitchPrimitive.Root>
 );
 
+Switch.displayName = 'Switch';
+
 export { Switch };

@@ -24,4 +24,6 @@ const KbdShortcut = ({ className, keys, separator = '+', ref, ...props }: KbdSho
   </span>
 );
 
+KbdShortcut.displayName = 'KbdShortcut';
+
 export { KbdShortcut };

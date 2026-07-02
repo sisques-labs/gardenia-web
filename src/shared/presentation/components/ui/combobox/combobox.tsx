@@ -76,4 +76,6 @@ const Combobox = ({ ref, className, options, value, onChange, placeholder = 'Sea
   );
 };
 
+Combobox.displayName = 'Combobox';
+
 export { Combobox };

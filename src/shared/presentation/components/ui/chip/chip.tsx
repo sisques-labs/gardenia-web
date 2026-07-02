@@ -30,4 +30,6 @@ const Chip = ({ className, variant = 'default', children, ref, ...props }: ChipP
   );
 };
 
+Chip.displayName = 'Chip';
+
 export { Chip };

@@ -66,4 +66,6 @@ const Stepper = ({ className, steps, currentStep, ref, ...props }: StepperProps)
   </div>
 );
 
+Stepper.displayName = 'Stepper';
+
 export { Stepper };

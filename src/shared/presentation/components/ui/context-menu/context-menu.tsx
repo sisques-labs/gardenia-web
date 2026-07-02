@@ -50,4 +50,6 @@ const ContextMenu = ({ items, children, contentClassName }: ContextMenuProps) =>
   </ContextMenuPrimitive.Root>
 );
 
+ContextMenu.displayName = 'ContextMenu';
+
 export { ContextMenu };

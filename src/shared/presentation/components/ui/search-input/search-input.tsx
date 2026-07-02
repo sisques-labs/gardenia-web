@@ -30,4 +30,6 @@ const SearchInput = ({ ref, className, onClear, value, ...props }: SearchInputPr
   </div>
 );
 
+SearchInput.displayName = 'SearchInput';
+
 export { SearchInput };

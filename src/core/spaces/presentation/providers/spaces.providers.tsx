@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import { redirect } from 'next/navigation';
-import { useSpaces } from '@/core/spaces/presentation/hooks/use-spaces/useSpaces.hook';
+import { useSpaces } from '@/core/spaces/presentation/hooks/use-spaces/use-spaces.hook';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 

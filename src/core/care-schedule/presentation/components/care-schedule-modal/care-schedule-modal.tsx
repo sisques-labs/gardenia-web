@@ -5,13 +5,7 @@ import { usePlants } from '@/core/plants/presentation/hooks/use-plants/use-plant
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import { CARE_SCHEDULE_ACTIVITY_TYPES, CARE_SCHEDULE_UNITS } from '@/core/care-schedule/domain/types/care-schedule.interface';
 import type { CareSchedule } from '@/core/care-schedule/domain/types/care-schedule.interface';
-import { Button } from '@/shared/presentation/components/ui/button/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from '@/shared/presentation/components/ui/dialog/dialog';
+import { FormModal } from '@/shared/presentation/components/ui/form-modal/form-modal';
 import { Input } from '@/shared/presentation/components/ui/input/input';
 import { Checkbox } from '@/shared/presentation/components/ui/checkbox/checkbox';
 import { Textarea } from '@/shared/presentation/components/ui/textarea/textarea';
@@ -58,15 +52,15 @@ export function CareScheduleModal({ dict, onClose, careSchedule, lockedPlantId }
   const showPlantPicker = !isEditing && !lockedPlantId;
 
   return (
-    <Dialog open onOpenChange={(isOpen) => { if (!isOpen) onClose(); }}>
-      <DialogContent className="max-w-md gap-4">
-        <DialogHeader>
-          <DialogTitle className="text-ink">
-            {isEditing ? dict.form.editTitle : dict.form.title}
-          </DialogTitle>
-        </DialogHeader>
-
-        <form onSubmit={onSubmit} className="flex flex-col gap-4">
+    <FormModal
+      title={isEditing ? dict.form.editTitle : dict.form.title}
+      onClose={onClose}
+      onSubmit={onSubmit}
+      isPending={isPending}
+      cancelLabel={dict.form.cancel}
+      submitLabel={dict.form.submit}
+      submittingLabel={dict.form.submitting}
+    >
           {showPlantPicker && (
             <div className="flex flex-col gap-1">
               <label className="text-sm text-ink-2">{dict.form.plant}</label>
@@ -161,17 +155,6 @@ export function CareScheduleModal({ dict, onClose, careSchedule, lockedPlantId }
             <Textarea {...register('notes')} />
             {errors.notes && <span className="text-destructive text-xs">{errors.notes.message}</span>}
           </div>
-
-          <div className="flex gap-2 justify-end">
-            <Button type="button" variant="ghost" onClick={onClose} disabled={isPending}>
-              {dict.form.cancel}
-            </Button>
-            <Button type="submit" disabled={isPending}>
-              {isPending ? dict.form.submitting : dict.form.submit}
-            </Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+    </FormModal>
   );
 }

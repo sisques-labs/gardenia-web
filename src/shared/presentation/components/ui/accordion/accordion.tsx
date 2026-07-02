@@ -67,4 +67,6 @@ const Accordion = ({ className, items, mode = 'single', defaultOpen = [], ref, .
   );
 };
 
+Accordion.displayName = 'Accordion';
+
 export { Accordion };

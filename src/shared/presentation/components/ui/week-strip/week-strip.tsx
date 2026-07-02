@@ -63,4 +63,6 @@ const WeekStrip = ({ className, weekStartDate, activeDate, onDateClick, ref, ...
   );
 };
 
+WeekStrip.displayName = 'WeekStrip';
+
 export { WeekStrip };
