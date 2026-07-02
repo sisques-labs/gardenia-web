@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { Plus } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus } from "lucide-react";
 import { ScreenHeader } from "./screen-header";
 
 const meta = {
@@ -8,6 +8,8 @@ const meta = {
   tags: ["autodocs"],
   argTypes: {
     title: { control: "text" },
+    eyebrow: { control: "text" },
+    subtitle: { control: "text" },
   },
 } satisfies Meta<typeof ScreenHeader>;
 
@@ -75,6 +77,71 @@ export const WithBreadcrumbsAndActions: Story = {
       >
         Editar
       </button>
+    ),
+  },
+};
+
+export const WithEyebrowAndSubtitle: Story = {
+  args: {
+    eyebrow: "CALENDARIO · VISTA MENSUAL",
+    title: "Mayo 2026",
+    subtitle: "· primavera",
+  },
+};
+
+export const WithEyebrowSubtitleAndActions: Story = {
+  args: {
+    eyebrow: "CALENDARIO · VISTA MENSUAL",
+    title: "Mayo 2026",
+    subtitle: "· primavera",
+    actions: (
+      <>
+        <button
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 4,
+            padding: "6px 10px",
+            border: "1px solid var(--rule)",
+            borderRadius: 6,
+            background: "var(--paper-2)",
+            cursor: "pointer",
+          }}
+        >
+          <ChevronLeft size={16} />
+        </button>
+        <button
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 4,
+            padding: "6px 10px",
+            border: "1px solid var(--rule)",
+            borderRadius: 6,
+            background: "var(--paper-2)",
+            cursor: "pointer",
+          }}
+        >
+          <ChevronRight size={16} />
+        </button>
+        <button
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "8px 14px",
+            borderRadius: 999,
+            background: "var(--forest)",
+            color: "var(--paper)",
+            fontSize: 13,
+            fontWeight: 500,
+            border: "none",
+            cursor: "pointer",
+          }}
+        >
+          <Plus size={14} /> Nueva tarea
+        </button>
+      </>
     ),
   },
 };
