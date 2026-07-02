@@ -5,6 +5,8 @@ import { SpaceMembersCard } from "./space-members-card";
 import { getDictionary } from "@/shared/presentation/i18n/get-dictionary";
 import { addMemberSchema, type AddMemberFormValues } from "@/core/spaces/presentation/schemas/add-member.schema";
 import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
+import { withQueryClient } from "../../../../../../.storybook/decorators/with-query-client";
+import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store";
 
 const dict = getDictionary("es");
 
@@ -37,6 +39,20 @@ function SpaceMembersCardStory({ dict, memberListDict, isOwner }: WrapperProps) 
 }
 SpaceMembersCardStory.displayName = "SpaceMembersCardStory";
 
+// SpaceMembersCard renders SpaceMembersList internally, which calls the real
+// useSpaceMembers() query hook. useSpacesStore persists currentSpaceId to
+// localStorage, so without an explicit seed here this story would inherit
+// whatever space a previously-rendered story left behind and fire a real
+// (unmocked) network request instead of resolving deterministically.
+function withMembersSeed(Story: () => React.ReactElement) {
+  useSpacesStore.setState({ currentSpaceId: "space-1", isResolved: true });
+  return (
+    <div style={{ maxWidth: 480 }}>
+      <Story />
+    </div>
+  );
+}
+
 const meta = {
   title: "Spaces/SpaceMembersCard",
   component: SpaceMembersCardStory,
@@ -44,11 +60,8 @@ const meta = {
   args: { dict: dict.spaces.settings, memberListDict: dict.spaces.members.list, isOwner: true },
   parameters: { layout: "padded" },
   decorators: [
-    (Story) => (
-      <div style={{ maxWidth: 480 }}>
-        <Story />
-      </div>
-    ),
+    withMembersSeed,
+    withQueryClient((qc) => qc.setQueryData(["space-members", "space-1"], [])),
   ],
 } satisfies Meta<typeof SpaceMembersCardStory>;
 
