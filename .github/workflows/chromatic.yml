@@ -13,6 +13,10 @@ jobs:
   chromatic:
     name: Visual regression tests
     runs-on: ubuntu-latest
+    # Dependabot PRs don't get repo secrets on the pull_request event, so
+    # CHROMATIC_PROJECT_TOKEN is unavailable and the job fails with
+    # "Missing project token". Skip it for those PRs.
+    if: github.actor != 'dependabot[bot]'
 
     steps:
       - name: Setup
