@@ -2,6 +2,7 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { CheckCircle2, Sprout } from 'lucide-react';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { useAcceptInvitation } from '@/core/spaces/presentation/hooks/use-accept-invitation/use-accept-invitation.hook';
 import { useSpaceInvitationPreview } from '@/core/spaces/presentation/hooks/use-space-invitation-preview/use-space-invitation-preview.hook';
@@ -15,6 +16,10 @@ import {
   getInvitationErrorCode,
   type InviteErrorCode,
 } from '@/core/spaces/presentation/screens/space-invite/invite-error-code';
+import { Alert } from '@/shared/presentation/components/ui/alert/alert';
+import { Badge } from '@/shared/presentation/components/ui/badge/badge';
+import { Button } from '@/shared/presentation/components/ui/button/button';
+import { Spinner } from '@/shared/presentation/components/ui/spinner/spinner';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {
@@ -33,6 +38,18 @@ function interpolate(template: string, vars: Record<string, string>): string {
 
 function errorMessage(dict: Props['dict'], code: InviteErrorCode | null): string {
   return (code && dict.errors[code]) || dict.errors.fallback;
+}
+
+function errorVariant(code: InviteErrorCode | null): 'warning' | 'error' {
+  return code === 'InvitationExpiredException' ? 'warning' : 'error';
+}
+
+function InviteIcon({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex h-14 w-14 items-center justify-center rounded-full bg-[var(--forest-bg)]">
+      {children}
+    </div>
+  );
 }
 
 function SpaceInviteInner({ dict, lang }: Props) {
@@ -56,82 +73,48 @@ function SpaceInviteInner({ dict, lang }: Props) {
   }, [succeeded, router, lang]);
 
   if (!code) {
-    return (
-      <p role="alert" style={{ textAlign: 'center' }}>
-        {dict.missingCode}
-      </p>
-    );
+    return <Alert variant="error" message={dict.missingCode} />;
   }
 
   if (!isBootComplete || preview.isLoading) {
     return (
-      <p role="status" style={{ textAlign: 'center' }}>
-        {dict.previewLoading}
-      </p>
+      <div className="flex flex-col items-center gap-3 py-10 text-center">
+        <Spinner size="lg" label={dict.previewLoading} />
+        <p className="text-sm text-muted-foreground">{dict.previewLoading}</p>
+      </div>
     );
   }
 
   if (preview.isError) {
-    return (
-      <p role="alert" style={{ textAlign: 'center' }}>
-        {errorMessage(dict, getInvitationErrorCode(preview.error))}
-      </p>
-    );
+    const code = getInvitationErrorCode(preview.error);
+    return <Alert variant={errorVariant(code)} message={errorMessage(dict, code)} />;
   }
 
   const invitation = preview.data;
   if (!invitation) return null;
 
   if (invitation.isExpired) {
-    return (
-      <p role="alert" style={{ textAlign: 'center' }}>
-        {dict.errors.InvitationExpiredException}
-      </p>
-    );
+    return <Alert variant="warning" message={dict.errors.InvitationExpiredException} />;
   }
 
   if (succeeded) {
     return (
-      <p role="status" style={{ textAlign: 'center' }}>
-        {interpolate(dict.success, { spaceName: invitation.spaceName })}
-      </p>
-    );
-  }
-
-  if (acceptError) {
-    return (
-      <p role="alert" style={{ textAlign: 'center' }}>
-        {acceptError}
-      </p>
-    );
-  }
-
-  const roleLabel = invitation.role === 'OWNER' ? dict.roleOwner : dict.roleMember;
-
-  if (!accessToken) {
-    const prompt = interpolate(dict.joinPromptUnauthenticated, {
-      spaceName: invitation.spaceName,
-      role: roleLabel,
-    });
-    const returnUrl = `/${lang}/invite?code=${encodeURIComponent(code)}`;
-
-    return (
-      <div style={{ textAlign: 'center' }}>
-        <p>{prompt}</p>
-        <button
-          type="button"
-          onClick={() => router.push(`/${lang}/login?returnUrl=${encodeURIComponent(returnUrl)}`)}
-        >
-          {dict.signInCta}
-        </button>
+      <div className="flex flex-col items-center gap-3 py-6 text-center">
+        <InviteIcon>
+          <CheckCircle2 className="h-6 w-6 text-[var(--forest)]" />
+        </InviteIcon>
+        <p className="headline text-xl">
+          {interpolate(dict.success, { spaceName: invitation.spaceName })}
+        </p>
       </div>
     );
   }
 
-  const prompt = interpolate(dict.joinPromptAuthenticated, {
-    spaceName: invitation.spaceName,
-    role: roleLabel,
-  });
+  if (acceptError) {
+    return <Alert variant="error" message={acceptError} />;
+  }
+
+  const roleLabel = invitation.role === 'OWNER' ? dict.roleOwner : dict.roleMember;
 
   const handleJoin = async () => {
     if (wasInviteAcceptCompleted(code)) {
@@ -152,11 +135,40 @@ function SpaceInviteInner({ dict, lang }: Props) {
   };
 
   return (
-    <div style={{ textAlign: 'center' }}>
-      <p>{prompt}</p>
-      <button type="button" disabled={isAccepting} onClick={() => void handleJoin()}>
-        {isAccepting ? dict.joining : dict.joinCta}
-      </button>
+    <div className="flex flex-col items-center gap-4 py-6 text-center">
+      <InviteIcon>
+        <Sprout className="h-6 w-6 text-[var(--forest)]" />
+      </InviteIcon>
+      <div className="flex flex-col items-center gap-2">
+        <p className="headline text-xl">{invitation.spaceName}</p>
+        <Badge variant="forest">{roleLabel}</Badge>
+      </div>
+      {accessToken ? (
+        <>
+          <p className="text-sm text-muted-foreground">{dict.joinPromptAuthenticated}</p>
+          <Button
+            className="w-full"
+            disabled={isAccepting}
+            loading={isAccepting}
+            onClick={() => void handleJoin()}
+          >
+            {isAccepting ? dict.joining : dict.joinCta}
+          </Button>
+        </>
+      ) : (
+        <>
+          <p className="text-sm text-muted-foreground">{dict.joinPromptUnauthenticated}</p>
+          <Button
+            className="w-full"
+            onClick={() => {
+              const returnUrl = `/${lang}/invite?code=${encodeURIComponent(code)}`;
+              router.push(`/${lang}/login?returnUrl=${encodeURIComponent(returnUrl)}`);
+            }}
+          >
+            {dict.signInCta}
+          </Button>
+        </>
+      )}
     </div>
   );
 }
@@ -165,9 +177,10 @@ export function SpaceInviteScreen({ dict, lang }: Props) {
   return (
     <Suspense
       fallback={
-        <p role="status" style={{ textAlign: 'center' }}>
-          {dict.previewLoading}
-        </p>
+        <div className="flex flex-col items-center gap-3 py-10 text-center">
+          <Spinner size="lg" label={dict.previewLoading} />
+          <p className="text-sm text-muted-foreground">{dict.previewLoading}</p>
+        </div>
       }
     >
       <SpaceInviteInner dict={dict} lang={lang} />

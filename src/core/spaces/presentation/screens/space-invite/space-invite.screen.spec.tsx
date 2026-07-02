@@ -51,9 +51,8 @@ vi.mock(
 const dict = {
   missingCode: 'This invitation link is invalid or missing a code.',
   previewLoading: 'Loading invitation...',
-  joinPromptAuthenticated: "You've been invited to {spaceName} as {role}.",
-  joinPromptUnauthenticated:
-    "You've been invited to {spaceName} as {role}. Sign in to continue.",
+  joinPromptAuthenticated: "You've been invited to join.",
+  joinPromptUnauthenticated: 'Sign in to accept this invitation.',
   signInCta: 'Sign in to continue',
   joinCta: 'Join',
   joining: 'Joining...',
@@ -90,7 +89,9 @@ describe('SpaceInviteScreen', () => {
   it('shows the join prompt with space name and role for an authenticated user', () => {
     mockGet.mockReturnValue('CODE-1');
     render(<SpaceInviteScreen dict={dict} lang="en" />);
-    expect(screen.getByText("You've been invited to Greenhouse A as member.")).toBeInTheDocument();
+    expect(screen.getByText('Greenhouse A')).toBeInTheDocument();
+    expect(screen.getByText('member')).toBeInTheDocument();
+    expect(screen.getByText(dict.joinPromptAuthenticated)).toBeInTheDocument();
     expect(screen.getByRole('button', { name: 'Join' })).toBeInTheDocument();
   });
 
@@ -99,9 +100,7 @@ describe('SpaceInviteScreen', () => {
     mockAccessToken = null;
     render(<SpaceInviteScreen dict={dict} lang="en" />);
 
-    expect(
-      screen.getByText("You've been invited to Greenhouse A as member. Sign in to continue."),
-    ).toBeInTheDocument();
+    expect(screen.getByText(dict.joinPromptUnauthenticated)).toBeInTheDocument();
     const cta = screen.getByRole('button', { name: 'Sign in to continue' });
     cta.click();
 

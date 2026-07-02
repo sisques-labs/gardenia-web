@@ -29,9 +29,8 @@ const dict = {
     missingCode:
       'Este enlace de invitación no es válido o no incluye un código.',
     previewLoading: 'Cargando invitación...',
-    joinPromptAuthenticated: 'Te han invitado a {spaceName} como {role}.',
-    joinPromptUnauthenticated:
-      'Te han invitado a {spaceName} como {role}. Inicia sesión para continuar.',
+    joinPromptAuthenticated: 'Te han invitado a unirte.',
+    joinPromptUnauthenticated: 'Inicia sesión para aceptar esta invitación.',
     signInCta: 'Iniciar sesión para continuar',
     joinCta: 'Unirme',
     joining: 'Uniéndote...',

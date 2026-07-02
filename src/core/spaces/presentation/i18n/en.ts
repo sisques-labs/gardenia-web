@@ -23,9 +23,8 @@ const dict = {
   invite: {
     missingCode: 'This invitation link is invalid or missing a code.',
     previewLoading: 'Loading invitation...',
-    joinPromptAuthenticated: "You've been invited to {spaceName} as {role}.",
-    joinPromptUnauthenticated:
-      "You've been invited to {spaceName} as {role}. Sign in to continue.",
+    joinPromptAuthenticated: "You've been invited to join.",
+    joinPromptUnauthenticated: 'Sign in to accept this invitation.',
     signInCta: 'Sign in to continue',
     joinCta: 'Join',
     joining: 'Joining...',
