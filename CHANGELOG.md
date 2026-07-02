@@ -1,6 +1,14 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.23.1-beta.0] - 2026-07-02
+
+### Refactor
+- **plants:** Simplify plant detail care tab (cd0b42f)
+- **plants:** Redesign plant cards with vertical editorial layout (f4640a8)
+
+### Testing
+- **plants:** Add card dict to plant detail screen spec fixture (83996c1)
 ## [0.23.0] - 2026-07-02
 
 ### Bug Fixes

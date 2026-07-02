@@ -101,13 +101,14 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
             <Alert variant="info" message={dict.list.empty} />
           ) : (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] gap-4">
                 {pagedPlants.map((plant) => (
                   <PlantCard
                     key={plant.id}
                     plant={plant}
                     lang={lang}
                     noSpecies={dict.detail.noSpecies}
+                    cardDict={dict.list.card}
                     onDelete={requestDelete}
                   />
                 ))}
