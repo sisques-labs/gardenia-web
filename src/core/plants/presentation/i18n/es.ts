@@ -22,6 +22,15 @@ const dict = {
       flower: 'Flor',
       tree: 'Árbol',
     },
+    card: {
+      delete: 'Eliminar planta',
+      health: {
+        good: 'Saludable',
+        warn: 'Requiere atención',
+        bad: 'En riesgo',
+        inactive: 'Inactiva',
+      },
+    },
   },
   create: {
     title: 'Nueva planta',
