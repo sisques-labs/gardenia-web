@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-## [0.23.0-beta.2] - 2026-07-02
+## [0.23.0] - 2026-07-02
 
 ### Bug Fixes
 - **care-schedule:** Send string filter values so the day panel query works (f5771b5)

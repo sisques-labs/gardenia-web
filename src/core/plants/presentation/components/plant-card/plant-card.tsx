@@ -1,58 +1,71 @@
-import Link from 'next/link';
-import Image from 'next/image';
-import { Trash2 } from 'lucide-react';
-import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
-import { Chip } from '@/shared/presentation/components/ui/chip/chip';
-import { StatusDot, type StatusDotStatus } from '@/shared/presentation/components/ui/status-dot/status-dot';
-import { Button } from '@/shared/presentation/components/ui/button/button';
+import type { Plant } from "@/core/plants/domain/interfaces/plant.interface";
+import { Button } from "@/shared/presentation/components/ui/button/button";
+import { Chip } from "@/shared/presentation/components/ui/chip/chip";
+import {
+  StatusDot,
+  type StatusDotStatus,
+} from "@/shared/presentation/components/ui/status-dot/status-dot";
+import { formatShortDate } from "@/shared/presentation/utils/format-short-date.util";
+import { Calendar, Trash2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+
+type CardDict = {
+  delete: string;
+  health: Record<StatusDotStatus, string>;
+};
 
 type Props = {
   plant: Plant;
   lang: string;
   noSpecies: string;
-  /** Optional plant health/status for the StatusDot indicator */
+  cardDict: CardDict;
+  /** Next or last care activity label for the chip badge */
+  careLabel?: string;
+  /** ISO date for the care activity shown in the footer */
+  careDate?: string;
+  /** Plant health indicator */
   status?: StatusDotStatus;
-  /** Optional category tag for the Chip badge */
-  tag?: string;
   /** Called when the user confirms deletion */
   onDelete?: (plant: Plant) => void;
 };
 
-export function PlantCard({ plant, lang, noSpecies, status, tag, onDelete }: Props) {
+export function PlantCard({
+  plant,
+  lang,
+  noSpecies,
+  cardDict,
+  careLabel,
+  careDate,
+  status,
+  onDelete,
+}: Props) {
+  const showFooter = Boolean(careDate || status);
+
   return (
     <Link
       href={`/${lang}/plants/${plant.id}`}
-      className="card flex flex-col hover:shadow-md transition-shadow overflow-hidden"
+      className="card overflow-hidden w-full hover:shadow-md transition-shadow block"
+      data-testid="plant-card"
     >
-      {/* Main row */}
-      <div className="flex items-center gap-3 p-4">
+      <div className="relative">
         {plant.imageUrl ? (
           <Image
             src={plant.imageUrl}
             alt={plant.name}
-            width={48}
-            height={48}
-            className="w-12 h-12 rounded-full object-cover shrink-0"
+            width={224}
+            height={144}
+            className="h-36 w-full object-cover"
           />
         ) : (
-          <div className="w-12 h-12 rounded-full bg-muted flex items-center justify-center shrink-0">
-            <span className="text-lg font-semibold text-muted-foreground">
-              {plant.name.charAt(0).toUpperCase()}
-            </span>
-          </div>
+          <div className="placeholder-img leaf h-36" aria-hidden="true" />
         )}
-        <div className="min-w-0 flex-1">
-          <p className="font-semibold text-sm truncate">{plant.name}</p>
-          <p className="text-xs text-muted-foreground truncate italic">
-            {plant.species?.scientificName ?? noSpecies}
-          </p>
-        </div>
         {onDelete && (
           <Button
             variant="ghost"
             size="sm"
             data-testid="btn-delete-plant"
-            className="shrink-0 text-muted-foreground hover:text-destructive"
+            className="absolute top-2 right-2 h-8 w-8 p-0 bg-paper/80 text-muted-foreground hover:text-destructive"
             onClick={(e) => {
               e.preventDefault();
               e.stopPropagation();
@@ -60,32 +73,49 @@ export function PlantCard({ plant, lang, noSpecies, status, tag, onDelete }: Pro
             }}
           >
             <Trash2 className="w-4 h-4" />
-            <span className="sr-only">Delete</span>
+            <span className="sr-only">{cardDict.delete}</span>
           </Button>
         )}
       </div>
 
-      {/* Footer */}
-      <div className="px-4 pb-3 flex items-center justify-between gap-2 border-t border-[var(--rule)] pt-2.5">
-        {/* Category chip */}
-        <div className="flex items-center gap-1.5">
-          {tag ? (
-            <Chip variant="forest">{tag}</Chip>
-          ) : (
-            <>
-              <div className="h-4 w-14 rounded-full bg-muted" />
-              <div className="h-4 w-16 rounded-full bg-muted" />
-            </>
+      <div className="p-4">
+        <div className="flex items-start justify-between gap-2 mb-2">
+          <div className="min-w-0">
+            <div className="font-serif text-base font-medium truncate">
+              {plant.name}
+            </div>
+            <div className="text-xs text-muted-foreground italic truncate">
+              {plant.species?.scientificName ?? noSpecies}
+            </div>
+          </div>
+          {careLabel && (
+            <Chip variant="terra" className="shrink-0">
+              {careLabel}
+            </Chip>
           )}
         </div>
-        {/* Status indicator */}
-        <div className="flex items-center gap-2">
-          {status ? (
-            <StatusDot status={status} />
-          ) : (
-            <div className="h-2 w-2 rounded-full bg-muted-foreground/40" />
-          )}
-        </div>
+
+        {showFooter && (
+          <>
+            <div className="dashed-rule my-3" />
+            <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
+              {careDate ? (
+                <span className="flex items-center gap-1">
+                  <Calendar className="w-3 h-3 shrink-0" aria-hidden="true" />
+                  {formatShortDate(careDate, lang)}
+                </span>
+              ) : (
+                <span />
+              )}
+              {status && (
+                <span className="flex items-center gap-1">
+                  <StatusDot status={status} />
+                  {cardDict.health[status]}
+                </span>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </Link>
   );

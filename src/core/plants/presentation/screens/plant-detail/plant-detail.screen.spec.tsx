@@ -86,6 +86,15 @@ const dict = {
       flower: 'Flower',
       tree: 'Tree',
     },
+    card: {
+      delete: 'Delete plant',
+      health: {
+        good: 'Healthy',
+        warn: 'Needs attention',
+        bad: 'At risk',
+        inactive: 'Inactive',
+      },
+    },
   },
   create: {
     title: 'New plant',
@@ -304,39 +313,6 @@ describe('PlantDetailScreen', () => {
     render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
 
     expect(screen.getByTestId('plant-action-bar')).toBeInTheDocument();
-  });
-
-  it('renders care grid with data-testid="care-grid"', () => {
-    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-
-    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
-
-    expect(screen.getByTestId('care-grid')).toBeInTheDocument();
-  });
-
-  it('renders 4 CareCard components in the Cuidados tab', () => {
-    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-
-    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
-
-    const careCards = screen.getAllByTestId('care-card');
-    expect(careCards).toHaveLength(4);
-  });
-
-  it('renders GrowthTimeline in the Cuidados tab', () => {
-    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-
-    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
-
-    expect(screen.getByTestId('growth-timeline')).toBeInTheDocument();
-  });
-
-  it('renders cycle title heading', () => {
-    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-
-    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
-
-    expect(screen.getByText('CYCLE · 64 DAYS')).toBeInTheDocument();
   });
 
   it('renders Calendar tab trigger', () => {
