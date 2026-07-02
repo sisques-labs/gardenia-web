@@ -1,5 +1,3 @@
-import { CombinedGraphQLErrors } from '@apollo/client/errors';
-
 const inFlightCodes = new Set<string>();
 const COMPLETED_PREFIX = 'gardenia:invite-accept:';
 
@@ -21,23 +19,4 @@ export function wasInviteAcceptCompleted(code: string): boolean {
 export function markInviteAcceptCompleted(code: string): void {
   if (typeof sessionStorage === 'undefined') return;
   sessionStorage.setItem(`${COMPLETED_PREFIX}${code}`, '1');
-}
-
-function messageIndicatesAlreadyMember(message: string): boolean {
-  return message.includes('already a member');
-}
-
-export function isAlreadyMemberError(error: unknown): boolean {
-  if (CombinedGraphQLErrors.is(error)) {
-    return error.errors.some((entry) => messageIndicatesAlreadyMember(entry.message));
-  }
-
-  const message =
-    error instanceof Error
-      ? error.message
-      : typeof error === 'object' && error !== null && 'message' in error
-        ? String((error as { message: unknown }).message)
-        : '';
-
-  return messageIndicatesAlreadyMember(message);
 }
