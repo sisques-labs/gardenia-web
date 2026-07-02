@@ -37,4 +37,6 @@ const PhotoGrid = ({ className, photos, columns = 3, onPhotoClick, ref, ...props
   </div>
 );
 
+PhotoGrid.displayName = 'PhotoGrid';
+
 export { PhotoGrid };

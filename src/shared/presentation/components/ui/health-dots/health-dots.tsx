@@ -26,4 +26,6 @@ const HealthDots = ({ ref, className, value, max = 5, ...props }: HealthDotsProp
   </div>
 );
 
+HealthDots.displayName = 'HealthDots';
+
 export { HealthDots };

@@ -59,4 +59,6 @@ const FacetPanel = ({ className, facets, selected = {}, onChange, ref, ...props 
   );
 };
 
+FacetPanel.displayName = 'FacetPanel';
+
 export { FacetPanel };

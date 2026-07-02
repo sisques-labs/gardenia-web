@@ -44,4 +44,6 @@ const Skeleton = ({ className, variant, width, height, style, ref, ...props }: S
   );
 };
 
+Skeleton.displayName = 'Skeleton';
+
 export { Skeleton };

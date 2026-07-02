@@ -21,4 +21,10 @@ const CardFooter = ({ className, ref, ...props }: React.HTMLAttributes<HTMLDivEl
   <div ref={ref} className={cn('flex items-center p-6 pt-0', className)} {...props} />
 );
 
+Card.displayName = 'Card';
+CardHeader.displayName = 'CardHeader';
+CardTitle.displayName = 'CardTitle';
+CardContent.displayName = 'CardContent';
+CardFooter.displayName = 'CardFooter';
+
 export { Card, CardHeader, CardTitle, CardContent, CardFooter };

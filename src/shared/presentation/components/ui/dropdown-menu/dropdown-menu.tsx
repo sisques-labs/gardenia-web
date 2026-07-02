@@ -97,6 +97,12 @@ const DropdownMenuSeparator = ({ className, ref, ...props }: React.ComponentProp
   />
 );
 
+DropdownMenuContent.displayName = 'DropdownMenuContent';
+DropdownMenuItem.displayName = 'DropdownMenuItem';
+DropdownMenuCheckboxItem.displayName = 'DropdownMenuCheckboxItem';
+DropdownMenuLabel.displayName = 'DropdownMenuLabel';
+DropdownMenuSeparator.displayName = 'DropdownMenuSeparator';
+
 export {
   DropdownMenu,
   DropdownMenuTrigger,

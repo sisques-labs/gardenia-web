@@ -1,11 +1,11 @@
 "use client";
 
-import { SpaceDetailsCard } from "@/core/spaces/presentation/components/space-details-card/space-details-card.component";
-import { SpaceGeolocationCard } from "@/core/spaces/presentation/components/space-geolocation-card/space-geolocation-card.component";
-import { SpaceInvitationCard } from "@/core/spaces/presentation/components/space-invitation-card/space-invitation-card.component";
-import { SpaceMembersCard } from "@/core/spaces/presentation/components/space-members-card/space-members-card.component";
-import { SpaceWeatherWidget } from "@/core/spaces/presentation/components/space-weather-widget/space-weather-widget.component";
-import { useSpaceSettings } from "@/core/spaces/presentation/hooks/use-space-settings/useSpaceSettings.hook";
+import { SpaceDetailsCard } from "@/core/spaces/presentation/components/space-details-card/space-details-card";
+import { SpaceGeolocationCard } from "@/core/spaces/presentation/components/space-geolocation-card/space-geolocation-card";
+import { SpaceInvitationCard } from "@/core/spaces/presentation/components/space-invitation-card/space-invitation-card";
+import { SpaceMembersCard } from "@/core/spaces/presentation/components/space-members-card/space-members-card";
+import { SpaceWeatherWidget } from "@/core/spaces/presentation/components/space-weather-widget/space-weather-widget";
+import { useSpaceSettings } from "@/core/spaces/presentation/hooks/use-space-settings/use-space-settings.hook";
 import { ScreenHeader } from "@/shared/presentation/components/screen-header/screen-header";
 import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
 
@@ -20,6 +20,7 @@ export function SpaceSettingsScreen({ dict, weatherDict, memberListDict, lang }:
   const {
     spaceDetail: { data: space, isLoading, isError },
     isOwner,
+    hasGeolocation,
     copied,
     copy,
     inviteLink,
@@ -52,8 +53,6 @@ export function SpaceSettingsScreen({ dict, weatherDict, memberListDict, lang }:
       isSuccess: updateSuccess,
     },
   } = useSpaceSettings(lang);
-
-  const hasGeolocation = !!(space?.latitude != null && space?.longitude != null);
 
   return (
     <div className="flex flex-col">

@@ -43,4 +43,6 @@ const MediaCard = ({ ref, className, src, alt, title, description, variant, acti
   </div>
 );
 
+MediaCard.displayName = 'MediaCard';
+
 export { MediaCard };

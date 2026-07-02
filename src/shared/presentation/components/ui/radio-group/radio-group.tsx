@@ -24,4 +24,7 @@ const RadioGroupItem = ({ className, ref, ...props }: React.ComponentPropsWithou
   </RadioGroupPrimitive.Item>
 );
 
+RadioGroup.displayName = 'RadioGroup';
+RadioGroupItem.displayName = 'RadioGroupItem';
+
 export { RadioGroup, RadioGroupItem };
