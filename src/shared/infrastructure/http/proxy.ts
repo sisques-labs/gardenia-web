@@ -28,10 +28,16 @@ export async function proxyTo(req: NextRequest, upstreamUrl: string): Promise<Ne
 
   const responseHeaders = new Headers();
   upstream.headers.forEach((value, key) => {
-    if (!HOP_BY_HOP.has(key.toLowerCase())) {
+    if (!HOP_BY_HOP.has(key.toLowerCase()) && key.toLowerCase() !== 'set-cookie') {
       responseHeaders.set(key, value);
     }
   });
+  // Set-Cookie is excluded from forEach/get/entries on a fetch() response —
+  // getSetCookie() is the only way to read it, and each value must be
+  // appended individually (set() would overwrite on a second cookie).
+  for (const cookie of upstream.headers.getSetCookie()) {
+    responseHeaders.append('set-cookie', cookie);
+  }
 
   return new NextResponse(upstream.body, {
     status: upstream.status,
