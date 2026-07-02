@@ -5,6 +5,7 @@ import { SpaceInvitationCard } from "./space-invitation-card";
 import { getDictionary } from "@/shared/presentation/i18n/get-dictionary";
 import { createInvitationSchema, type CreateInvitationFormValues } from "@/core/spaces/presentation/schemas/create-invitation.schema";
 import type { SpaceInvitation } from "@/core/spaces/domain/types/space-invitation.type";
+import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
 
 const dict = getDictionary("es").spaces.settings;
 
@@ -18,28 +19,39 @@ const mockInvitation: SpaceInvitation = {
   spaceId: "space-1",
 };
 
-function Wrapper(args: Omit<React.ComponentProps<typeof SpaceInvitationCard>, "invForm">) {
+type WrapperProps = {
+  dict: AppDict["spaces"]["settings"];
+  isPending: boolean;
+  isError: boolean;
+  invitation: SpaceInvitation | undefined;
+};
+
+function SpaceInvitationCardStory({ dict, isPending, isError, invitation }: WrapperProps) {
   const invForm = useForm<CreateInvitationFormValues>({
     resolver: zodResolver(createInvitationSchema),
     defaultValues: { role: "member" },
   });
-  return <SpaceInvitationCard {...args} invForm={invForm} />;
+  return (
+    <SpaceInvitationCard
+      dict={dict}
+      invForm={invForm}
+      onSubmit={() => {}}
+      isPending={isPending}
+      isError={isError}
+      invitation={invitation}
+      copied={null}
+      copy={() => {}}
+      inviteLink={(inv) => `https://gardenia.app/es/invite?code=${inv.code}`}
+    />
+  );
 }
+SpaceInvitationCardStory.displayName = "SpaceInvitationCardStory";
 
 const meta = {
   title: "Spaces/SpaceInvitationCard",
-  component: Wrapper,
+  component: SpaceInvitationCardStory,
   tags: ["autodocs"],
-  args: {
-    dict,
-    onSubmit: () => {},
-    isPending: false,
-    isError: false,
-    invitation: undefined,
-    copied: null,
-    copy: () => {},
-    inviteLink: (inv) => `https://gardenia.app/es/invite?code=${inv.code}`,
-  },
+  args: { dict, isPending: false, isError: false, invitation: undefined },
   parameters: { layout: "padded" },
   decorators: [
     (Story) => (
@@ -48,8 +60,7 @@ const meta = {
       </div>
     ),
   ],
-  render: (args) => <Wrapper {...args} />,
-} satisfies Meta<typeof Wrapper>;
+} satisfies Meta<typeof SpaceInvitationCardStory>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
