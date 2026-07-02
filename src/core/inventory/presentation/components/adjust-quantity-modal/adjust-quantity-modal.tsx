@@ -1,5 +1,6 @@
 'use client';
 
+import { useMemo } from 'react';
 import { useAdjustQuantityForm } from '@/core/inventory/presentation/hooks/use-adjust-quantity-form/use-adjust-quantity-form.hook';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
 import { FormModal } from '@/shared/presentation/components/ui/form-modal/form-modal';
@@ -20,6 +21,15 @@ export function AdjustQuantityModal({ dict, item, onClose }: Props) {
     formState: { errors },
   } = form;
 
+  const currentQuantityHint = useMemo(
+    () => (
+      <p className="text-sm text-muted-foreground">
+        {dict.adjust.currentQuantity}: {item.quantity} {dict.units[item.unit]}
+      </p>
+    ),
+    [dict.adjust.currentQuantity, dict.units, item.quantity, item.unit],
+  );
+
   return (
     <FormModal
       title={dict.adjust.title}
@@ -30,11 +40,7 @@ export function AdjustQuantityModal({ dict, item, onClose }: Props) {
       submitLabel={dict.adjust.submit}
       submittingLabel={dict.adjust.submitting}
       maxWidth="sm"
-      beforeForm={
-        <p className="text-sm text-muted-foreground">
-          {dict.adjust.currentQuantity}: {item.quantity} {dict.units[item.unit]}
-        </p>
-      }
+      beforeForm={currentQuantityHint}
     >
       <div className="flex flex-col gap-1">
         <label className="text-sm text-ink-2">{dict.adjust.delta}</label>
