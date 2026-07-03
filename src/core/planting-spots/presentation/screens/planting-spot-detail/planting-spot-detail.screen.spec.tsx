@@ -1,7 +1,9 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
+import type { WaterPlantingSpotResult } from '@/core/planting-spots/domain/interfaces/water-planting-spot-result.interface';
 
 vi.mock('next/navigation', () => ({
   useRouter: () => ({ push: vi.fn() }),
@@ -36,7 +38,13 @@ vi.mock('@/shared/presentation/components/ui/tabs/tabs', () => ({
   TabsContent: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));
 
+vi.mock(
+  '@/core/planting-spots/presentation/hooks/use-water-planting-spot/use-water-planting-spot.hook',
+  () => ({ useWaterPlantingSpot: vi.fn() }),
+);
+
 import { usePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-planting-spot/use-planting-spot.hook';
+import { useWaterPlantingSpot } from '@/core/planting-spots/presentation/hooks/use-water-planting-spot/use-water-planting-spot.hook';
 import { PlantingSpotDetailScreen } from './planting-spot-detail.screen';
 
 const dict = {
@@ -91,6 +99,14 @@ const dict = {
     notSet: 'Not set',
     plantsCount: 'plants',
     position: 'Position',
+    waterSpot: 'Water entire spot',
+    waterSpotConfirmTitle: 'Water all plants in this spot?',
+    waterSpotConfirmDescription: 'This will log a watering for every plant currently in this spot.',
+    waterSpotConfirm: 'Water',
+    waterSpotCancel: 'Cancel',
+    waterSpotWatered: 'watered',
+    waterSpotFailed: 'failed',
+    waterSpotError: 'Could not water the spot. Try again.',
   },
   types: {
     RAISED_BED: 'Raised bed',
@@ -139,6 +155,11 @@ function mockNoSpot() {
 describe('PlantingSpotDetailScreen', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useWaterPlantingSpot).mockReturnValue({
+      mutate: vi.fn(),
+      isPending: false,
+      isError: false,
+    } as unknown as ReturnType<typeof useWaterPlantingSpot>);
   });
 
   it('renders skeleton when loading', () => {
@@ -350,5 +371,133 @@ describe('PlantingSpotDetailScreen', () => {
       <PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />,
     );
     expect(container.querySelector('.bg-\\[var\\(--forest\\)\\]')).toBeInTheDocument();
+  });
+
+  it('renders the "Water entire spot" button when the spot has plants', () => {
+    mockSpot({
+      resolvedPlants: [
+        { id: 'p1', name: 'P1', imageUrl: null, plantSpeciesId: null, userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      ],
+    });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByTestId('btn-water-spot')).toBeInTheDocument();
+  });
+
+  it('does NOT render the "Water entire spot" button when the spot has no plants', () => {
+    mockSpot({ resolvedPlants: [] });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.queryByTestId('btn-water-spot')).not.toBeInTheDocument();
+  });
+
+  it('opens the confirmation dialog when the "Water entire spot" button is clicked', async () => {
+    const user = userEvent.setup();
+    mockSpot({
+      resolvedPlants: [
+        { id: 'p1', name: 'P1', imageUrl: null, plantSpeciesId: null, userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      ],
+    });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    await user.click(screen.getByTestId('btn-water-spot'));
+
+    expect(screen.getByText('Water all plants in this spot?')).toBeInTheDocument();
+  });
+
+  it('triggers waterPlantingSpot.mutate with the spot id when the dialog is confirmed', async () => {
+    const user = userEvent.setup();
+    const mockMutate = vi.fn();
+    vi.mocked(useWaterPlantingSpot).mockReturnValue({
+      mutate: mockMutate,
+      isPending: false,
+      isError: false,
+    } as unknown as ReturnType<typeof useWaterPlantingSpot>);
+    mockSpot({
+      resolvedPlants: [
+        { id: 'p1', name: 'P1', imageUrl: null, plantSpeciesId: null, userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      ],
+    });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    await user.click(screen.getByTestId('btn-water-spot'));
+    await user.click(screen.getByText('Water'));
+
+    expect(mockMutate).toHaveBeenCalledWith(
+      { id: 'spot-1' },
+      expect.objectContaining({ onSuccess: expect.any(Function) }),
+    );
+  });
+
+  it('shows a success alert after a full success result', async () => {
+    const user = userEvent.setup();
+    const successResult: WaterPlantingSpotResult = {
+      plantingSpotId: 'spot-1',
+      wateredPlantIds: ['p1', 'p2'],
+      failedPlants: [],
+    };
+    const mockMutate = vi.fn((_variables, options) => {
+      options?.onSuccess?.(successResult);
+    });
+    vi.mocked(useWaterPlantingSpot).mockReturnValue({
+      mutate: mockMutate,
+      isPending: false,
+      isError: false,
+    } as unknown as ReturnType<typeof useWaterPlantingSpot>);
+    mockSpot({
+      resolvedPlants: [
+        { id: 'p1', name: 'P1', imageUrl: null, plantSpeciesId: null, userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+        { id: 'p2', name: 'P2', imageUrl: null, plantSpeciesId: null, userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      ],
+    });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    await user.click(screen.getByTestId('btn-water-spot'));
+    await user.click(screen.getByText('Water'));
+
+    expect(screen.getByText('2 watered.')).toBeInTheDocument();
+  });
+
+  it('shows a partial-failure alert detailing watered and failed counts', async () => {
+    const user = userEvent.setup();
+    const partialResult: WaterPlantingSpotResult = {
+      plantingSpotId: 'spot-1',
+      wateredPlantIds: ['p1'],
+      failedPlants: [{ plantId: 'p2', reason: 'No active schedule' }],
+    };
+    const mockMutate = vi.fn((_variables, options) => {
+      options?.onSuccess?.(partialResult);
+    });
+    vi.mocked(useWaterPlantingSpot).mockReturnValue({
+      mutate: mockMutate,
+      isPending: false,
+      isError: false,
+    } as unknown as ReturnType<typeof useWaterPlantingSpot>);
+    mockSpot({
+      resolvedPlants: [
+        { id: 'p1', name: 'P1', imageUrl: null, plantSpeciesId: null, userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+        { id: 'p2', name: 'P2', imageUrl: null, plantSpeciesId: null, userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      ],
+    });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    await user.click(screen.getByTestId('btn-water-spot'));
+    await user.click(screen.getByText('Water'));
+
+    expect(screen.getByText('1 watered, 1 failed.')).toBeInTheDocument();
+  });
+
+  it('disables the "Water entire spot" button while the mutation is pending', () => {
+    vi.mocked(useWaterPlantingSpot).mockReturnValue({
+      mutate: vi.fn(),
+      isPending: true,
+      isError: false,
+    } as unknown as ReturnType<typeof useWaterPlantingSpot>);
+    mockSpot({
+      resolvedPlants: [
+        { id: 'p1', name: 'P1', imageUrl: null, plantSpeciesId: null, userId: 'u1', spaceId: 's1', createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+      ],
+    });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    expect(screen.getByTestId('btn-water-spot')).toBeDisabled();
   });
 });
