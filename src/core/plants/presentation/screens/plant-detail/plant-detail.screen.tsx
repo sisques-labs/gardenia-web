@@ -1,13 +1,15 @@
 "use client";
 
+import { CareLogActivityType } from "@/core/care-log/domain/interfaces/care-log-entry.interface";
 import { CareLogSummary } from "@/core/care-log/presentation/components/care-log-summary/care-log-summary";
+import { useCreateCareLog } from "@/core/care-log/presentation/hooks/use-create-care-log/use-create-care-log.hook";
 import { usePlantCareLogs } from "@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-logs.hook";
 import { CareScheduleList } from "@/core/care-schedule/presentation/components/care-schedule-list/care-schedule-list";
 import { PlantDetailSkeleton } from "@/core/plants/presentation/components/plant-detail-skeleton/plant-detail-skeleton";
 import { useDeletePlant } from "@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook";
 import { usePlant } from "@/core/plants/presentation/hooks/use-plant/use-plant.hook";
 import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store";
-import { InDevelopment } from "@/shared/presentation/components/in-development/in-development";
+import { formatRelativeTime } from "@/shared/lib/format-relative-time";
 import { ScreenHeader } from "@/shared/presentation/components/screen-header/screen-header";
 import { Alert } from "@/shared/presentation/components/ui/alert/alert";
 import { Button } from "@/shared/presentation/components/ui/button/button";
@@ -17,14 +19,8 @@ import {
 } from "@/shared/presentation/components/ui/card/card";
 import { Chip } from "@/shared/presentation/components/ui/chip/chip";
 import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/shared/presentation/components/ui/tabs/tabs";
 import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
-import { Camera, Droplets, StickyNote, Trash2 } from "lucide-react";
+import { Droplets, MapPin, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -52,11 +48,14 @@ export function PlantDetailScreen({
   const { data: plant, isLoading, isError } = usePlant(spaceId, plantId);
   const { data: lastCareByType = {} } = usePlantCareLogs(plantId);
   const deletePlant = useDeletePlant(spaceId);
+  const markWatered = useCreateCareLog(plantId);
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   if (isLoading) return <PlantDetailSkeleton />;
   if (isError) redirect(`/${lang}/plants`);
   if (!plant) return null;
+
+  const lastWatered = lastCareByType[CareLogActivityType.WATERING];
 
   function handleDeleteConfirm() {
     deletePlant.mutate(plantId, {
@@ -67,7 +66,6 @@ export function PlantDetailScreen({
 
   return (
     <div className="flex flex-col">
-      {/* Breadcrumb nav */}
       <ScreenHeader
         title={plant.name}
         breadcrumbs={[
@@ -76,13 +74,13 @@ export function PlantDetailScreen({
         ]}
       />
 
-      <div className="p-6 flex flex-col gap-6">
-        {/* 3-column header grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Left column — Plant image */}
+      <div className="p-6 flex flex-col gap-8">
+        {/* Hero */}
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,320px)_1fr_auto] gap-6 items-start">
+          {/* Image */}
           <div
             data-testid="plant-image"
-            className="relative aspect-square rounded-xl overflow-hidden bg-muted flex items-center justify-center"
+            className="relative aspect-square rounded-2xl overflow-hidden bg-muted ring-1 ring-[var(--rule)] flex items-center justify-center"
           >
             {plant.imageUrl ? (
               <Image
@@ -90,7 +88,7 @@ export function PlantDetailScreen({
                 alt={plant.name}
                 fill
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, 33vw"
+                sizes="(max-width: 1024px) 100vw, 320px"
               />
             ) : (
               <div className="placeholder-img paper-grain flex items-center justify-center w-full h-full">
@@ -101,12 +99,9 @@ export function PlantDetailScreen({
             )}
           </div>
 
-          {/* Center column — Identity + Chips + Actions */}
-          <div className="flex flex-col gap-4">
+          {/* Identity + chips + actions */}
+          <div className="flex flex-col gap-4 min-w-0">
             <div className="flex flex-col gap-1">
-              <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                {dict.detail.bancal} · {plant.spaceId}
-              </p>
               <h1
                 data-testid="plant-name"
                 className="headline text-3xl font-serif"
@@ -121,6 +116,11 @@ export function PlantDetailScreen({
                   {plant.species.scientificName}
                 </p>
               )}
+              {plant.species?.description && (
+                <p className="text-sm text-muted-foreground line-clamp-2">
+                  {plant.species.description}
+                </p>
+              )}
             </div>
 
             {/* Chips row */}
@@ -130,6 +130,26 @@ export function PlantDetailScreen({
                   {plant.species.scientificName}
                 </Chip>
               )}
+              {plant.plantingSpot && (
+                <Chip variant="outline" data-testid="chip-planting-spot">
+                  <MapPin className="w-3 h-3" aria-hidden="true" />
+                  {plant.plantingSpot.name}
+                </Chip>
+              )}
+            </div>
+
+            {/* Last watered quick stat */}
+            <div
+              data-testid="plant-last-watered"
+              className="flex items-center gap-2 text-sm text-muted-foreground"
+            >
+              <Droplets
+                className="w-4 h-4 text-[var(--forest)]"
+                aria-hidden="true"
+              />
+              {lastWatered
+                ? `${dict.detail.care.lastWatered} · ${formatRelativeTime(lastWatered.performedAt, lang)}`
+                : dict.detail.care.neverWatered}
             </div>
 
             {/* Action bar */}
@@ -140,18 +160,17 @@ export function PlantDetailScreen({
               <Button
                 variant="default"
                 size="sm"
+                loading={markWatered.isPending}
                 data-testid="btn-mark-watered"
+                onClick={() =>
+                  markWatered.mutate({
+                    plantId,
+                    activityType: CareLogActivityType.WATERING,
+                  })
+                }
               >
                 <Droplets className="w-4 h-4" />
                 {dict.detail.actions.markWatered}
-              </Button>
-              <Button variant="outline" size="sm" data-testid="btn-add-photo">
-                <Camera className="w-4 h-4" />
-                {dict.detail.actions.addPhoto}
-              </Button>
-              <Button variant="outline" size="sm" data-testid="btn-new-note">
-                <StickyNote className="w-4 h-4" />
-                {dict.detail.actions.newNote}
               </Button>
               <Button
                 variant="outline"
@@ -164,14 +183,17 @@ export function PlantDetailScreen({
                 {dict.delete.button}
               </Button>
             </div>
+            {markWatered.isError && (
+              <Alert variant="error" message={dict.detail.actions.markWateredError} />
+            )}
             {deletePlant.isError && (
               <Alert variant="error" message={dict.delete.error} />
             )}
           </div>
 
-          {/* Right column — QR Card */}
+          {/* QR Card */}
           {plant.qr && (
-            <Card data-testid="plant-qr-card">
+            <Card data-testid="plant-qr-card" className="w-full lg:w-56">
               <CardContent className="flex flex-col gap-3 pt-6">
                 <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                   {dict.detail.qr.label}
@@ -208,56 +230,25 @@ export function PlantDetailScreen({
           )}
         </div>
 
-        {/* Tab nav */}
-        <Tabs defaultValue="care">
-          <TabsList
-            variant="line"
-            className="w-full justify-start border-b rounded-none h-auto pb-0"
-          >
-            <TabsTrigger value="care">{dict.detail.tabs.care}</TabsTrigger>
-            <TabsTrigger value="calendar">
-              {dict.detail.tabs.calendar}
-            </TabsTrigger>
-            <TabsTrigger value="diary">{dict.detail.tabs.diary}</TabsTrigger>
-            <TabsTrigger value="harvests">
-              {dict.detail.tabs.harvests}
-            </TabsTrigger>
-            <TabsTrigger value="pests">{dict.detail.tabs.pests}</TabsTrigger>
-            <TabsTrigger value="associations">
-              {dict.detail.tabs.associations}
-            </TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="care">
-            <div className="pt-6">
+        {/* Care + calendar sections */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          <Card data-testid="care-log-section">
+            <CardContent className="pt-6">
               <CareLogSummary
                 lastCareByType={lastCareByType}
                 dict={careLogDict}
                 lang={lang}
               />
-            </div>
-          </TabsContent>
+            </CardContent>
+          </Card>
 
-          <TabsContent value="calendar">
-            <CareScheduleList plantId={plantId} dict={careScheduleDict} />
-          </TabsContent>
-
-          <TabsContent value="diary">
-            <InDevelopment />
-          </TabsContent>
-
-          <TabsContent value="harvests">
-            <InDevelopment />
-          </TabsContent>
-
-          <TabsContent value="pests">
-            <InDevelopment />
-          </TabsContent>
-
-          <TabsContent value="associations">
-            <InDevelopment />
-          </TabsContent>
-        </Tabs>
+          <Card data-testid="care-schedule-section">
+            <CardContent className="pt-6 flex flex-col gap-3">
+              <p className="eyebrow">{dict.detail.calendarTitle}</p>
+              <CareScheduleList plantId={plantId} dict={careScheduleDict} />
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       <ConfirmDialog
