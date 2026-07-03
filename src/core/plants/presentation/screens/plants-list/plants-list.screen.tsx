@@ -36,14 +36,23 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
   const { search, setSearch, filters } = usePlantFilters();
   const { data, isLoading, speciesCount } = usePaginatedPlants(spaceId, { page, filters });
 
+  const onPageChangeRef = useRef(onPageChange);
+  useEffect(() => {
+    onPageChangeRef.current = onPageChange;
+  });
+
   const isFirstFiltersRender = useRef(true);
   useEffect(() => {
     if (isFirstFiltersRender.current) {
       isFirstFiltersRender.current = false;
       return;
     }
-    onPageChange(1);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Reads onPageChange via a ref (not as a dependency) because its
+    // identity changes on every page navigation (useUrlPage derives it from
+    // searchParams) — depending on it directly would re-fire this effect
+    // right after the user navigates to another page, bouncing them back to
+    // page 1. This should only reset the page when `filters` itself changes.
+    onPageChangeRef.current(1);
   }, [filters]);
   const { plantToDelete, requestDelete, confirmDelete, cancelDelete, isError } = useDeletePlantConfirm(spaceId);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
