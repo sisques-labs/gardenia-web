@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { SortingState } from '@tanstack/react-table';
 import { InventoryTable } from '@/core/inventory/presentation/components/inventory-table/inventory-table';
 import { InventoryItemModal } from '@/core/inventory/presentation/components/inventory-item-modal/inventory-item-modal';
@@ -38,20 +38,40 @@ export function InventoryListScreen({ dict, lang: _lang }: Props) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const sorts = useMemo(() => toInventorySorts(sorting), [sorting]);
 
-  const { data, isLoading } = usePaginatedInventoryItems({ page, sorts });
-  const items = data?.items ?? [];
-  const totalPages = data?.totalPages ?? 1;
-
   const { itemToDelete, requestDelete, confirmDelete, cancelDelete, isError } =
     useDeleteInventoryItemConfirm();
   const {
+    filterState,
     filters,
-    filteredItems,
     setQuery,
     setType,
     toggleLowStock,
     toggleExpiringSoon,
-  } = useInventoryFilters(items);
+    removeFilter,
+  } = useInventoryFilters();
+
+  const { data, isLoading } = usePaginatedInventoryItems({ page, filters, sorts });
+  const items = data?.items ?? [];
+  const totalPages = data?.totalPages ?? 1;
+
+  const onPageChangeRef = useRef(onPageChange);
+  useEffect(() => {
+    onPageChangeRef.current = onPageChange;
+  });
+
+  const isFirstFiltersRender = useRef(true);
+  useEffect(() => {
+    if (isFirstFiltersRender.current) {
+      isFirstFiltersRender.current = false;
+      return;
+    }
+    // Reads onPageChange via a ref (not as a dependency) because its identity
+    // changes on every page navigation (useUrlPage derives it from
+    // searchParams) — depending on it directly would re-fire this effect
+    // right after the user navigates to another page, bouncing them back to
+    // page 1. This should only reset the page when `filters` itself changes.
+    onPageChangeRef.current(1);
+  }, [filters]);
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
@@ -75,22 +95,23 @@ export function InventoryListScreen({ dict, lang: _lang }: Props) {
       <div className="flex flex-col gap-6 px-6 py-6">
         <InventoryFilters
           dict={dict}
-          filters={filters}
+          filters={filterState}
           onQueryChange={setQuery}
           onTypeChange={setType}
           onToggleLowStock={toggleLowStock}
           onToggleExpiringSoon={toggleExpiringSoon}
+          onRemoveFilter={removeFilter}
         />
 
         {isError && <Alert variant="error" message={dict.delete.error} />}
 
         {isLoading ? (
           <InventoryListSkeleton />
-        ) : filteredItems.length === 0 ? (
+        ) : items.length === 0 ? (
           <p className="text-muted-foreground text-sm">{dict.list.empty}</p>
         ) : (
           <InventoryTable
-            items={filteredItems}
+            items={items}
             dict={dict}
             onEdit={(i) => setEditingItem(i)}
             onAdjust={(i) => setAdjustingItem(i)}

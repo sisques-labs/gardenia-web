@@ -20,6 +20,7 @@ const dict = {
     allTypes: 'All types',
     lowStockOnly: 'Low stock',
     expiringSoon: 'Expiring soon',
+    searchChipLabel: 'Search',
   },
   form: {
     title: 'New item',

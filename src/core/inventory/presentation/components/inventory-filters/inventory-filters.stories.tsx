@@ -15,6 +15,7 @@ const meta = {
     onTypeChange: () => {},
     onToggleLowStock: () => {},
     onToggleExpiringSoon: () => {},
+    onRemoveFilter: () => {},
   },
   parameters: { layout: "padded" },
 } satisfies Meta<typeof InventoryFilters>;

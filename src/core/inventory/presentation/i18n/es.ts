@@ -25,6 +25,7 @@ const dict = {
     allTypes: 'Todos los tipos',
     lowStockOnly: 'Stock bajo',
     expiringSoon: 'Caduca pronto',
+    searchChipLabel: 'Búsqueda',
   },
   form: {
     title: 'Nuevo artículo',

@@ -22,6 +22,7 @@ function setup(overrides: Partial<React.ComponentProps<typeof InventoryFilters>>
     onTypeChange: vi.fn(),
     onToggleLowStock: vi.fn(),
     onToggleExpiringSoon: vi.fn(),
+    onRemoveFilter: vi.fn(),
     ...overrides,
   };
   render(<InventoryFilters {...props} />);
@@ -46,5 +47,29 @@ describe('InventoryFilters', () => {
     setup();
     expect(screen.getByText('Low stock')).toBeInTheDocument();
     expect(screen.getByText('Expiring soon')).toBeInTheDocument();
+  });
+
+  it('renders no chips when no filters are active', () => {
+    setup();
+    expect(screen.queryByText(/Search:/)).not.toBeInTheDocument();
+  });
+
+  it('renders a chip per active filter', () => {
+    setup({
+      filters: { query: 'lettuce', type: 'SEEDS', lowStockOnly: true, expiringSoonOnly: true },
+    });
+
+    expect(screen.getByText('Search: lettuce')).toBeInTheDocument();
+    expect(screen.getByLabelText('Remove Seeds')).toBeInTheDocument();
+    expect(screen.getByLabelText('Remove Low stock')).toBeInTheDocument();
+    expect(screen.getByLabelText('Remove Expiring soon')).toBeInTheDocument();
+  });
+
+  it('calls onRemoveFilter with the right key when a chip is removed', () => {
+    const props = setup({ filters: { ...filters, type: 'SEEDS' } });
+
+    fireEvent.click(screen.getByLabelText('Remove Seeds'));
+
+    expect(props.onRemoveFilter).toHaveBeenCalledWith('type');
   });
 });

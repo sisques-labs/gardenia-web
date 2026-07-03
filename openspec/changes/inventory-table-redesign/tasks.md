@@ -49,12 +49,13 @@
 
 ## PR3: Server-Side Filtering & Quick Filter Chips
 
-- [ ] 3.1 RED+GREEN: modify `presentation/hooks/use-inventory-filters/use-inventory-filters.hook.ts` (+spec) — debounce `search` via `useDebouncedValue`; emit `InventoryFilter[]` (name LIKE, itemType EQUALS, low_stock EQUALS true, expiresAt LESS_THAN_OR_EQUAL) instead of the pure in-memory `filterInventoryItems`
-- [ ] 3.2 Delete `application/use-cases`/domain pure filter helper `filter-inventory-items.ts` (+spec) — no longer used once filtering is server-side; confirm no other caller before removing
-- [ ] 3.3 Modify `presentation/components/inventory-filters/inventory-filters.tsx` — render `ActiveFilterChips` below the filter controls, one chip per active filter, wired to per-field clear
-- [ ] 3.4 RED+GREEN: update `inventory-filters.spec.tsx` — chips render for each active filter; removing a chip clears only that filter; debounce timing test (fake timers)
-- [ ] 3.5 Modify `presentation/i18n/{en,es}.ts` — chip labels (e.g. "Type: Seeds", "Low stock", "Expiring soon", "Search: {term}")
-- [ ] 3.6 `pnpm test` + `pnpm lint` + `pnpm tsc --noEmit` green
+- [x] 3.1 RED+GREEN: rewrote `presentation/hooks/use-inventory-filters/use-inventory-filters.hook.ts` (+spec) — debounces `query` via `useDebouncedValue`; returns `filterState` (for the UI controls, unchanged shape) + `filters: InventoryFilter[]` (name LIKE, itemType EQUALS, low_stock EQUALS true, expiresAt LESS_THAN_OR_EQUAL against a stable "now" captured once via `useState(() => Date.now())` — a raw `Date.now()` call inside the `useMemo` body tripped the `react-hooks/purity` lint rule) + `removeFilter(key)`
+- [x] 3.2 Deleted `filter-inventory-items.ts` + spec — confirmed no other caller before removing; kept `is-low-stock.ts`/`is-expiring-soon.ts` (still used by the table's Status column badges, independent of the filter criteria)
+- [x] 3.3 Modified `presentation/components/inventory-filters/inventory-filters.tsx` — renders `ActiveFilterChips` below the filter controls, one chip per active filter (search/type/lowStock/expiringSoon), wired to `onRemoveFilter`
+- [x] 3.4 RED+GREEN: updated `inventory-filters.spec.tsx` — chips render for each active filter (queried via `getByLabelText('Remove …')` to disambiguate from the Select's own option text); removing a chip calls `onRemoveFilter` with the right key
+- [x] 3.5 Modified `presentation/i18n/{en,es}.ts` — added `dict.filters.searchChipLabel` ("Search"/"Búsqueda"); type/lowStock/expiringSoon chips reuse existing `dict.types[...]`/`dict.filters.lowStockOnly`/`dict.filters.expiringSoon` labels, no new keys needed for those
+- [x] 3.6 Wired `usePaginatedInventoryItems({ page, filters, sorts })` in the screen (removed the interim client-side re-filter from PR2) and ported the ref-based page-reset-on-filter-change effect from `plants-list.screen.tsx:39-56` (deferred in PR2 since filters didn't affect the query yet)
+- [x] 3.7 `pnpm test` (250 suites/1227 tests) + `pnpm lint` + `pnpm tsc --noEmit` green
 
 ## PR4: Item Detail Drawer
 

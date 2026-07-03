@@ -15,15 +15,12 @@ phases:
 next_recommended:
   - sdd-apply
 notes: |
-  Five chained PRs. PR1 (row actions dropdown + delete confirmation) done.
-  PR2 (server-side pagination + sorting) done: InventoryItemQueryableField
-  enum, InventoryListCriteria/Filter/Sort types, GetInventoryItemsUseCase +
-  port + GQL repo now accept criteria and return PaginatedResult (no more
-  hardcoded perPage:100), usePaginatedInventoryItems hook (replaces
-  useInventoryItems), Name/Quantity columns sortable via SortableHeader,
-  DataTable pagination footer wired, route wrapped in <Suspense> (required by
-  useUrlPage's useSearchParams). pnpm test (250 suites/1218 tests), tsc
-  --noEmit, eslint all green. PR3-PR4 pending. PR5 (bulk selection + bulk
-  delete) is blocked on the companion sisques-labs/gardenia-api change
-  `inventory-bulk-delete`, which has already shipped `inventoryItemsDeleteBulk`
-  on the same branch.
+  Five chained PRs. PR1 (row actions dropdown + delete confirmation) and PR2
+  (server-side pagination + sorting) done. PR3 (server-side filtering + quick
+  filter chips) done: useInventoryFilters now debounces search and emits
+  InventoryFilter[] against the API instead of filtering an in-memory array;
+  ActiveFilterChips wired into InventoryFilters; page-reset-on-filter-change
+  effect ported from plants. pnpm test (250 suites/1227 tests), tsc --noEmit,
+  eslint all green. PR4 pending. PR5 (bulk selection + bulk delete) is blocked
+  on the companion sisques-labs/gardenia-api change `inventory-bulk-delete`,
+  which has already shipped `inventoryItemsDeleteBulk` on the same branch.
