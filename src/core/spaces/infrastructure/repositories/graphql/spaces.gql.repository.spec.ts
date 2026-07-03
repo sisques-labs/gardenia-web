@@ -19,6 +19,7 @@ import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { SpacesGqlRepository } from './spaces.gql.repository';
 import { SPACES_FIND_BY_USER } from './queries/spaces-find-by-user.query';
 import { SPACE_FIND_BY_ID } from './queries/space-find-by-id.query';
+import { SPACE_INVITATION_PREVIEW } from './queries/space-invitation-preview.query';
 import { SPACE_ACCEPT_INVITATION } from './mutations/space-accept-invitation.mutation';
 import { SPACE_CREATE } from './mutations/space-create.mutation';
 import { SPACE_CREATE_INVITATION } from './mutations/space-create-invitation.mutation';
@@ -72,6 +73,11 @@ describe('SpacesGqlRepository', () => {
     it('SPACE_ACCEPT_INVITATION is a valid GQL document', () => {
       expect(SPACE_ACCEPT_INVITATION).toBeDefined();
       expect((SPACE_ACCEPT_INVITATION as DocumentNode).kind).toBe('Document');
+    });
+
+    it('SPACE_INVITATION_PREVIEW is a valid GQL document', () => {
+      expect(SPACE_INVITATION_PREVIEW).toBeDefined();
+      expect((SPACE_INVITATION_PREVIEW as DocumentNode).kind).toBe('Document');
     });
 
     it('SPACE_CREATE_INVITATION is a valid GQL document', () => {
@@ -160,6 +166,47 @@ describe('SpacesGqlRepository', () => {
 
       await expect(repository.acceptInvitation('TES · 2026 · AB')).rejects.toThrow(
         'Invitation expired',
+      );
+    });
+  });
+
+  describe('getInvitationPreview()', () => {
+    it('returns the preview from the query response', async () => {
+      const preview = {
+        spaceName: 'Greenhouse A',
+        role: 'MEMBER' as const,
+        expiresAt: '2026-12-31T00:00:00.000Z',
+        isExpired: false,
+      };
+      vi.mocked(apolloClient.query).mockResolvedValue({
+        data: { spaceInvitationPreview: preview },
+      } as never);
+
+      const result = await repository.getInvitationPreview('TES · 2026 · AB');
+
+      expect(apolloClient.query).toHaveBeenCalledWith({
+        query: SPACE_INVITATION_PREVIEW,
+        variables: { code: 'TES · 2026 · AB' },
+        fetchPolicy: 'network-only',
+      });
+      expect(result).toEqual(preview);
+    });
+
+    it('throws when the query returns no data', async () => {
+      vi.mocked(apolloClient.query).mockResolvedValue({
+        data: { spaceInvitationPreview: null },
+      } as never);
+
+      await expect(repository.getInvitationPreview('BADCODE')).rejects.toThrow(
+        'spaceInvitationPreview query returned no data',
+      );
+    });
+
+    it('propagates errors from apolloClient.query', async () => {
+      vi.mocked(apolloClient.query).mockRejectedValue(new Error('Not found'));
+
+      await expect(repository.getInvitationPreview('BADCODE')).rejects.toThrow(
+        'Not found',
       );
     });
   });

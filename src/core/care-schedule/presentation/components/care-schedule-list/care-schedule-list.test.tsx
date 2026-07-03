@@ -57,6 +57,12 @@ describe('CareScheduleList', () => {
     expect(screen.getByText(dict.tab.empty)).toBeInTheDocument();
   });
 
+  it('renders the given title next to the "new task" button when provided', () => {
+    render(<CareScheduleList plantId="plant-1" dict={dict} title="Upcoming tasks" />);
+    expect(screen.getByText('Upcoming tasks')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: new RegExp(dict.tab.newTask, 'i') })).toBeInTheDocument();
+  });
+
   it('lists a CareScheduleRow per care schedule', () => {
     vi.mocked(useCareSchedules).mockReturnValue({ careSchedules: [mockCareSchedule], isLoading: false } as never);
     render(<CareScheduleList plantId="plant-1" dict={dict} />);

@@ -6,10 +6,12 @@ import type { MemberInput } from '@/core/spaces/application/interfaces/member-in
 import type { UpdateSpaceInput } from '@/core/spaces/application/interfaces/update-space-input.interface';
 import type { Space } from '@/core/spaces/domain/interfaces/space.interface';
 import type { SpaceDetail } from '@/core/spaces/domain/interfaces/space-detail.interface';
+import type { SpaceInvitationPreview } from '@/core/spaces/domain/interfaces/space-invitation-preview.interface';
 import type { SpaceInvitation } from '@/core/spaces/domain/types/space-invitation.type';
 import type { SpaceWeather } from '@/core/spaces/domain/interfaces/space-weather.interface';
 import { SPACES_FIND_BY_USER } from './queries/spaces-find-by-user.query';
 import { SPACE_FIND_BY_ID } from './queries/space-find-by-id.query';
+import { SPACE_INVITATION_PREVIEW } from './queries/space-invitation-preview.query';
 import { SPACE_ACCEPT_INVITATION } from './mutations/space-accept-invitation.mutation';
 import { SPACE_CREATE } from './mutations/space-create.mutation';
 import { SPACE_CREATE_INVITATION } from './mutations/space-create-invitation.mutation';
@@ -31,6 +33,10 @@ interface SpaceCreateData {
 
 interface SpaceAcceptInvitationData {
   spaceAcceptInvitation: { id: string; success: boolean; message: string };
+}
+
+interface SpaceInvitationPreviewData {
+  spaceInvitationPreview: SpaceInvitationPreview;
 }
 
 interface SpaceCreateInvitationData {
@@ -82,6 +88,18 @@ export class SpacesGqlRepository implements ISpacesRepository {
       throw new Error('spaceAcceptInvitation mutation did not return a space id');
     }
     return spaceId;
+  }
+
+  async getInvitationPreview(code: string): Promise<SpaceInvitationPreview> {
+    const res = await apolloClient.query<SpaceInvitationPreviewData>({
+      query: SPACE_INVITATION_PREVIEW,
+      variables: { code },
+      fetchPolicy: 'network-only',
+    });
+    if (!res.data?.spaceInvitationPreview) {
+      throw new Error('spaceInvitationPreview query returned no data');
+    }
+    return res.data.spaceInvitationPreview;
   }
 
   async create(name: string): Promise<Space> {

@@ -7,7 +7,7 @@ const plantsUseCase = new GetPlantsUseCase(new PlantsGqlRepository());
 export function usePlants(spaceId: string | null) {
   const query = useQuery({
     queryKey: ['plants', spaceId],
-    queryFn: () => plantsUseCase.execute(),
+    queryFn: async () => (await plantsUseCase.execute()).items,
     enabled: !!spaceId,
   });
 

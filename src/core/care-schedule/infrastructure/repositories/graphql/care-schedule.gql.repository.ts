@@ -4,6 +4,7 @@ import type { CareScheduleFilters } from '@/core/care-schedule/application/inter
 import type { CreateCareScheduleInput } from '@/core/care-schedule/application/interfaces/create-care-schedule-input.interface';
 import type { UpdateCareScheduleInput } from '@/core/care-schedule/application/interfaces/update-care-schedule-input.interface';
 import type { CareSchedule, WaterPlantResult } from '@/core/care-schedule/domain/types/care-schedule.interface';
+import type { CreatedEntity } from '@/shared/domain/interfaces/created-entity.interface';
 import { CARE_SCHEDULES_FIND_BY_CRITERIA } from './queries/care-schedule-find-by-criteria.query';
 import { CARE_SCHEDULE_FIND_BY_ID } from './queries/care-schedule-find-by-id.query';
 import { CARE_SCHEDULE_CREATE } from './mutations/care-schedule-create.mutation';
@@ -60,31 +61,31 @@ export class CareScheduleGqlRepository implements ICareScheduleRepository {
     return res.data.careScheduleFindById;
   }
 
-  async create(input: CreateCareScheduleInput): Promise<CareSchedule> {
+  async create(input: CreateCareScheduleInput): Promise<CreatedEntity> {
     const res = await apolloClient.mutate<CareScheduleCreateResponse>({
       mutation: CARE_SCHEDULE_CREATE,
       variables: { input },
     });
     if (!res.data?.careScheduleCreate?.success) throw new Error('careScheduleCreate mutation failed');
-    return this.findById(res.data.careScheduleCreate.id);
+    return { id: res.data.careScheduleCreate.id };
   }
 
-  async update(input: UpdateCareScheduleInput): Promise<CareSchedule> {
+  async update(input: UpdateCareScheduleInput): Promise<CreatedEntity> {
     const res = await apolloClient.mutate<CareScheduleUpdateResponse>({
       mutation: CARE_SCHEDULE_UPDATE,
       variables: { input },
     });
     if (!res.data?.careScheduleUpdate?.success) throw new Error('careScheduleUpdate mutation failed');
-    return this.findById(res.data.careScheduleUpdate.id);
+    return { id: res.data.careScheduleUpdate.id };
   }
 
-  async complete(id: string, completedAt?: string): Promise<CareSchedule> {
+  async complete(id: string, completedAt?: string): Promise<CreatedEntity> {
     const res = await apolloClient.mutate<CareScheduleCompleteResponse>({
       mutation: CARE_SCHEDULE_COMPLETE,
       variables: { input: { id, completedAt } },
     });
     if (!res.data?.careScheduleComplete?.success) throw new Error('careScheduleComplete mutation failed');
-    return this.findById(res.data.careScheduleComplete.id);
+    return { id: res.data.careScheduleComplete.id };
   }
 
   async delete(id: string): Promise<void> {

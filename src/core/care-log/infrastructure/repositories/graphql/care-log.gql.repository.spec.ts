@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 vi.mock('@/shared/infrastructure/http/apollo.client', () => ({
   apolloClient: {
     query: vi.fn(),
+    mutate: vi.fn(),
   },
 }));
 
@@ -82,5 +83,32 @@ describe('CareLogGqlRepository', () => {
     const result = await repository.findByPlantId('plant-1');
 
     expect(result).toEqual([]);
+  });
+
+  describe('create()', () => {
+    it('llama a apolloClient.mutate con CARE_LOG_ENTRY_CREATE y retorna solo el id creado', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { careLogEntryCreate: { id: 'entry-1', success: true, message: 'Created' } },
+      } as never);
+
+      const input = { plantId: 'plant-1', activityType: CareLogActivityType.WATERING };
+      const result = await repository.create(input);
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: expect.anything(),
+        variables: { input },
+      });
+      expect(result).toEqual({ id: 'entry-1' });
+    });
+
+    it('lanza un error cuando success es false', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { careLogEntryCreate: { id: '', success: false, message: 'Failed' } },
+      } as never);
+
+      await expect(
+        repository.create({ plantId: 'plant-1', activityType: CareLogActivityType.WATERING }),
+      ).rejects.toThrow('careLogEntryCreate mutation failed');
+    });
   });
 });

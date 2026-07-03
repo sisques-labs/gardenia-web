@@ -3,6 +3,7 @@ import type { IHarvestsRepository } from '@/core/harvests/application/ports/harv
 import type { CreateHarvestInput } from '@/core/harvests/application/interfaces/create-harvest-input.interface';
 import type { UpdateHarvestInput } from '@/core/harvests/application/interfaces/update-harvest-input.interface';
 import type { Harvest } from '@/core/harvests/domain/types/harvest.interface';
+import type { CreatedEntity } from '@/shared/domain/interfaces/created-entity.interface';
 import { HARVESTS_FIND_BY_CRITERIA } from './queries/harvest-find-by-criteria.query';
 import { HARVEST_FIND_BY_ID } from './queries/harvest-find-by-id.query';
 import { HARVEST_CREATE } from './mutations/harvest-create.mutation';
@@ -30,22 +31,22 @@ export class HarvestsGqlRepository implements IHarvestsRepository {
     return res.data.harvestFindById;
   }
 
-  async create(input: CreateHarvestInput): Promise<Harvest> {
+  async create(input: CreateHarvestInput): Promise<CreatedEntity> {
     const res = await apolloClient.mutate<HarvestCreateResponse>({
       mutation: HARVEST_CREATE,
       variables: { input },
     });
     if (!res.data?.harvestCreate?.success) throw new Error('harvestCreate mutation failed');
-    return this.findById(res.data.harvestCreate.id);
+    return { id: res.data.harvestCreate.id };
   }
 
-  async update(input: UpdateHarvestInput): Promise<Harvest> {
+  async update(input: UpdateHarvestInput): Promise<CreatedEntity> {
     const res = await apolloClient.mutate<HarvestUpdateResponse>({
       mutation: HARVEST_UPDATE,
       variables: { input },
     });
     if (!res.data?.harvestUpdate?.success) throw new Error('harvestUpdate mutation failed');
-    return this.findById(res.data.harvestUpdate.id);
+    return { id: res.data.harvestUpdate.id };
   }
 
   async delete(id: string): Promise<void> {

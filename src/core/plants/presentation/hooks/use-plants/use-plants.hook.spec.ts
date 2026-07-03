@@ -37,7 +37,7 @@ describe('usePlants', () => {
   });
 
   it('returns plants data when spaceId is provided', async () => {
-    mockExecute.mockResolvedValue(mockPlants);
+    mockExecute.mockResolvedValue({ items: mockPlants, total: 2, page: 1, perPage: 10, totalPages: 1 });
 
     const { result } = renderHook(() => usePlants('space-1'), { wrapper: makeWrapper() });
 
@@ -76,11 +76,12 @@ describe('usePlants', () => {
   });
 
   it('returns speciesCount as the number of distinct plantSpeciesId values', async () => {
-    mockExecute.mockResolvedValue([
+    const items = [
       { ...mockPlants[0], plantSpeciesId: 'sp1' },
       { ...mockPlants[1], plantSpeciesId: 'sp2' },
       { id: 'p3', name: 'Monstera 2', userId: 'u1', spaceId: 's1', plantSpeciesId: 'sp1', createdAt: '', updatedAt: '' },
-    ]);
+    ];
+    mockExecute.mockResolvedValue({ items, total: items.length, page: 1, perPage: 10, totalPages: 1 });
 
     const { result } = renderHook(() => usePlants('space-1'), { wrapper: makeWrapper() });
 

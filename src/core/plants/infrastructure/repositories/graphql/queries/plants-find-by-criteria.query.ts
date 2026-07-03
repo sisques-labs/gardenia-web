@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const PLANTS_FIND_BY_CRITERIA = gql`
-  query PlantsFindByCriteria {
-    plantsFindByCriteria {
+  query PlantsFindByCriteria($input: PlantFindByCriteriaRequestDto) {
+    plantsFindByCriteria(input: $input) {
       items {
         id
         name
@@ -30,6 +30,10 @@ export const PLANTS_FIND_BY_CRITERIA = gql`
         createdAt
         updatedAt
       }
+      total
+      page
+      perPage
+      totalPages
     }
   }
 `;

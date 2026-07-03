@@ -97,6 +97,9 @@
   --color-plum:        var(--plum);
   --color-sky:         var(--sky);
 
+  --color-destructive:            var(--terracotta);
+  --color-destructive-foreground: var(--white);
+
   --color-honey-bg:    var(--honey-bg);
   --color-terra-bg:    var(--terra-bg);
   --color-sage-bg:     var(--sage-bg);

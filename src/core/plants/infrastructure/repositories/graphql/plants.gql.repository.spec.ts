@@ -71,25 +71,47 @@ describe('PlantsGqlRepository', () => {
   });
 
   describe('list()', () => {
-    it('calls apolloClient.query with PLANTS_FIND_BY_CRITERIA and returns Plant[]', async () => {
+    it('calls apolloClient.query with PLANTS_FIND_BY_CRITERIA and returns a paginated result', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { plantsFindByCriteria: { items: mockPlants } },
+        data: { plantsFindByCriteria: { items: mockPlants, total: 2, page: 1, perPage: 10, totalPages: 1 } },
       } as never);
 
       const result = await repository.list();
 
       expect(apolloClient.query).toHaveBeenCalledOnce();
-      expect(apolloClient.query).toHaveBeenCalledWith({ query: PLANTS_FIND_BY_CRITERIA, fetchPolicy: 'network-only' });
-      expect(result).toEqual(mockPlants);
+      expect(apolloClient.query).toHaveBeenCalledWith({
+        query: PLANTS_FIND_BY_CRITERIA,
+        variables: { input: undefined },
+        fetchPolicy: 'network-only',
+      });
+      expect(result).toEqual({ items: mockPlants, total: 2, page: 1, perPage: 10, totalPages: 1 });
     });
 
-    it('returns empty array when items is empty', async () => {
+    it('forwards filters and pagination as the input variable', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { plantsFindByCriteria: { items: [] } },
+        data: { plantsFindByCriteria: { items: [], total: 0, page: 2, perPage: 5, totalPages: 0 } },
+      } as never);
+
+      const criteria = {
+        filters: [{ field: 'NAME' as never, operator: 'LIKE' as never, value: 'rose' }],
+        pagination: { page: 2, perPage: 5 },
+      };
+      await repository.list(criteria);
+
+      expect(apolloClient.query).toHaveBeenCalledWith({
+        query: PLANTS_FIND_BY_CRITERIA,
+        variables: { input: criteria },
+        fetchPolicy: 'network-only',
+      });
+    });
+
+    it('returns empty items when items is empty', async () => {
+      vi.mocked(apolloClient.query).mockResolvedValue({
+        data: { plantsFindByCriteria: { items: [], total: 0, page: 1, perPage: 10, totalPages: 0 } },
       } as never);
 
       const result = await repository.list();
-      expect(result).toEqual([]);
+      expect(result.items).toEqual([]);
     });
 
     it('propagates errors from apolloClient.query', async () => {
@@ -121,12 +143,9 @@ describe('PlantsGqlRepository', () => {
   });
 
   describe('create()', () => {
-    it('calls apolloClient.mutate with PLANT_CREATE and then getById, returns Plant', async () => {
+    it('calls apolloClient.mutate with PLANT_CREATE and returns just the created id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { plantCreate: { id: 'plant-1', success: true, message: 'Plant created successfully' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { plantFindById: mockPlant },
       } as never);
 
       const result = await repository.create({ name: 'Monstera' });
@@ -136,11 +155,8 @@ describe('PlantsGqlRepository', () => {
         mutation: PLANT_CREATE,
         variables: { input: { name: 'Monstera' } },
       });
-      expect(apolloClient.query).toHaveBeenCalledWith({
-        query: PLANT_FIND_BY_ID,
-        variables: { input: { id: 'plant-1' } },
-      });
-      expect(result).toEqual(mockPlant);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'plant-1' });
     });
 
     it('throws when success is false', async () => {

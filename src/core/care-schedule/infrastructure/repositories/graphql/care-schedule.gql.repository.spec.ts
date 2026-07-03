@@ -165,19 +165,17 @@ describe('CareScheduleGqlRepository', () => {
   });
 
   describe('create()', () => {
-    it('calls apolloClient.mutate with CARE_SCHEDULE_CREATE then re-fetches by id', async () => {
+    it('calls apolloClient.mutate with CARE_SCHEDULE_CREATE and returns just the created id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { careScheduleCreate: { id: 'cs-1', success: true, message: 'Created' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { careScheduleFindById: mockCareSchedule },
       } as never);
 
       const input = { plantId: 'plant-1', activityType: 'WATERING' as const, intervalDays: 3 };
       const result = await repository.create(input);
 
       expect(apolloClient.mutate).toHaveBeenCalledWith({ mutation: CARE_SCHEDULE_CREATE, variables: { input } });
-      expect(result).toEqual(mockCareSchedule);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'cs-1' });
     });
 
     it('throws when mutation success is false', async () => {
@@ -192,29 +190,24 @@ describe('CareScheduleGqlRepository', () => {
   });
 
   describe('update()', () => {
-    it('calls apolloClient.mutate with CARE_SCHEDULE_UPDATE then re-fetches by id', async () => {
+    it('calls apolloClient.mutate with CARE_SCHEDULE_UPDATE and returns just the updated id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { careScheduleUpdate: { id: 'cs-1', success: true, message: 'Updated' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { careScheduleFindById: mockCareSchedule },
       } as never);
 
       const input = { id: 'cs-1', notes: 'updated' };
       const result = await repository.update(input);
 
       expect(apolloClient.mutate).toHaveBeenCalledWith({ mutation: CARE_SCHEDULE_UPDATE, variables: { input } });
-      expect(result).toEqual(mockCareSchedule);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'cs-1' });
     });
   });
 
   describe('complete()', () => {
-    it('calls apolloClient.mutate with CARE_SCHEDULE_COMPLETE then re-fetches by id', async () => {
+    it('calls apolloClient.mutate with CARE_SCHEDULE_COMPLETE and returns just the completed id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { careScheduleComplete: { id: 'cs-1', success: true, message: 'Completed' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { careScheduleFindById: mockCareSchedule },
       } as never);
 
       const result = await repository.complete('cs-1', '2026-07-05');
@@ -223,7 +216,8 @@ describe('CareScheduleGqlRepository', () => {
         mutation: CARE_SCHEDULE_COMPLETE,
         variables: { input: { id: 'cs-1', completedAt: '2026-07-05' } },
       });
-      expect(result).toEqual(mockCareSchedule);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'cs-1' });
     });
   });
 

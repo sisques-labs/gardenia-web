@@ -1,0 +1,25 @@
+change: inventory-table-redesign
+status: apply
+created: 2026-07-03
+artifact_store: hybrid
+context: inventory
+phases:
+  explore: skipped
+  proposal: done
+  spec: done
+  design: done
+  tasks: done
+  apply: done
+  verify: partial
+  archive: pending
+next_recommended:
+  - sdd-verify
+notes: |
+  All five chained PRs done: (1) row actions dropdown + delete confirmation,
+  (2) server-side pagination + sorting, (3) server-side filtering + active
+  filter chips, (4) item detail drawer, (5) bulk selection + bulk delete
+  (wired to gardenia-api's inventoryItemsDeleteBulk, shipped on the companion
+  branch in sisques-labs/gardenia-api). Full pnpm test (254 suites/1250
+  tests), tsc --noEmit, eslint all green throughout. Not done in this
+  environment: manual browser smoke test (no dev server/backend available
+  here) and pnpm test:coverage delta check.
