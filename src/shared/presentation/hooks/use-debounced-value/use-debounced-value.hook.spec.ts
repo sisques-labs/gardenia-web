@@ -72,4 +72,21 @@ describe('useDebouncedValue', () => {
 
     expect(clearSpy).toHaveBeenCalled();
   });
+
+  it('defaults to a 300ms delay when delayMs is omitted', () => {
+    const { result, rerender } = renderHook(({ value }) => useDebouncedValue(value), {
+      initialProps: { value: 'a' },
+    });
+
+    rerender({ value: 'ab' });
+    act(() => {
+      vi.advanceTimersByTime(299);
+    });
+    expect(result.current).toBe('a');
+
+    act(() => {
+      vi.advanceTimersByTime(1);
+    });
+    expect(result.current).toBe('ab');
+  });
 });

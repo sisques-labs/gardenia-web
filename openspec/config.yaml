@@ -178,6 +178,7 @@ rules:
     - Value objects in domain/value-objects/ using {name}.vo.ts
     - Tests co-located (.spec.ts next to source file). Write RED first, then GREEN.
     - No barrel index.ts files unless the module explicitly needs a public API surface
+    - "Any text search input whose value drives a network query (TanStack Query/GraphQL findByCriteria, etc.) MUST debounce the derived value before it reaches the query — never let it trigger a request on every keystroke. Use the shared useDebouncedValue(value, delayMs = 300) hook (src/shared/presentation/hooks/use-debounced-value/) inside the module's use{Context}Filters hook: keep the raw input state updating immediately (so typing feels responsive) and derive the filter/query input from the debounced value instead. Override delayMs only when 300 is demonstrably wrong for that input. Purely client-side (in-memory) filtering with no network cost is exempt."
   verify:
     test_command: "pnpm test"
     build_command: "pnpm build"

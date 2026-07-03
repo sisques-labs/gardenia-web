@@ -4,11 +4,9 @@ import { useDebouncedValue } from '@/shared/presentation/hooks/use-debounced-val
 import { PlantQueryableField } from '@/core/plants/domain/enums/plant-queryable-field.enum';
 import type { PlantFilter } from '@/core/plants/application/interfaces/plant-filter.interface';
 
-const SEARCH_DEBOUNCE_MS = 300;
-
 export function usePlantFilters() {
   const [search, setSearch] = useState('');
-  const debouncedSearch = useDebouncedValue(search, SEARCH_DEBOUNCE_MS);
+  const debouncedSearch = useDebouncedValue(search);
 
   const filters = useMemo<PlantFilter[]>(() => {
     const trimmed = debouncedSearch.trim();
