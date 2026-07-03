@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import enInventory from '@/core/inventory/presentation/i18n/en';
@@ -8,8 +9,18 @@ vi.mock('@/core/inventory/presentation/hooks/use-inventory-items/use-inventory-i
   useInventoryItems: vi.fn(),
 }));
 
-vi.mock('@/core/inventory/presentation/hooks/use-delete-inventory-item/use-delete-inventory-item.hook', () => ({
-  useDeleteInventoryItem: vi.fn(),
+const mockRequestDelete = vi.fn();
+const mockConfirmDelete = vi.fn();
+const mockCancelDelete = vi.fn();
+
+vi.mock('@/core/inventory/presentation/hooks/use-delete-inventory-item-confirm/use-delete-inventory-item-confirm.hook', () => ({
+  useDeleteInventoryItemConfirm: vi.fn(() => ({
+    itemToDelete: null,
+    requestDelete: mockRequestDelete,
+    confirmDelete: mockConfirmDelete,
+    cancelDelete: mockCancelDelete,
+    isError: false,
+  })),
 }));
 
 vi.mock('@/core/inventory/presentation/components/inventory-item-modal/inventory-item-modal', () => ({
@@ -23,8 +34,14 @@ vi.mock('@/core/inventory/presentation/components/adjust-quantity-modal/adjust-q
 }));
 
 import { useInventoryItems } from '@/core/inventory/presentation/hooks/use-inventory-items/use-inventory-items.hook';
-import { useDeleteInventoryItem } from '@/core/inventory/presentation/hooks/use-delete-inventory-item/use-delete-inventory-item.hook';
+import { useDeleteInventoryItemConfirm } from '@/core/inventory/presentation/hooks/use-delete-inventory-item-confirm/use-delete-inventory-item-confirm.hook';
 import { InventoryListScreen } from './inventory-list.screen';
+
+async function openRowActionsMenu() {
+  const user = userEvent.setup();
+  await user.click(screen.getByLabelText('Open actions menu'));
+  return user;
+}
 
 const dict = enInventory as AppDict['inventory'];
 
@@ -47,14 +64,16 @@ const mockItems: InventoryItem[] = [
   },
 ];
 
-const mockMutate = vi.fn();
-
 describe('InventoryListScreen', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useDeleteInventoryItem).mockReturnValue({
-      mutate: mockMutate,
-    } as unknown as ReturnType<typeof useDeleteInventoryItem>);
+    vi.mocked(useDeleteInventoryItemConfirm).mockReturnValue({
+      itemToDelete: null,
+      requestDelete: mockRequestDelete,
+      confirmDelete: mockConfirmDelete,
+      cancelDelete: mockCancelDelete,
+      isError: false,
+    });
   });
 
   it('renders a loading skeleton when loading', () => {
@@ -75,31 +94,82 @@ describe('InventoryListScreen', () => {
     expect(screen.getByText('Lettuce seeds')).toBeInTheDocument();
   });
 
-  it('opens the create modal when the new item button is clicked', () => {
+  it('opens the create modal when the new item button is clicked', async () => {
+    const user = userEvent.setup();
     vi.mocked(useInventoryItems).mockReturnValue({ items: [], isLoading: false, error: null });
     render(<InventoryListScreen dict={dict} lang="en" />);
-    fireEvent.click(screen.getByRole('button', { name: 'New item' }));
+    await user.click(screen.getByRole('button', { name: 'New item' }));
     expect(screen.getByTestId('create-modal')).toBeInTheDocument();
   });
 
-  it('deletes an item when the row delete action is clicked', () => {
+  it('requests delete confirmation (does not delete directly) when the row delete action is clicked', async () => {
     vi.mocked(useInventoryItems).mockReturnValue({ items: mockItems, isLoading: false, error: null });
     render(<InventoryListScreen dict={dict} lang="en" />);
-    fireEvent.click(screen.getByRole('button', { name: /delete/i }));
-    expect(mockMutate).toHaveBeenCalledWith('i1');
+    const user = await openRowActionsMenu();
+    await user.click(screen.getByRole('menuitem', { name: /delete/i }));
+
+    expect(mockRequestDelete).toHaveBeenCalledWith(mockItems[0]);
+    expect(mockConfirmDelete).not.toHaveBeenCalled();
   });
 
-  it('opens the edit modal when the row edit action is clicked', () => {
+  it('shows the confirm dialog when an item is pending deletion', () => {
+    vi.mocked(useInventoryItems).mockReturnValue({ items: mockItems, isLoading: false, error: null });
+    vi.mocked(useDeleteInventoryItemConfirm).mockReturnValue({
+      itemToDelete: mockItems[0],
+      requestDelete: mockRequestDelete,
+      confirmDelete: mockConfirmDelete,
+      cancelDelete: mockCancelDelete,
+      isError: false,
+    });
+    render(<InventoryListScreen dict={dict} lang="en" />);
+
+    expect(screen.getByText(dict.delete.confirmTitle)).toBeInTheDocument();
+  });
+
+  it('calls confirmDelete when the confirm dialog is confirmed', async () => {
+    const user = userEvent.setup();
+    vi.mocked(useInventoryItems).mockReturnValue({ items: mockItems, isLoading: false, error: null });
+    vi.mocked(useDeleteInventoryItemConfirm).mockReturnValue({
+      itemToDelete: mockItems[0],
+      requestDelete: mockRequestDelete,
+      confirmDelete: mockConfirmDelete,
+      cancelDelete: mockCancelDelete,
+      isError: false,
+    });
+    render(<InventoryListScreen dict={dict} lang="en" />);
+
+    await user.click(screen.getByRole('button', { name: dict.delete.confirm }));
+
+    expect(mockConfirmDelete).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows an error alert when the delete mutation failed', () => {
+    vi.mocked(useInventoryItems).mockReturnValue({ items: mockItems, isLoading: false, error: null });
+    vi.mocked(useDeleteInventoryItemConfirm).mockReturnValue({
+      itemToDelete: null,
+      requestDelete: mockRequestDelete,
+      confirmDelete: mockConfirmDelete,
+      cancelDelete: mockCancelDelete,
+      isError: true,
+    });
+    render(<InventoryListScreen dict={dict} lang="en" />);
+
+    expect(screen.getByText(dict.delete.error)).toBeInTheDocument();
+  });
+
+  it('opens the edit modal when the row edit action is clicked', async () => {
     vi.mocked(useInventoryItems).mockReturnValue({ items: mockItems, isLoading: false, error: null });
     render(<InventoryListScreen dict={dict} lang="en" />);
-    fireEvent.click(screen.getByRole('button', { name: /edit/i }));
+    const user = await openRowActionsMenu();
+    await user.click(screen.getByRole('menuitem', { name: /edit/i }));
     expect(screen.getByTestId('edit-modal')).toBeInTheDocument();
   });
 
-  it('opens the adjust modal when the row adjust action is clicked', () => {
+  it('opens the adjust modal when the row adjust action is clicked', async () => {
     vi.mocked(useInventoryItems).mockReturnValue({ items: mockItems, isLoading: false, error: null });
     render(<InventoryListScreen dict={dict} lang="en" />);
-    fireEvent.click(screen.getByRole('button', { name: /adjust/i }));
+    const user = await openRowActionsMenu();
+    await user.click(screen.getByRole('menuitem', { name: /adjust/i }));
     expect(screen.getByTestId('adjust-modal')).toBeInTheDocument();
   });
 });

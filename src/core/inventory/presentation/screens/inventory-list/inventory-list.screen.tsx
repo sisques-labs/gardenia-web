@@ -6,11 +6,13 @@ import { InventoryItemModal } from '@/core/inventory/presentation/components/inv
 import { AdjustQuantityModal } from '@/core/inventory/presentation/components/adjust-quantity-modal/adjust-quantity-modal';
 import { InventoryFilters } from '@/core/inventory/presentation/components/inventory-filters/inventory-filters';
 import { useInventoryItems } from '@/core/inventory/presentation/hooks/use-inventory-items/use-inventory-items.hook';
-import { useDeleteInventoryItem } from '@/core/inventory/presentation/hooks/use-delete-inventory-item/use-delete-inventory-item.hook';
+import { useDeleteInventoryItemConfirm } from '@/core/inventory/presentation/hooks/use-delete-inventory-item-confirm/use-delete-inventory-item-confirm.hook';
 import { useInventoryFilters } from '@/core/inventory/presentation/hooks/use-inventory-filters/use-inventory-filters.hook';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
+import { Alert } from '@/shared/presentation/components/ui/alert/alert';
 import { Button } from '@/shared/presentation/components/ui/button/button';
+import { ConfirmDialog } from '@/shared/presentation/components/ui/confirm-dialog/confirm-dialog';
 import { RowSkeleton } from '@/shared/presentation/components/ui/row-skeleton/row-skeleton';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
@@ -21,7 +23,8 @@ type Props = {
 
 export function InventoryListScreen({ dict, lang: _lang }: Props) {
   const { items, isLoading } = useInventoryItems();
-  const { mutate: deleteItem } = useDeleteInventoryItem();
+  const { itemToDelete, requestDelete, confirmDelete, cancelDelete, isError } =
+    useDeleteInventoryItemConfirm();
   const {
     filters,
     filteredItems,
@@ -60,6 +63,8 @@ export function InventoryListScreen({ dict, lang: _lang }: Props) {
           onToggleExpiringSoon={toggleExpiringSoon}
         />
 
+        {isError && <Alert variant="error" message={dict.delete.error} />}
+
         {isLoading ? (
           <div className="flex flex-col gap-4">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -74,7 +79,7 @@ export function InventoryListScreen({ dict, lang: _lang }: Props) {
             dict={dict}
             onEdit={(i) => setEditingItem(i)}
             onAdjust={(i) => setAdjustingItem(i)}
-            onDelete={(id) => deleteItem(id)}
+            onDelete={requestDelete}
           />
         )}
       </div>
@@ -88,6 +93,20 @@ export function InventoryListScreen({ dict, lang: _lang }: Props) {
       {adjustingItem && (
         <AdjustQuantityModal dict={dict} item={adjustingItem} onClose={() => setAdjustingItem(null)} />
       )}
+
+      <ConfirmDialog
+        open={!!itemToDelete}
+        onOpenChange={(open) => {
+          if (!open) cancelDelete();
+        }}
+        title={dict.delete.confirmTitle}
+        description={dict.delete.confirmDescription}
+        confirmLabel={dict.delete.confirm}
+        cancelLabel={dict.delete.cancel}
+        destructive
+        onConfirm={confirmDelete}
+        onCancel={cancelDelete}
+      />
     </div>
   );
 }

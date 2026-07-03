@@ -12,7 +12,13 @@ const dict = {
     expiringBadge: 'Caduca pronto',
     statusColumn: 'Estado',
     actionsColumn: 'Acciones',
-    deleteConfirm: '¿Seguro que quieres eliminar este artículo?',
+  },
+  delete: {
+    confirmTitle: 'Eliminar artículo',
+    confirmDescription: 'Esta acción no se puede deshacer. El artículo se eliminará del inventario de forma permanente.',
+    confirm: 'Eliminar',
+    cancel: 'Cancelar',
+    error: 'No se pudo eliminar el artículo. Inténtalo de nuevo.',
   },
   filters: {
     searchPlaceholder: 'Buscar por nombre...',
@@ -46,6 +52,7 @@ const dict = {
     cancel: 'Cancelar',
   },
   row: {
+    actionsMenu: 'Abrir menú de acciones',
     edit: 'Editar',
     adjust: 'Ajustar',
     delete: 'Eliminar',
@@ -69,7 +76,6 @@ const dict = {
     loadFailed: 'No se pudo cargar el inventario. Inténtalo de nuevo.',
     createFailed: 'No se pudo crear el artículo. Inténtalo de nuevo.',
     updateFailed: 'No se pudo actualizar el artículo. Inténtalo de nuevo.',
-    deleteFailed: 'No se pudo eliminar el artículo. Inténtalo de nuevo.',
     adjustFailed: 'No se pudo ajustar la cantidad. Inténtalo de nuevo.',
   },
 } as const satisfies InventoryDictTranslated;

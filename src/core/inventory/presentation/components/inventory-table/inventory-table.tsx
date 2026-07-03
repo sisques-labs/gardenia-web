@@ -11,7 +11,7 @@ type Props = {
   dict: AppDict['inventory'];
   onEdit: (item: InventoryItem) => void;
   onAdjust: (item: InventoryItem) => void;
-  onDelete: (id: string) => void;
+  onDelete: (item: InventoryItem) => void;
 };
 
 export function InventoryTable({ items, dict, onEdit, onAdjust, onDelete }: Props) {

@@ -1,0 +1,24 @@
+change: inventory-table-redesign
+status: apply
+created: 2026-07-03
+artifact_store: hybrid
+context: inventory
+phases:
+  explore: skipped
+  proposal: done
+  spec: done
+  design: done
+  tasks: done
+  apply: in_progress
+  verify: partial
+  archive: pending
+next_recommended:
+  - sdd-apply
+notes: |
+  Five chained PRs. PR1 (row actions dropdown + delete confirmation) done:
+  useDeleteInventoryItemConfirm hook, DropdownMenu row actions, ConfirmDialog
+  before delete, error Alert. pnpm test (250 suites/1213 tests), tsc --noEmit,
+  eslint all green. PR2-PR4 pending. PR5 (bulk selection + bulk delete) is
+  blocked on the companion sisques-labs/gardenia-api change
+  `inventory-bulk-delete`, which has already shipped `inventoryItemsDeleteBulk`
+  on the same branch.

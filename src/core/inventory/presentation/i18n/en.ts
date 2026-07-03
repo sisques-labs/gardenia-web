@@ -7,7 +7,13 @@ const dict = {
     expiringBadge: 'Expiring soon',
     statusColumn: 'Status',
     actionsColumn: 'Actions',
-    deleteConfirm: 'Are you sure you want to delete this item?',
+  },
+  delete: {
+    confirmTitle: 'Delete item',
+    confirmDescription: 'This action cannot be undone. The item will be permanently removed from the inventory.',
+    confirm: 'Delete',
+    cancel: 'Cancel',
+    error: 'Could not delete the item. Try again.',
   },
   filters: {
     searchPlaceholder: 'Search by name...',
@@ -41,6 +47,7 @@ const dict = {
     cancel: 'Cancel',
   },
   row: {
+    actionsMenu: 'Open actions menu',
     edit: 'Edit',
     adjust: 'Adjust',
     delete: 'Delete',
@@ -64,7 +71,6 @@ const dict = {
     loadFailed: 'Could not load the inventory. Try again.',
     createFailed: 'Could not create the item. Try again.',
     updateFailed: 'Could not update the item. Try again.',
-    deleteFailed: 'Could not delete the item. Try again.',
     adjustFailed: 'Could not adjust the quantity. Try again.',
   },
 } as const;

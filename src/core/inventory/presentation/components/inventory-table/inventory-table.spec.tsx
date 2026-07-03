@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
@@ -63,15 +64,21 @@ describe('InventoryTable', () => {
     expect(screen.queryByLabelText('Select all')).not.toBeInTheDocument();
   });
 
-  it('fires adjust, edit and delete callbacks', () => {
+  it('fires adjust, edit and delete callbacks from the row actions menu', async () => {
+    const user = userEvent.setup();
     const { onEdit, onAdjust, onDelete } = setup([makeItem()]);
 
-    fireEvent.click(screen.getByRole('button', { name: /adjust/i }));
-    fireEvent.click(screen.getByRole('button', { name: /edit/i }));
-    fireEvent.click(screen.getByRole('button', { name: /delete/i }));
-
+    await user.click(screen.getByLabelText('Open actions menu'));
+    await user.click(screen.getByRole('menuitem', { name: /adjust/i }));
     expect(onAdjust).toHaveBeenCalledWith(makeItem());
+
+    await user.click(screen.getByLabelText('Open actions menu'));
+    await user.click(screen.getByRole('menuitem', { name: /edit/i }));
     expect(onEdit).toHaveBeenCalledWith(makeItem());
-    expect(onDelete).toHaveBeenCalledWith('i1');
+
+    await user.click(screen.getByLabelText('Open actions menu'));
+    await user.click(screen.getByRole('menuitem', { name: /delete/i }));
+    expect(onDelete).toHaveBeenCalledTimes(1);
+    expect(onDelete).toHaveBeenCalledWith(makeItem());
   });
 });
