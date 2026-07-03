@@ -59,12 +59,12 @@
 
 ## PR4: Item Detail Drawer
 
-- [ ] 4.1 RED+GREEN: create `presentation/hooks/use-inventory-item/use-inventory-item.hook.ts` (+spec) — wraps the existing (currently unused) `GetInventoryItemUseCase`; `useQuery(['inventory', spaceId, id], ..., { enabled: !!id })`
-- [ ] 4.2 RED+GREEN: create `presentation/components/inventory-item-detail-drawer/inventory-item-detail-drawer.tsx` (+spec) — renders brand, notes, acquiredAt, expiresAt, createdAt, updatedAt with placeholder states for absent optional fields, using the shared `Drawer`
-- [ ] 4.3 Modify `presentation/components/inventory-table/inventory-columns.tsx` — wire "View detail" dropdown item (stubbed in PR1) to open the drawer
-- [ ] 4.4 Modify `presentation/screens/inventory-list/inventory-list.screen.tsx` — `selectedItemId` state, render `InventoryItemDetailDrawer` conditionally
-- [ ] 4.5 Modify `presentation/i18n/{en,es}.ts` — drawer field labels, empty-state copy
-- [ ] 4.6 `pnpm test` + `pnpm lint` + `pnpm tsc --noEmit` green
+- [x] 4.1 Deviation from plan: did NOT create a `use-inventory-item`/`GetInventoryItemUseCase` fetch. The paginated list query already selects every field (brand, notes, acquiredAt, expiresAt, createdAt, updatedAt) for each row, so a second `findById` round trip for data already in hand would violate the "no wasted network round trip" rule in AGENTS.md. The drawer receives the already-loaded `InventoryItem` object directly. `GetInventoryItemUseCase`/`findById` remain available, unused, for a future deep-link scenario (e.g. `/inventory/[id]` without the list loaded) — not needed here.
+- [x] 4.2 RED+GREEN: created `presentation/components/inventory-item-detail-drawer/inventory-item-detail-drawer.tsx` (+spec, +stories) — takes `item: InventoryItem | null` directly; renders itemType/brand/quantity/lowStockThreshold/acquiredAt/expiresAt/notes/createdAt/updatedAt (dates via `formatShortDate(iso, lang)`, mirrors `plant-card.tsx`), `dict.detail.noValue` ("—") placeholder for absent optional fields, using the shared `Drawer`
+- [x] 4.3 Modified `presentation/components/inventory-table/inventory-columns.tsx` + `inventory-table.tsx` — added the "View detail" dropdown item (first item, above Adjust/Edit/Delete) wired via a new `onViewDetail` prop
+- [x] 4.4 Modified `presentation/screens/inventory-list/inventory-list.screen.tsx` — `viewingItem: InventoryItem | null` state (not just an id, since we already have the full object), renders `InventoryItemDetailDrawer` unconditionally (drawer itself no-ops when `item` is null); un-prefixed the `lang` prop (was `lang: _lang`, now used for date formatting)
+- [x] 4.5 Modified `presentation/i18n/{en,es}.ts` — added `dict.row.viewDetail`, `dict.detail.{createdAt,updatedAt,noValue}`; reused existing `dict.form.*` labels for brand/quantity/lowStockThreshold/acquiredAt/expiresAt/notes instead of duplicating them
+- [x] 4.6 `pnpm test` (251 suites/1232 tests) + `pnpm lint` + `pnpm tsc --noEmit` green
 
 ## PR5: Bulk Selection & Bulk Delete
 

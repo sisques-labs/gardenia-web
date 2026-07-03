@@ -29,13 +29,21 @@ function makeItem(overrides: Partial<InventoryItem> = {}): InventoryItem {
 }
 
 function setup(items: InventoryItem[]) {
+  const onViewDetail = vi.fn();
   const onEdit = vi.fn();
   const onAdjust = vi.fn();
   const onDelete = vi.fn();
   render(
-    <InventoryTable items={items} dict={dict} onEdit={onEdit} onAdjust={onAdjust} onDelete={onDelete} />,
+    <InventoryTable
+      items={items}
+      dict={dict}
+      onViewDetail={onViewDetail}
+      onEdit={onEdit}
+      onAdjust={onAdjust}
+      onDelete={onDelete}
+    />,
   );
-  return { onEdit, onAdjust, onDelete };
+  return { onViewDetail, onEdit, onAdjust, onDelete };
 }
 
 describe('InventoryTable', () => {
@@ -64,9 +72,13 @@ describe('InventoryTable', () => {
     expect(screen.queryByLabelText('Select all')).not.toBeInTheDocument();
   });
 
-  it('fires adjust, edit and delete callbacks from the row actions menu', async () => {
+  it('fires view detail, adjust, edit and delete callbacks from the row actions menu', async () => {
     const user = userEvent.setup();
-    const { onEdit, onAdjust, onDelete } = setup([makeItem()]);
+    const { onViewDetail, onEdit, onAdjust, onDelete } = setup([makeItem()]);
+
+    await user.click(screen.getByLabelText('Open actions menu'));
+    await user.click(screen.getByRole('menuitem', { name: /view detail/i }));
+    expect(onViewDetail).toHaveBeenCalledWith(makeItem());
 
     await user.click(screen.getByLabelText('Open actions menu'));
     await user.click(screen.getByRole('menuitem', { name: /adjust/i }));

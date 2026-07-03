@@ -17,6 +17,7 @@ import { isExpiringSoon } from '@/core/inventory/presentation/hooks/use-inventor
 
 export type InventoryColumnsParams = {
   dict: AppDict['inventory'];
+  onViewDetail: (item: InventoryItem) => void;
   onEdit: (item: InventoryItem) => void;
   onAdjust: (item: InventoryItem) => void;
   onDelete: (item: InventoryItem) => void;
@@ -24,6 +25,7 @@ export type InventoryColumnsParams = {
 
 export function getInventoryColumns({
   dict,
+  onViewDetail,
   onEdit,
   onAdjust,
   onDelete,
@@ -91,6 +93,9 @@ export function getInventoryColumns({
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
+                <DropdownMenuItem onSelect={() => onViewDetail(item)}>
+                  {dict.row.viewDetail}
+                </DropdownMenuItem>
                 <DropdownMenuItem onSelect={() => onAdjust(item)}>
                   {dict.row.adjust}
                 </DropdownMenuItem>

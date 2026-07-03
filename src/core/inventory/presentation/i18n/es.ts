@@ -54,9 +54,15 @@ const dict = {
   },
   row: {
     actionsMenu: 'Abrir menú de acciones',
+    viewDetail: 'Ver detalle',
     edit: 'Editar',
     adjust: 'Ajustar',
     delete: 'Eliminar',
+  },
+  detail: {
+    createdAt: 'Creado',
+    updatedAt: 'Última actualización',
+    noValue: '—',
   },
   types: {
     SEEDS: 'Semillas',

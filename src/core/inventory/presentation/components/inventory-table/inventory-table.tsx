@@ -10,6 +10,7 @@ import { getInventoryColumns } from './inventory-columns';
 type Props = {
   items: InventoryItem[];
   dict: AppDict['inventory'];
+  onViewDetail: (item: InventoryItem) => void;
   onEdit: (item: InventoryItem) => void;
   onAdjust: (item: InventoryItem) => void;
   onDelete: (item: InventoryItem) => void;
@@ -21,6 +22,7 @@ type Props = {
 export function InventoryTable({
   items,
   dict,
+  onViewDetail,
   onEdit,
   onAdjust,
   onDelete,
@@ -29,8 +31,8 @@ export function InventoryTable({
   pagination,
 }: Props) {
   const columns = useMemo(
-    () => getInventoryColumns({ dict, onEdit, onAdjust, onDelete }),
-    [dict, onEdit, onAdjust, onDelete],
+    () => getInventoryColumns({ dict, onViewDetail, onEdit, onAdjust, onDelete }),
+    [dict, onViewDetail, onEdit, onAdjust, onDelete],
   );
 
   return (

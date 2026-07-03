@@ -7,6 +7,7 @@ import { InventoryItemModal } from '@/core/inventory/presentation/components/inv
 import { AdjustQuantityModal } from '@/core/inventory/presentation/components/adjust-quantity-modal/adjust-quantity-modal';
 import { InventoryFilters } from '@/core/inventory/presentation/components/inventory-filters/inventory-filters';
 import { InventoryListSkeleton } from '@/core/inventory/presentation/components/inventory-list-skeleton/inventory-list-skeleton';
+import { InventoryItemDetailDrawer } from '@/core/inventory/presentation/components/inventory-item-detail-drawer/inventory-item-detail-drawer';
 import { usePaginatedInventoryItems } from '@/core/inventory/presentation/hooks/use-paginated-inventory-items/use-paginated-inventory-items.hook';
 import { useDeleteInventoryItemConfirm } from '@/core/inventory/presentation/hooks/use-delete-inventory-item-confirm/use-delete-inventory-item-confirm.hook';
 import { useInventoryFilters } from '@/core/inventory/presentation/hooks/use-inventory-filters/use-inventory-filters.hook';
@@ -33,7 +34,7 @@ function toInventorySorts(sorting: SortingState): InventorySort[] {
   }));
 }
 
-export function InventoryListScreen({ dict, lang: _lang }: Props) {
+export function InventoryListScreen({ dict, lang }: Props) {
   const { page, onPageChange } = useUrlPage();
   const [sorting, setSorting] = useState<SortingState>([]);
   const sorts = useMemo(() => toInventorySorts(sorting), [sorting]);
@@ -76,6 +77,7 @@ export function InventoryListScreen({ dict, lang: _lang }: Props) {
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
   const [adjustingItem, setAdjustingItem] = useState<InventoryItem | null>(null);
+  const [viewingItem, setViewingItem] = useState<InventoryItem | null>(null);
 
   return (
     <div>
@@ -113,6 +115,7 @@ export function InventoryListScreen({ dict, lang: _lang }: Props) {
           <InventoryTable
             items={items}
             dict={dict}
+            onViewDetail={(i) => setViewingItem(i)}
             onEdit={(i) => setEditingItem(i)}
             onAdjust={(i) => setAdjustingItem(i)}
             onDelete={requestDelete}
@@ -141,6 +144,13 @@ export function InventoryListScreen({ dict, lang: _lang }: Props) {
       {adjustingItem && (
         <AdjustQuantityModal dict={dict} item={adjustingItem} onClose={() => setAdjustingItem(null)} />
       )}
+
+      <InventoryItemDetailDrawer
+        dict={dict}
+        lang={lang}
+        item={viewingItem}
+        onClose={() => setViewingItem(null)}
+      />
 
       <ConfirmDialog
         open={!!itemToDelete}

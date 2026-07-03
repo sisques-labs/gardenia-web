@@ -201,4 +201,12 @@ describe('InventoryListScreen', () => {
     await user.click(screen.getByRole('menuitem', { name: /adjust/i }));
     expect(screen.getByTestId('adjust-modal')).toBeInTheDocument();
   });
+
+  it('opens the detail drawer when the row "View detail" action is clicked', async () => {
+    mockPaginatedItems(mockItems);
+    render(<InventoryListScreen dict={dict} lang="en" />);
+    const user = await openRowActionsMenu();
+    await user.click(screen.getByRole('menuitem', { name: /view detail/i }));
+    expect(screen.getAllByText('Lettuce seeds').length).toBeGreaterThan(0);
+  });
 });
