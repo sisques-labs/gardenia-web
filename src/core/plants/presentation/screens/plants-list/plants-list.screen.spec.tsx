@@ -64,6 +64,7 @@ const dict = {
     filterAll: 'All',
     filters: 'Filters',
     searchPlaceholder: 'Search plants...',
+    searchChipLabel: 'Search',
     statsPlants: 'plants',
     statsSpecies: 'species',
     inProgress: 'Coming soon',
@@ -278,6 +279,21 @@ describe('PlantsListScreen', () => {
 
     const searchInput = screen.getByPlaceholderText('Search plants...');
     expect(searchInput).toBeInTheDocument();
+  });
+
+  it('shows a removable search chip once a search term is typed', () => {
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
+
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    expect(screen.queryByText(/Search:/)).not.toBeInTheDocument();
+
+    const searchInput = screen.getByPlaceholderText('Search plants...');
+    fireEvent.change(searchInput, { target: { value: 'Rose' } });
+
+    expect(screen.getByText('Search: Rose')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText('Remove Search: Rose'));
+    expect((searchInput as HTMLInputElement).value).toBe('');
   });
 
   it('passes the typed search text as a NAME/LIKE filter to usePaginatedPlants after the debounce delay', () => {

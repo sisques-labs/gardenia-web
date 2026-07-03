@@ -12,6 +12,7 @@ const dict = {
     filterAll: 'Todas',
     filters: 'Filtros',
     searchPlaceholder: 'Buscar plantas...',
+    searchChipLabel: 'Búsqueda',
     statsPlants: 'plantas',
     statsSpecies: 'especies',
     inProgress: 'Próximamente',
