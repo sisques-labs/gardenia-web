@@ -47,7 +47,7 @@ export function InventoryListScreen({ dict, lang }: Props) {
     filterState,
     filters,
     setQuery,
-    setType,
+    toggleType,
     toggleLowStock,
     toggleExpiringSoon,
     removeFilter,
@@ -126,7 +126,7 @@ export function InventoryListScreen({ dict, lang }: Props) {
           dict={dict}
           filters={filterState}
           onQueryChange={setQuery}
-          onTypeChange={setType}
+          onToggleType={toggleType}
           onToggleLowStock={toggleLowStock}
           onToggleExpiringSoon={toggleExpiringSoon}
           onRemoveFilter={removeFilter}

@@ -34,20 +34,47 @@ describe('useInventoryFilters', () => {
     expect(result.current.filters).toEqual([]);
   });
 
-  it('adds an itemType filter when a type is selected', () => {
+  it('adds an itemType EQUALS filter when a single type is toggled on', () => {
     const { result } = renderHook(() => useInventoryFilters());
 
-    act(() => result.current.setType('SEEDS'));
+    act(() => result.current.toggleType('SEEDS'));
 
     expect(result.current.filters).toEqual([
       { field: InventoryItemQueryableField.ITEM_TYPE, operator: FilterOperator.EQUALS, value: 'SEEDS' },
     ]);
   });
 
-  it('clears the itemType filter when set back to ALL', () => {
+  it('adds an itemType IN filter when multiple types are toggled on', () => {
     const { result } = renderHook(() => useInventoryFilters());
-    act(() => result.current.setType('SEEDS'));
-    act(() => result.current.setType('ALL'));
+
+    act(() => result.current.toggleType('SEEDS'));
+    act(() => result.current.toggleType('FERTILIZER'));
+
+    expect(result.current.filters).toEqual([
+      {
+        field: InventoryItemQueryableField.ITEM_TYPE,
+        operator: FilterOperator.IN,
+        value: ['SEEDS', 'FERTILIZER'],
+      },
+    ]);
+  });
+
+  it('toggling a selected type off removes it from the filter', () => {
+    const { result } = renderHook(() => useInventoryFilters());
+    act(() => result.current.toggleType('SEEDS'));
+    act(() => result.current.toggleType('FERTILIZER'));
+
+    act(() => result.current.toggleType('SEEDS'));
+
+    expect(result.current.filters).toEqual([
+      { field: InventoryItemQueryableField.ITEM_TYPE, operator: FilterOperator.EQUALS, value: 'FERTILIZER' },
+    ]);
+  });
+
+  it('clears the itemType filter when the only selected type is toggled off', () => {
+    const { result } = renderHook(() => useInventoryFilters());
+    act(() => result.current.toggleType('SEEDS'));
+    act(() => result.current.toggleType('SEEDS'));
 
     expect(result.current.filters).toEqual([]);
   });
@@ -80,7 +107,7 @@ describe('useInventoryFilters', () => {
   it('combines multiple active filters', () => {
     const { result } = renderHook(() => useInventoryFilters());
 
-    act(() => result.current.setType('SEEDS'));
+    act(() => result.current.toggleType('SEEDS'));
     act(() => result.current.toggleLowStock());
 
     expect(result.current.filters).toHaveLength(2);
@@ -88,23 +115,24 @@ describe('useInventoryFilters', () => {
 
   it('removeFilter("search") clears only the search term', () => {
     const { result } = renderHook(() => useInventoryFilters());
-    act(() => result.current.setType('SEEDS'));
+    act(() => result.current.toggleType('SEEDS'));
     act(() => result.current.setQuery('lettuce'));
     act(() => vi.advanceTimersByTime(300));
 
     act(() => result.current.removeFilter('search'));
 
     expect(result.current.filterState.query).toBe('');
-    expect(result.current.filterState.type).toBe('SEEDS');
+    expect(result.current.filterState.types).toEqual(['SEEDS']);
   });
 
-  it('removeFilter("type") resets type to ALL', () => {
+  it('removeFilter("type:SEEDS") removes only that type', () => {
     const { result } = renderHook(() => useInventoryFilters());
-    act(() => result.current.setType('SEEDS'));
+    act(() => result.current.toggleType('SEEDS'));
+    act(() => result.current.toggleType('FERTILIZER'));
 
-    act(() => result.current.removeFilter('type'));
+    act(() => result.current.removeFilter('type:SEEDS'));
 
-    expect(result.current.filterState.type).toBe('ALL');
+    expect(result.current.filterState.types).toEqual(['FERTILIZER']);
   });
 
   it('removeFilter("lowStock") turns the toggle off', () => {

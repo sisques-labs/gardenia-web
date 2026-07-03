@@ -18,6 +18,7 @@ const dict = {
   filters: {
     searchPlaceholder: 'Search by name...',
     allTypes: 'All types',
+    typesSelectedSuffix: 'types selected',
     lowStockOnly: 'Low stock',
     expiringSoon: 'Expiring soon',
     searchChipLabel: 'Search',

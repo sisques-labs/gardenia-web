@@ -1,29 +1,30 @@
 'use client';
 
+import { ChevronDown } from 'lucide-react';
 import { INVENTORY_ITEM_TYPES } from '@/core/inventory/domain/types/inventory-item.interface';
+import type { InventoryItemType } from '@/core/inventory/domain/types/inventory-item.interface';
 import type { InventoryFiltersState } from '@/core/inventory/presentation/hooks/use-inventory-filters/inventory-filters-state.interface';
+import type { RemovableFilterKey } from '@/core/inventory/presentation/hooks/use-inventory-filters/use-inventory-filters.hook';
 import { SearchInput } from '@/shared/presentation/components/ui/search-input/search-input';
 import { Switch } from '@/shared/presentation/components/ui/switch/switch';
+import { Button } from '@/shared/presentation/components/ui/button/button';
 import { ActiveFilterChips, type ActiveFilter } from '@/shared/presentation/components/ui/active-filter-chips/active-filter-chips';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/shared/presentation/components/ui/select/select';
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '@/shared/presentation/components/ui/dropdown-menu/dropdown-menu';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
-
-type FilterKey = 'search' | 'type' | 'lowStock' | 'expiringSoon';
 
 type Props = {
   dict: AppDict['inventory'];
   filters: InventoryFiltersState;
   onQueryChange: (query: string) => void;
-  onTypeChange: (type: InventoryFiltersState['type']) => void;
+  onToggleType: (type: InventoryItemType) => void;
   onToggleLowStock: () => void;
   onToggleExpiringSoon: () => void;
-  onRemoveFilter: (key: FilterKey) => void;
+  onRemoveFilter: (key: RemovableFilterKey) => void;
 };
 
 function buildActiveFilters(filters: InventoryFiltersState, dict: AppDict['inventory']): ActiveFilter[] {
@@ -33,8 +34,8 @@ function buildActiveFilters(filters: InventoryFiltersState, dict: AppDict['inven
   if (trimmedQuery) {
     active.push({ key: 'search', label: `${dict.filters.searchChipLabel}: ${trimmedQuery}` });
   }
-  if (filters.type !== 'ALL') {
-    active.push({ key: 'type', label: dict.types[filters.type] });
+  for (const type of filters.types) {
+    active.push({ key: `type:${type}`, label: dict.types[type] });
   }
   if (filters.lowStockOnly) {
     active.push({ key: 'lowStock', label: dict.filters.lowStockOnly });
@@ -46,11 +47,17 @@ function buildActiveFilters(filters: InventoryFiltersState, dict: AppDict['inven
   return active;
 }
 
+function typeTriggerLabel(filters: InventoryFiltersState, dict: AppDict['inventory']): string {
+  if (filters.types.length === 0) return dict.filters.allTypes;
+  if (filters.types.length === 1) return dict.types[filters.types[0]];
+  return `${filters.types.length} ${dict.filters.typesSelectedSuffix}`;
+}
+
 export function InventoryFilters({
   dict,
   filters,
   onQueryChange,
-  onTypeChange,
+  onToggleType,
   onToggleLowStock,
   onToggleExpiringSoon,
   onRemoveFilter,
@@ -66,22 +73,26 @@ export function InventoryFilters({
           className="w-64"
         />
 
-        <Select
-          value={filters.type}
-          onValueChange={(value) => onTypeChange(value as InventoryFiltersState['type'])}
-        >
-          <SelectTrigger className="w-48">
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="ALL">{dict.filters.allTypes}</SelectItem>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button type="button" variant="outline" size="sm" className="w-48 justify-between font-normal">
+              {typeTriggerLabel(filters, dict)}
+              <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="start" className="w-48">
             {INVENTORY_ITEM_TYPES.map((type) => (
-              <SelectItem key={type} value={type}>
+              <DropdownMenuCheckboxItem
+                key={type}
+                checked={filters.types.includes(type)}
+                onSelect={(e) => e.preventDefault()}
+                onCheckedChange={() => onToggleType(type)}
+              >
                 {dict.types[type]}
-              </SelectItem>
+              </DropdownMenuCheckboxItem>
             ))}
-          </SelectContent>
-        </Select>
+          </DropdownMenuContent>
+        </DropdownMenu>
 
         <label className="flex items-center gap-2 text-sm text-ink-2">
           <Switch checked={filters.lowStockOnly} onCheckedChange={onToggleLowStock} />
@@ -96,7 +107,7 @@ export function InventoryFilters({
 
       <ActiveFilterChips
         filters={buildActiveFilters(filters, dict)}
-        onRemove={(key) => onRemoveFilter(key as FilterKey)}
+        onRemove={(key) => onRemoveFilter(key as RemovableFilterKey)}
       />
     </div>
   );

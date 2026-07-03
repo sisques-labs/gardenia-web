@@ -4,12 +4,15 @@ import { useMemo, useState } from 'react';
 import { useDebouncedValue } from '@/shared/presentation/hooks/use-debounced-value/use-debounced-value.hook';
 import { InventoryItemQueryableField } from '@/core/inventory/domain/enums/inventory-item-queryable-field.enum';
 import { FilterOperator } from '@/shared/domain/enums/filter-operator.enum';
+import type { InventoryItemType } from '@/core/inventory/domain/types/inventory-item.interface';
 import type { InventoryFilter } from '@/core/inventory/application/interfaces/inventory-filter.interface';
 import { EXPIRING_SOON_DAYS } from './is-expiring-soon';
 import {
   INITIAL_INVENTORY_FILTERS,
   type InventoryFiltersState,
 } from './inventory-filters-state.interface';
+
+export type RemovableFilterKey = 'search' | 'lowStock' | 'expiringSoon' | `type:${InventoryItemType}`;
 
 export function useInventoryFilters() {
   const [filterState, setFilterState] = useState<InventoryFiltersState>(INITIAL_INVENTORY_FILTERS);
@@ -26,11 +29,17 @@ export function useInventoryFilters() {
     if (trimmed) {
       result.push({ field: InventoryItemQueryableField.NAME, operator: FilterOperator.LIKE, value: trimmed });
     }
-    if (filterState.type !== 'ALL') {
+    if (filterState.types.length === 1) {
       result.push({
         field: InventoryItemQueryableField.ITEM_TYPE,
         operator: FilterOperator.EQUALS,
-        value: filterState.type,
+        value: filterState.types[0],
+      });
+    } else if (filterState.types.length > 1) {
+      result.push({
+        field: InventoryItemQueryableField.ITEM_TYPE,
+        operator: FilterOperator.IN,
+        value: filterState.types,
       });
     }
     if (filterState.lowStockOnly) {
@@ -46,14 +55,17 @@ export function useInventoryFilters() {
     }
 
     return result;
-  }, [debouncedQuery, filterState.type, filterState.lowStockOnly, filterState.expiringSoonOnly, now]);
+  }, [debouncedQuery, filterState.types, filterState.lowStockOnly, filterState.expiringSoonOnly, now]);
 
   function setQuery(query: string) {
     setFilterState((s) => ({ ...s, query }));
   }
 
-  function setType(type: InventoryFiltersState['type']) {
-    setFilterState((s) => ({ ...s, type }));
+  function toggleType(type: InventoryItemType) {
+    setFilterState((s) => ({
+      ...s,
+      types: s.types.includes(type) ? s.types.filter((t) => t !== type) : [...s.types, type],
+    }));
   }
 
   function toggleLowStock() {
@@ -64,28 +76,28 @@ export function useInventoryFilters() {
     setFilterState((s) => ({ ...s, expiringSoonOnly: !s.expiringSoonOnly }));
   }
 
-  function removeFilter(key: 'search' | 'type' | 'lowStock' | 'expiringSoon') {
-    switch (key) {
-      case 'search':
-        setFilterState((s) => ({ ...s, query: '' }));
-        break;
-      case 'type':
-        setFilterState((s) => ({ ...s, type: 'ALL' }));
-        break;
-      case 'lowStock':
-        setFilterState((s) => ({ ...s, lowStockOnly: false }));
-        break;
-      case 'expiringSoon':
-        setFilterState((s) => ({ ...s, expiringSoonOnly: false }));
-        break;
+  function removeFilter(key: RemovableFilterKey) {
+    if (key === 'search') {
+      setFilterState((s) => ({ ...s, query: '' }));
+      return;
     }
+    if (key === 'lowStock') {
+      setFilterState((s) => ({ ...s, lowStockOnly: false }));
+      return;
+    }
+    if (key === 'expiringSoon') {
+      setFilterState((s) => ({ ...s, expiringSoonOnly: false }));
+      return;
+    }
+    const type = key.slice('type:'.length) as InventoryItemType;
+    setFilterState((s) => ({ ...s, types: s.types.filter((t) => t !== type) }));
   }
 
   return {
     filterState,
     filters,
     setQuery,
-    setType,
+    toggleType,
     toggleLowStock,
     toggleExpiringSoon,
     removeFilter,

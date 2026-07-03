@@ -23,6 +23,7 @@ const dict = {
   filters: {
     searchPlaceholder: 'Buscar por nombre...',
     allTypes: 'Todos los tipos',
+    typesSelectedSuffix: 'tipos seleccionados',
     lowStockOnly: 'Stock bajo',
     expiringSoon: 'Caduca pronto',
     searchChipLabel: 'Búsqueda',
