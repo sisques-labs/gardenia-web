@@ -93,22 +93,22 @@ export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
     });
   }
 
-  async markFallow(id: string): Promise<PlantingSpot> {
+  async markFallow(id: string): Promise<CreatedEntity> {
     const res = await apolloClient.mutate<PlantingSpotMarkFallowResponse>({
       mutation: PLANTING_SPOT_MARK_FALLOW,
       variables: { input: { id } },
     });
     if (!res.data?.plantingSpotMarkFallow?.success) throw new Error('plantingSpotMarkFallow mutation failed');
-    return this.findById(res.data.plantingSpotMarkFallow.id);
+    return { id: res.data.plantingSpotMarkFallow.id };
   }
 
-  async markActive(id: string): Promise<PlantingSpot> {
+  async markActive(id: string): Promise<CreatedEntity> {
     const res = await apolloClient.mutate<PlantingSpotMarkActiveResponse>({
       mutation: PLANTING_SPOT_MARK_ACTIVE,
       variables: { input: { id } },
     });
     if (!res.data?.plantingSpotMarkActive?.success) throw new Error('plantingSpotMarkActive mutation failed');
-    return this.findById(res.data.plantingSpotMarkActive.id);
+    return { id: res.data.plantingSpotMarkActive.id };
   }
 }
 

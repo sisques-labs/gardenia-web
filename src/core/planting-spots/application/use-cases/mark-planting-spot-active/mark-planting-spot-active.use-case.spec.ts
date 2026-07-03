@@ -1,21 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { MarkPlantingSpotActiveUseCase } from './mark-planting-spot-active.use-case';
 import type { IPlantingSpotsRepository } from '@/core/planting-spots/application/ports/planting-spots.repository.port';
-import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
 
-const mockSpot: PlantingSpot = {
-  id: 'spot-1',
-  name: 'North Bed',
-  type: 'RAISED_BED',
-  description: null,
-  status: 'ACTIVE',
-  fallowSince: null,
-  userId: 'user-1',
-  spaceId: 'space-1',
-  resolvedPlants: [],
-  createdAt: '2024-01-01',
-  updatedAt: '2024-01-02',
-};
+const mockCreatedEntity = { id: 'spot-1' };
 
 const mockRepository: IPlantingSpotsRepository = {
   list: vi.fn(),
@@ -33,7 +20,7 @@ describe('MarkPlantingSpotActiveUseCase', () => {
   });
 
   it('calls repo.markActive with the id', async () => {
-    vi.mocked(mockRepository.markActive).mockResolvedValue(mockSpot);
+    vi.mocked(mockRepository.markActive).mockResolvedValue(mockCreatedEntity);
     const useCase = new MarkPlantingSpotActiveUseCase(mockRepository);
 
     await useCase.execute('spot-1');
@@ -42,12 +29,12 @@ describe('MarkPlantingSpotActiveUseCase', () => {
     expect(mockRepository.markActive).toHaveBeenCalledWith('spot-1');
   });
 
-  it('returns the active spot', async () => {
-    vi.mocked(mockRepository.markActive).mockResolvedValue(mockSpot);
+  it('returns the id', async () => {
+    vi.mocked(mockRepository.markActive).mockResolvedValue(mockCreatedEntity);
     const useCase = new MarkPlantingSpotActiveUseCase(mockRepository);
 
     const result = await useCase.execute('spot-1');
 
-    expect(result).toEqual(mockSpot);
+    expect(result).toEqual(mockCreatedEntity);
   });
 });

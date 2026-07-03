@@ -212,12 +212,9 @@ describe('PlantingSpotsGqlRepository', () => {
   });
 
   describe('markFallow()', () => {
-    it('calls apolloClient.mutate with PLANTING_SPOT_MARK_FALLOW then re-fetches by id', async () => {
+    it('calls apolloClient.mutate with PLANTING_SPOT_MARK_FALLOW and returns just the id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { plantingSpotMarkFallow: { id: 'spot-1', success: true, message: 'Marked fallow' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { plantingSpotFindById: { ...mockSpot, status: 'FALLOW', fallowSince: '2026-07-03T00:00:00.000Z' } },
       } as never);
 
       const result = await repository.markFallow('spot-1');
@@ -226,7 +223,8 @@ describe('PlantingSpotsGqlRepository', () => {
         mutation: PLANTING_SPOT_MARK_FALLOW,
         variables: { input: { id: 'spot-1' } },
       });
-      expect(result.status).toBe('FALLOW');
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'spot-1' });
     });
 
     it('throws when mutation success is false', async () => {
@@ -239,12 +237,9 @@ describe('PlantingSpotsGqlRepository', () => {
   });
 
   describe('markActive()', () => {
-    it('calls apolloClient.mutate with PLANTING_SPOT_MARK_ACTIVE then re-fetches by id', async () => {
+    it('calls apolloClient.mutate with PLANTING_SPOT_MARK_ACTIVE and returns just the id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { plantingSpotMarkActive: { id: 'spot-1', success: true, message: 'Marked active' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { plantingSpotFindById: mockSpot },
       } as never);
 
       const result = await repository.markActive('spot-1');
@@ -253,7 +248,8 @@ describe('PlantingSpotsGqlRepository', () => {
         mutation: PLANTING_SPOT_MARK_ACTIVE,
         variables: { input: { id: 'spot-1' } },
       });
-      expect(result.status).toBe('ACTIVE');
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'spot-1' });
     });
 
     it('throws when mutation success is false', async () => {

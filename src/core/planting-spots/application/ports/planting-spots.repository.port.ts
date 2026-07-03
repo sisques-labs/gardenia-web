@@ -10,6 +10,6 @@ export interface IPlantingSpotsRepository {
   create(input: CreatePlantingSpotInput): Promise<CreatedEntity>;
   update(input: UpdatePlantingSpotInput): Promise<CreatedEntity>;
   delete(id: string): Promise<void>;
-  markFallow(id: string): Promise<PlantingSpot>;
-  markActive(id: string): Promise<PlantingSpot>;
+  markFallow(id: string): Promise<CreatedEntity>;
+  markActive(id: string): Promise<CreatedEntity>;
 }

@@ -9,13 +9,17 @@ const statusLabels: Record<PlantingSpotStatus, string> = {
 };
 
 describe("PlantingSpotStatusBadge", () => {
-  it("renders localized label for ACTIVE", () => {
+  it("renders localized label for ACTIVE with the forest variant", () => {
     render(<PlantingSpotStatusBadge status="ACTIVE" dict={statusLabels} />);
-    expect(screen.getByText("Active")).toBeInTheDocument();
+    const badge = screen.getByText("Active");
+    expect(badge).toBeInTheDocument();
+    expect(badge.className).toContain("forest");
   });
 
-  it("renders localized label for FALLOW", () => {
+  it("renders localized label for FALLOW with the honey variant", () => {
     render(<PlantingSpotStatusBadge status="FALLOW" dict={statusLabels} />);
-    expect(screen.getByText("Fallow")).toBeInTheDocument();
+    const badge = screen.getByText("Fallow");
+    expect(badge).toBeInTheDocument();
+    expect(badge.className).toContain("honey");
   });
 });

@@ -2,7 +2,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createElement } from 'react';
-import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
 
 const mockExecute = vi.hoisted(() => vi.fn());
 const mockInvalidateQueries = vi.hoisted(() => vi.fn());
@@ -27,19 +26,7 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
 
 import { useMarkPlantingSpotFallow } from './use-mark-planting-spot-fallow.hook';
 
-const mockSpot: PlantingSpot = {
-  id: 'spot-1',
-  name: 'North Bed',
-  type: 'RAISED_BED',
-  description: null,
-  status: 'FALLOW',
-  fallowSince: '2026-07-03T00:00:00.000Z',
-  userId: 'u1',
-  spaceId: 's1',
-  resolvedPlants: [],
-  createdAt: '2024-01-01',
-  updatedAt: '2024-01-02',
-};
+const mockCreatedEntity = { id: 'spot-1' };
 
 function makeWrapper() {
   const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
@@ -55,7 +42,7 @@ describe('useMarkPlantingSpotFallow', () => {
   });
 
   it('calls MarkPlantingSpotFallowUseCase.execute(id) on mutate', async () => {
-    mockExecute.mockResolvedValue(mockSpot);
+    mockExecute.mockResolvedValue(mockCreatedEntity);
 
     const { result } = renderHook(() => useMarkPlantingSpotFallow(), { wrapper: makeWrapper() });
 
@@ -67,7 +54,7 @@ describe('useMarkPlantingSpotFallow', () => {
   });
 
   it('invalidates list and detail queries on success', async () => {
-    mockExecute.mockResolvedValue(mockSpot);
+    mockExecute.mockResolvedValue(mockCreatedEntity);
 
     const { result } = renderHook(() => useMarkPlantingSpotFallow(), { wrapper: makeWrapper() });
 
