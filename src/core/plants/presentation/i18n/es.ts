@@ -61,6 +61,8 @@ const dict = {
     noSpecies: 'Especie desconocida',
     actions: {
       markWatered: 'Marcar regado',
+      markWateredPending: 'Regando…',
+      markWateredError: 'No se ha podido registrar el riego. Inténtalo de nuevo.',
       addPhoto: 'Añadir foto',
       newNote: 'Nueva nota',
     },

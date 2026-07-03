@@ -3,6 +3,7 @@
 import { CareLogSummary } from "@/core/care-log/presentation/components/care-log-summary/care-log-summary";
 import { usePlantCareLogs } from "@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-logs.hook";
 import { CareScheduleList } from "@/core/care-schedule/presentation/components/care-schedule-list/care-schedule-list";
+import { useWaterPlant } from "@/core/care-schedule/presentation/hooks/use-water-plant/use-water-plant.hook";
 import { PlantDetailSkeleton } from "@/core/plants/presentation/components/plant-detail-skeleton/plant-detail-skeleton";
 import { useDeletePlant } from "@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook";
 import { usePlant } from "@/core/plants/presentation/hooks/use-plant/use-plant.hook";
@@ -52,6 +53,7 @@ export function PlantDetailScreen({
   const { data: plant, isLoading, isError } = usePlant(spaceId, plantId);
   const { data: lastCareByType = {} } = usePlantCareLogs(plantId);
   const deletePlant = useDeletePlant(spaceId);
+  const waterPlant = useWaterPlant();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   if (isLoading) return <PlantDetailSkeleton />;
@@ -141,9 +143,13 @@ export function PlantDetailScreen({
                 variant="default"
                 size="sm"
                 data-testid="btn-mark-watered"
+                disabled={waterPlant.isPending}
+                onClick={() => waterPlant.mutate({ plantId })}
               >
                 <Droplets className="w-4 h-4" />
-                {dict.detail.actions.markWatered}
+                {waterPlant.isPending
+                  ? dict.detail.actions.markWateredPending
+                  : dict.detail.actions.markWatered}
               </Button>
               <Button variant="outline" size="sm" data-testid="btn-add-photo">
                 <Camera className="w-4 h-4" />
@@ -166,6 +172,9 @@ export function PlantDetailScreen({
             </div>
             {deletePlant.isError && (
               <Alert variant="error" message={dict.delete.error} />
+            )}
+            {waterPlant.isError && (
+              <Alert variant="error" message={dict.detail.actions.markWateredError} />
             )}
           </div>
 

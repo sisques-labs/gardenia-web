@@ -97,7 +97,13 @@ const dict = {
     qrPrint: 'Print QR',
     noImage: 'No image',
     noSpecies: 'Unknown species',
-    actions: { markWatered: 'Mark watered', addPhoto: 'Add photo', newNote: 'New note' },
+    actions: {
+      markWatered: 'Mark watered',
+      markWateredPending: 'Watering…',
+      markWateredError: 'Could not log the watering. Try again.',
+      addPhoto: 'Add photo',
+      newNote: 'New note',
+    },
     qr: { label: 'Label · QR', hint: 'Print and stick on the pot', download: 'Download PDF' },
     tabs: { care: 'Care', calendar: 'Calendar', diary: 'Diary', harvests: 'Harvests', pests: 'Pests', associations: 'Associations' },
     sections: {

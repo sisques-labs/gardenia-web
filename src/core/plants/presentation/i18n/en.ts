@@ -56,6 +56,8 @@ const dict = {
     noSpecies: 'Unknown species',
     actions: {
       markWatered: 'Mark watered',
+      markWateredPending: 'Watering…',
+      markWateredError: 'Could not log the watering. Try again.',
       addPhoto: 'Add photo',
       newNote: 'New note',
     },

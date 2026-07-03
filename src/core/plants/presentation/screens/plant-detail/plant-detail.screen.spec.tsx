@@ -37,6 +37,10 @@ vi.mock('@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook
   useDeletePlant: vi.fn(() => ({ mutate: vi.fn(), isError: false })),
 }));
 
+vi.mock('@/core/care-schedule/presentation/hooks/use-water-plant/use-water-plant.hook', () => ({
+  useWaterPlant: vi.fn(() => ({ mutate: vi.fn(), isPending: false, isError: false })),
+}));
+
 vi.mock('next/link', () => ({
   default: ({ href, children }: { href: string; children: React.ReactNode }) => (
     <a href={href}>{children}</a>
@@ -45,6 +49,7 @@ vi.mock('next/link', () => ({
 
 import { usePlant } from '@/core/plants/presentation/hooks/use-plant/use-plant.hook';
 import { CareScheduleList } from '@/core/care-schedule/presentation/components/care-schedule-list/care-schedule-list';
+import { useWaterPlant } from '@/core/care-schedule/presentation/hooks/use-water-plant/use-water-plant.hook';
 import { PlantDetailScreen } from './plant-detail.screen';
 
 const mockPlant: Plant = {
@@ -117,6 +122,8 @@ const dict = {
     noSpecies: 'Unknown species',
     actions: {
       markWatered: 'Mark watered',
+      markWateredPending: 'Watering…',
+      markWateredError: 'Could not log the watering. Try again.',
       addPhoto: 'Add photo',
       newNote: 'New note',
     },
@@ -377,5 +384,35 @@ describe('PlantDetailScreen', () => {
       expect.objectContaining({ plantId: 'p1', dict: careScheduleDict }),
       undefined,
     );
+  });
+
+  it('calls waterPlant.mutate with the plant id when "Mark watered" is clicked', async () => {
+    const user = userEvent.setup();
+    const mockMutate = vi.fn();
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+    vi.mocked(useWaterPlant).mockReturnValue({ mutate: mockMutate, isPending: false, isError: false } as unknown as ReturnType<typeof useWaterPlant>);
+
+    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
+    await user.click(screen.getByTestId('btn-mark-watered'));
+
+    expect(mockMutate).toHaveBeenCalledWith({ plantId: 'p1' });
+  });
+
+  it('disables the "Mark watered" button while the mutation is pending', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+    vi.mocked(useWaterPlant).mockReturnValue({ mutate: vi.fn(), isPending: true, isError: false } as unknown as ReturnType<typeof useWaterPlant>);
+
+    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByTestId('btn-mark-watered')).toBeDisabled();
+  });
+
+  it('shows an error alert when waterPlant.isError is true', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+    vi.mocked(useWaterPlant).mockReturnValue({ mutate: vi.fn(), isPending: false, isError: true } as unknown as ReturnType<typeof useWaterPlant>);
+
+    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByText('Could not log the watering. Try again.')).toBeInTheDocument();
   });
 });
