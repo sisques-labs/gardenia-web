@@ -139,12 +139,9 @@ describe('PlantingSpotsGqlRepository', () => {
   });
 
   describe('create()', () => {
-    it('calls apolloClient.mutate with PLANTING_SPOT_CREATE then re-fetches by id', async () => {
+    it('calls apolloClient.mutate with PLANTING_SPOT_CREATE and returns just the created id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { plantingSpotCreate: { id: 'spot-1', success: true, message: 'Created' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { plantingSpotFindById: mockSpot },
       } as never);
 
       const input = { name: 'Main Bed', type: 'RAISED_BED' as const };
@@ -155,12 +152,8 @@ describe('PlantingSpotsGqlRepository', () => {
         mutation: PLANTING_SPOT_CREATE,
         variables: { input },
       });
-      expect(apolloClient.query).toHaveBeenCalledWith({
-        query: PLANTING_SPOT_FIND_BY_ID,
-        variables: { input: { id: 'spot-1' } },
-        fetchPolicy: 'network-only',
-      });
-      expect(result).toEqual(mockSpot);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'spot-1' });
     });
 
     it('throws when mutation success is false', async () => {
@@ -175,12 +168,9 @@ describe('PlantingSpotsGqlRepository', () => {
   });
 
   describe('update()', () => {
-    it('calls apolloClient.mutate with PLANTING_SPOT_UPDATE then re-fetches by id', async () => {
+    it('calls apolloClient.mutate with PLANTING_SPOT_UPDATE and returns just the updated id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { plantingSpotUpdate: { id: 'spot-1', success: true, message: 'Updated' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { plantingSpotFindById: mockSpot },
       } as never);
 
       const input = { id: 'spot-1', name: 'Updated Bed' };
@@ -191,18 +181,16 @@ describe('PlantingSpotsGqlRepository', () => {
         mutation: PLANTING_SPOT_UPDATE,
         variables: { input },
       });
-      expect(result).toEqual(mockSpot);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'spot-1' });
     });
 
-    it('propagates not-found rejection after update', async () => {
+    it('throws when mutation success is false', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
-        data: { plantingSpotUpdate: { id: 'spot-99', success: true, message: 'Updated' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { plantingSpotFindById: null },
+        data: { plantingSpotUpdate: { id: '', success: false, message: 'Failed' } },
       } as never);
 
-      await expect(repository.update({ id: 'spot-99' })).rejects.toThrow('PlantingSpot not found: spot-99');
+      await expect(repository.update({ id: 'spot-99' })).rejects.toThrow('plantingSpotUpdate mutation failed');
     });
   });
 

@@ -3,6 +3,7 @@ import type { IPlantingSpotsRepository } from '@/core/planting-spots/application
 import type { CreatePlantingSpotInput } from '@/core/planting-spots/application/interfaces/create-planting-spot-input.interface';
 import type { UpdatePlantingSpotInput } from '@/core/planting-spots/application/interfaces/update-planting-spot-input.interface';
 import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
+import type { CreatedEntity } from '@/shared/domain/interfaces/created-entity.interface';
 import type { PaginatedResult } from '@/shared/domain/interfaces/paginated-result.interface';
 import { PLANTING_SPOTS_FIND_BY_CRITERIA } from './queries/planting-spots-find-by-criteria.query';
 import { PLANTING_SPOT_FIND_BY_ID } from './queries/planting-spot-find-by-id.query';
@@ -46,7 +47,7 @@ export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
     return res.data.plantingSpotFindById;
   }
 
-  async create(input: CreatePlantingSpotInput): Promise<PlantingSpot> {
+  async create(input: CreatePlantingSpotInput): Promise<CreatedEntity> {
     const { dimensionsWidth, dimensionsHeight, dimensionsLength, ...rest } = input;
     const hasDimensions = dimensionsWidth != null || dimensionsHeight != null || dimensionsLength != null;
     const res = await apolloClient.mutate<PlantingSpotCreateResponse>({
@@ -61,10 +62,10 @@ export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
       },
     });
     if (!res.data?.plantingSpotCreate?.success) throw new Error('plantingSpotCreate mutation failed');
-    return this.findById(res.data.plantingSpotCreate.id);
+    return { id: res.data.plantingSpotCreate.id };
   }
 
-  async update(input: UpdatePlantingSpotInput): Promise<PlantingSpot> {
+  async update(input: UpdatePlantingSpotInput): Promise<CreatedEntity> {
     const { dimensionsWidth, dimensionsHeight, dimensionsLength, ...rest } = input;
     const dimensionsUndefined = dimensionsWidth === undefined && dimensionsHeight === undefined && dimensionsLength === undefined;
     const hasDimensions = !dimensionsUndefined && (dimensionsWidth != null || dimensionsHeight != null || dimensionsLength != null);
@@ -82,7 +83,7 @@ export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
       },
     });
     if (!res.data?.plantingSpotUpdate?.success) throw new Error('plantingSpotUpdate mutation failed');
-    return this.findById(res.data.plantingSpotUpdate.id);
+    return { id: res.data.plantingSpotUpdate.id };
   }
 
   async delete(id: string): Promise<void> {

@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
@@ -27,14 +28,25 @@ function makeItem(overrides: Partial<InventoryItem> = {}): InventoryItem {
   };
 }
 
-function setup(items: InventoryItem[]) {
+function setup(items: InventoryItem[], extra: Partial<React.ComponentProps<typeof InventoryTable>> = {}) {
+  const onViewDetail = vi.fn();
   const onEdit = vi.fn();
   const onAdjust = vi.fn();
   const onDelete = vi.fn();
+  const onSelectionChange = vi.fn();
   render(
-    <InventoryTable items={items} dict={dict} onEdit={onEdit} onAdjust={onAdjust} onDelete={onDelete} />,
+    <InventoryTable
+      items={items}
+      dict={dict}
+      onViewDetail={onViewDetail}
+      onEdit={onEdit}
+      onAdjust={onAdjust}
+      onDelete={onDelete}
+      onSelectionChange={onSelectionChange}
+      {...extra}
+    />,
   );
-  return { onEdit, onAdjust, onDelete };
+  return { onViewDetail, onEdit, onAdjust, onDelete, onSelectionChange };
 }
 
 describe('InventoryTable', () => {
@@ -58,20 +70,35 @@ describe('InventoryTable', () => {
     expect(screen.getByText('Low stock')).toBeInTheDocument();
   });
 
-  it('does not render a selection checkbox column', () => {
-    setup([makeItem()]);
-    expect(screen.queryByLabelText('Select all')).not.toBeInTheDocument();
+  it('renders a selection checkbox column and reports selection', async () => {
+    const user = userEvent.setup();
+    const { onSelectionChange } = setup([makeItem()]);
+
+    expect(screen.getByLabelText('Select all')).toBeInTheDocument();
+    await user.click(screen.getByLabelText('Select row'));
+
+    expect(onSelectionChange).toHaveBeenCalledWith([makeItem()]);
   });
 
-  it('fires adjust, edit and delete callbacks', () => {
-    const { onEdit, onAdjust, onDelete } = setup([makeItem()]);
+  it('fires view detail, adjust, edit and delete callbacks from the row actions menu', async () => {
+    const user = userEvent.setup();
+    const { onViewDetail, onEdit, onAdjust, onDelete } = setup([makeItem()]);
 
-    fireEvent.click(screen.getByRole('button', { name: /adjust/i }));
-    fireEvent.click(screen.getByRole('button', { name: /edit/i }));
-    fireEvent.click(screen.getByRole('button', { name: /delete/i }));
+    await user.click(screen.getByLabelText('Open actions menu'));
+    await user.click(screen.getByRole('menuitem', { name: /view detail/i }));
+    expect(onViewDetail).toHaveBeenCalledWith(makeItem());
 
+    await user.click(screen.getByLabelText('Open actions menu'));
+    await user.click(screen.getByRole('menuitem', { name: /adjust/i }));
     expect(onAdjust).toHaveBeenCalledWith(makeItem());
+
+    await user.click(screen.getByLabelText('Open actions menu'));
+    await user.click(screen.getByRole('menuitem', { name: /edit/i }));
     expect(onEdit).toHaveBeenCalledWith(makeItem());
-    expect(onDelete).toHaveBeenCalledWith('i1');
+
+    await user.click(screen.getByLabelText('Open actions menu'));
+    await user.click(screen.getByRole('menuitem', { name: /delete/i }));
+    expect(onDelete).toHaveBeenCalledTimes(1);
+    expect(onDelete).toHaveBeenCalledWith(makeItem());
   });
 });

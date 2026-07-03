@@ -1,9 +1,10 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { act, render, screen, fireEvent } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
+import type { PaginatedResult } from '@/shared/domain/interfaces/paginated-result.interface';
 
-vi.mock('@/core/plants/presentation/hooks/use-plants/use-plants.hook', () => ({
-  usePlants: vi.fn(),
+vi.mock('@/core/plants/presentation/hooks/use-paginated-plants/use-paginated-plants.hook', () => ({
+  usePaginatedPlants: vi.fn(),
 }));
 
 vi.mock('@/core/spaces/infrastructure/store/spaces.store', () => ({
@@ -36,18 +37,23 @@ vi.mock('next/link', () => ({
   ),
 }));
 
+const mockPush = vi.fn();
 vi.mock('next/navigation', () => ({
-  useRouter: vi.fn(() => ({ push: vi.fn() })),
+  useRouter: vi.fn(() => ({ push: mockPush })),
   useSearchParams: vi.fn(() => new URLSearchParams()),
 }));
 
-import { usePlants } from '@/core/plants/presentation/hooks/use-plants/use-plants.hook';
+import { usePaginatedPlants } from '@/core/plants/presentation/hooks/use-paginated-plants/use-paginated-plants.hook';
 import { PlantsListScreen } from './plants-list.screen';
 
 const mockPlants: Plant[] = [
   { id: 'p1', name: 'Monstera', userId: 'u1', spaceId: 's1', createdAt: '', updatedAt: '' },
   { id: 'p2', name: 'Pothos', userId: 'u1', spaceId: 's1', createdAt: '', updatedAt: '' },
 ];
+
+function paginated(items: Plant[]): PaginatedResult<Plant> {
+  return { items, total: items.length, page: 1, perPage: 20, totalPages: 1 };
+}
 
 const dict = {
   nav: 'Inventory',
@@ -57,6 +63,8 @@ const dict = {
     empty: 'No plants yet',
     filterAll: 'All',
     filters: 'Filters',
+    searchPlaceholder: 'Search plants...',
+    searchChipLabel: 'Search',
     statsPlants: 'plants',
     statsSpecies: 'species',
     inProgress: 'Coming soon',
@@ -93,46 +101,18 @@ const dict = {
   },
   detail: {
     breadcrumbList: 'Inventory',
-    bancal: 'Plot',
-    qrPrint: 'Print QR',
-    noImage: 'No image',
     noSpecies: 'Unknown species',
-    actions: { markWatered: 'Mark watered', addPhoto: 'Add photo', newNote: 'New note' },
-    qr: { label: 'Label · QR', hint: 'Print and stick on the pot', download: 'Download PDF' },
-    tabs: { care: 'Care', calendar: 'Calendar', diary: 'Diary', harvests: 'Harvests', pests: 'Pests', associations: 'Associations' },
-    sections: {
-      care: { title: 'Care', inProgress: 'Coming soon' },
-      cycle: { title: 'Growth cycle', inProgress: 'Coming soon' },
-      photoHistory: { title: 'Photo history', inProgress: 'Coming soon' },
-      pests: { title: 'Pest tracking', inProgress: 'Coming soon' },
+    actions: {
+      markWatered: 'Mark watered',
+      markWateredError: 'Could not log the watering. Try again.',
     },
     care: {
-      wateringLabel: 'WATERING',
-      wateringTitle: 'Every day · 250 ml',
-      wateringDesc: 'Reduce to 200ml when flowering. Deep, infrequent.',
-      sunLabel: 'SUN',
-      sunTitle: '6–8 h direct',
-      sunDesc: 'Face south. Heat tolerant but shade above 35°C.',
-      soilLabel: 'SOIL',
-      soilTitle: 'Rich, drained · pH 6.0–6.8',
-      soilDesc: 'Add compost every 3 weeks. Stake from day 21.',
-      pruningLabel: 'PRUNING',
-      pruningTitle: 'Remove suckers',
-      pruningDesc: 'Once a week. Lower leaves after first flowering.',
+      lastWatered: 'Last watered',
+      neverWatered: 'Not watered yet',
     },
-    cycle: {
-      title: 'CYCLE · 64 DAYS',
-      seedStage: 'Seed',
-      seedlingStage: 'Seedling',
-      vegetativeStage: 'Vegetative',
-      fruitingStage: 'Fruiting',
-    },
-    photoHistory: {
-      title: 'PHOTO HISTORY',
-    },
-    pestTracking: {
-      title: 'PEST TRACKING',
-    },
+    addedOn: 'In your garden since',
+    qr: { label: 'Label · QR', hint: 'Print and stick on the pot', download: 'Download PDF' },
+    calendarTitle: 'Upcoming tasks',
   },
   delete: {
     button: 'Delete plant',
@@ -159,10 +139,15 @@ const dict = {
 describe('PlantsListScreen', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('renders a grid of PlantCards when data exists', () => {
-    vi.mocked(usePlants).mockReturnValue({ data: mockPlants, isLoading: false, isError: false } as ReturnType<typeof usePlants>);
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
 
     render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
 
@@ -171,7 +156,7 @@ describe('PlantsListScreen', () => {
   });
 
   it('renders loading skeleton when loading', () => {
-    vi.mocked(usePlants).mockReturnValue({ data: undefined, isLoading: true, isError: false } as ReturnType<typeof usePlants>);
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: undefined, isLoading: true, isError: false } as ReturnType<typeof usePaginatedPlants>);
 
     const { container } = render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
 
@@ -179,7 +164,7 @@ describe('PlantsListScreen', () => {
   });
 
   it('renders empty state when no plants', () => {
-    vi.mocked(usePlants).mockReturnValue({ data: [] as Plant[], isLoading: false, isError: false } as unknown as ReturnType<typeof usePlants>);
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated([]), isLoading: false, isError: false } as unknown as ReturnType<typeof usePaginatedPlants>);
 
     render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
 
@@ -187,7 +172,7 @@ describe('PlantsListScreen', () => {
   });
 
   it('renders "New plant" button as enabled', () => {
-    vi.mocked(usePlants).mockReturnValue({ data: [] as Plant[], isLoading: false, isError: false } as unknown as ReturnType<typeof usePlants>);
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated([]), isLoading: false, isError: false } as unknown as ReturnType<typeof usePaginatedPlants>);
 
     render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
 
@@ -196,7 +181,7 @@ describe('PlantsListScreen', () => {
   });
 
   it('opens the create modal when "New plant" button is clicked', () => {
-    vi.mocked(usePlants).mockReturnValue({ data: [] as Plant[], isLoading: false, isError: false } as unknown as ReturnType<typeof usePlants>);
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated([]), isLoading: false, isError: false } as unknown as ReturnType<typeof usePaginatedPlants>);
 
     render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
 
@@ -206,7 +191,7 @@ describe('PlantsListScreen', () => {
   });
 
   it('closes the create modal when onClose is called', () => {
-    vi.mocked(usePlants).mockReturnValue({ data: [] as Plant[], isLoading: false, isError: false } as unknown as ReturnType<typeof usePlants>);
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated([]), isLoading: false, isError: false } as unknown as ReturnType<typeof usePaginatedPlants>);
 
     render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
 
@@ -217,7 +202,7 @@ describe('PlantsListScreen', () => {
   });
 
   it('renders the screen title', () => {
-    vi.mocked(usePlants).mockReturnValue({ data: [] as Plant[], isLoading: false, isError: false } as unknown as ReturnType<typeof usePlants>);
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated([]), isLoading: false, isError: false } as unknown as ReturnType<typeof usePaginatedPlants>);
 
     render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
 
@@ -225,7 +210,7 @@ describe('PlantsListScreen', () => {
   });
 
   it('renders "All" filter tab as active and category tabs as disabled', () => {
-    vi.mocked(usePlants).mockReturnValue({ data: mockPlants, isLoading: false, isError: false } as ReturnType<typeof usePlants>);
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
 
     render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
 
@@ -241,7 +226,7 @@ describe('PlantsListScreen', () => {
       { id: 'p1', name: 'Monstera', userId: 'u1', spaceId: 's1', plantSpeciesId: 'sp1', createdAt: '', updatedAt: '' },
       { id: 'p2', name: 'Pothos', userId: 'u1', spaceId: 's1', plantSpeciesId: 'sp2', createdAt: '', updatedAt: '' },
     ];
-    vi.mocked(usePlants).mockReturnValue({ data: plantsWithSpecies, isLoading: false, isError: false, speciesCount: 2 } as ReturnType<typeof usePlants>);
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(plantsWithSpecies), isLoading: false, isError: false, speciesCount: 2 } as ReturnType<typeof usePaginatedPlants>);
 
     render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
 
@@ -251,11 +236,82 @@ describe('PlantsListScreen', () => {
   });
 
   it('renders disabled Filters button', () => {
-    vi.mocked(usePlants).mockReturnValue({ data: mockPlants, isLoading: false, isError: false } as ReturnType<typeof usePlants>);
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
 
     render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
 
     const filtersBtn = screen.getByRole('button', { name: /filters/i });
     expect(filtersBtn).toBeDisabled();
+  });
+
+  it('renders a search input bound to the name filter', () => {
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
+
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+
+    const searchInput = screen.getByPlaceholderText('Search plants...');
+    expect(searchInput).toBeInTheDocument();
+  });
+
+  it('shows a removable search chip once a search term is typed', () => {
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
+
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    expect(screen.queryByText(/Search:/)).not.toBeInTheDocument();
+
+    const searchInput = screen.getByPlaceholderText('Search plants...');
+    fireEvent.change(searchInput, { target: { value: 'Rose' } });
+
+    expect(screen.getByText('Search: Rose')).toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText('Remove Search: Rose'));
+    expect((searchInput as HTMLInputElement).value).toBe('');
+  });
+
+  it('passes the typed search text as a NAME/LIKE filter to usePaginatedPlants after the debounce delay', () => {
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
+
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+
+    const searchInput = screen.getByPlaceholderText('Search plants...');
+    fireEvent.change(searchInput, { target: { value: 'Rose' } });
+    act(() => vi.advanceTimersByTime(300));
+
+    const lastCall = vi.mocked(usePaginatedPlants).mock.calls.at(-1);
+    expect(lastCall?.[1]?.filters).toEqual([{ field: 'NAME', operator: 'LIKE', value: 'Rose' }]);
+  });
+
+  it('does not query by the typed search text before the debounce delay elapses', () => {
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
+
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+
+    const searchInput = screen.getByPlaceholderText('Search plants...');
+    fireEvent.change(searchInput, { target: { value: 'Rose' } });
+
+    const lastCall = vi.mocked(usePaginatedPlants).mock.calls.at(-1);
+    expect(lastCall?.[1]?.filters).toEqual([]);
+  });
+
+  it('resets to page 1 once the debounced search filter changes', () => {
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
+
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    expect(mockPush).not.toHaveBeenCalled();
+
+    const searchInput = screen.getByPlaceholderText('Search plants...');
+    fireEvent.change(searchInput, { target: { value: 'Rose' } });
+    act(() => vi.advanceTimersByTime(300));
+
+    expect(mockPush).toHaveBeenCalledWith('?page=1');
+  });
+
+  it('does not reset the page on initial render', () => {
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
+
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    act(() => vi.advanceTimersByTime(300));
+
+    expect(mockPush).not.toHaveBeenCalled();
   });
 });
