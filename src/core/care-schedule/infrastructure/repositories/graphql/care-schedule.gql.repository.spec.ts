@@ -16,7 +16,8 @@ import { CARE_SCHEDULE_CREATE } from './mutations/care-schedule-create.mutation'
 import { CARE_SCHEDULE_UPDATE } from './mutations/care-schedule-update.mutation';
 import { CARE_SCHEDULE_COMPLETE } from './mutations/care-schedule-complete.mutation';
 import { CARE_SCHEDULE_DELETE } from './mutations/care-schedule-delete.mutation';
-import type { CareSchedule } from '@/core/care-schedule/domain/types/care-schedule.interface';
+import { CARE_SCHEDULE_WATER_PLANT } from './mutations/care-schedule-water-plant.mutation';
+import type { CareSchedule, WaterPlantResult } from '@/core/care-schedule/domain/types/care-schedule.interface';
 
 const mockCareSchedule: CareSchedule = {
   id: 'cs-1',
@@ -51,6 +52,7 @@ describe('CareScheduleGqlRepository', () => {
       ['CARE_SCHEDULE_UPDATE', CARE_SCHEDULE_UPDATE],
       ['CARE_SCHEDULE_COMPLETE', CARE_SCHEDULE_COMPLETE],
       ['CARE_SCHEDULE_DELETE', CARE_SCHEDULE_DELETE],
+      ['CARE_SCHEDULE_WATER_PLANT', CARE_SCHEDULE_WATER_PLANT],
     ])('%s is a valid GQL document', (_name, doc) => {
       expect(doc).toBeDefined();
       expect((doc as DocumentNode).kind).toBe('Document');
@@ -238,6 +240,50 @@ describe('CareScheduleGqlRepository', () => {
         mutation: CARE_SCHEDULE_DELETE,
         variables: { id: 'cs-1' },
       });
+    });
+  });
+
+  describe('waterPlant()', () => {
+    const mockWaterPlantResult: WaterPlantResult = {
+      plantId: 'plant-1',
+      mode: 'SCHEDULE_COMPLETED',
+      careScheduleId: 'cs-1',
+    };
+
+    it('calls apolloClient.mutate with CARE_SCHEDULE_WATER_PLANT and returns the result as-is (no follow-up fetch)', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { careScheduleWaterPlant: mockWaterPlantResult },
+      } as never);
+
+      const result = await repository.waterPlant('plant-1', '2026-07-05');
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: CARE_SCHEDULE_WATER_PLANT,
+        variables: { input: { plantId: 'plant-1', performedAt: '2026-07-05' } },
+      });
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual(mockWaterPlantResult);
+    });
+
+    it('calls apolloClient.mutate without performedAt when omitted', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { careScheduleWaterPlant: { plantId: 'plant-1', mode: 'CARE_LOG_CREATED' } },
+      } as never);
+
+      await repository.waterPlant('plant-1');
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: CARE_SCHEDULE_WATER_PLANT,
+        variables: { input: { plantId: 'plant-1', performedAt: undefined } },
+      });
+    });
+
+    it('throws when careScheduleWaterPlant is null', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { careScheduleWaterPlant: null },
+      } as never);
+
+      await expect(repository.waterPlant('plant-1')).rejects.toThrow('careScheduleWaterPlant mutation failed');
     });
   });
 });
