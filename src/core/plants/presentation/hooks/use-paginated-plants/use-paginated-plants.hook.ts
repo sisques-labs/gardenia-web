@@ -24,7 +24,9 @@ export function usePaginatedPlants(spaceId: string | null, options?: UsePaginate
   const filters = options?.filters ?? [];
 
   const query = useQuery({
-    queryKey: ['plants', 'paginated', spaceId, page, perPage, filters],
+    // spaceId right after 'plants' so `invalidateQueries({ queryKey: ['plants', spaceId] })`
+    // (used by useCreatePlant/useDeletePlant) matches this query too via prefix matching.
+    queryKey: ['plants', spaceId, 'paginated', page, perPage, filters],
     queryFn: () => plantsUseCase.execute({ filters, pagination: { page, perPage } }),
     enabled: !!spaceId,
   });

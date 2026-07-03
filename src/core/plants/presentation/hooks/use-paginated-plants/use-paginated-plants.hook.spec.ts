@@ -23,8 +23,8 @@ const mockPlants: Plant[] = [
   { id: 'p2', name: 'Pothos', userId: 'u1', spaceId: 's1', createdAt: '', updatedAt: '' },
 ];
 
-function makeWrapper() {
-  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+function makeWrapper(client?: QueryClient) {
+  const queryClient = client ?? new QueryClient({ defaultOptions: { queries: { retry: false } } });
   function Wrapper({ children }: { children: React.ReactNode }) {
     return createElement(QueryClientProvider, { client: queryClient }, children);
   }
@@ -101,5 +101,20 @@ describe('usePaginatedPlants', () => {
     const { result } = renderHook(() => usePaginatedPlants('space-1'), { wrapper: makeWrapper() });
 
     expect(result.current.speciesCount).toBe(0);
+  });
+
+  it('refetches once ["plants", spaceId] is invalidated (as useCreatePlant/useDeletePlant do)', async () => {
+    mockExecute.mockResolvedValue({ items: mockPlants, total: 2, page: 1, perPage: 20, totalPages: 1 });
+    const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+
+    const { result } = renderHook(() => usePaginatedPlants('space-1'), {
+      wrapper: makeWrapper(queryClient),
+    });
+    await waitFor(() => expect(result.current.isSuccess).toBe(true));
+    expect(mockExecute).toHaveBeenCalledTimes(1);
+
+    await queryClient.invalidateQueries({ queryKey: ['plants', 'space-1'] });
+
+    await waitFor(() => expect(mockExecute).toHaveBeenCalledTimes(2));
   });
 });
