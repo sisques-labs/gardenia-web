@@ -1,5 +1,5 @@
-import { render, screen, fireEvent } from '@testing-library/react';
-import { vi, describe, it, expect, beforeEach } from 'vitest';
+import { act, render, screen, fireEvent } from '@testing-library/react';
+import { vi, describe, it, expect, beforeEach, afterEach } from 'vitest';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 import type { PaginatedResult } from '@/shared/domain/interfaces/paginated-result.interface';
 
@@ -37,8 +37,9 @@ vi.mock('next/link', () => ({
   ),
 }));
 
+const mockPush = vi.fn();
 vi.mock('next/navigation', () => ({
-  useRouter: vi.fn(() => ({ push: vi.fn() })),
+  useRouter: vi.fn(() => ({ push: mockPush })),
   useSearchParams: vi.fn(() => new URLSearchParams()),
 }));
 
@@ -165,6 +166,11 @@ const dict = {
 describe('PlantsListScreen', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it('renders a grid of PlantCards when data exists', () => {
@@ -274,7 +280,20 @@ describe('PlantsListScreen', () => {
     expect(searchInput).toBeInTheDocument();
   });
 
-  it('passes the typed search text as a NAME/LIKE filter to usePaginatedPlants', () => {
+  it('passes the typed search text as a NAME/LIKE filter to usePaginatedPlants after the debounce delay', () => {
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
+
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+
+    const searchInput = screen.getByPlaceholderText('Search plants...');
+    fireEvent.change(searchInput, { target: { value: 'Rose' } });
+    act(() => vi.advanceTimersByTime(300));
+
+    const lastCall = vi.mocked(usePaginatedPlants).mock.calls.at(-1);
+    expect(lastCall?.[1]?.filters).toEqual([{ field: 'NAME', operator: 'LIKE', value: 'Rose' }]);
+  });
+
+  it('does not query by the typed search text before the debounce delay elapses', () => {
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
 
     render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
@@ -283,6 +302,28 @@ describe('PlantsListScreen', () => {
     fireEvent.change(searchInput, { target: { value: 'Rose' } });
 
     const lastCall = vi.mocked(usePaginatedPlants).mock.calls.at(-1);
-    expect(lastCall?.[1]?.filters).toEqual([{ field: 'NAME', operator: 'LIKE', value: 'Rose' }]);
+    expect(lastCall?.[1]?.filters).toEqual([]);
+  });
+
+  it('resets to page 1 once the debounced search filter changes', () => {
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
+
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    expect(mockPush).not.toHaveBeenCalled();
+
+    const searchInput = screen.getByPlaceholderText('Search plants...');
+    fireEvent.change(searchInput, { target: { value: 'Rose' } });
+    act(() => vi.advanceTimersByTime(300));
+
+    expect(mockPush).toHaveBeenCalledWith('?page=1');
+  });
+
+  it('does not reset the page on initial render', () => {
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
+
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    act(() => vi.advanceTimersByTime(300));
+
+    expect(mockPush).not.toHaveBeenCalled();
   });
 });

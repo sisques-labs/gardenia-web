@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CreatePlantModal } from "@/core/plants/presentation/components/create-plant-modal/create-plant-modal";
 import { PlantCard } from "@/core/plants/presentation/components/plant-card/plant-card";
 import { usePaginatedPlants } from "@/core/plants/presentation/hooks/use-paginated-plants/use-paginated-plants.hook";
@@ -35,6 +35,16 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
   const { page, onPageChange } = useUrlPage();
   const { search, setSearch, filters } = usePlantFilters();
   const { data, isLoading, speciesCount } = usePaginatedPlants(spaceId, { page, filters });
+
+  const isFirstFiltersRender = useRef(true);
+  useEffect(() => {
+    if (isFirstFiltersRender.current) {
+      isFirstFiltersRender.current = false;
+      return;
+    }
+    onPageChange(1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filters]);
   const { plantToDelete, requestDelete, confirmDelete, cancelDelete, isError } = useDeletePlantConfirm(spaceId);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
