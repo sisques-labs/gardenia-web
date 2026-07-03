@@ -3,6 +3,7 @@ import type { CreateInventoryItemInput } from '@/core/inventory/application/inte
 import type { UpdateInventoryItemInput } from '@/core/inventory/application/interfaces/update-inventory-item-input.interface';
 import type { AdjustInventoryItemQuantityInput } from '@/core/inventory/application/interfaces/adjust-inventory-item-quantity-input.interface';
 import type { InventoryListCriteria } from '@/core/inventory/application/interfaces/inventory-list-criteria.interface';
+import type { BulkDeleteResult } from '@/core/inventory/domain/interfaces/bulk-delete-result.interface';
 import type { CreatedEntity } from '@/shared/domain/interfaces/created-entity.interface';
 import type { PaginatedResult } from '@/shared/domain/interfaces/paginated-result.interface';
 
@@ -19,4 +20,5 @@ export interface IInventoryRepository {
   update(input: UpdateInventoryItemInput): Promise<CreatedEntity>;
   adjustQuantity(input: AdjustInventoryItemQuantityInput): Promise<CreatedEntity>;
   delete(id: string): Promise<void>;
+  deleteBulk(ids: string[]): Promise<BulkDeleteResult>;
 }

@@ -28,11 +28,12 @@ function makeItem(overrides: Partial<InventoryItem> = {}): InventoryItem {
   };
 }
 
-function setup(items: InventoryItem[]) {
+function setup(items: InventoryItem[], extra: Partial<React.ComponentProps<typeof InventoryTable>> = {}) {
   const onViewDetail = vi.fn();
   const onEdit = vi.fn();
   const onAdjust = vi.fn();
   const onDelete = vi.fn();
+  const onSelectionChange = vi.fn();
   render(
     <InventoryTable
       items={items}
@@ -41,9 +42,11 @@ function setup(items: InventoryItem[]) {
       onEdit={onEdit}
       onAdjust={onAdjust}
       onDelete={onDelete}
+      onSelectionChange={onSelectionChange}
+      {...extra}
     />,
   );
-  return { onViewDetail, onEdit, onAdjust, onDelete };
+  return { onViewDetail, onEdit, onAdjust, onDelete, onSelectionChange };
 }
 
 describe('InventoryTable', () => {
@@ -67,9 +70,14 @@ describe('InventoryTable', () => {
     expect(screen.getByText('Low stock')).toBeInTheDocument();
   });
 
-  it('does not render a selection checkbox column', () => {
-    setup([makeItem()]);
-    expect(screen.queryByLabelText('Select all')).not.toBeInTheDocument();
+  it('renders a selection checkbox column and reports selection', async () => {
+    const user = userEvent.setup();
+    const { onSelectionChange } = setup([makeItem()]);
+
+    expect(screen.getByLabelText('Select all')).toBeInTheDocument();
+    await user.click(screen.getByLabelText('Select row'));
+
+    expect(onSelectionChange).toHaveBeenCalledWith([makeItem()]);
   });
 
   it('fires view detail, adjust, edit and delete callbacks from the row actions menu', async () => {

@@ -59,6 +59,16 @@ const dict = {
     updatedAt: 'Last updated',
     noValue: '—',
   },
+  bulk: {
+    selectedSuffix: 'selected',
+    deleteSelected: 'Delete selected',
+    confirmTitle: 'Delete selected items',
+    confirmDescription: 'This action cannot be undone. The selected items will be permanently removed from the inventory.',
+    confirm: 'Delete',
+    cancel: 'Cancel',
+    partialSuccess: '{deleted} of {total} items deleted. The rest no longer existed.',
+    error: 'Could not delete the selected items. Try again.',
+  },
   types: {
     SEEDS: 'Seeds',
     FERTILIZER: 'Fertilizer',

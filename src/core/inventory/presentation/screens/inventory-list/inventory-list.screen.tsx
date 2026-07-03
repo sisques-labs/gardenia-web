@@ -8,8 +8,10 @@ import { AdjustQuantityModal } from '@/core/inventory/presentation/components/ad
 import { InventoryFilters } from '@/core/inventory/presentation/components/inventory-filters/inventory-filters';
 import { InventoryListSkeleton } from '@/core/inventory/presentation/components/inventory-list-skeleton/inventory-list-skeleton';
 import { InventoryItemDetailDrawer } from '@/core/inventory/presentation/components/inventory-item-detail-drawer/inventory-item-detail-drawer';
+import { InventoryBulkActionsBar } from '@/core/inventory/presentation/components/inventory-bulk-actions-bar/inventory-bulk-actions-bar';
 import { usePaginatedInventoryItems } from '@/core/inventory/presentation/hooks/use-paginated-inventory-items/use-paginated-inventory-items.hook';
 import { useDeleteInventoryItemConfirm } from '@/core/inventory/presentation/hooks/use-delete-inventory-item-confirm/use-delete-inventory-item-confirm.hook';
+import { useBulkDeleteInventoryItems } from '@/core/inventory/presentation/hooks/use-bulk-delete-inventory-items/use-bulk-delete-inventory-items.hook';
 import { useInventoryFilters } from '@/core/inventory/presentation/hooks/use-inventory-filters/use-inventory-filters.hook';
 import { InventoryItemQueryableField } from '@/core/inventory/domain/enums/inventory-item-queryable-field.enum';
 import type { InventorySort } from '@/core/inventory/application/interfaces/inventory-sort.interface';
@@ -79,6 +81,31 @@ export function InventoryListScreen({ dict, lang }: Props) {
   const [adjustingItem, setAdjustingItem] = useState<InventoryItem | null>(null);
   const [viewingItem, setViewingItem] = useState<InventoryItem | null>(null);
 
+  const [selectedItems, setSelectedItems] = useState<InventoryItem[]>([]);
+  const [isBulkConfirmOpen, setIsBulkConfirmOpen] = useState(false);
+  const [partialFailureMessage, setPartialFailureMessage] = useState<string | null>(null);
+  const bulkDelete = useBulkDeleteInventoryItems();
+
+  function confirmBulkDelete() {
+    setPartialFailureMessage(null);
+    bulkDelete.mutate(
+      selectedItems.map((item) => item.id),
+      {
+        onSuccess: (result) => {
+          setSelectedItems([]);
+          if (result.notFoundIds.length > 0) {
+            setPartialFailureMessage(
+              dict.bulk.partialSuccess
+                .replace('{deleted}', String(result.deletedCount))
+                .replace('{total}', String(result.requestedCount)),
+            );
+          }
+        },
+        onSettled: () => setIsBulkConfirmOpen(false),
+      },
+    );
+  }
+
   return (
     <div>
       <ScreenHeader
@@ -106,6 +133,14 @@ export function InventoryListScreen({ dict, lang }: Props) {
         />
 
         {isError && <Alert variant="error" message={dict.delete.error} />}
+        {bulkDelete.isError && <Alert variant="error" message={dict.bulk.error} />}
+        {partialFailureMessage && <Alert variant="info" message={partialFailureMessage} />}
+
+        <InventoryBulkActionsBar
+          dict={dict}
+          selectedCount={selectedItems.length}
+          onDeleteSelected={() => setIsBulkConfirmOpen(true)}
+        />
 
         {isLoading ? (
           <InventoryListSkeleton />
@@ -119,6 +154,7 @@ export function InventoryListScreen({ dict, lang }: Props) {
             onEdit={(i) => setEditingItem(i)}
             onAdjust={(i) => setAdjustingItem(i)}
             onDelete={requestDelete}
+            onSelectionChange={setSelectedItems}
             sorting={sorting}
             onSortingChange={setSorting}
             pagination={
@@ -164,6 +200,20 @@ export function InventoryListScreen({ dict, lang }: Props) {
         destructive
         onConfirm={confirmDelete}
         onCancel={cancelDelete}
+      />
+
+      <ConfirmDialog
+        open={isBulkConfirmOpen}
+        onOpenChange={(open) => {
+          if (!open) setIsBulkConfirmOpen(false);
+        }}
+        title={dict.bulk.confirmTitle}
+        description={dict.bulk.confirmDescription}
+        confirmLabel={dict.bulk.confirm}
+        cancelLabel={dict.bulk.cancel}
+        destructive
+        onConfirm={confirmBulkDelete}
+        onCancel={() => setIsBulkConfirmOpen(false)}
       />
     </div>
   );

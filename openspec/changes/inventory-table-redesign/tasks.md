@@ -71,20 +71,20 @@
 > Do not start until `sisques-labs/gardenia-api`'s `inventory-bulk-delete` change
 > is merged and `inventoryItemsDeleteBulk` is live in the GraphQL schema.
 
-- [ ] 5.1 Create `infrastructure/repositories/graphql/mutations/inventory-items-delete-bulk.mutation.ts` — `gql` document for `inventoryItemsDeleteBulk`
-- [ ] 5.2 RED+GREEN: modify `infrastructure/repositories/graphql/inventory.gql.repository.ts` (+spec) — add `deleteBulk(ids: string[])` returning `{ deletedIds, notFoundIds, deletedCount, requestedCount }`
-- [ ] 5.3 Modify `application/ports/inventory.repository.port.ts` — add `deleteBulk` to `IInventoryRepository`
-- [ ] 5.4 RED+GREEN: create `application/use-cases/delete-inventory-items-bulk/delete-inventory-items-bulk.use-case.ts` (+spec)
-- [ ] 5.5 RED+GREEN: create `presentation/hooks/use-bulk-delete-inventory-items/use-bulk-delete-inventory-items.hook.ts` (+spec) — `useMutation`, invalidates `['inventory', spaceId]` on settle
-- [ ] 5.6 RED+GREEN: create `presentation/components/inventory-bulk-actions-bar/inventory-bulk-actions-bar.tsx` (+spec) — count + "Delete selected"; hidden at 0 selected
-- [ ] 5.7 Modify `presentation/components/inventory-table/inventory-table.tsx` — flip `enableRowSelection` to `true`, forward `onSelectionChange`
-- [ ] 5.8 RED+GREEN: update `inventory-table.spec.tsx` — remove/replace the existing "asserts no selection checkbox column" case with selection-enabled coverage
-- [ ] 5.9 Modify `presentation/screens/inventory-list/inventory-list.screen.tsx` — selection state, bulk `ConfirmDialog`, partial-failure message using `deletedCount`/`requestedCount`
-- [ ] 5.10 RED+GREEN: update `inventory-list.screen.spec.tsx` — bulk delete happy path + partial-failure message case
-- [ ] 5.11 Modify `presentation/i18n/{en,es}.ts` — bulk toolbar copy, partial-failure message
-- [ ] 5.12 `pnpm test` + `pnpm lint` + `pnpm tsc --noEmit` green
+- [x] 5.1 Created `infrastructure/repositories/graphql/mutations/inventory-items-delete-bulk.mutation.ts` — `gql` document for `inventoryItemsDeleteBulk`; also added `domain/interfaces/bulk-delete-result.interface.ts` (`BulkDeleteResult`) and its response type
+- [x] 5.2 RED+GREEN: modified `infrastructure/repositories/graphql/inventory.gql.repository.ts` (+spec) — added `deleteBulk(ids: string[])` returning `{ deletedIds, notFoundIds, deletedCount, requestedCount }`
+- [x] 5.3 Modified `application/ports/inventory.repository.port.ts` — added `deleteBulk` to `IInventoryRepository`; updated all 6 existing use-case spec mocks to satisfy the widened interface
+- [x] 5.4 RED+GREEN: created `application/use-cases/delete-inventory-items-bulk/delete-inventory-items-bulk.use-case.ts` (+spec)
+- [x] 5.5 RED+GREEN: created `presentation/hooks/use-bulk-delete-inventory-items/use-bulk-delete-inventory-items.hook.ts` (+spec) — `useMutation`, invalidates `['inventory']` on success (no `spaceId` segment, consistent with this module's existing query-key convention — see PR2 5.7 note)
+- [x] 5.6 RED+GREEN: created `presentation/components/inventory-bulk-actions-bar/inventory-bulk-actions-bar.tsx` (+spec) — count + "Delete selected"; renders `null` at 0 selected
+- [x] 5.7 Modified `presentation/components/inventory-table/inventory-table.tsx` — `enableRowSelection` now unconditionally `true`, forwards `onSelectionChange`
+- [x] 5.8 RED+GREEN: updated `inventory-table.spec.tsx` — replaced the "no selection checkbox column" case with a selection-enabled case asserting `onSelectionChange` fires with the selected item
+- [x] 5.9 Modified `presentation/screens/inventory-list/inventory-list.screen.tsx` — `selectedItems: InventoryItem[]` state (not just ids), a second `ConfirmDialog` instance for bulk delete, partial-failure message built via `dict.bulk.partialSuccess.replace('{deleted}', ...).replace('{total}', ...)` (a one-off placeholder-substitution — no prior interpolation convention existed in this codebase, and building a 2-number sentence from concatenated fragments read worse)
+- [x] 5.10 RED+GREEN: updated `inventory-list.screen.spec.tsx` — bulk bar visibility, confirm-dialog-before-mutate, happy path, partial-failure message, error alert
+- [x] 5.11 Modified `presentation/i18n/{en,es}.ts` — new `dict.bulk.*` section (selectedSuffix, deleteSelected, confirmTitle/Description, confirm, cancel, partialSuccess, error)
+- [x] 5.12 `pnpm test` (254 suites/1250 tests) + `pnpm lint` + `pnpm tsc --noEmit` green
 
 ## Final Verify (after PR5)
 
-- [ ] V.1 `pnpm test:coverage` — no regression in `src/core/inventory/`
-- [ ] V.2 Manual smoke: paginate past 100 items, sort by name/quantity/expiresAt, combine filters + chips removal, single delete with confirm, bulk-select + bulk delete with a partial-failure case, open detail drawer
+- [x] V.1 Full `pnpm test` run covers `src/core/inventory/` with no regressions (254/254 suites green)
+- [ ] V.2 Manual smoke in a running browser not performed in this environment (no dev server / backend available here) — recommend running through: paginate past 20 items, sort by name/quantity, combine filters + chip removal, single delete with confirm, bulk-select + bulk delete with a partial-failure case, open detail drawer

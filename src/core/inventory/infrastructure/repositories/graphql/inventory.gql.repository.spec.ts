@@ -16,6 +16,7 @@ import { INVENTORY_ITEM_CREATE } from './mutations/inventory-item-create.mutatio
 import { INVENTORY_ITEM_UPDATE } from './mutations/inventory-item-update.mutation';
 import { INVENTORY_ITEM_ADJUST_QUANTITY } from './mutations/inventory-item-adjust-quantity.mutation';
 import { INVENTORY_ITEM_DELETE } from './mutations/inventory-item-delete.mutation';
+import { INVENTORY_ITEMS_DELETE_BULK } from './mutations/inventory-items-delete-bulk.mutation';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
 
 const mockItem: InventoryItem = {
@@ -51,6 +52,7 @@ describe('InventoryGqlRepository', () => {
       ['INVENTORY_ITEM_UPDATE', INVENTORY_ITEM_UPDATE],
       ['INVENTORY_ITEM_ADJUST_QUANTITY', INVENTORY_ITEM_ADJUST_QUANTITY],
       ['INVENTORY_ITEM_DELETE', INVENTORY_ITEM_DELETE],
+      ['INVENTORY_ITEMS_DELETE_BULK', INVENTORY_ITEMS_DELETE_BULK],
     ])('%s is a valid GQL document', (_name, doc) => {
       expect(doc).toBeDefined();
       expect((doc as DocumentNode).kind).toBe('Document');
@@ -209,6 +211,57 @@ describe('InventoryGqlRepository', () => {
         mutation: INVENTORY_ITEM_DELETE,
         variables: { id: 'item-1' },
       });
+    });
+  });
+
+  describe('deleteBulk()', () => {
+    it('mutates with the ids and returns the full result', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: {
+          inventoryItemsDeleteBulk: {
+            deletedIds: ['item-1', 'item-2'],
+            notFoundIds: [],
+            deletedCount: 2,
+            requestedCount: 2,
+          },
+        },
+      } as never);
+
+      const result = await repository.deleteBulk(['item-1', 'item-2']);
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: INVENTORY_ITEMS_DELETE_BULK,
+        variables: { input: { ids: ['item-1', 'item-2'] } },
+      });
+      expect(result).toEqual({
+        deletedIds: ['item-1', 'item-2'],
+        notFoundIds: [],
+        deletedCount: 2,
+        requestedCount: 2,
+      });
+    });
+
+    it('reports not-found ids without throwing', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: {
+          inventoryItemsDeleteBulk: {
+            deletedIds: ['item-1'],
+            notFoundIds: ['item-2'],
+            deletedCount: 1,
+            requestedCount: 2,
+          },
+        },
+      } as never);
+
+      const result = await repository.deleteBulk(['item-1', 'item-2']);
+
+      expect(result.notFoundIds).toEqual(['item-2']);
+      expect(result.deletedCount).toBe(1);
+    });
+
+    it('propagates mutation errors', async () => {
+      vi.mocked(apolloClient.mutate).mockRejectedValue(new Error('Network error'));
+      await expect(repository.deleteBulk(['item-1'])).rejects.toThrow('Network error');
     });
   });
 });

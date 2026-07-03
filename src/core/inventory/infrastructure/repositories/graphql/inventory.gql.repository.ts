@@ -4,6 +4,7 @@ import type { CreateInventoryItemInput } from '@/core/inventory/application/inte
 import type { UpdateInventoryItemInput } from '@/core/inventory/application/interfaces/update-inventory-item-input.interface';
 import type { AdjustInventoryItemQuantityInput } from '@/core/inventory/application/interfaces/adjust-inventory-item-quantity-input.interface';
 import type { InventoryListCriteria } from '@/core/inventory/application/interfaces/inventory-list-criteria.interface';
+import type { BulkDeleteResult } from '@/core/inventory/domain/interfaces/bulk-delete-result.interface';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
 import type { CreatedEntity } from '@/shared/domain/interfaces/created-entity.interface';
 import type { PaginatedResult } from '@/shared/domain/interfaces/paginated-result.interface';
@@ -13,6 +14,7 @@ import { INVENTORY_ITEM_CREATE } from './mutations/inventory-item-create.mutatio
 import { INVENTORY_ITEM_UPDATE } from './mutations/inventory-item-update.mutation';
 import { INVENTORY_ITEM_ADJUST_QUANTITY } from './mutations/inventory-item-adjust-quantity.mutation';
 import { INVENTORY_ITEM_DELETE } from './mutations/inventory-item-delete.mutation';
+import { INVENTORY_ITEMS_DELETE_BULK } from './mutations/inventory-items-delete-bulk.mutation';
 import type { InventoryItemsFindByCriteriaResponse } from './responses/inventory-items-find-by-criteria.response';
 import type { InventoryItemFindByIdResponse } from './responses/inventory-item-find-by-id.response';
 import type {
@@ -21,6 +23,7 @@ import type {
   InventoryItemAdjustQuantityResponse,
   InventoryItemDeleteResponse,
 } from './responses/inventory-item-mutation.response';
+import type { InventoryItemsDeleteBulkResponse } from './responses/inventory-items-delete-bulk.response';
 
 export class InventoryGqlRepository implements IInventoryRepository {
   async findByCriteria(criteria?: InventoryListCriteria): Promise<PaginatedResult<InventoryItem>> {
@@ -91,6 +94,20 @@ export class InventoryGqlRepository implements IInventoryRepository {
       mutation: INVENTORY_ITEM_DELETE,
       variables: { id },
     });
+  }
+
+  async deleteBulk(ids: string[]): Promise<BulkDeleteResult> {
+    const res = await apolloClient.mutate<InventoryItemsDeleteBulkResponse>({
+      mutation: INVENTORY_ITEMS_DELETE_BULK,
+      variables: { input: { ids } },
+    });
+    const result = res.data?.inventoryItemsDeleteBulk;
+    return {
+      deletedIds: result?.deletedIds ?? [],
+      notFoundIds: result?.notFoundIds ?? [],
+      deletedCount: result?.deletedCount ?? 0,
+      requestedCount: result?.requestedCount ?? ids.length,
+    };
   }
 }
 

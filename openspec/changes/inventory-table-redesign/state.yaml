@@ -9,18 +9,17 @@ phases:
   spec: done
   design: done
   tasks: done
-  apply: in_progress
+  apply: done
   verify: partial
   archive: pending
 next_recommended:
-  - sdd-apply
+  - sdd-verify
 notes: |
-  Five chained PRs. PR1-PR3 done (row actions + delete confirm, server-side
-  pagination/sorting, server-side filtering + chips). PR4 (item detail drawer)
-  done: InventoryItemDetailDrawer + "View detail" dropdown item, wired to the
-  already-loaded InventoryItem object (deliberately skipped a redundant
-  findById fetch — see tasks.md 4.1 for rationale). pnpm test (251
-  suites/1232 tests), tsc --noEmit, eslint all green. PR5 (bulk selection +
-  bulk delete) pending — blocked on the companion sisques-labs/gardenia-api
-  change `inventory-bulk-delete`, which has already shipped
-  `inventoryItemsDeleteBulk` on the same branch.
+  All five chained PRs done: (1) row actions dropdown + delete confirmation,
+  (2) server-side pagination + sorting, (3) server-side filtering + active
+  filter chips, (4) item detail drawer, (5) bulk selection + bulk delete
+  (wired to gardenia-api's inventoryItemsDeleteBulk, shipped on the companion
+  branch in sisques-labs/gardenia-api). Full pnpm test (254 suites/1250
+  tests), tsc --noEmit, eslint all green throughout. Not done in this
+  environment: manual browser smoke test (no dev server/backend available
+  here) and pnpm test:coverage delta check.

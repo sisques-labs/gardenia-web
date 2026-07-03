@@ -14,6 +14,7 @@ type Props = {
   onEdit: (item: InventoryItem) => void;
   onAdjust: (item: InventoryItem) => void;
   onDelete: (item: InventoryItem) => void;
+  onSelectionChange?: (items: InventoryItem[]) => void;
   sorting?: SortingState;
   onSortingChange?: (sorting: SortingState) => void;
   pagination?: DataTablePagination;
@@ -26,6 +27,7 @@ export function InventoryTable({
   onEdit,
   onAdjust,
   onDelete,
+  onSelectionChange,
   sorting,
   onSortingChange,
   pagination,
@@ -39,7 +41,8 @@ export function InventoryTable({
     <DataTable
       columns={columns}
       data={items}
-      enableRowSelection={false}
+      enableRowSelection
+      onSelectionChange={onSelectionChange}
       sorting={sorting}
       onSortingChange={onSortingChange}
       pagination={pagination}

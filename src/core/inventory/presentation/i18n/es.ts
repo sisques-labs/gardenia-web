@@ -64,6 +64,16 @@ const dict = {
     updatedAt: 'Última actualización',
     noValue: '—',
   },
+  bulk: {
+    selectedSuffix: 'seleccionados',
+    deleteSelected: 'Eliminar seleccionados',
+    confirmTitle: 'Eliminar artículos seleccionados',
+    confirmDescription: 'Esta acción no se puede deshacer. Los artículos seleccionados se eliminarán del inventario de forma permanente.',
+    confirm: 'Eliminar',
+    cancel: 'Cancelar',
+    partialSuccess: '{deleted} de {total} artículos eliminados. El resto ya no existía.',
+    error: 'No se pudieron eliminar los artículos seleccionados. Inténtalo de nuevo.',
+  },
   types: {
     SEEDS: 'Semillas',
     FERTILIZER: 'Fertilizante',
