@@ -129,8 +129,9 @@ const dict = {
     },
     care: {
       lastWatered: 'Last watered',
-      neverWatered: 'No watering logged yet',
+      neverWatered: 'Not watered yet',
     },
+    addedOn: 'In your garden since',
     qr: {
       label: 'Label · QR',
       hint: 'Print and stick on the pot',
@@ -208,7 +209,7 @@ describe('PlantDetailScreen', () => {
 
     render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
 
-    expect(screen.getByTestId('plant-last-watered')).toHaveTextContent('No watering logged yet');
+    expect(screen.getByTestId('plant-last-watered')).toHaveTextContent('Not watered yet');
   });
 
   it('renders only the mark-watered and delete actions (no add-photo/new-note)', () => {

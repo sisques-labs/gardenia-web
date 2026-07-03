@@ -64,8 +64,9 @@ const dict = {
     },
     care: {
       lastWatered: 'Último riego',
-      neverWatered: 'Todavía no hay riegos registrados',
+      neverWatered: 'Sin regar todavía',
     },
+    addedOn: 'En tu jardín desde',
     qr: {
       label: 'Etiqueta · QR',
       hint: 'Imprime y pega en la maceta',

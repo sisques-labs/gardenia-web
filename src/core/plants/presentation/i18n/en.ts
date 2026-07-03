@@ -59,8 +59,9 @@ const dict = {
     },
     care: {
       lastWatered: 'Last watered',
-      neverWatered: 'No watering logged yet',
+      neverWatered: 'Not watered yet',
     },
+    addedOn: 'In your garden since',
     qr: {
       label: 'Label · QR',
       hint: 'Print and stick on the pot',
