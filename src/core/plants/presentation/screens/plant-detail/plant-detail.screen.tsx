@@ -270,12 +270,17 @@ export function PlantDetailScreen({
             data-testid="care-schedule-section"
             className="rounded-2xl border-l-4 border-l-[var(--honey)] transition-shadow duration-200 hover:shadow-md"
           >
-            <CardContent className="pt-6 flex flex-col gap-3">
-              <p className="eyebrow flex items-center gap-1.5">
-                <CalendarDays className="w-3.5 h-3.5" aria-hidden="true" />
-                {dict.detail.calendarTitle}
-              </p>
-              <CareScheduleList plantId={plantId} dict={careScheduleDict} />
+            <CardContent className="pt-6">
+              <CareScheduleList
+                plantId={plantId}
+                dict={careScheduleDict}
+                title={
+                  <>
+                    <CalendarDays className="w-3.5 h-3.5" aria-hidden="true" />
+                    {dict.detail.calendarTitle}
+                  </>
+                }
+              />
             </CardContent>
           </Card>
         </div>
