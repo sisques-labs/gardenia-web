@@ -3,6 +3,7 @@
 import type { PlantingSpot } from "@/core/planting-spots/domain/interfaces/planting-spot.interface";
 import type { PlantingSpotType } from "@/core/planting-spots/domain/types/planting-spot-type.type";
 import { PlantingSpotTypeBadge } from "@/core/planting-spots/presentation/components/planting-spot-type-badge/planting-spot-type-badge";
+import { PlantingSpotStatusBadge } from "@/core/planting-spots/presentation/components/planting-spot-status-badge/planting-spot-status-badge";
 import { CapacityBar } from "@/core/planting-spots/presentation/components/capacity-bar/capacity-bar";
 import { getPlantingSpotPositionLabel } from "@/core/planting-spots/presentation/utils/get-planting-spot-position-label/get-planting-spot-position-label.util";
 import {
@@ -53,7 +54,12 @@ export function PlantingSpotCard({ spot, dict, lang }: Props) {
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between gap-2">
             <CardTitle className="text-base">{spot.name}</CardTitle>
-            <PlantingSpotTypeBadge type={spot.type} dict={dict.types} />
+            <div className="flex items-center gap-1.5">
+              {spot.status === 'FALLOW' && (
+                <PlantingSpotStatusBadge status={spot.status} dict={dict.statuses} />
+              )}
+              <PlantingSpotTypeBadge type={spot.type} dict={dict.types} />
+            </div>
           </div>
 
           {/* Position badge */}

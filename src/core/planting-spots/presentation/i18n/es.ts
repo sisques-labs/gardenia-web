@@ -40,6 +40,9 @@ const dict = {
     tabInfo: 'Info del espacio',
     editSpot: 'Editar espacio',
     addPlant: 'Añadir planta',
+    markFallow: 'Marcar en barbecho',
+    markActive: 'Reactivar',
+    infoStatus: 'Estado',
     noActivePlants: 'No hay plantas asignadas actualmente a este espacio.',
     rotationHistoryEmpty: 'No hay historial de rotación todavía.',
     infoCapacity: 'Capacidad',
@@ -62,6 +65,10 @@ const dict = {
     CONTAINER: 'Contenedor',
     FIELD_SECTION: 'Sección de campo',
     OTHER: 'Otro',
+  },
+  statuses: {
+    ACTIVE: 'Activo',
+    FALLOW: 'En barbecho',
   },
 } as const satisfies PlantingSpotsDictTranslated;
 

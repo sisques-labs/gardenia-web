@@ -8,6 +8,8 @@ const mockRepository: IPlantingSpotsRepository = {
   create: vi.fn(),
   update: vi.fn(),
   delete: vi.fn(),
+  markFallow: vi.fn(),
+  markActive: vi.fn(),
 };
 
 describe('DeletePlantingSpotUseCase', () => {

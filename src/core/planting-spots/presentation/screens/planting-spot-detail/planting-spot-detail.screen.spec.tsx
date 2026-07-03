@@ -19,10 +19,29 @@ vi.mock(
 );
 
 vi.mock(
+  '@/core/planting-spots/presentation/hooks/use-mark-planting-spot-fallow/use-mark-planting-spot-fallow.hook',
+  () => ({ useMarkPlantingSpotFallow: vi.fn() }),
+);
+
+vi.mock(
+  '@/core/planting-spots/presentation/hooks/use-mark-planting-spot-active/use-mark-planting-spot-active.hook',
+  () => ({ useMarkPlantingSpotActive: vi.fn() }),
+);
+
+vi.mock(
   '@/core/planting-spots/presentation/components/planting-spot-type-badge/planting-spot-type-badge',
   () => ({
     PlantingSpotTypeBadge: ({ type }: { type: string }) => (
       <span data-testid="type-badge">{type}</span>
+    ),
+  }),
+);
+
+vi.mock(
+  '@/core/planting-spots/presentation/components/planting-spot-status-badge/planting-spot-status-badge',
+  () => ({
+    PlantingSpotStatusBadge: ({ status }: { status: string }) => (
+      <span data-testid="status-badge">{status}</span>
     ),
   }),
 );
@@ -37,6 +56,8 @@ vi.mock('@/shared/presentation/components/ui/tabs/tabs', () => ({
 }));
 
 import { usePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-planting-spot/use-planting-spot.hook';
+import { useMarkPlantingSpotFallow } from '@/core/planting-spots/presentation/hooks/use-mark-planting-spot-fallow/use-mark-planting-spot-fallow.hook';
+import { useMarkPlantingSpotActive } from '@/core/planting-spots/presentation/hooks/use-mark-planting-spot-active/use-mark-planting-spot-active.hook';
 import { PlantingSpotDetailScreen } from './planting-spot-detail.screen';
 
 const dict = {
@@ -76,6 +97,9 @@ const dict = {
     tabInfo: 'Spot info',
     editSpot: 'Edit spot',
     addPlant: 'Add plant',
+    markFallow: 'Mark fallow',
+    markActive: 'Reactivate',
+    infoStatus: 'Status',
     noActivePlants: 'No plants currently assigned to this spot.',
     rotationHistoryEmpty: 'No rotation history yet.',
     infoCapacity: 'Capacity',
@@ -99,6 +123,10 @@ const dict = {
     FIELD_SECTION: 'Field section',
     OTHER: 'Other',
   },
+  statuses: {
+    ACTIVE: 'Active',
+    FALLOW: 'Fallow',
+  },
 };
 
 const baseSpot: PlantingSpot = {
@@ -115,6 +143,8 @@ const baseSpot: PlantingSpot = {
   soilType: null,
   userId: 'u1',
   spaceId: 's1',
+  status: 'ACTIVE',
+  fallowSince: null,
   resolvedPlants: [],
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
@@ -139,6 +169,14 @@ function mockNoSpot() {
 describe('PlantingSpotDetailScreen', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useMarkPlantingSpotFallow).mockReturnValue({
+      mutate: vi.fn(),
+      isPending: false,
+    } as never);
+    vi.mocked(useMarkPlantingSpotActive).mockReturnValue({
+      mutate: vi.fn(),
+      isPending: false,
+    } as never);
   });
 
   it('renders skeleton when loading', () => {
@@ -167,6 +205,46 @@ describe('PlantingSpotDetailScreen', () => {
     mockSpot();
     render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
     expect(screen.getByText('Edit spot')).toBeInTheDocument();
+  });
+
+  it('renders status badge with current status', () => {
+    mockSpot({ status: 'FALLOW' });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getAllByTestId('status-badge')[0]).toHaveTextContent('FALLOW');
+  });
+
+  it('shows "Mark fallow" action for an active spot', () => {
+    mockSpot({ status: 'ACTIVE' });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('Mark fallow')).toBeInTheDocument();
+  });
+
+  it('shows "Reactivate" action for a fallow spot', () => {
+    mockSpot({ status: 'FALLOW' });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('Reactivate')).toBeInTheDocument();
+  });
+
+  it('calls markFallow.mutate with the spot id when marking an active spot fallow', () => {
+    mockSpot({ status: 'ACTIVE' });
+    const mutate = vi.fn();
+    vi.mocked(useMarkPlantingSpotFallow).mockReturnValue({ mutate, isPending: false } as never);
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    screen.getByText('Mark fallow').click();
+
+    expect(mutate).toHaveBeenCalledWith('spot-1');
+  });
+
+  it('calls markActive.mutate with the spot id when reactivating a fallow spot', () => {
+    mockSpot({ status: 'FALLOW' });
+    const mutate = vi.fn();
+    vi.mocked(useMarkPlantingSpotActive).mockReturnValue({ mutate, isPending: false } as never);
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    screen.getByText('Reactivate').click();
+
+    expect(mutate).toHaveBeenCalledWith('spot-1');
   });
 
   it('renders empty plants message when no plants', () => {

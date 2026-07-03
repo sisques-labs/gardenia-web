@@ -31,6 +31,8 @@ const mockSpot: PlantingSpot = {
   description: 'A nice bed',
   userId: 'u1',
   spaceId: 's1',
+  status: 'ACTIVE',
+  fallowSince: null,
   resolvedPlants: [],
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
@@ -73,6 +75,9 @@ const dict = {
     tabInfo: 'Spot info',
     editSpot: 'Edit spot',
     addPlant: 'Add plant',
+    markFallow: 'Mark fallow',
+    markActive: 'Reactivate',
+    infoStatus: 'Status',
     noActivePlants: 'No plants currently assigned to this spot.',
     rotationHistoryEmpty: 'No rotation history yet.',
     infoCapacity: 'Capacity',
@@ -95,6 +100,10 @@ const dict = {
     CONTAINER: 'Container',
     FIELD_SECTION: 'Field section',
     OTHER: 'Other',
+  },
+  statuses: {
+    ACTIVE: 'Active',
+    FALLOW: 'Fallow',
   },
 };
 

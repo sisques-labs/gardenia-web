@@ -35,6 +35,9 @@ const dict = {
     tabInfo: 'Spot info',
     editSpot: 'Edit spot',
     addPlant: 'Add plant',
+    markFallow: 'Mark fallow',
+    markActive: 'Reactivate',
+    infoStatus: 'Status',
     noActivePlants: 'No plants currently assigned to this spot.',
     rotationHistoryEmpty: 'No rotation history yet.',
     infoCapacity: 'Capacity',
@@ -57,6 +60,10 @@ const dict = {
     CONTAINER: 'Container',
     FIELD_SECTION: 'Field section',
     OTHER: 'Other',
+  },
+  statuses: {
+    ACTIVE: 'Active',
+    FALLOW: 'Fallow',
   },
 } as const;
 

@@ -10,7 +10,10 @@ import {
 } from '@/shared/presentation/components/ui/tabs/tabs';
 import { Button, buttonVariants } from '@/shared/presentation/components/ui/button/button';
 import { usePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-planting-spot/use-planting-spot.hook';
+import { useMarkPlantingSpotFallow } from '@/core/planting-spots/presentation/hooks/use-mark-planting-spot-fallow/use-mark-planting-spot-fallow.hook';
+import { useMarkPlantingSpotActive } from '@/core/planting-spots/presentation/hooks/use-mark-planting-spot-active/use-mark-planting-spot-active.hook';
 import { PlantingSpotTypeBadge } from '@/core/planting-spots/presentation/components/planting-spot-type-badge/planting-spot-type-badge';
+import { PlantingSpotStatusBadge } from '@/core/planting-spots/presentation/components/planting-spot-status-badge/planting-spot-status-badge';
 import { PlantingSpotDetailSkeleton } from '@/core/planting-spots/presentation/components/planting-spot-detail-skeleton/planting-spot-detail-skeleton';
 import { CapacityBar } from '@/core/planting-spots/presentation/components/capacity-bar/capacity-bar';
 import { Row } from '@/core/planting-spots/presentation/components/row/row';
@@ -25,6 +28,8 @@ type Props = {
 
 export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
   const { spot, isLoading } = usePlantingSpot(spotId);
+  const markFallow = useMarkPlantingSpotFallow();
+  const markActive = useMarkPlantingSpotActive();
   const d = dict.detail;
 
   if (isLoading) return <PlantingSpotDetailSkeleton />;
@@ -33,6 +38,8 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
   const plantCount = spot.resolvedPlants?.length ?? 0;
   const hasCapacity = spot.capacity != null;
   const positionLabel = getPlantingSpotPositionLabel(spot);
+  const isFallow = spot.status === 'FALLOW';
+  const isTogglingStatus = markFallow.isPending || markActive.isPending;
 
   return (
     <div>
@@ -43,12 +50,23 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
           { label: spot.name },
         ]}
         actions={
-          <Link
-            href={`/${lang}/planting-spots/${spotId}/edit`}
-            className={buttonVariants({ variant: 'outline', size: 'sm' })}
-          >
-            {d.editSpot}
-          </Link>
+          <div className="flex items-center gap-2">
+            <PlantingSpotStatusBadge status={spot.status} dict={dict.statuses} />
+            <Button
+              variant="outline"
+              size="sm"
+              disabled={isTogglingStatus}
+              onClick={() => (isFallow ? markActive.mutate(spotId) : markFallow.mutate(spotId))}
+            >
+              {isFallow ? d.markActive : d.markFallow}
+            </Button>
+            <Link
+              href={`/${lang}/planting-spots/${spotId}/edit`}
+              className={buttonVariants({ variant: 'outline', size: 'sm' })}
+            >
+              {d.editSpot}
+            </Link>
+          </div>
         }
       />
 
@@ -145,6 +163,10 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
           {/* --- Info tab --- */}
           <TabsContent value="info" className="pt-4">
             <div className="flex flex-col gap-3 max-w-sm">
+              <Row label={d.infoStatus}>
+                <PlantingSpotStatusBadge status={spot.status} dict={dict.statuses} />
+              </Row>
+
               <Row label={d.infoType}>
                 <PlantingSpotTypeBadge type={spot.type} dict={dict.types} />
               </Row>

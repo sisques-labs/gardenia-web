@@ -9,11 +9,15 @@ import { PLANTING_SPOT_FIND_BY_ID } from './queries/planting-spot-find-by-id.que
 import { PLANTING_SPOT_CREATE } from './mutations/planting-spot-create.mutation';
 import { PLANTING_SPOT_UPDATE } from './mutations/planting-spot-update.mutation';
 import { PLANTING_SPOT_DELETE } from './mutations/planting-spot-delete.mutation';
+import { PLANTING_SPOT_MARK_FALLOW } from './mutations/planting-spot-mark-fallow.mutation';
+import { PLANTING_SPOT_MARK_ACTIVE } from './mutations/planting-spot-mark-active.mutation';
 import type { PlantingSpotsFindByCriteriaResponse } from './responses/planting-spots-find-by-criteria.response';
 import type { PlantingSpotFindByIdResponse } from './responses/planting-spot-find-by-id.response';
 import type { PlantingSpotCreateResponse } from './responses/planting-spot-create.response';
 import type { PlantingSpotUpdateResponse } from './responses/planting-spot-update.response';
 import type { PlantingSpotDeleteResponse } from './responses/planting-spot-delete.response';
+import type { PlantingSpotMarkFallowResponse } from './responses/planting-spot-mark-fallow.response';
+import type { PlantingSpotMarkActiveResponse } from './responses/planting-spot-mark-active.response';
 
 export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
   async list(page: number, perPage: number): Promise<PaginatedResult<PlantingSpot>> {
@@ -86,6 +90,24 @@ export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
       mutation: PLANTING_SPOT_DELETE,
       variables: { input: { id } },
     });
+  }
+
+  async markFallow(id: string): Promise<PlantingSpot> {
+    const res = await apolloClient.mutate<PlantingSpotMarkFallowResponse>({
+      mutation: PLANTING_SPOT_MARK_FALLOW,
+      variables: { input: { id } },
+    });
+    if (!res.data?.plantingSpotMarkFallow?.success) throw new Error('plantingSpotMarkFallow mutation failed');
+    return this.findById(res.data.plantingSpotMarkFallow.id);
+  }
+
+  async markActive(id: string): Promise<PlantingSpot> {
+    const res = await apolloClient.mutate<PlantingSpotMarkActiveResponse>({
+      mutation: PLANTING_SPOT_MARK_ACTIVE,
+      variables: { input: { id } },
+    });
+    if (!res.data?.plantingSpotMarkActive?.success) throw new Error('plantingSpotMarkActive mutation failed');
+    return this.findById(res.data.plantingSpotMarkActive.id);
   }
 }
 

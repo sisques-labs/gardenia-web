@@ -2,14 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createElement } from 'react';
-import type { UpdatePlantingSpotInput } from '@/core/planting-spots/application/interfaces/update-planting-spot-input.interface';
 import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
 
 const mockExecute = vi.hoisted(() => vi.fn());
 const mockInvalidateQueries = vi.hoisted(() => vi.fn());
 
-vi.mock('@/core/planting-spots/application/use-cases/update-planting-spot/update-planting-spot.use-case', () => ({
-  UpdatePlantingSpotUseCase: class {
+vi.mock('@/core/planting-spots/application/use-cases/mark-planting-spot-fallow/mark-planting-spot-fallow.use-case', () => ({
+  MarkPlantingSpotFallowUseCase: class {
     execute = mockExecute;
   },
 }));
@@ -26,26 +25,20 @@ vi.mock('@tanstack/react-query', async (importOriginal) => {
   };
 });
 
-import { useUpdatePlantingSpot } from './use-update-planting-spot.hook';
+import { useMarkPlantingSpotFallow } from './use-mark-planting-spot-fallow.hook';
 
 const mockSpot: PlantingSpot = {
   id: 'spot-1',
-  name: 'Updated Bed',
-  type: 'POT',
+  name: 'North Bed',
+  type: 'RAISED_BED',
   description: null,
+  status: 'FALLOW',
+  fallowSince: '2026-07-03T00:00:00.000Z',
   userId: 'u1',
   spaceId: 's1',
-  status: 'ACTIVE',
-  fallowSince: null,
   resolvedPlants: [],
   createdAt: '2024-01-01',
   updatedAt: '2024-01-02',
-};
-
-const input: UpdatePlantingSpotInput = {
-  id: 'spot-1',
-  name: 'Updated Bed',
-  type: 'POT',
 };
 
 function makeWrapper() {
@@ -56,30 +49,30 @@ function makeWrapper() {
   return Wrapper;
 }
 
-describe('useUpdatePlantingSpot', () => {
+describe('useMarkPlantingSpotFallow', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('calls UpdatePlantingSpotUseCase.execute(input) on mutate', async () => {
+  it('calls MarkPlantingSpotFallowUseCase.execute(id) on mutate', async () => {
     mockExecute.mockResolvedValue(mockSpot);
 
-    const { result } = renderHook(() => useUpdatePlantingSpot(), { wrapper: makeWrapper() });
+    const { result } = renderHook(() => useMarkPlantingSpotFallow(), { wrapper: makeWrapper() });
 
     await act(async () => {
-      result.current.mutate(input);
+      result.current.mutate('spot-1');
     });
 
-    await waitFor(() => expect(mockExecute).toHaveBeenCalledWith(input));
+    await waitFor(() => expect(mockExecute).toHaveBeenCalledWith('spot-1'));
   });
 
   it('invalidates list and detail queries on success', async () => {
     mockExecute.mockResolvedValue(mockSpot);
 
-    const { result } = renderHook(() => useUpdatePlantingSpot(), { wrapper: makeWrapper() });
+    const { result } = renderHook(() => useMarkPlantingSpotFallow(), { wrapper: makeWrapper() });
 
     await act(async () => {
-      result.current.mutate(input);
+      result.current.mutate('spot-1');
     });
 
     await waitFor(() => {
