@@ -58,27 +58,51 @@ describe('InventoryGqlRepository', () => {
   });
 
   describe('findByCriteria()', () => {
-    it('queries with pagination and returns items', async () => {
+    it('queries with no criteria and returns a paginated result', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { inventoryItemsFindByCriteria: { items: [mockItem] } },
+        data: {
+          inventoryItemsFindByCriteria: { items: [mockItem], total: 1, page: 1, perPage: 20, totalPages: 1 },
+        },
       } as never);
 
       const result = await repository.findByCriteria();
 
       expect(apolloClient.query).toHaveBeenCalledWith({
         query: INVENTORY_ITEMS_FIND_BY_CRITERIA,
-        variables: { input: { pagination: { page: 1, perPage: 100 } } },
+        variables: { input: undefined },
         fetchPolicy: 'network-only',
       });
-      expect(result).toEqual([mockItem]);
+      expect(result).toEqual({ items: [mockItem], total: 1, page: 1, perPage: 20, totalPages: 1 });
     });
 
-    it('returns empty array when there are no items', async () => {
+    it('forwards filters, sorts and pagination as the input variable', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { inventoryItemsFindByCriteria: { items: [] } },
+        data: {
+          inventoryItemsFindByCriteria: { items: [], total: 0, page: 2, perPage: 5, totalPages: 0 },
+        },
       } as never);
 
-      expect(await repository.findByCriteria()).toEqual([]);
+      const criteria = {
+        filters: [{ field: 'NAME' as never, operator: 'LIKE' as never, value: 'seeds' }],
+        sorts: [{ field: 'QUANTITY' as never, direction: 'ASC' as never }],
+        pagination: { page: 2, perPage: 5 },
+      };
+      await repository.findByCriteria(criteria);
+
+      expect(apolloClient.query).toHaveBeenCalledWith({
+        query: INVENTORY_ITEMS_FIND_BY_CRITERIA,
+        variables: { input: criteria },
+        fetchPolicy: 'network-only',
+      });
+    });
+
+    it('returns empty items when there are no items', async () => {
+      vi.mocked(apolloClient.query).mockResolvedValue({
+        data: { inventoryItemsFindByCriteria: { items: [], total: 0, page: 1, perPage: 20, totalPages: 0 } },
+      } as never);
+
+      const result = await repository.findByCriteria();
+      expect(result.items).toEqual([]);
     });
 
     it('propagates query errors', async () => {

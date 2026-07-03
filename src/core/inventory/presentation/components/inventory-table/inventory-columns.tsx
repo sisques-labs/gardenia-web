@@ -4,6 +4,7 @@ import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import { Badge } from '@/shared/presentation/components/ui/badge/badge';
 import { Button } from '@/shared/presentation/components/ui/button/button';
+import { SortableHeader } from '@/shared/presentation/components/ui/table/table';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,7 +31,7 @@ export function getInventoryColumns({
   return [
     {
       accessorKey: 'name',
-      header: dict.form.name,
+      header: ({ column }) => <SortableHeader column={column}>{dict.form.name}</SortableHeader>,
       cell: ({ row }) => {
         const item = row.original;
         return (
@@ -44,11 +45,12 @@ export function getInventoryColumns({
     {
       accessorKey: 'itemType',
       header: dict.form.itemType,
+      enableSorting: false,
       cell: ({ row }) => dict.types[row.original.itemType],
     },
     {
       accessorKey: 'quantity',
-      header: dict.form.quantity,
+      header: ({ column }) => <SortableHeader column={column}>{dict.form.quantity}</SortableHeader>,
       cell: ({ row }) => `${row.original.quantity} ${dict.units[row.original.unit]}`,
     },
     {

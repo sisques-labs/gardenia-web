@@ -33,18 +33,19 @@
 
 ## PR2: Server-Side Pagination & Sorting
 
-- [ ] 2.1 Create `domain/enums/inventory-item-queryable-field.enum.ts` — `InventoryItemQueryableField` (mirrors API's whitelist: `itemType`, `name`, `quantity`, `low_stock`, `expiresAt`)
-- [ ] 2.2 Create `application/interfaces/inventory-filter.interface.ts` — `type InventoryFilter = Filter<InventoryItemQueryableField>`
-- [ ] 2.3 Create `application/interfaces/inventory-sort.interface.ts` — `type InventorySort = Sort<InventoryItemQueryableField>`
-- [ ] 2.4 RED+GREEN: modify `application/use-cases/get-inventory-items/get-inventory-items.use-case.ts` (+spec) — accept `{ filters?, sorts?, pagination? }`, delegate to `repository.findByCriteria(criteria)`
-- [ ] 2.5 Modify `application/ports/inventory.repository.port.ts` — `findByCriteria` signature accepts criteria, returns `{ items, total, page, perPage, totalPages }`
-- [ ] 2.6 RED+GREEN: modify `infrastructure/repositories/graphql/inventory.gql.repository.ts` (+spec) — forward `filters`/`sorts`/`pagination` as the GraphQL input variable; remove hardcoded `{ page: 1, perPage: 100 }` and the `fetchPolicy: 'network-only'` full-refetch workaround if pagination makes it unnecessary
-- [ ] 2.7 Create `presentation/hooks/use-paginated-inventory-items/use-paginated-inventory-items.hook.ts` (+spec) — mirrors `use-paginated-plants.hook.ts`; `queryKey: ['inventory', spaceId, 'paginated', page, perPage, filters, sorts]`
-- [ ] 2.8 Modify `presentation/components/inventory-table/inventory-columns.tsx` — wrap Name/Quantity/Expires-at headers in `SortableHeader`
-- [ ] 2.9 Modify `presentation/components/inventory-table/inventory-table.tsx` — accept + forward `sorting`/`onSortingChange`/`pagination` props to `DataTable`
-- [ ] 2.10 Modify `presentation/screens/inventory-list/inventory-list.screen.tsx` — replace `useInventoryItems` with `usePaginatedInventoryItems` + `useUrlPage`; port the ref-based page-reset-on-filter-change fix from `plants-list.screen.tsx:39-56`
-- [ ] 2.11 RED+GREEN: update `inventory-list.screen.spec.tsx` — pagination footer renders when `totalPages > 1`; page resets to 1 on filter change; sort header click re-fetches with sort
-- [ ] 2.12 `pnpm test` + `pnpm lint` + `pnpm tsc --noEmit` green
+- [x] 2.1 Create `domain/enums/inventory-item-queryable-field.enum.ts` — `InventoryItemQueryableField`, full whitelist mirroring the API enum (SCREAMING_CASE wire values, since the API registers it via `registerEnumType` with no `valuesMap`)
+- [x] 2.2 Create `application/interfaces/inventory-filter.interface.ts` — `type InventoryFilter = Filter<InventoryItemQueryableField>`
+- [x] 2.3 Create `application/interfaces/inventory-sort.interface.ts` — `type InventorySort = Sort<InventoryItemQueryableField>`
+- [x] 2.4 RED+GREEN: modify `application/use-cases/get-inventory-items/get-inventory-items.use-case.ts` (+spec) — accept `{ filters?, sorts?, pagination? }`, delegate to `repository.findByCriteria(criteria)`, return `PaginatedResult<InventoryItem>`
+- [x] 2.5 Modify `application/ports/inventory.repository.port.ts` + `application/interfaces/inventory-list-criteria.interface.ts` (new) — `findByCriteria(criteria?: InventoryListCriteria): Promise<PaginatedResult<InventoryItem>>`
+- [x] 2.6 RED+GREEN: modify `infrastructure/repositories/graphql/inventory.gql.repository.ts` (+spec) + the GQL query (add `total`/`page`/`perPage`/`totalPages` fields) + response type — forward `filters`/`sorts`/`pagination` as the GraphQL input variable; removed the hardcoded `{ page: 1, perPage: 100 }` default entirely (kept `fetchPolicy: 'network-only'`, matching `plants.gql.repository.ts`)
+- [x] 2.7 Create `presentation/hooks/use-paginated-inventory-items/use-paginated-inventory-items.hook.ts` (+spec) — mirrors `use-paginated-plants.hook.ts`; `queryKey: ['inventory', 'paginated', page, perPage, filters, sorts]` (no `spaceId` segment — this module doesn't scope query keys by space today, unlike `plants`; out of scope to change here). Deleted the now-superseded `use-inventory-items` hook + spec (only consumer was this screen).
+- [x] 2.8 Modify `presentation/components/inventory-table/inventory-columns.tsx` — wrap Name/Quantity headers in `SortableHeader`; `itemType` explicitly `enableSorting: false`. Deviation: no Expires-at column exists in the table (only surfaced via the Status badge) — sorting scoped to the two columns that actually render a comparable scalar value.
+- [x] 2.9 Modify `presentation/components/inventory-table/inventory-table.tsx` — accept + forward `sorting`/`onSortingChange`/`pagination` props to `DataTable`
+- [x] 2.10 Modify `presentation/screens/inventory-list/inventory-list.screen.tsx` — replace `useInventoryItems` with `usePaginatedInventoryItems` + `useUrlPage`; map `SortingState` → `InventorySort[]` (name/quantity only). Deferred the ref-based page-reset-on-filter-change fix to PR3: filters don't affect the query yet in PR2 (still client-side over the current page), so there's nothing to reset against.
+- [x] 2.10b Extracted `presentation/components/inventory-list-skeleton/inventory-list-skeleton.tsx` (was inline in the screen) and wrapped the route in `<Suspense>` in `app/[lang]/(protected)/inventory/page.tsx` — required because `useUrlPage` calls `useSearchParams()`, which needs a Suspense boundary in the App Router (mirrors `plants`' `page.tsx`).
+- [x] 2.11 RED+GREEN: update `inventory-list.screen.spec.tsx` — mocks `usePaginatedInventoryItems` + `next/navigation` (mirrors `plants-list.screen.spec.tsx`); pagination footer renders only when `totalPages > 1`
+- [x] 2.12 `pnpm test` (250 suites/1218 tests) + `pnpm lint` + `pnpm tsc --noEmit` green
 
 ## PR3: Server-Side Filtering & Quick Filter Chips
 

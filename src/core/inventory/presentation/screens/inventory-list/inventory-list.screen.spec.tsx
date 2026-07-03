@@ -4,9 +4,10 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import enInventory from '@/core/inventory/presentation/i18n/en';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
+import type { PaginatedResult } from '@/shared/domain/interfaces/paginated-result.interface';
 
-vi.mock('@/core/inventory/presentation/hooks/use-inventory-items/use-inventory-items.hook', () => ({
-  useInventoryItems: vi.fn(),
+vi.mock('@/core/inventory/presentation/hooks/use-paginated-inventory-items/use-paginated-inventory-items.hook', () => ({
+  usePaginatedInventoryItems: vi.fn(),
 }));
 
 const mockRequestDelete = vi.fn();
@@ -33,7 +34,12 @@ vi.mock('@/core/inventory/presentation/components/adjust-quantity-modal/adjust-q
   AdjustQuantityModal: () => <div data-testid="adjust-modal" />,
 }));
 
-import { useInventoryItems } from '@/core/inventory/presentation/hooks/use-inventory-items/use-inventory-items.hook';
+vi.mock('next/navigation', () => ({
+  useRouter: vi.fn(() => ({ push: vi.fn() })),
+  useSearchParams: vi.fn(() => new URLSearchParams()),
+}));
+
+import { usePaginatedInventoryItems } from '@/core/inventory/presentation/hooks/use-paginated-inventory-items/use-paginated-inventory-items.hook';
 import { useDeleteInventoryItemConfirm } from '@/core/inventory/presentation/hooks/use-delete-inventory-item-confirm/use-delete-inventory-item-confirm.hook';
 import { InventoryListScreen } from './inventory-list.screen';
 
@@ -64,6 +70,17 @@ const mockItems: InventoryItem[] = [
   },
 ];
 
+function paginated(items: InventoryItem[], overrides: Partial<PaginatedResult<InventoryItem>> = {}) {
+  return { items, total: items.length, page: 1, perPage: 20, totalPages: 1, ...overrides };
+}
+
+function mockPaginatedItems(items: InventoryItem[], isLoading = false, overrides: Partial<PaginatedResult<InventoryItem>> = {}) {
+  vi.mocked(usePaginatedInventoryItems).mockReturnValue({
+    data: isLoading ? undefined : paginated(items, overrides),
+    isLoading,
+  } as unknown as ReturnType<typeof usePaginatedInventoryItems>);
+}
+
 describe('InventoryListScreen', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -77,33 +94,45 @@ describe('InventoryListScreen', () => {
   });
 
   it('renders a loading skeleton when loading', () => {
-    vi.mocked(useInventoryItems).mockReturnValue({ items: [], isLoading: true, error: null });
+    mockPaginatedItems([], true);
     const { container } = render(<InventoryListScreen dict={dict} lang="en" />);
     expect(container.querySelector('.animate-pulse')).toBeInTheDocument();
   });
 
   it('renders the empty state when there are no items', () => {
-    vi.mocked(useInventoryItems).mockReturnValue({ items: [], isLoading: false, error: null });
+    mockPaginatedItems([]);
     render(<InventoryListScreen dict={dict} lang="en" />);
     expect(screen.getByText('No supplies yet')).toBeInTheDocument();
   });
 
   it('renders the items in a table when populated', () => {
-    vi.mocked(useInventoryItems).mockReturnValue({ items: mockItems, isLoading: false, error: null });
+    mockPaginatedItems(mockItems);
     render(<InventoryListScreen dict={dict} lang="en" />);
     expect(screen.getByText('Lettuce seeds')).toBeInTheDocument();
   });
 
+  it('does not render a pagination footer when there is only one page', () => {
+    mockPaginatedItems(mockItems, false, { totalPages: 1 });
+    render(<InventoryListScreen dict={dict} lang="en" />);
+    expect(screen.queryByRole('navigation')).not.toBeInTheDocument();
+  });
+
+  it('renders a pagination footer when there is more than one page', () => {
+    mockPaginatedItems(mockItems, false, { total: 40, totalPages: 2, perPage: 20 });
+    render(<InventoryListScreen dict={dict} lang="en" />);
+    expect(screen.getByRole('navigation')).toBeInTheDocument();
+  });
+
   it('opens the create modal when the new item button is clicked', async () => {
     const user = userEvent.setup();
-    vi.mocked(useInventoryItems).mockReturnValue({ items: [], isLoading: false, error: null });
+    mockPaginatedItems([]);
     render(<InventoryListScreen dict={dict} lang="en" />);
     await user.click(screen.getByRole('button', { name: 'New item' }));
     expect(screen.getByTestId('create-modal')).toBeInTheDocument();
   });
 
   it('requests delete confirmation (does not delete directly) when the row delete action is clicked', async () => {
-    vi.mocked(useInventoryItems).mockReturnValue({ items: mockItems, isLoading: false, error: null });
+    mockPaginatedItems(mockItems);
     render(<InventoryListScreen dict={dict} lang="en" />);
     const user = await openRowActionsMenu();
     await user.click(screen.getByRole('menuitem', { name: /delete/i }));
@@ -113,7 +142,7 @@ describe('InventoryListScreen', () => {
   });
 
   it('shows the confirm dialog when an item is pending deletion', () => {
-    vi.mocked(useInventoryItems).mockReturnValue({ items: mockItems, isLoading: false, error: null });
+    mockPaginatedItems(mockItems);
     vi.mocked(useDeleteInventoryItemConfirm).mockReturnValue({
       itemToDelete: mockItems[0],
       requestDelete: mockRequestDelete,
@@ -128,7 +157,7 @@ describe('InventoryListScreen', () => {
 
   it('calls confirmDelete when the confirm dialog is confirmed', async () => {
     const user = userEvent.setup();
-    vi.mocked(useInventoryItems).mockReturnValue({ items: mockItems, isLoading: false, error: null });
+    mockPaginatedItems(mockItems);
     vi.mocked(useDeleteInventoryItemConfirm).mockReturnValue({
       itemToDelete: mockItems[0],
       requestDelete: mockRequestDelete,
@@ -144,7 +173,7 @@ describe('InventoryListScreen', () => {
   });
 
   it('shows an error alert when the delete mutation failed', () => {
-    vi.mocked(useInventoryItems).mockReturnValue({ items: mockItems, isLoading: false, error: null });
+    mockPaginatedItems(mockItems);
     vi.mocked(useDeleteInventoryItemConfirm).mockReturnValue({
       itemToDelete: null,
       requestDelete: mockRequestDelete,
@@ -158,7 +187,7 @@ describe('InventoryListScreen', () => {
   });
 
   it('opens the edit modal when the row edit action is clicked', async () => {
-    vi.mocked(useInventoryItems).mockReturnValue({ items: mockItems, isLoading: false, error: null });
+    mockPaginatedItems(mockItems);
     render(<InventoryListScreen dict={dict} lang="en" />);
     const user = await openRowActionsMenu();
     await user.click(screen.getByRole('menuitem', { name: /edit/i }));
@@ -166,7 +195,7 @@ describe('InventoryListScreen', () => {
   });
 
   it('opens the adjust modal when the row adjust action is clicked', async () => {
-    vi.mocked(useInventoryItems).mockReturnValue({ items: mockItems, isLoading: false, error: null });
+    mockPaginatedItems(mockItems);
     render(<InventoryListScreen dict={dict} lang="en" />);
     const user = await openRowActionsMenu();
     await user.click(screen.getByRole('menuitem', { name: /adjust/i }));

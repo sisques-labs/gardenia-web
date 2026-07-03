@@ -1,19 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import type { SortingState } from '@tanstack/react-table';
 import { InventoryTable } from '@/core/inventory/presentation/components/inventory-table/inventory-table';
 import { InventoryItemModal } from '@/core/inventory/presentation/components/inventory-item-modal/inventory-item-modal';
 import { AdjustQuantityModal } from '@/core/inventory/presentation/components/adjust-quantity-modal/adjust-quantity-modal';
 import { InventoryFilters } from '@/core/inventory/presentation/components/inventory-filters/inventory-filters';
-import { useInventoryItems } from '@/core/inventory/presentation/hooks/use-inventory-items/use-inventory-items.hook';
+import { InventoryListSkeleton } from '@/core/inventory/presentation/components/inventory-list-skeleton/inventory-list-skeleton';
+import { usePaginatedInventoryItems } from '@/core/inventory/presentation/hooks/use-paginated-inventory-items/use-paginated-inventory-items.hook';
 import { useDeleteInventoryItemConfirm } from '@/core/inventory/presentation/hooks/use-delete-inventory-item-confirm/use-delete-inventory-item-confirm.hook';
 import { useInventoryFilters } from '@/core/inventory/presentation/hooks/use-inventory-filters/use-inventory-filters.hook';
+import { InventoryItemQueryableField } from '@/core/inventory/domain/enums/inventory-item-queryable-field.enum';
+import type { InventorySort } from '@/core/inventory/application/interfaces/inventory-sort.interface';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
+import { SortDirection } from '@/shared/domain/enums/sort-direction.enum';
+import { useUrlPage } from '@/shared/presentation/hooks/use-url-page/use-url-page.hook';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { Alert } from '@/shared/presentation/components/ui/alert/alert';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import { ConfirmDialog } from '@/shared/presentation/components/ui/confirm-dialog/confirm-dialog';
-import { RowSkeleton } from '@/shared/presentation/components/ui/row-skeleton/row-skeleton';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {
@@ -21,8 +26,22 @@ type Props = {
   lang: string;
 };
 
+function toInventorySorts(sorting: SortingState): InventorySort[] {
+  return sorting.map((s) => ({
+    field: s.id === 'quantity' ? InventoryItemQueryableField.QUANTITY : InventoryItemQueryableField.NAME,
+    direction: s.desc ? SortDirection.DESC : SortDirection.ASC,
+  }));
+}
+
 export function InventoryListScreen({ dict, lang: _lang }: Props) {
-  const { items, isLoading } = useInventoryItems();
+  const { page, onPageChange } = useUrlPage();
+  const [sorting, setSorting] = useState<SortingState>([]);
+  const sorts = useMemo(() => toInventorySorts(sorting), [sorting]);
+
+  const { data, isLoading } = usePaginatedInventoryItems({ page, sorts });
+  const items = data?.items ?? [];
+  const totalPages = data?.totalPages ?? 1;
+
   const { itemToDelete, requestDelete, confirmDelete, cancelDelete, isError } =
     useDeleteInventoryItemConfirm();
   const {
@@ -66,11 +85,7 @@ export function InventoryListScreen({ dict, lang: _lang }: Props) {
         {isError && <Alert variant="error" message={dict.delete.error} />}
 
         {isLoading ? (
-          <div className="flex flex-col gap-4">
-            {Array.from({ length: 4 }).map((_, i) => (
-              <RowSkeleton key={i} />
-            ))}
-          </div>
+          <InventoryListSkeleton />
         ) : filteredItems.length === 0 ? (
           <p className="text-muted-foreground text-sm">{dict.list.empty}</p>
         ) : (
@@ -80,6 +95,18 @@ export function InventoryListScreen({ dict, lang: _lang }: Props) {
             onEdit={(i) => setEditingItem(i)}
             onAdjust={(i) => setAdjustingItem(i)}
             onDelete={requestDelete}
+            sorting={sorting}
+            onSortingChange={setSorting}
+            pagination={
+              totalPages > 1
+                ? {
+                    page: data?.page ?? page,
+                    pageSize: data?.perPage ?? 20,
+                    total: data?.total ?? 0,
+                    onPageChange,
+                  }
+                : undefined
+            }
           />
         )}
       </div>
