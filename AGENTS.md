@@ -48,6 +48,8 @@ Never mirror server data into Zustand — TanStack Query is the single source of
 
 Any text search input whose value drives a network query (TanStack Query/GraphQL `findByCriteria`, etc.) MUST debounce the derived value before it reaches the query — never fire a request per keystroke. Use the shared `useDebouncedValue(value, delayMs = 300)` hook (`src/shared/presentation/hooks/use-debounced-value/`) inside the module's `use{Context}Filters` hook: keep the raw input state updating immediately (typing stays responsive) and derive the filter from the debounced value. Override `delayMs` only when 300 is demonstrably wrong. Purely client-side (in-memory) filtering with no network cost is exempt.
 
+A repository's `create`/`update` mutation MUST NOT re-fetch the entity via `getById`/`findById` just to satisfy its return type when the mutation itself only returns a lightweight ack (`{ id, success, message }`) — that's a wasted network round trip whenever the caller only needs the id (e.g. to invalidate a query). Check every current `onSuccess` callback before assuming a caller needs more. Return `CreatedEntity` (`{ id: string }`, `shared/domain/interfaces/created-entity.interface.ts`) instead, built directly from the mutation's response.
+
 ## Naming conventions
 
 - Use cases: `{name}.use-case.ts`, class `{Name}UseCase`, in `application/use-cases/{name}/`

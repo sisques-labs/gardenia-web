@@ -115,19 +115,17 @@ describe('InventoryGqlRepository', () => {
   });
 
   describe('create()', () => {
-    it('mutates then re-fetches by id', async () => {
+    it('mutates and returns just the created id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { inventoryItemCreate: { id: 'item-1', success: true, message: 'ok' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { inventoryItemFindById: mockItem },
       } as never);
 
       const input = { itemType: 'SEEDS' as const, name: 'Lettuce seeds', quantity: 3, unit: 'PACKETS' as const };
       const result = await repository.create(input);
 
       expect(apolloClient.mutate).toHaveBeenCalledWith({ mutation: INVENTORY_ITEM_CREATE, variables: { input } });
-      expect(result).toEqual(mockItem);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'item-1' });
     });
 
     it('throws when success is false', async () => {
@@ -142,29 +140,24 @@ describe('InventoryGqlRepository', () => {
   });
 
   describe('update()', () => {
-    it('mutates then re-fetches by id', async () => {
+    it('mutates and returns just the updated id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { inventoryItemUpdate: { id: 'item-1', success: true, message: 'ok' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { inventoryItemFindById: mockItem },
       } as never);
 
       const input = { id: 'item-1', name: 'Renamed' };
       const result = await repository.update(input);
 
       expect(apolloClient.mutate).toHaveBeenCalledWith({ mutation: INVENTORY_ITEM_UPDATE, variables: { input } });
-      expect(result).toEqual(mockItem);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'item-1' });
     });
   });
 
   describe('adjustQuantity()', () => {
-    it('mutates then re-fetches by id', async () => {
+    it('mutates and returns just the adjusted id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { inventoryItemAdjustQuantity: { id: 'item-1', success: true, message: 'ok' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { inventoryItemFindById: mockItem },
       } as never);
 
       const input = { id: 'item-1', delta: -2, reason: 'sowed' };
@@ -174,7 +167,8 @@ describe('InventoryGqlRepository', () => {
         mutation: INVENTORY_ITEM_ADJUST_QUANTITY,
         variables: { input },
       });
-      expect(result).toEqual(mockItem);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'item-1' });
     });
   });
 

@@ -143,12 +143,9 @@ describe('PlantsGqlRepository', () => {
   });
 
   describe('create()', () => {
-    it('calls apolloClient.mutate with PLANT_CREATE and then getById, returns Plant', async () => {
+    it('calls apolloClient.mutate with PLANT_CREATE and returns just the created id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { plantCreate: { id: 'plant-1', success: true, message: 'Plant created successfully' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { plantFindById: mockPlant },
       } as never);
 
       const result = await repository.create({ name: 'Monstera' });
@@ -158,11 +155,8 @@ describe('PlantsGqlRepository', () => {
         mutation: PLANT_CREATE,
         variables: { input: { name: 'Monstera' } },
       });
-      expect(apolloClient.query).toHaveBeenCalledWith({
-        query: PLANT_FIND_BY_ID,
-        variables: { input: { id: 'plant-1' } },
-      });
-      expect(result).toEqual(mockPlant);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'plant-1' });
     });
 
     it('throws when success is false', async () => {
