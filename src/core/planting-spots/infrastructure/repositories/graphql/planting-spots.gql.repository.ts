@@ -3,17 +3,20 @@ import type { IPlantingSpotsRepository } from '@/core/planting-spots/application
 import type { CreatePlantingSpotInput } from '@/core/planting-spots/application/interfaces/create-planting-spot-input.interface';
 import type { UpdatePlantingSpotInput } from '@/core/planting-spots/application/interfaces/update-planting-spot-input.interface';
 import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
+import type { WaterPlantingSpotResult } from '@/core/planting-spots/domain/interfaces/water-planting-spot-result.interface';
 import type { PaginatedResult } from '@/shared/domain/interfaces/paginated-result.interface';
 import { PLANTING_SPOTS_FIND_BY_CRITERIA } from './queries/planting-spots-find-by-criteria.query';
 import { PLANTING_SPOT_FIND_BY_ID } from './queries/planting-spot-find-by-id.query';
 import { PLANTING_SPOT_CREATE } from './mutations/planting-spot-create.mutation';
 import { PLANTING_SPOT_UPDATE } from './mutations/planting-spot-update.mutation';
 import { PLANTING_SPOT_DELETE } from './mutations/planting-spot-delete.mutation';
+import { PLANTING_SPOT_WATER } from './mutations/planting-spot-water.mutation';
 import type { PlantingSpotsFindByCriteriaResponse } from './responses/planting-spots-find-by-criteria.response';
 import type { PlantingSpotFindByIdResponse } from './responses/planting-spot-find-by-id.response';
 import type { PlantingSpotCreateResponse } from './responses/planting-spot-create.response';
 import type { PlantingSpotUpdateResponse } from './responses/planting-spot-update.response';
 import type { PlantingSpotDeleteResponse } from './responses/planting-spot-delete.response';
+import type { PlantingSpotWaterResponse } from './responses/planting-spot-water.response';
 
 export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
   async list(page: number, perPage: number): Promise<PaginatedResult<PlantingSpot>> {
@@ -86,6 +89,15 @@ export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
       mutation: PLANTING_SPOT_DELETE,
       variables: { input: { id } },
     });
+  }
+
+  async waterAll(id: string, performedAt?: string): Promise<WaterPlantingSpotResult> {
+    const res = await apolloClient.mutate<PlantingSpotWaterResponse>({
+      mutation: PLANTING_SPOT_WATER,
+      variables: { input: { id, performedAt } },
+    });
+    if (!res.data?.plantingSpotWater) throw new Error('plantingSpotWater mutation failed');
+    return res.data.plantingSpotWater;
   }
 }
 
