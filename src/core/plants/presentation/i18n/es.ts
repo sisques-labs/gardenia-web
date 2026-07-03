@@ -11,6 +11,7 @@ const dict = {
     empty: 'Todavía no hay plantas',
     filterAll: 'Todas',
     filters: 'Filtros',
+    searchPlaceholder: 'Buscar plantas...',
     statsPlants: 'plantas',
     statsSpecies: 'especies',
     inProgress: 'Próximamente',

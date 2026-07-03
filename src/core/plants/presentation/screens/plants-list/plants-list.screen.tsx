@@ -1,18 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { CreatePlantModal } from "@/core/plants/presentation/components/create-plant-modal/create-plant-modal";
 import { PlantCard } from "@/core/plants/presentation/components/plant-card/plant-card";
-import { usePlants } from "@/core/plants/presentation/hooks/use-plants/use-plants.hook";
+import { usePaginatedPlants } from "@/core/plants/presentation/hooks/use-paginated-plants/use-paginated-plants.hook";
+import { usePlantFilters } from "@/core/plants/presentation/hooks/use-plant-filters/use-plant-filters.hook";
 import { useDeletePlantConfirm } from "@/core/plants/presentation/hooks/use-delete-plant-confirm/use-delete-plant-confirm.hook";
 import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store";
 import { ScreenHeader } from "@/shared/presentation/components/screen-header/screen-header";
 import { Alert } from "@/shared/presentation/components/ui/alert/alert";
 import { Button } from "@/shared/presentation/components/ui/button/button";
 import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
+import { SearchInput } from "@/shared/presentation/components/ui/search-input/search-input";
 import { PlantsListSkeleton } from "@/core/plants/presentation/components/plants-list-skeleton/plants-list-skeleton";
 import { Pagination } from "@/shared/presentation/components/ui/pagination/pagination";
-import { useUrlPagination } from "@/shared/presentation/hooks/use-url-pagination/use-url-pagination.hook";
+import { useUrlPage } from "@/shared/presentation/hooks/use-url-page/use-url-page.hook";
 import {
   Tabs,
   TabsContent,
@@ -30,13 +32,35 @@ type Props = {
 export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
   const storeSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const spaceId = spaceIdProp ?? storeSpaceId;
-  const { data: plants, isLoading, speciesCount } = usePlants(spaceId);
+  const { page, onPageChange } = useUrlPage();
+  const { search, setSearch, filters } = usePlantFilters();
+  const { data, isLoading, speciesCount } = usePaginatedPlants(spaceId, { page, filters });
+
+  const onPageChangeRef = useRef(onPageChange);
+  useEffect(() => {
+    onPageChangeRef.current = onPageChange;
+  });
+
+  const isFirstFiltersRender = useRef(true);
+  useEffect(() => {
+    if (isFirstFiltersRender.current) {
+      isFirstFiltersRender.current = false;
+      return;
+    }
+    // Reads onPageChange via a ref (not as a dependency) because its
+    // identity changes on every page navigation (useUrlPage derives it from
+    // searchParams) — depending on it directly would re-fire this effect
+    // right after the user navigates to another page, bouncing them back to
+    // page 1. This should only reset the page when `filters` itself changes.
+    onPageChangeRef.current(1);
+  }, [filters]);
   const { plantToDelete, requestDelete, confirmDelete, cancelDelete, isError } = useDeletePlantConfirm(spaceId);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
-  const { currentPage, totalPages, pagedItems: pagedPlants, onPageChange } = useUrlPagination(plants ?? []);
-
-  const plantCount = plants?.length ?? 0;
+  const plants = data?.items ?? [];
+  const plantCount = data?.total ?? 0;
+  const totalPages = data?.totalPages ?? 1;
+  const currentPage = data?.page ?? page;
 
   return (
     <div>
@@ -53,6 +77,16 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
           </Button>
         }
       />
+
+      <div className="px-6 pt-4">
+        <SearchInput
+          placeholder={dict.list.searchPlaceholder}
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          onClear={() => setSearch('')}
+          className="w-64"
+        />
+      </div>
 
       {/* Filter tabs */}
       <Tabs defaultValue="all" className="px-6 border-b border-rule">
@@ -95,14 +129,12 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
           )}
           {isLoading ? (
             <PlantsListSkeleton />
-          ) : !plants || plants.length === 0 ? (
-            <Alert variant="info" message={dict.list.empty} />
-          ) : pagedPlants.length === 0 ? (
+          ) : plants.length === 0 ? (
             <Alert variant="info" message={dict.list.empty} />
           ) : (
             <>
               <div className="grid grid-cols-[repeat(auto-fill,minmax(14rem,1fr))] gap-4">
-                {pagedPlants.map((plant) => (
+                {plants.map((plant) => (
                   <PlantCard
                     key={plant.id}
                     plant={plant}

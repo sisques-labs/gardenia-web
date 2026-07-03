@@ -4,6 +4,7 @@ import type { CreateInventoryItemInput } from '@/core/inventory/application/inte
 import type { UpdateInventoryItemInput } from '@/core/inventory/application/interfaces/update-inventory-item-input.interface';
 import type { AdjustInventoryItemQuantityInput } from '@/core/inventory/application/interfaces/adjust-inventory-item-quantity-input.interface';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
+import type { CreatedEntity } from '@/shared/domain/interfaces/created-entity.interface';
 import { INVENTORY_ITEMS_FIND_BY_CRITERIA } from './queries/inventory-items-find-by-criteria.query';
 import { INVENTORY_ITEM_FIND_BY_ID } from './queries/inventory-item-find-by-id.query';
 import { INVENTORY_ITEM_CREATE } from './mutations/inventory-item-create.mutation';
@@ -44,7 +45,7 @@ export class InventoryGqlRepository implements IInventoryRepository {
     return res.data.inventoryItemFindById;
   }
 
-  async create(input: CreateInventoryItemInput): Promise<InventoryItem> {
+  async create(input: CreateInventoryItemInput): Promise<CreatedEntity> {
     const res = await apolloClient.mutate<InventoryItemCreateResponse>({
       mutation: INVENTORY_ITEM_CREATE,
       variables: { input },
@@ -52,10 +53,10 @@ export class InventoryGqlRepository implements IInventoryRepository {
     if (!res.data?.inventoryItemCreate?.success) {
       throw new Error('inventoryItemCreate mutation failed');
     }
-    return this.findById(res.data.inventoryItemCreate.id);
+    return { id: res.data.inventoryItemCreate.id };
   }
 
-  async update(input: UpdateInventoryItemInput): Promise<InventoryItem> {
+  async update(input: UpdateInventoryItemInput): Promise<CreatedEntity> {
     const res = await apolloClient.mutate<InventoryItemUpdateResponse>({
       mutation: INVENTORY_ITEM_UPDATE,
       variables: { input },
@@ -63,10 +64,10 @@ export class InventoryGqlRepository implements IInventoryRepository {
     if (!res.data?.inventoryItemUpdate?.success) {
       throw new Error('inventoryItemUpdate mutation failed');
     }
-    return this.findById(res.data.inventoryItemUpdate.id);
+    return { id: res.data.inventoryItemUpdate.id };
   }
 
-  async adjustQuantity(input: AdjustInventoryItemQuantityInput): Promise<InventoryItem> {
+  async adjustQuantity(input: AdjustInventoryItemQuantityInput): Promise<CreatedEntity> {
     const res = await apolloClient.mutate<InventoryItemAdjustQuantityResponse>({
       mutation: INVENTORY_ITEM_ADJUST_QUANTITY,
       variables: { input },
@@ -74,7 +75,7 @@ export class InventoryGqlRepository implements IInventoryRepository {
     if (!res.data?.inventoryItemAdjustQuantity?.success) {
       throw new Error('inventoryItemAdjustQuantity mutation failed');
     }
-    return this.findById(res.data.inventoryItemAdjustQuantity.id);
+    return { id: res.data.inventoryItemAdjustQuantity.id };
   }
 
   async delete(id: string): Promise<void> {
