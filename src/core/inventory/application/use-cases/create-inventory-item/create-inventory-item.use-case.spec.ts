@@ -19,6 +19,7 @@ const mockRepository: IInventoryRepository = {
   update: vi.fn(),
   adjustQuantity: vi.fn(),
   delete: vi.fn(),
+  deleteBulk: vi.fn(),
 };
 
 describe('CreateInventoryItemUseCase', () => {

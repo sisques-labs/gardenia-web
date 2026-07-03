@@ -3,14 +3,18 @@ import type { IInventoryRepository } from '@/core/inventory/application/ports/in
 import type { CreateInventoryItemInput } from '@/core/inventory/application/interfaces/create-inventory-item-input.interface';
 import type { UpdateInventoryItemInput } from '@/core/inventory/application/interfaces/update-inventory-item-input.interface';
 import type { AdjustInventoryItemQuantityInput } from '@/core/inventory/application/interfaces/adjust-inventory-item-quantity-input.interface';
+import type { InventoryListCriteria } from '@/core/inventory/application/interfaces/inventory-list-criteria.interface';
+import type { BulkDeleteResult } from '@/core/inventory/domain/interfaces/bulk-delete-result.interface';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
 import type { CreatedEntity } from '@/shared/domain/interfaces/created-entity.interface';
+import type { PaginatedResult } from '@/shared/domain/interfaces/paginated-result.interface';
 import { INVENTORY_ITEMS_FIND_BY_CRITERIA } from './queries/inventory-items-find-by-criteria.query';
 import { INVENTORY_ITEM_FIND_BY_ID } from './queries/inventory-item-find-by-id.query';
 import { INVENTORY_ITEM_CREATE } from './mutations/inventory-item-create.mutation';
 import { INVENTORY_ITEM_UPDATE } from './mutations/inventory-item-update.mutation';
 import { INVENTORY_ITEM_ADJUST_QUANTITY } from './mutations/inventory-item-adjust-quantity.mutation';
 import { INVENTORY_ITEM_DELETE } from './mutations/inventory-item-delete.mutation';
+import { INVENTORY_ITEMS_DELETE_BULK } from './mutations/inventory-items-delete-bulk.mutation';
 import type { InventoryItemsFindByCriteriaResponse } from './responses/inventory-items-find-by-criteria.response';
 import type { InventoryItemFindByIdResponse } from './responses/inventory-item-find-by-id.response';
 import type {
@@ -19,18 +23,25 @@ import type {
   InventoryItemAdjustQuantityResponse,
   InventoryItemDeleteResponse,
 } from './responses/inventory-item-mutation.response';
-
-/** Generous single page — server-side pagination is out of scope for v1. */
-const DEFAULT_PAGE_SIZE = 100;
+import type { InventoryItemsDeleteBulkResponse } from './responses/inventory-items-delete-bulk.response';
 
 export class InventoryGqlRepository implements IInventoryRepository {
-  async findByCriteria(): Promise<InventoryItem[]> {
+  async findByCriteria(criteria?: InventoryListCriteria): Promise<PaginatedResult<InventoryItem>> {
     const res = await apolloClient.query<InventoryItemsFindByCriteriaResponse>({
       query: INVENTORY_ITEMS_FIND_BY_CRITERIA,
-      variables: { input: { pagination: { page: 1, perPage: DEFAULT_PAGE_SIZE } } },
+      variables: { input: criteria },
       fetchPolicy: 'network-only',
     });
-    return res.data?.inventoryItemsFindByCriteria?.items ?? [];
+    const data = res.data?.inventoryItemsFindByCriteria;
+    const page = criteria?.pagination?.page ?? 1;
+    const perPage = criteria?.pagination?.perPage ?? 20;
+    return {
+      items: data?.items ?? [],
+      total: data?.total ?? 0,
+      page: data?.page ?? page,
+      perPage: data?.perPage ?? perPage,
+      totalPages: data?.totalPages ?? 1,
+    };
   }
 
   async findById(id: string): Promise<InventoryItem> {
@@ -83,6 +94,20 @@ export class InventoryGqlRepository implements IInventoryRepository {
       mutation: INVENTORY_ITEM_DELETE,
       variables: { id },
     });
+  }
+
+  async deleteBulk(ids: string[]): Promise<BulkDeleteResult> {
+    const res = await apolloClient.mutate<InventoryItemsDeleteBulkResponse>({
+      mutation: INVENTORY_ITEMS_DELETE_BULK,
+      variables: { input: { ids } },
+    });
+    const result = res.data?.inventoryItemsDeleteBulk;
+    return {
+      deletedIds: result?.deletedIds ?? [],
+      notFoundIds: result?.notFoundIds ?? [],
+      deletedCount: result?.deletedCount ?? 0,
+      requestedCount: result?.requestedCount ?? ids.length,
+    };
   }
 }
 

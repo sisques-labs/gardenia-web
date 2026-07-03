@@ -12,13 +12,21 @@ const dict = {
     expiringBadge: 'Caduca pronto',
     statusColumn: 'Estado',
     actionsColumn: 'Acciones',
-    deleteConfirm: '¿Seguro que quieres eliminar este artículo?',
+  },
+  delete: {
+    confirmTitle: 'Eliminar artículo',
+    confirmDescription: 'Esta acción no se puede deshacer. El artículo se eliminará del inventario de forma permanente.',
+    confirm: 'Eliminar',
+    cancel: 'Cancelar',
+    error: 'No se pudo eliminar el artículo. Inténtalo de nuevo.',
   },
   filters: {
     searchPlaceholder: 'Buscar por nombre...',
     allTypes: 'Todos los tipos',
+    typesSelectedSuffix: 'tipos seleccionados',
     lowStockOnly: 'Stock bajo',
     expiringSoon: 'Caduca pronto',
+    searchChipLabel: 'Búsqueda',
   },
   form: {
     title: 'Nuevo artículo',
@@ -46,9 +54,26 @@ const dict = {
     cancel: 'Cancelar',
   },
   row: {
+    actionsMenu: 'Abrir menú de acciones',
+    viewDetail: 'Ver detalle',
     edit: 'Editar',
     adjust: 'Ajustar',
     delete: 'Eliminar',
+  },
+  detail: {
+    createdAt: 'Creado',
+    updatedAt: 'Última actualización',
+    noValue: '—',
+  },
+  bulk: {
+    selectedSuffix: 'seleccionados',
+    deleteSelected: 'Eliminar seleccionados',
+    confirmTitle: 'Eliminar artículos seleccionados',
+    confirmDescription: 'Esta acción no se puede deshacer. Los artículos seleccionados se eliminarán del inventario de forma permanente.',
+    confirm: 'Eliminar',
+    cancel: 'Cancelar',
+    partialSuccess: '{deleted} de {total} artículos eliminados. El resto ya no existía.',
+    error: 'No se pudieron eliminar los artículos seleccionados. Inténtalo de nuevo.',
   },
   types: {
     SEEDS: 'Semillas',
@@ -69,7 +94,6 @@ const dict = {
     loadFailed: 'No se pudo cargar el inventario. Inténtalo de nuevo.',
     createFailed: 'No se pudo crear el artículo. Inténtalo de nuevo.',
     updateFailed: 'No se pudo actualizar el artículo. Inténtalo de nuevo.',
-    deleteFailed: 'No se pudo eliminar el artículo. Inténtalo de nuevo.',
     adjustFailed: 'No se pudo ajustar la cantidad. Inténtalo de nuevo.',
   },
 } as const satisfies InventoryDictTranslated;

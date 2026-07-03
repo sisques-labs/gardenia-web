@@ -19,6 +19,10 @@ export const INVENTORY_ITEMS_FIND_BY_CRITERIA = gql`
         createdAt
         updatedAt
       }
+      total
+      page
+      perPage
+      totalPages
     }
   }
 `;

@@ -76,6 +76,7 @@ const dict = {
     filterAll: 'All',
     filters: 'Filters',
     searchPlaceholder: 'Search plants...',
+    searchChipLabel: 'Search',
     statsPlants: 'plants',
     statsSpecies: 'species',
     inProgress: 'Coming soon',

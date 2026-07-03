@@ -11,7 +11,8 @@ import { ScreenHeader } from "@/shared/presentation/components/screen-header/scr
 import { Alert } from "@/shared/presentation/components/ui/alert/alert";
 import { Button } from "@/shared/presentation/components/ui/button/button";
 import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
-import { SearchInput } from "@/shared/presentation/components/ui/search-input/search-input";
+import { FilterBar, type FilterDescriptor } from "@/shared/presentation/components/ui/filter-bar/filter-bar";
+import type { ActiveFilter } from "@/shared/presentation/components/ui/active-filter-chips/active-filter-chips";
 import { PlantsListSkeleton } from "@/core/plants/presentation/components/plants-list-skeleton/plants-list-skeleton";
 import { Pagination } from "@/shared/presentation/components/ui/pagination/pagination";
 import { useUrlPage } from "@/shared/presentation/hooks/use-url-page/use-url-page.hook";
@@ -79,12 +80,22 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
       />
 
       <div className="px-6 pt-4">
-        <SearchInput
-          placeholder={dict.list.searchPlaceholder}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-          onClear={() => setSearch('')}
-          className="w-64"
+        <FilterBar
+          filters={[
+            {
+              type: "search",
+              key: "search",
+              placeholder: dict.list.searchPlaceholder,
+              value: search,
+              onChange: setSearch,
+            },
+          ] satisfies FilterDescriptor[]}
+          chips={
+            search.trim()
+              ? ([{ key: "search", label: `${dict.list.searchChipLabel}: ${search.trim()}` }] satisfies ActiveFilter[])
+              : []
+          }
+          onRemoveChip={() => setSearch("")}
         />
       </div>
 
