@@ -11,8 +11,7 @@ import {
 } from '@/shared/presentation/components/ui/tabs/tabs';
 import { Button, buttonVariants } from '@/shared/presentation/components/ui/button/button';
 import { usePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-planting-spot/use-planting-spot.hook';
-import { useMarkPlantingSpotFallow } from '@/core/planting-spots/presentation/hooks/use-mark-planting-spot-fallow/use-mark-planting-spot-fallow.hook';
-import { useMarkPlantingSpotActive } from '@/core/planting-spots/presentation/hooks/use-mark-planting-spot-active/use-mark-planting-spot-active.hook';
+import { usePlantingSpotStatusToggle } from '@/core/planting-spots/presentation/hooks/use-planting-spot-status-toggle/use-planting-spot-status-toggle.hook';
 import { PlantingSpotTypeBadge } from '@/core/planting-spots/presentation/components/planting-spot-type-badge/planting-spot-type-badge';
 import { PlantingSpotStatusBadge } from '@/core/planting-spots/presentation/components/planting-spot-status-badge/planting-spot-status-badge';
 import { AddPlantToSpotModal } from '@/core/planting-spots/presentation/components/add-plant-to-spot-modal/add-plant-to-spot-modal';
@@ -30,8 +29,10 @@ type Props = {
 
 export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
   const { spot, isLoading } = usePlantingSpot(spotId);
-  const markFallow = useMarkPlantingSpotFallow();
-  const markActive = useMarkPlantingSpotActive();
+  const { isFallow, isPending: isTogglingStatus, toggle: toggleStatus } = usePlantingSpotStatusToggle(
+    spotId,
+    spot?.status ?? 'ACTIVE',
+  );
   const [isAddPlantOpen, setIsAddPlantOpen] = useState(false);
   const d = dict.detail;
 
@@ -41,8 +42,6 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
   const plantCount = spot.resolvedPlants?.length ?? 0;
   const hasCapacity = spot.capacity != null;
   const positionLabel = getPlantingSpotPositionLabel(spot);
-  const isFallow = spot.status === 'FALLOW';
-  const isTogglingStatus = markFallow.isPending || markActive.isPending;
 
   return (
     <div>
@@ -59,7 +58,7 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
               variant="outline"
               size="sm"
               disabled={isTogglingStatus}
-              onClick={() => (isFallow ? markActive.mutate(spotId) : markFallow.mutate(spotId))}
+              onClick={toggleStatus}
             >
               {isFallow ? d.markActive : d.markFallow}
             </Button>

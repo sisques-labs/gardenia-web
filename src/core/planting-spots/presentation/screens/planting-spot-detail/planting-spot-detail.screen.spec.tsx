@@ -19,13 +19,8 @@ vi.mock(
 );
 
 vi.mock(
-  '@/core/planting-spots/presentation/hooks/use-mark-planting-spot-fallow/use-mark-planting-spot-fallow.hook',
-  () => ({ useMarkPlantingSpotFallow: vi.fn() }),
-);
-
-vi.mock(
-  '@/core/planting-spots/presentation/hooks/use-mark-planting-spot-active/use-mark-planting-spot-active.hook',
-  () => ({ useMarkPlantingSpotActive: vi.fn() }),
+  '@/core/planting-spots/presentation/hooks/use-planting-spot-status-toggle/use-planting-spot-status-toggle.hook',
+  () => ({ usePlantingSpotStatusToggle: vi.fn() }),
 );
 
 vi.mock(
@@ -67,8 +62,7 @@ vi.mock('@/shared/presentation/components/ui/tabs/tabs', () => ({
 }));
 
 import { usePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-planting-spot/use-planting-spot.hook';
-import { useMarkPlantingSpotFallow } from '@/core/planting-spots/presentation/hooks/use-mark-planting-spot-fallow/use-mark-planting-spot-fallow.hook';
-import { useMarkPlantingSpotActive } from '@/core/planting-spots/presentation/hooks/use-mark-planting-spot-active/use-mark-planting-spot-active.hook';
+import { usePlantingSpotStatusToggle } from '@/core/planting-spots/presentation/hooks/use-planting-spot-status-toggle/use-planting-spot-status-toggle.hook';
 import { PlantingSpotDetailScreen } from './planting-spot-detail.screen';
 
 const dict = {
@@ -188,16 +182,18 @@ function mockNoSpot() {
 }
 
 describe('PlantingSpotDetailScreen', () => {
+  const toggleStatus = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useMarkPlantingSpotFallow).mockReturnValue({
-      mutate: vi.fn(),
-      isPending: false,
-    } as never);
-    vi.mocked(useMarkPlantingSpotActive).mockReturnValue({
-      mutate: vi.fn(),
-      isPending: false,
-    } as never);
+    vi.mocked(usePlantingSpotStatusToggle).mockImplementation(
+      (_spotId, status) =>
+        ({
+          isFallow: status === 'FALLOW',
+          isPending: false,
+          toggle: toggleStatus,
+        }) as never,
+    );
   });
 
   it('renders skeleton when loading', () => {
@@ -246,26 +242,22 @@ describe('PlantingSpotDetailScreen', () => {
     expect(screen.getByText('Reactivate')).toBeInTheDocument();
   });
 
-  it('calls markFallow.mutate with the spot id when marking an active spot fallow', () => {
+  it('calls toggleStatus() when marking an active spot fallow', () => {
     mockSpot({ status: 'ACTIVE' });
-    const mutate = vi.fn();
-    vi.mocked(useMarkPlantingSpotFallow).mockReturnValue({ mutate, isPending: false } as never);
     render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
 
     screen.getByText('Mark fallow').click();
 
-    expect(mutate).toHaveBeenCalledWith('spot-1');
+    expect(toggleStatus).toHaveBeenCalledOnce();
   });
 
-  it('calls markActive.mutate with the spot id when reactivating a fallow spot', () => {
+  it('calls toggleStatus() when reactivating a fallow spot', () => {
     mockSpot({ status: 'FALLOW' });
-    const mutate = vi.fn();
-    vi.mocked(useMarkPlantingSpotActive).mockReturnValue({ mutate, isPending: false } as never);
     render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
 
     screen.getByText('Reactivate').click();
 
-    expect(mutate).toHaveBeenCalledWith('spot-1');
+    expect(toggleStatus).toHaveBeenCalledOnce();
   });
 
   it('does not render the add-plant modal by default', () => {
