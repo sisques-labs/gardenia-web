@@ -16,7 +16,8 @@ import { CARE_SCHEDULE_CREATE } from './mutations/care-schedule-create.mutation'
 import { CARE_SCHEDULE_UPDATE } from './mutations/care-schedule-update.mutation';
 import { CARE_SCHEDULE_COMPLETE } from './mutations/care-schedule-complete.mutation';
 import { CARE_SCHEDULE_DELETE } from './mutations/care-schedule-delete.mutation';
-import type { CareSchedule } from '@/core/care-schedule/domain/types/care-schedule.interface';
+import { CARE_SCHEDULE_WATER_PLANT } from './mutations/care-schedule-water-plant.mutation';
+import type { CareSchedule, WaterPlantResult } from '@/core/care-schedule/domain/types/care-schedule.interface';
 
 const mockCareSchedule: CareSchedule = {
   id: 'cs-1',
@@ -51,6 +52,7 @@ describe('CareScheduleGqlRepository', () => {
       ['CARE_SCHEDULE_UPDATE', CARE_SCHEDULE_UPDATE],
       ['CARE_SCHEDULE_COMPLETE', CARE_SCHEDULE_COMPLETE],
       ['CARE_SCHEDULE_DELETE', CARE_SCHEDULE_DELETE],
+      ['CARE_SCHEDULE_WATER_PLANT', CARE_SCHEDULE_WATER_PLANT],
     ])('%s is a valid GQL document', (_name, doc) => {
       expect(doc).toBeDefined();
       expect((doc as DocumentNode).kind).toBe('Document');
@@ -73,7 +75,7 @@ describe('CareScheduleGqlRepository', () => {
       expect(result).toEqual([mockCareSchedule]);
     });
 
-    it('translates plantId to a plant_id EQUALS filter', async () => {
+    it('translates plantId to a PLANT_ID EQUALS filter', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
         data: { careSchedulesFindByCriteria: { items: [] } },
       } as never);
@@ -83,13 +85,29 @@ describe('CareScheduleGqlRepository', () => {
       expect(apolloClient.query).toHaveBeenCalledWith({
         query: CARE_SCHEDULES_FIND_BY_CRITERIA,
         variables: {
-          input: { filters: [{ field: 'plant_id', operator: 'EQUALS', value: 'plant-1' }] },
+          input: { filters: [{ field: 'PLANT_ID', operator: 'EQUALS', value: 'plant-1' }] },
         },
         fetchPolicy: 'network-only',
       });
     });
 
-    it('translates active + dueOnDay to an active EQUALS filter plus a next_due_at range bracketing that day', async () => {
+    it('translates activityType to an ACTIVITY_TYPE EQUALS filter', async () => {
+      vi.mocked(apolloClient.query).mockResolvedValue({
+        data: { careSchedulesFindByCriteria: { items: [] } },
+      } as never);
+
+      await repository.findByCriteria({ activityType: 'WATERING' });
+
+      expect(apolloClient.query).toHaveBeenCalledWith({
+        query: CARE_SCHEDULES_FIND_BY_CRITERIA,
+        variables: {
+          input: { filters: [{ field: 'ACTIVITY_TYPE', operator: 'EQUALS', value: 'WATERING' }] },
+        },
+        fetchPolicy: 'network-only',
+      });
+    });
+
+    it('translates active + dueOnDay to an ACTIVE EQUALS filter plus a NEXT_DUE_AT range bracketing that day', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
         data: { careSchedulesFindByCriteria: { items: [] } },
       } as never);
@@ -101,9 +119,9 @@ describe('CareScheduleGqlRepository', () => {
         variables: {
           input: {
             filters: [
-              { field: 'active', operator: 'EQUALS', value: 'true' },
-              { field: 'next_due_at', operator: 'GREATER_THAN_OR_EQUAL', value: '2026-07-05T00:00:00.000' },
-              { field: 'next_due_at', operator: 'LESS_THAN_OR_EQUAL', value: '2026-07-05T23:59:59.999' },
+              { field: 'ACTIVE', operator: 'EQUALS', value: true },
+              { field: 'NEXT_DUE_AT', operator: 'GREATER_THAN_OR_EQUAL', value: '2026-07-05T00:00:00.000' },
+              { field: 'NEXT_DUE_AT', operator: 'LESS_THAN_OR_EQUAL', value: '2026-07-05T23:59:59.999' },
             ],
           },
         },
@@ -111,7 +129,7 @@ describe('CareScheduleGqlRepository', () => {
       });
     });
 
-    it('sends active: false as the string "false", not an empty/falsy value', async () => {
+    it('sends active: false as a real boolean, not an empty/falsy value', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
         data: { careSchedulesFindByCriteria: { items: [] } },
       } as never);
@@ -121,7 +139,7 @@ describe('CareScheduleGqlRepository', () => {
       expect(apolloClient.query).toHaveBeenCalledWith({
         query: CARE_SCHEDULES_FIND_BY_CRITERIA,
         variables: {
-          input: { filters: [{ field: 'active', operator: 'EQUALS', value: 'false' }] },
+          input: { filters: [{ field: 'ACTIVE', operator: 'EQUALS', value: false }] },
         },
         fetchPolicy: 'network-only',
       });
@@ -232,6 +250,50 @@ describe('CareScheduleGqlRepository', () => {
         mutation: CARE_SCHEDULE_DELETE,
         variables: { id: 'cs-1' },
       });
+    });
+  });
+
+  describe('waterPlant()', () => {
+    const mockWaterPlantResult: WaterPlantResult = {
+      plantId: 'plant-1',
+      mode: 'SCHEDULE_COMPLETED',
+      careScheduleId: 'cs-1',
+    };
+
+    it('calls apolloClient.mutate with CARE_SCHEDULE_WATER_PLANT and returns the result as-is (no follow-up fetch)', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { careScheduleWaterPlant: mockWaterPlantResult },
+      } as never);
+
+      const result = await repository.waterPlant('plant-1', '2026-07-05');
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: CARE_SCHEDULE_WATER_PLANT,
+        variables: { input: { plantId: 'plant-1', performedAt: '2026-07-05' } },
+      });
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual(mockWaterPlantResult);
+    });
+
+    it('calls apolloClient.mutate without performedAt when omitted', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { careScheduleWaterPlant: { plantId: 'plant-1', mode: 'CARE_LOG_CREATED' } },
+      } as never);
+
+      await repository.waterPlant('plant-1');
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: CARE_SCHEDULE_WATER_PLANT,
+        variables: { input: { plantId: 'plant-1', performedAt: undefined } },
+      });
+    });
+
+    it('throws when careScheduleWaterPlant is null', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { careScheduleWaterPlant: null },
+      } as never);
+
+      await expect(repository.waterPlant('plant-1')).rejects.toThrow('careScheduleWaterPlant mutation failed');
     });
   });
 });

@@ -2,9 +2,9 @@
 
 import { CareLogActivityType } from "@/core/care-log/domain/interfaces/care-log-entry.interface";
 import { CareLogSummary } from "@/core/care-log/presentation/components/care-log-summary/care-log-summary";
-import { useCreateCareLog } from "@/core/care-log/presentation/hooks/use-create-care-log/use-create-care-log.hook";
 import { usePlantCareLogs } from "@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-logs.hook";
 import { CareScheduleList } from "@/core/care-schedule/presentation/components/care-schedule-list/care-schedule-list";
+import { useWaterPlant } from "@/core/care-schedule/presentation/hooks/use-water-plant/use-water-plant.hook";
 import { PlantDetailSkeleton } from "@/core/plants/presentation/components/plant-detail-skeleton/plant-detail-skeleton";
 import { PlantPlantingSpotField } from "@/core/plants/presentation/components/plant-planting-spot-field/plant-planting-spot-field";
 import { useDeletePlant } from "@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook";
@@ -50,7 +50,7 @@ export function PlantDetailScreen({
   const { data: plant, isLoading, isError } = usePlant(spaceId, plantId);
   const { data: lastCareByType = {} } = usePlantCareLogs(plantId);
   const deletePlant = useDeletePlant(spaceId);
-  const markWatered = useCreateCareLog(plantId);
+  const waterPlant = useWaterPlant();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
 
   if (isLoading) return <PlantDetailSkeleton />;
@@ -182,15 +182,10 @@ export function PlantDetailScreen({
                   <Button
                     variant="default"
                     size="sm"
-                    loading={markWatered.isPending}
+                    loading={waterPlant.isPending}
                     data-testid="btn-mark-watered"
                     className="shadow-sm"
-                    onClick={() =>
-                      markWatered.mutate({
-                        plantId,
-                        activityType: CareLogActivityType.WATERING,
-                      })
-                    }
+                    onClick={() => waterPlant.mutate({ plantId })}
                   >
                     <Droplets className="w-4 h-4" />
                     {dict.detail.actions.markWatered}
@@ -206,7 +201,7 @@ export function PlantDetailScreen({
                     {dict.delete.button}
                   </Button>
                 </div>
-                {markWatered.isError && (
+                {waterPlant.isError && (
                   <Alert variant="error" message={dict.detail.actions.markWateredError} />
                 )}
                 {deletePlant.isError && (

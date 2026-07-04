@@ -2,7 +2,6 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
-import { CareLogActivityType } from '@/core/care-log/domain/interfaces/care-log-entry.interface';
 import careScheduleDict from '@/core/care-schedule/presentation/i18n/en';
 
 const mockRedirect = vi.fn();
@@ -28,8 +27,8 @@ vi.mock('@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-l
   usePlantCareLogs: vi.fn(() => ({ data: {}, isLoading: false })),
 }));
 
-vi.mock('@/core/care-log/presentation/hooks/use-create-care-log/use-create-care-log.hook', () => ({
-  useCreateCareLog: vi.fn(() => ({ mutate: mockMutate, isPending: false, isError: false })),
+vi.mock('@/core/care-schedule/presentation/hooks/use-water-plant/use-water-plant.hook', () => ({
+  useWaterPlant: vi.fn(() => ({ mutate: mockMutate, isPending: false, isError: false })),
 }));
 
 vi.mock('@/core/care-log/presentation/components/care-log-summary/care-log-summary', () => ({
@@ -55,7 +54,7 @@ vi.mock('next/link', () => ({
 }));
 
 import { usePlant } from '@/core/plants/presentation/hooks/use-plant/use-plant.hook';
-import { useCreateCareLog } from '@/core/care-log/presentation/hooks/use-create-care-log/use-create-care-log.hook';
+import { useWaterPlant } from '@/core/care-schedule/presentation/hooks/use-water-plant/use-water-plant.hook';
 import { CareScheduleList } from '@/core/care-schedule/presentation/components/care-schedule-list/care-schedule-list';
 import { PlantDetailScreen } from './plant-detail.screen';
 
@@ -178,7 +177,7 @@ const careLogDict = {
 describe('PlantDetailScreen', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useCreateCareLog).mockReturnValue({ mutate: mockMutate, isPending: false, isError: false } as unknown as ReturnType<typeof useCreateCareLog>);
+    vi.mocked(useWaterPlant).mockReturnValue({ mutate: mockMutate, isPending: false, isError: false } as unknown as ReturnType<typeof useWaterPlant>);
   });
 
   it('renders plant name via data-testid="plant-name"', () => {
@@ -233,19 +232,19 @@ describe('PlantDetailScreen', () => {
     expect(screen.queryByTestId('btn-new-note')).not.toBeInTheDocument();
   });
 
-  it('calls useCreateCareLog().mutate with plantId + WATERING when "mark watered" is clicked', async () => {
+  it('calls useWaterPlant().mutate with plantId when "mark watered" is clicked', async () => {
     const user = userEvent.setup();
     vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
 
     render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
     await user.click(screen.getByTestId('btn-mark-watered'));
 
-    expect(mockMutate).toHaveBeenCalledWith({ plantId: 'p1', activityType: CareLogActivityType.WATERING });
+    expect(mockMutate).toHaveBeenCalledWith({ plantId: 'p1' });
   });
 
   it('renders an error alert when marking watered fails', () => {
     vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-    vi.mocked(useCreateCareLog).mockReturnValue({ mutate: mockMutate, isPending: false, isError: true } as unknown as ReturnType<typeof useCreateCareLog>);
+    vi.mocked(useWaterPlant).mockReturnValue({ mutate: mockMutate, isPending: false, isError: true } as unknown as ReturnType<typeof useWaterPlant>);
 
     render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
 

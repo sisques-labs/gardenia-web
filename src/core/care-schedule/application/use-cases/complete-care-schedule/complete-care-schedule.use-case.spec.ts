@@ -10,6 +10,7 @@ const mockRepository: ICareScheduleRepository = {
   create: vi.fn(),
   update: vi.fn(),
   complete: vi.fn(),
+  waterPlant: vi.fn(),
   delete: vi.fn(),
 };
 

@@ -1,4 +1,5 @@
 import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
+import type { WaterPlantingSpotResult } from '@/core/planting-spots/domain/interfaces/water-planting-spot-result.interface';
 import type { CreatePlantingSpotInput } from '@/core/planting-spots/application/interfaces/create-planting-spot-input.interface';
 import type { UpdatePlantingSpotInput } from '@/core/planting-spots/application/interfaces/update-planting-spot-input.interface';
 import type { CreatedEntity } from '@/shared/domain/interfaces/created-entity.interface';
@@ -10,6 +11,7 @@ export interface IPlantingSpotsRepository {
   create(input: CreatePlantingSpotInput): Promise<CreatedEntity>;
   update(input: UpdatePlantingSpotInput): Promise<CreatedEntity>;
   delete(id: string): Promise<void>;
+  waterAll(id: string, performedAt?: string): Promise<WaterPlantingSpotResult>;
   markFallow(id: string): Promise<CreatedEntity>;
   markActive(id: string): Promise<CreatedEntity>;
 }
