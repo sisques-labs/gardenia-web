@@ -15,6 +15,8 @@ export const PLANTING_SPOTS_FIND_BY_CRITERIA = gql`
         dimensionsHeight
         dimensionsLength
         soilType
+        status
+        fallowSince
         userId
         spaceId
         resolvedPlants {
