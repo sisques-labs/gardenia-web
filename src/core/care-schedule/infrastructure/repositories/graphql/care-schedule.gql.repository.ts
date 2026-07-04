@@ -4,6 +4,9 @@ import type { CareScheduleFilters } from '@/core/care-schedule/application/inter
 import type { CreateCareScheduleInput } from '@/core/care-schedule/application/interfaces/create-care-schedule-input.interface';
 import type { UpdateCareScheduleInput } from '@/core/care-schedule/application/interfaces/update-care-schedule-input.interface';
 import type { CareSchedule, WaterPlantResult } from '@/core/care-schedule/domain/types/care-schedule.interface';
+import { CareScheduleQueryableField } from '@/core/care-schedule/domain/enums/care-schedule-queryable-field.enum';
+import { FilterOperator } from '@/shared/domain/enums/filter-operator.enum';
+import type { Filter } from '@/shared/domain/interfaces/filter.interface';
 import type { CreatedEntity } from '@/shared/domain/interfaces/created-entity.interface';
 import { CARE_SCHEDULES_FIND_BY_CRITERIA } from './queries/care-schedule-find-by-criteria.query';
 import { CARE_SCHEDULE_FIND_BY_ID } from './queries/care-schedule-find-by-id.query';
@@ -20,22 +23,28 @@ import type { CareScheduleCompleteResponse } from './responses/care-schedule-com
 import type { CareScheduleDeleteResponse } from './responses/care-schedule-delete.response';
 import type { CareScheduleWaterPlantResponse } from './responses/care-schedule-water-plant.response';
 
-// Filters use the API's snake_case column names — this mapping is confined to this repository.
-// BaseFilterInput.value is a GraphQL String scalar, so every value must be sent as a string
-// (a raw boolean fails variable coercion: "String cannot represent a non string value").
+// Filters use the API's typed Criteria enum (CareScheduleQueryableField) and JSON-scalar
+// values — this mapping is confined to this repository so callers keep the ergonomic
+// CareScheduleFilters shape.
 function toApiFilters(filters?: CareScheduleFilters) {
   if (!filters) return undefined;
 
-  const apiFilters: { field: string; operator: string; value: string }[] = [];
-  if (filters.plantId) apiFilters.push({ field: 'plant_id', operator: 'EQUALS', value: filters.plantId });
-  if (filters.activityType) apiFilters.push({ field: 'activity_type', operator: 'EQUALS', value: filters.activityType });
-  if (filters.active !== undefined) apiFilters.push({ field: 'active', operator: 'EQUALS', value: String(filters.active) });
+  const apiFilters: Filter<CareScheduleQueryableField>[] = [];
+  if (filters.plantId) {
+    apiFilters.push({ field: CareScheduleQueryableField.PLANT_ID, operator: FilterOperator.EQUALS, value: filters.plantId });
+  }
+  if (filters.activityType) {
+    apiFilters.push({ field: CareScheduleQueryableField.ACTIVITY_TYPE, operator: FilterOperator.EQUALS, value: filters.activityType });
+  }
+  if (filters.active !== undefined) {
+    apiFilters.push({ field: CareScheduleQueryableField.ACTIVE, operator: FilterOperator.EQUALS, value: filters.active });
+  }
   // dueOnDay is a plain 'YYYY-MM-DD' day; bracket it as [start-of-day, end-of-day] range filters
-  // directly on next_due_at (the API's generic Criteria mechanism supports >=/<= on any real
+  // directly on NEXT_DUE_AT (the API's generic Criteria mechanism supports >=/<= on any real
   // column), so only schedules due on that exact day are returned — not earlier ones too.
   if (filters.dueOnDay) {
-    apiFilters.push({ field: 'next_due_at', operator: 'GREATER_THAN_OR_EQUAL', value: `${filters.dueOnDay}T00:00:00.000` });
-    apiFilters.push({ field: 'next_due_at', operator: 'LESS_THAN_OR_EQUAL', value: `${filters.dueOnDay}T23:59:59.999` });
+    apiFilters.push({ field: CareScheduleQueryableField.NEXT_DUE_AT, operator: FilterOperator.GREATER_THAN_OR_EQUAL, value: `${filters.dueOnDay}T00:00:00.000` });
+    apiFilters.push({ field: CareScheduleQueryableField.NEXT_DUE_AT, operator: FilterOperator.LESS_THAN_OR_EQUAL, value: `${filters.dueOnDay}T23:59:59.999` });
   }
 
   return apiFilters.length ? { filters: apiFilters } : undefined;

@@ -75,7 +75,7 @@ describe('CareScheduleGqlRepository', () => {
       expect(result).toEqual([mockCareSchedule]);
     });
 
-    it('translates plantId to a plant_id EQUALS filter', async () => {
+    it('translates plantId to a PLANT_ID EQUALS filter', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
         data: { careSchedulesFindByCriteria: { items: [] } },
       } as never);
@@ -85,13 +85,29 @@ describe('CareScheduleGqlRepository', () => {
       expect(apolloClient.query).toHaveBeenCalledWith({
         query: CARE_SCHEDULES_FIND_BY_CRITERIA,
         variables: {
-          input: { filters: [{ field: 'plant_id', operator: 'EQUALS', value: 'plant-1' }] },
+          input: { filters: [{ field: 'PLANT_ID', operator: 'EQUALS', value: 'plant-1' }] },
         },
         fetchPolicy: 'network-only',
       });
     });
 
-    it('translates active + dueOnDay to an active EQUALS filter plus a next_due_at range bracketing that day', async () => {
+    it('translates activityType to an ACTIVITY_TYPE EQUALS filter', async () => {
+      vi.mocked(apolloClient.query).mockResolvedValue({
+        data: { careSchedulesFindByCriteria: { items: [] } },
+      } as never);
+
+      await repository.findByCriteria({ activityType: 'WATERING' });
+
+      expect(apolloClient.query).toHaveBeenCalledWith({
+        query: CARE_SCHEDULES_FIND_BY_CRITERIA,
+        variables: {
+          input: { filters: [{ field: 'ACTIVITY_TYPE', operator: 'EQUALS', value: 'WATERING' }] },
+        },
+        fetchPolicy: 'network-only',
+      });
+    });
+
+    it('translates active + dueOnDay to an ACTIVE EQUALS filter plus a NEXT_DUE_AT range bracketing that day', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
         data: { careSchedulesFindByCriteria: { items: [] } },
       } as never);
@@ -103,9 +119,9 @@ describe('CareScheduleGqlRepository', () => {
         variables: {
           input: {
             filters: [
-              { field: 'active', operator: 'EQUALS', value: 'true' },
-              { field: 'next_due_at', operator: 'GREATER_THAN_OR_EQUAL', value: '2026-07-05T00:00:00.000' },
-              { field: 'next_due_at', operator: 'LESS_THAN_OR_EQUAL', value: '2026-07-05T23:59:59.999' },
+              { field: 'ACTIVE', operator: 'EQUALS', value: true },
+              { field: 'NEXT_DUE_AT', operator: 'GREATER_THAN_OR_EQUAL', value: '2026-07-05T00:00:00.000' },
+              { field: 'NEXT_DUE_AT', operator: 'LESS_THAN_OR_EQUAL', value: '2026-07-05T23:59:59.999' },
             ],
           },
         },
@@ -113,7 +129,7 @@ describe('CareScheduleGqlRepository', () => {
       });
     });
 
-    it('sends active: false as the string "false", not an empty/falsy value', async () => {
+    it('sends active: false as a real boolean, not an empty/falsy value', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
         data: { careSchedulesFindByCriteria: { items: [] } },
       } as never);
@@ -123,7 +139,7 @@ describe('CareScheduleGqlRepository', () => {
       expect(apolloClient.query).toHaveBeenCalledWith({
         query: CARE_SCHEDULES_FIND_BY_CRITERIA,
         variables: {
-          input: { filters: [{ field: 'active', operator: 'EQUALS', value: 'false' }] },
+          input: { filters: [{ field: 'ACTIVE', operator: 'EQUALS', value: false }] },
         },
         fetchPolicy: 'network-only',
       });
