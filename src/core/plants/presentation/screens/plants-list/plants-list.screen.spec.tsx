@@ -99,12 +99,26 @@ const dict = {
     cancel: 'Cancel',
     error: 'Could not create the plant. Try again.',
   },
+  edit: {
+    title: 'Edit plant',
+    name: 'Name',
+    namePlaceholder: 'e.g. Monstera',
+    nameRequired: 'Name is required',
+    nameMax: 'At most 100 characters',
+    imageUrl: 'Image URL',
+    imageUrlPlaceholder: 'https://...',
+    submit: 'Save',
+    submitting: 'Saving...',
+    cancel: 'Cancel',
+    error: 'Could not update the plant. Try again.',
+  },
   detail: {
     breadcrumbList: 'Inventory',
     noSpecies: 'Unknown species',
     actions: {
       markWatered: 'Mark watered',
       markWateredError: 'Could not log the watering. Try again.',
+      edit: 'Edit',
     },
     care: {
       lastWatered: 'Last watered',
