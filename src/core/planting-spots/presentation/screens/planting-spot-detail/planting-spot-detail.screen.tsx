@@ -61,14 +61,51 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
           { label: spot.name },
         ]}
         actions={
-          <Link
-            href={`/${lang}/planting-spots/${spotId}/edit`}
-            className={buttonVariants({ variant: 'outline', size: 'sm' })}
-          >
-            {d.editSpot}
-          </Link>
+          <>
+            <Link
+              href={`/${lang}/planting-spots/${spotId}/edit`}
+              className={buttonVariants({ variant: 'outline', size: 'sm' })}
+            >
+              {d.editSpot}
+            </Link>
+            {plantCount > 0 && (
+              <Button
+                variant="default"
+                size="sm"
+                data-testid="btn-water-spot"
+                disabled={waterPlantingSpot.isPending}
+                onClick={() => setIsWaterOpen(true)}
+              >
+                {d.waterSpot}
+              </Button>
+            )}
+          </>
         }
       />
+
+      {(waterResult || waterPlantingSpot.isError) && (
+        <div className="px-6 pt-4 flex flex-col gap-2">
+          {waterResult && (
+            <Alert
+              variant={
+                waterResult.failedPlants.length === 0
+                  ? 'success'
+                  : waterResult.wateredPlantIds.length === 0
+                    ? 'error'
+                    : 'warning'
+              }
+              message={
+                waterResult.failedPlants.length === 0
+                  ? `${waterResult.wateredPlantIds.length} ${d.waterSpotWatered}.`
+                  : `${waterResult.wateredPlantIds.length} ${d.waterSpotWatered}, ${waterResult.failedPlants.length} ${d.waterSpotFailed}.`
+              }
+            />
+          )}
+          {waterPlantingSpot.isError && (
+            <Alert variant="error" message={d.waterSpotError} />
+          )}
+        </div>
+      )}
 
       {/* Capacity summary bar */}
       {hasCapacity && (
@@ -95,40 +132,6 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
 
           {/* --- Active plants tab --- */}
           <TabsContent value="plants" className="pt-4">
-            {plantCount > 0 && (
-              <div className="flex flex-col gap-2 pb-4">
-                <div className="flex justify-end">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    data-testid="btn-water-spot"
-                    disabled={waterPlantingSpot.isPending}
-                    onClick={() => setIsWaterOpen(true)}
-                  >
-                    {d.waterSpot}
-                  </Button>
-                </div>
-                {waterResult && (
-                  <Alert
-                    variant={
-                      waterResult.failedPlants.length === 0
-                        ? 'success'
-                        : waterResult.wateredPlantIds.length === 0
-                          ? 'error'
-                          : 'warning'
-                    }
-                    message={
-                      waterResult.failedPlants.length === 0
-                        ? `${waterResult.wateredPlantIds.length} ${d.waterSpotWatered}.`
-                        : `${waterResult.wateredPlantIds.length} ${d.waterSpotWatered}, ${waterResult.failedPlants.length} ${d.waterSpotFailed}.`
-                    }
-                  />
-                )}
-                {waterPlantingSpot.isError && (
-                  <Alert variant="error" message={d.waterSpotError} />
-                )}
-              </div>
-            )}
             {plantCount === 0 ? (
               <p className="text-sm text-muted-foreground">{d.noActivePlants}</p>
             ) : (
