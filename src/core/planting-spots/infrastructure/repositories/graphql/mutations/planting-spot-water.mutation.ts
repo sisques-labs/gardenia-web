@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const PLANTING_SPOT_WATER = gql`
-  mutation PlantingSpotWater($input: WaterPlantingSpotGraphQLDto!) {
+  mutation PlantingSpotWater($input: PlantingSpotWaterRequestDto!) {
     plantingSpotWater(input: $input) {
       plantingSpotId
       wateredPlantIds
