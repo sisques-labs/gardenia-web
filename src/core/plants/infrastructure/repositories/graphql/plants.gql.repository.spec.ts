@@ -138,6 +138,7 @@ describe('PlantsGqlRepository', () => {
       expect(apolloClient.query).toHaveBeenCalledWith({
         query: PLANT_FIND_BY_ID,
         variables: { input: { id: 'plant-1' } },
+        fetchPolicy: 'network-only',
       });
       expect(result).toEqual(mockPlant);
     });
