@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-## [0.24.0-beta.0] - 2026-07-04
+## [0.24.0] - 2026-07-04
 
 ### Bug Fixes
 - **plants:** Avoid exhaustive-deps suppression in page-reset effect (3806018)

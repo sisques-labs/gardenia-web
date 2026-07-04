@@ -47,6 +47,19 @@ const dict = {
     cancel: 'Cancelar',
     error: 'No se pudo crear la planta. Inténtalo de nuevo.',
   },
+  edit: {
+    title: 'Editar planta',
+    name: 'Nombre',
+    namePlaceholder: 'ej. Monstera',
+    nameRequired: 'El nombre es obligatorio',
+    nameMax: 'Máximo 100 caracteres',
+    imageUrl: 'URL de imagen',
+    imageUrlPlaceholder: 'https://...',
+    submit: 'Guardar',
+    submitting: 'Guardando...',
+    cancel: 'Cancelar',
+    error: 'No se pudo actualizar la planta. Inténtalo de nuevo.',
+  },
   delete: {
     button: 'Eliminar planta',
     confirmTitle: 'Eliminar planta',
@@ -61,6 +74,7 @@ const dict = {
     actions: {
       markWatered: 'Marcar regado',
       markWateredError: 'No se pudo registrar el riego. Inténtalo de nuevo.',
+      edit: 'Editar',
     },
     care: {
       lastWatered: 'Último riego',

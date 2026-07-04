@@ -47,6 +47,12 @@ vi.mock('@/core/plants/presentation/components/plant-planting-spot-field/plant-p
   PlantPlantingSpotField: () => null,
 }));
 
+vi.mock('@/core/plants/presentation/components/edit-plant-modal/edit-plant-modal', () => ({
+  EditPlantModal: ({ plant }: { plant: { id: string } }) => (
+    <div data-testid="edit-plant-modal" data-plant-id={plant.id} />
+  ),
+}));
+
 vi.mock('next/link', () => ({
   default: ({ href, children }: { href: string; children: React.ReactNode }) => (
     <a href={href}>{children}</a>
@@ -123,12 +129,26 @@ const dict = {
     cancel: 'Cancel',
     error: 'Could not create the plant. Try again.',
   },
+  edit: {
+    title: 'Edit plant',
+    name: 'Name',
+    namePlaceholder: 'e.g. Monstera',
+    nameRequired: 'Name is required',
+    nameMax: 'At most 100 characters',
+    imageUrl: 'Image URL',
+    imageUrlPlaceholder: 'https://...',
+    submit: 'Save',
+    submitting: 'Saving...',
+    cancel: 'Cancel',
+    error: 'Could not update the plant. Try again.',
+  },
   detail: {
     breadcrumbList: 'Inventory',
     noSpecies: 'Unknown species',
     actions: {
       markWatered: 'Mark watered',
       markWateredError: 'Could not log the watering. Try again.',
+      edit: 'Edit',
     },
     care: {
       lastWatered: 'Last watered',
@@ -221,15 +241,28 @@ describe('PlantDetailScreen', () => {
     expect(screen.getByTestId('plant-last-watered')).toHaveTextContent('Not watered yet');
   });
 
-  it('renders only the mark-watered and delete actions (no add-photo/new-note)', () => {
+  it('renders only the mark-watered, edit and delete actions (no add-photo/new-note)', () => {
     vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
 
     render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
 
     expect(screen.getByTestId('btn-mark-watered')).not.toBeDisabled();
+    expect(screen.getByTestId('btn-edit-plant')).not.toBeDisabled();
     expect(screen.getByTestId('btn-delete-plant')).not.toBeDisabled();
     expect(screen.queryByTestId('btn-add-photo')).not.toBeInTheDocument();
     expect(screen.queryByTestId('btn-new-note')).not.toBeInTheDocument();
+  });
+
+  it('opens the edit modal for the current plant when "edit" is clicked', async () => {
+    const user = userEvent.setup();
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
+    expect(screen.queryByTestId('edit-plant-modal')).not.toBeInTheDocument();
+
+    await user.click(screen.getByTestId('btn-edit-plant'));
+
+    expect(screen.getByTestId('edit-plant-modal')).toHaveAttribute('data-plant-id', 'p1');
   });
 
   it('calls useWaterPlant().mutate with plantId when "mark watered" is clicked', async () => {
