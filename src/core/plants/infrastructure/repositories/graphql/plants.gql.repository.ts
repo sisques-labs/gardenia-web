@@ -39,6 +39,7 @@ export class PlantsGqlRepository implements IPlantsRepository {
     const res = await apolloClient.query<PlantFindByIdResponse>({
       query: PLANT_FIND_BY_ID,
       variables: { input: { id } },
+      fetchPolicy: 'network-only',
     });
     if (!res.data?.plantFindById) throw new Error(`Plant not found: ${id}`);
     return res.data.plantFindById;
