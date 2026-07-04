@@ -105,6 +105,16 @@ const dict = {
     ACTIVE: 'Active',
     FALLOW: 'Fallow',
   },
+  addPlantModal: {
+    title: 'Add plant',
+    selectLabel: 'Plant',
+    selectPlaceholder: 'Select a plant',
+    noPlantsAvailable: 'No plants available to add.',
+    submit: 'Add',
+    submitting: 'Adding…',
+    cancel: 'Cancel',
+    error: 'Could not add the plant. Try again.',
+  },
 };
 
 function makeMockForm(name = 'Main Bed') {

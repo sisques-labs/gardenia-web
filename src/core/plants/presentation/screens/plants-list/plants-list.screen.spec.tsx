@@ -111,6 +111,12 @@ const dict = {
       neverWatered: 'Not watered yet',
     },
     addedOn: 'In your garden since',
+    plantingSpot: {
+      label: 'Planting spot',
+      unassigned: 'Unassigned',
+      placeholder: 'Select a planting spot',
+      updateError: 'Could not update the planting spot. Try again.',
+    },
     qr: { label: 'Label · QR', hint: 'Print and stick on the pot', download: 'Download PDF' },
     calendarTitle: 'Upcoming tasks',
   },

@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
 
@@ -42,6 +42,17 @@ vi.mock(
   () => ({
     PlantingSpotStatusBadge: ({ status }: { status: string }) => (
       <span data-testid="status-badge">{status}</span>
+    ),
+  }),
+);
+
+vi.mock(
+  '@/core/planting-spots/presentation/components/add-plant-to-spot-modal/add-plant-to-spot-modal',
+  () => ({
+    AddPlantToSpotModal: ({ onClose }: { onClose: () => void }) => (
+      <div data-testid="add-plant-modal">
+        <button onClick={onClose}>close-add-plant-modal</button>
+      </div>
     ),
   }),
 );
@@ -126,6 +137,16 @@ const dict = {
   statuses: {
     ACTIVE: 'Active',
     FALLOW: 'Fallow',
+  },
+  addPlantModal: {
+    title: 'Add plant',
+    selectLabel: 'Plant',
+    selectPlaceholder: 'Select a plant',
+    noPlantsAvailable: 'No plants available to add.',
+    submit: 'Add',
+    submitting: 'Adding…',
+    cancel: 'Cancel',
+    error: 'Could not add the plant. Try again.',
   },
 };
 
@@ -245,6 +266,31 @@ describe('PlantingSpotDetailScreen', () => {
     screen.getByText('Reactivate').click();
 
     expect(mutate).toHaveBeenCalledWith('spot-1');
+  });
+
+  it('does not render the add-plant modal by default', () => {
+    mockSpot();
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.queryByTestId('add-plant-modal')).not.toBeInTheDocument();
+  });
+
+  it('opens the add-plant modal when "Add plant" is clicked', () => {
+    mockSpot();
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    fireEvent.click(screen.getByText('Add plant'));
+
+    expect(screen.getByTestId('add-plant-modal')).toBeInTheDocument();
+  });
+
+  it('closes the add-plant modal when it calls onClose', () => {
+    mockSpot();
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    fireEvent.click(screen.getByText('Add plant'));
+    fireEvent.click(screen.getByText('close-add-plant-modal'));
+
+    expect(screen.queryByTestId('add-plant-modal')).not.toBeInTheDocument();
   });
 
   it('renders empty plants message when no plants', () => {

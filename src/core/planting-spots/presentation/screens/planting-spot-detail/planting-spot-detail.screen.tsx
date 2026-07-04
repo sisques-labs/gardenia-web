@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import {
@@ -14,6 +15,7 @@ import { useMarkPlantingSpotFallow } from '@/core/planting-spots/presentation/ho
 import { useMarkPlantingSpotActive } from '@/core/planting-spots/presentation/hooks/use-mark-planting-spot-active/use-mark-planting-spot-active.hook';
 import { PlantingSpotTypeBadge } from '@/core/planting-spots/presentation/components/planting-spot-type-badge/planting-spot-type-badge';
 import { PlantingSpotStatusBadge } from '@/core/planting-spots/presentation/components/planting-spot-status-badge/planting-spot-status-badge';
+import { AddPlantToSpotModal } from '@/core/planting-spots/presentation/components/add-plant-to-spot-modal/add-plant-to-spot-modal';
 import { PlantingSpotDetailSkeleton } from '@/core/planting-spots/presentation/components/planting-spot-detail-skeleton/planting-spot-detail-skeleton';
 import { CapacityBar } from '@/core/planting-spots/presentation/components/capacity-bar/capacity-bar';
 import { Row } from '@/core/planting-spots/presentation/components/row/row';
@@ -30,6 +32,7 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
   const { spot, isLoading } = usePlantingSpot(spotId);
   const markFallow = useMarkPlantingSpotFallow();
   const markActive = useMarkPlantingSpotActive();
+  const [isAddPlantOpen, setIsAddPlantOpen] = useState(false);
   const d = dict.detail;
 
   if (isLoading) return <PlantingSpotDetailSkeleton />;
@@ -95,6 +98,11 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
 
           {/* --- Active plants tab --- */}
           <TabsContent value="plants" className="pt-4">
+            <div className="flex justify-end pb-3">
+              <Button variant="outline" size="sm" onClick={() => setIsAddPlantOpen(true)}>
+                {d.addPlant}
+              </Button>
+            </div>
             {plantCount === 0 ? (
               <p className="text-sm text-muted-foreground">{d.noActivePlants}</p>
             ) : (
@@ -214,6 +222,14 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
           </TabsContent>
         </Tabs>
       </div>
+
+      {isAddPlantOpen && (
+        <AddPlantToSpotModal
+          spotId={spotId}
+          dict={dict.addPlantModal}
+          onClose={() => setIsAddPlantOpen(false)}
+        />
+      )}
     </div>
   );
 }

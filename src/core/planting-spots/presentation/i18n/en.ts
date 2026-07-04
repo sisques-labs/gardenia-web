@@ -54,6 +54,16 @@ const dict = {
     plantsCount: 'plants',
     position: 'Position',
   },
+  addPlantModal: {
+    title: 'Add plant',
+    selectLabel: 'Plant',
+    selectPlaceholder: 'Select a plant',
+    noPlantsAvailable: 'No plants available to add.',
+    submit: 'Add',
+    submitting: 'Adding…',
+    cancel: 'Cancel',
+    error: 'Could not add the plant. Try again.',
+  },
   types: {
     RAISED_BED: 'Raised bed',
     POT: 'Pot',
