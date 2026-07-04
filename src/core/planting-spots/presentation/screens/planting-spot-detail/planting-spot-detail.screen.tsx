@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import {
@@ -13,13 +12,12 @@ import { Button, buttonVariants } from '@/shared/presentation/components/ui/butt
 import { Alert } from '@/shared/presentation/components/ui/alert/alert';
 import { ConfirmDialog } from '@/shared/presentation/components/ui/confirm-dialog/confirm-dialog';
 import { usePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-planting-spot/use-planting-spot.hook';
-import { useWaterPlantingSpot } from '@/core/planting-spots/presentation/hooks/use-water-planting-spot/use-water-planting-spot.hook';
+import { useWaterPlantingSpotConfirm } from '@/core/planting-spots/presentation/hooks/use-water-planting-spot-confirm/use-water-planting-spot-confirm.hook';
 import { PlantingSpotTypeBadge } from '@/core/planting-spots/presentation/components/planting-spot-type-badge/planting-spot-type-badge';
 import { PlantingSpotDetailSkeleton } from '@/core/planting-spots/presentation/components/planting-spot-detail-skeleton/planting-spot-detail-skeleton';
 import { CapacityBar } from '@/core/planting-spots/presentation/components/capacity-bar/capacity-bar';
 import { Row } from '@/core/planting-spots/presentation/components/row/row';
 import { getPlantingSpotPositionLabel } from '@/core/planting-spots/presentation/utils/get-planting-spot-position-label/get-planting-spot-position-label.util';
-import type { WaterPlantingSpotResult } from '@/core/planting-spots/domain/interfaces/water-planting-spot-result.interface';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {
@@ -30,9 +28,15 @@ type Props = {
 
 export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
   const { spot, isLoading } = usePlantingSpot(spotId);
-  const waterPlantingSpot = useWaterPlantingSpot();
-  const [isWaterOpen, setIsWaterOpen] = useState(false);
-  const [waterResult, setWaterResult] = useState<WaterPlantingSpotResult | null>(null);
+  const {
+    isOpen: isWaterOpen,
+    requestWater,
+    confirmWater,
+    cancelWater,
+    result: waterResult,
+    isPending: isWaterPending,
+    isError: isWaterError,
+  } = useWaterPlantingSpotConfirm(spotId);
   const d = dict.detail;
 
   if (isLoading) return <PlantingSpotDetailSkeleton />;
@@ -41,16 +45,6 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
   const plantCount = spot.resolvedPlants?.length ?? 0;
   const hasCapacity = spot.capacity != null;
   const positionLabel = getPlantingSpotPositionLabel(spot);
-
-  function handleWaterConfirm() {
-    waterPlantingSpot.mutate(
-      { id: spotId },
-      {
-        onSuccess: (result) => setWaterResult(result),
-        onSettled: () => setIsWaterOpen(false),
-      },
-    );
-  }
 
   return (
     <div>
@@ -73,8 +67,8 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
                 variant="default"
                 size="sm"
                 data-testid="btn-water-spot"
-                disabled={waterPlantingSpot.isPending}
-                onClick={() => setIsWaterOpen(true)}
+                disabled={isWaterPending}
+                onClick={requestWater}
               >
                 {d.waterSpot}
               </Button>
@@ -83,7 +77,7 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
         }
       />
 
-      {(waterResult || waterPlantingSpot.isError) && (
+      {(waterResult || isWaterError) && (
         <div className="px-6 pt-4 flex flex-col gap-2">
           {waterResult && (
             <Alert
@@ -101,7 +95,7 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
               }
             />
           )}
-          {waterPlantingSpot.isError && (
+          {isWaterError && (
             <Alert variant="error" message={d.waterSpotError} />
           )}
         </div>
@@ -250,13 +244,13 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
 
       <ConfirmDialog
         open={isWaterOpen}
-        onOpenChange={setIsWaterOpen}
+        onOpenChange={(open) => !open && cancelWater()}
         title={d.waterSpotConfirmTitle}
         description={d.waterSpotConfirmDescription}
         confirmLabel={d.waterSpotConfirm}
         cancelLabel={d.waterSpotCancel}
-        onConfirm={handleWaterConfirm}
-        onCancel={() => setIsWaterOpen(false)}
+        onConfirm={confirmWater}
+        onCancel={cancelWater}
       />
     </div>
   );
