@@ -19,7 +19,9 @@
 ## Phase 2 — Component
 
 - [x] T-2 — `EditPlantModal` component mirroring `CreatePlantModal` (`FormModal` + `Input` +
-  `resolveFieldError`), taking `{ plant, dict, onClose }`.
+  `resolveFieldError`), taking `{ plant, dict, onClose }`, with a co-located
+  `edit-plant-modal.stories.tsx` (mandatory per `openspec/config.yaml`'s storybook rule —
+  initially missed, added after review).
 - [x] T-3 — `edit-plant-modal.spec.tsx`: dialog renders, cancel calls `onClose` (mirrors
   `create-plant-modal.spec.tsx`).
 
