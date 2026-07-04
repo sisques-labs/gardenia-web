@@ -15,6 +15,8 @@ const mockSpot: PlantingSpot = {
   row: 1,
   column: 2,
   soilType: "Franco arcilloso",
+  status: "ACTIVE",
+  fallowSince: null,
   resolvedPlants: [
     { id: "p1", name: "Tomate cherry", userId: "u1", spaceId: "s1", createdAt: "2026-05-01", updatedAt: "2026-05-01" },
     { id: "p2", name: "Albahaca", userId: "u1", spaceId: "s1", createdAt: "2026-05-10", updatedAt: "2026-05-10" },

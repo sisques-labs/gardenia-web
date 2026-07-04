@@ -10,11 +10,12 @@ const meta = {
   tags: ["autodocs"],
   args: {
     dict,
-    filters: { query: "", type: "ALL", lowStockOnly: false, expiringSoonOnly: false },
+    filters: { query: "", types: [], lowStockOnly: false, expiringSoonOnly: false },
     onQueryChange: () => {},
-    onTypeChange: () => {},
+    onToggleType: () => {},
     onToggleLowStock: () => {},
     onToggleExpiringSoon: () => {},
+    onRemoveFilter: () => {},
   },
   parameters: { layout: "padded" },
 } satisfies Meta<typeof InventoryFilters>;
@@ -26,6 +27,6 @@ export const Default: Story = {};
 
 export const Active: Story = {
   args: {
-    filters: { query: "sustrato", type: "SUBSTRATE", lowStockOnly: true, expiringSoonOnly: false },
+    filters: { query: "sustrato", types: ["SUBSTRATE", "FERTILIZER"], lowStockOnly: true, expiringSoonOnly: false },
   },
 };

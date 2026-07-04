@@ -133,12 +133,9 @@ describe('HarvestsGqlRepository', () => {
   });
 
   describe('create()', () => {
-    it('calls apolloClient.mutate with HARVEST_CREATE then re-fetches by id to return Harvest', async () => {
+    it('calls apolloClient.mutate with HARVEST_CREATE and returns just the created id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { harvestCreate: { id: 'harvest-1', success: true, message: 'Harvest created' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { harvestFindById: mockHarvest },
       } as never);
 
       const input = { cropType: 'Tomato', quantity: 5, unit: 'KG' as const, harvestedAt: '2024-06-01' };
@@ -149,12 +146,8 @@ describe('HarvestsGqlRepository', () => {
         mutation: HARVEST_CREATE,
         variables: { input },
       });
-      expect(apolloClient.query).toHaveBeenCalledWith({
-        query: HARVEST_FIND_BY_ID,
-        variables: { input: { id: 'harvest-1' } },
-        fetchPolicy: 'network-only',
-      });
-      expect(result).toEqual(mockHarvest);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'harvest-1' });
     });
 
     it('throws when mutation success is false', async () => {
@@ -169,12 +162,9 @@ describe('HarvestsGqlRepository', () => {
   });
 
   describe('update()', () => {
-    it('calls apolloClient.mutate with HARVEST_UPDATE then re-fetches by id to return Harvest', async () => {
+    it('calls apolloClient.mutate with HARVEST_UPDATE and returns just the updated id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { harvestUpdate: { id: 'harvest-1', success: true, message: 'Harvest updated' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { harvestFindById: mockHarvest },
       } as never);
 
       const input = { id: 'harvest-1', cropType: 'Tomato Updated' };
@@ -185,23 +175,16 @@ describe('HarvestsGqlRepository', () => {
         mutation: HARVEST_UPDATE,
         variables: { input },
       });
-      expect(apolloClient.query).toHaveBeenCalledWith({
-        query: HARVEST_FIND_BY_ID,
-        variables: { input: { id: 'harvest-1' } },
-        fetchPolicy: 'network-only',
-      });
-      expect(result).toEqual(mockHarvest);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'harvest-1' });
     });
 
-    it('propagates not-found rejection', async () => {
+    it('throws when mutation success is false', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
-        data: { harvestUpdate: { id: 'harvest-99', success: true, message: 'Updated' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { harvestFindById: null },
+        data: { harvestUpdate: { id: '', success: false, message: 'Failed' } },
       } as never);
 
-      await expect(repository.update({ id: 'harvest-99' })).rejects.toThrow('Harvest not found: harvest-99');
+      await expect(repository.update({ id: 'harvest-99' })).rejects.toThrow('harvestUpdate mutation failed');
     });
   });
 

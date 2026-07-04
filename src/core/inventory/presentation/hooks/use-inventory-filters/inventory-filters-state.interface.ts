@@ -2,14 +2,14 @@ import type { InventoryItemType } from '@/core/inventory/domain/types/inventory-
 
 export interface InventoryFiltersState {
   query: string;
-  type: InventoryItemType | 'ALL';
+  types: InventoryItemType[];
   lowStockOnly: boolean;
   expiringSoonOnly: boolean;
 }
 
 export const INITIAL_INVENTORY_FILTERS: InventoryFiltersState = {
   query: '',
-  type: 'ALL',
+  types: [],
   lowStockOnly: false,
   expiringSoonOnly: false,
 };

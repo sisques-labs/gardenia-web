@@ -14,6 +14,7 @@ const makeEntry = (overrides: Partial<CareLogEntry> = {}): CareLogEntry => ({
 
 const mockRepository: ICareLogRepository = {
   findByPlantId: vi.fn(),
+  create: vi.fn(),
 };
 
 describe('GetPlantCareLogsUseCase', () => {

@@ -1,6 +1,62 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.24.0-beta.0] - 2026-07-04
+
+### Bug Fixes
+- **plants:** Avoid exhaustive-deps suppression in page-reset effect (3806018)
+- **plants:** Fix cache invalidation for the paginated plants list (04ca385)
+- Stop re-fetching entities after create/update mutations (17f3721)
+- **ui:** Stop RowSkeleton and Select dropdown from rendering transparent (85119d1)
+- **plants:** Align the "new task" button with the section title (fe65a0f)
+- **planting-spots:** Request status and fallowSince in GraphQL queries (455a8b2)
+- **care-log:** Send the GraphQL enum name instead of the raw field name (35a7886)
+- **care-log:** Use network-only fetch policy when listing a plant's care log (391b577)
+- **watering:** Use the API's actual registered GraphQL input type names (e763b1e)
+
+### CI
+- Fetch full history in React Doctor checkout for accurate PR diffing (c79a257)
+
+### Documentation
+- **openspec:** Propose space-invite-preview-ux change (3e602ed)
+- **openspec:** Propose wiring plants list filters to typed criteria (16420f4)
+- Codify debounce convention for network-triggering search inputs (34a09c1)
+
+### Features
+- **care-schedule:** Add water-plant use-case, repository mutation and hook (9827ddf)
+- **plants:** Wire "Mark watered" button to careScheduleWaterPlant (72d72e3)
+- **planting-spots:** Add water-all use-case, repository mutation and hook (07c55e4)
+- **planting-spots:** Water all plants in a spot from the detail screen (ec206ef)
+- **spaces:** Preview-then-confirm invitation acceptance flow (7260fa5)
+- **plants:** Wire the plants list search to typed Criteria filters (b520ae2)
+- **plants:** Mirror the API's expanded queryable field enum (65a80b7)
+- **plants:** Debounce the search filter and reset to page 1 on change (db9aa67)
+- **inventory:** Row actions menu and delete confirmation (1b1e7ab)
+- **inventory:** Server-side pagination and sorting (a2aa5d3)
+- **inventory:** Server-side filtering and active filter chips (f1be813)
+- **inventory:** Item detail drawer (796cdf9)
+- **inventory:** Bulk selection and bulk delete (a57dbff)
+- **inventory:** Allow selecting multiple item types in the type filter (727d0d6)
+- **ui:** Make FilterBar a generic, declarative filter-controls component (ec1c414)
+- **plants:** Port the generic FilterBar to the plants list search (cac78cd)
+- **plants:** Redesign the plant detail screen with real data (6dcddd0)
+- **planting-spots:** Add fallow/active status use cases and UI (39a65e5)
+- **plants:** Allow assigning a plant to a planting spot from the UI (a9c1fc9)
+
+### Refactor
+- **criteria:** Extract generic Filter/Sort/ListCriteria to shared (211196c)
+- **care-schedule:** Migrate filters to the typed Criteria pattern (5095db0)
+- **planting-spots:** Move water-confirm state into a hook (afcd87f)
+- **planting-spots:** Address review feedback on mark-fallow/active (2a2afdb)
+
+### Style
+- **spaces:** Redesign the invite screen with shadcn/ui components (78f915a)
+- **plants:** Give the plant detail hero an editorial, botanical-tag look (cd12b35)
+- **planting-spots:** Move the water-all-plants button into the screen header (e19e2bc)
+
+### Testing
+- **plants:** Enrich the plant detail story fixture with QR and planting spot (0df3ad0)
+- **planting-spots:** Complete IPlantingSpotsRepository mocks post-merge (4c9230e)
 ## [0.23.1] - 2026-07-02
 
 ### Refactor

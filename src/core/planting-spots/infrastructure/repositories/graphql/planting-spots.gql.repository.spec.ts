@@ -15,7 +15,11 @@ import { PLANTING_SPOT_FIND_BY_ID } from './queries/planting-spot-find-by-id.que
 import { PLANTING_SPOT_CREATE } from './mutations/planting-spot-create.mutation';
 import { PLANTING_SPOT_UPDATE } from './mutations/planting-spot-update.mutation';
 import { PLANTING_SPOT_DELETE } from './mutations/planting-spot-delete.mutation';
+import { PLANTING_SPOT_WATER } from './mutations/planting-spot-water.mutation';
+import { PLANTING_SPOT_MARK_FALLOW } from './mutations/planting-spot-mark-fallow.mutation';
+import { PLANTING_SPOT_MARK_ACTIVE } from './mutations/planting-spot-mark-active.mutation';
 import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
+import type { WaterPlantingSpotResult } from '@/core/planting-spots/domain/interfaces/water-planting-spot-result.interface';
 
 const mockSpot: PlantingSpot = {
   id: 'spot-1',
@@ -24,6 +28,8 @@ const mockSpot: PlantingSpot = {
   description: null,
   userId: 'user-1',
   spaceId: 'space-1',
+  status: 'ACTIVE',
+  fallowSince: null,
   resolvedPlants: [],
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
@@ -63,6 +69,21 @@ describe('PlantingSpotsGqlRepository', () => {
     it('PLANTING_SPOT_DELETE is a valid GQL document', () => {
       expect(PLANTING_SPOT_DELETE).toBeDefined();
       expect((PLANTING_SPOT_DELETE as DocumentNode).kind).toBe('Document');
+    });
+
+    it('PLANTING_SPOT_WATER is a valid GQL document', () => {
+      expect(PLANTING_SPOT_WATER).toBeDefined();
+      expect((PLANTING_SPOT_WATER as DocumentNode).kind).toBe('Document');
+    });
+
+    it('PLANTING_SPOT_MARK_FALLOW is a valid GQL document', () => {
+      expect(PLANTING_SPOT_MARK_FALLOW).toBeDefined();
+      expect((PLANTING_SPOT_MARK_FALLOW as DocumentNode).kind).toBe('Document');
+    });
+
+    it('PLANTING_SPOT_MARK_ACTIVE is a valid GQL document', () => {
+      expect(PLANTING_SPOT_MARK_ACTIVE).toBeDefined();
+      expect((PLANTING_SPOT_MARK_ACTIVE as DocumentNode).kind).toBe('Document');
     });
   });
 
@@ -125,12 +146,9 @@ describe('PlantingSpotsGqlRepository', () => {
   });
 
   describe('create()', () => {
-    it('calls apolloClient.mutate with PLANTING_SPOT_CREATE then re-fetches by id', async () => {
+    it('calls apolloClient.mutate with PLANTING_SPOT_CREATE and returns just the created id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { plantingSpotCreate: { id: 'spot-1', success: true, message: 'Created' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { plantingSpotFindById: mockSpot },
       } as never);
 
       const input = { name: 'Main Bed', type: 'RAISED_BED' as const };
@@ -141,12 +159,8 @@ describe('PlantingSpotsGqlRepository', () => {
         mutation: PLANTING_SPOT_CREATE,
         variables: { input },
       });
-      expect(apolloClient.query).toHaveBeenCalledWith({
-        query: PLANTING_SPOT_FIND_BY_ID,
-        variables: { input: { id: 'spot-1' } },
-        fetchPolicy: 'network-only',
-      });
-      expect(result).toEqual(mockSpot);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'spot-1' });
     });
 
     it('throws when mutation success is false', async () => {
@@ -161,12 +175,9 @@ describe('PlantingSpotsGqlRepository', () => {
   });
 
   describe('update()', () => {
-    it('calls apolloClient.mutate with PLANTING_SPOT_UPDATE then re-fetches by id', async () => {
+    it('calls apolloClient.mutate with PLANTING_SPOT_UPDATE and returns just the updated id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { plantingSpotUpdate: { id: 'spot-1', success: true, message: 'Updated' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { plantingSpotFindById: mockSpot },
       } as never);
 
       const input = { id: 'spot-1', name: 'Updated Bed' };
@@ -177,18 +188,16 @@ describe('PlantingSpotsGqlRepository', () => {
         mutation: PLANTING_SPOT_UPDATE,
         variables: { input },
       });
-      expect(result).toEqual(mockSpot);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'spot-1' });
     });
 
-    it('propagates not-found rejection after update', async () => {
+    it('throws when mutation success is false', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
-        data: { plantingSpotUpdate: { id: 'spot-99', success: true, message: 'Updated' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { plantingSpotFindById: null },
+        data: { plantingSpotUpdate: { id: '', success: false, message: 'Failed' } },
       } as never);
 
-      await expect(repository.update({ id: 'spot-99' })).rejects.toThrow('PlantingSpot not found: spot-99');
+      await expect(repository.update({ id: 'spot-99' })).rejects.toThrow('plantingSpotUpdate mutation failed');
     });
   });
 
@@ -206,6 +215,115 @@ describe('PlantingSpotsGqlRepository', () => {
         mutation: PLANTING_SPOT_DELETE,
         variables: { input: { id: 'spot-1' } },
       });
+    });
+  });
+
+  describe('waterAll()', () => {
+    const mockResult: WaterPlantingSpotResult = {
+      plantingSpotId: 'spot-1',
+      wateredPlantIds: ['plant-1', 'plant-2'],
+      failedPlants: [],
+    };
+
+    it('calls apolloClient.mutate with PLANTING_SPOT_WATER and returns the result as-is (no follow-up fetch)', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { plantingSpotWater: mockResult },
+      } as never);
+
+      const result = await repository.waterAll('spot-1', '2026-07-05');
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: PLANTING_SPOT_WATER,
+        variables: { input: { id: 'spot-1', performedAt: '2026-07-05' } },
+      });
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual(mockResult);
+    });
+
+    it('calls apolloClient.mutate without performedAt when omitted', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { plantingSpotWater: { plantingSpotId: 'spot-1', wateredPlantIds: [], failedPlants: [] } },
+      } as never);
+
+      await repository.waterAll('spot-1');
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: PLANTING_SPOT_WATER,
+        variables: { input: { id: 'spot-1', performedAt: undefined } },
+      });
+    });
+
+    it('returns partial failure results untouched', async () => {
+      const partial: WaterPlantingSpotResult = {
+        plantingSpotId: 'spot-1',
+        wateredPlantIds: ['plant-1'],
+        failedPlants: [{ plantId: 'plant-2', reason: 'No active schedule' }],
+      };
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { plantingSpotWater: partial },
+      } as never);
+
+      const result = await repository.waterAll('spot-1');
+
+      expect(result).toEqual(partial);
+    });
+
+    it('throws when plantingSpotWater is null', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { plantingSpotWater: null },
+      } as never);
+
+      await expect(repository.waterAll('spot-1')).rejects.toThrow('plantingSpotWater mutation failed');
+    });
+  });
+
+  describe('markFallow()', () => {
+    it('calls apolloClient.mutate with PLANTING_SPOT_MARK_FALLOW and returns just the id', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { plantingSpotMarkFallow: { id: 'spot-1', success: true, message: 'Marked fallow' } },
+      } as never);
+
+      const result = await repository.markFallow('spot-1');
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: PLANTING_SPOT_MARK_FALLOW,
+        variables: { input: { id: 'spot-1' } },
+      });
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'spot-1' });
+    });
+
+    it('throws when mutation success is false', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { plantingSpotMarkFallow: { id: '', success: false, message: 'Failed' } },
+      } as never);
+
+      await expect(repository.markFallow('spot-1')).rejects.toThrow('plantingSpotMarkFallow mutation failed');
+    });
+  });
+
+  describe('markActive()', () => {
+    it('calls apolloClient.mutate with PLANTING_SPOT_MARK_ACTIVE and returns just the id', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { plantingSpotMarkActive: { id: 'spot-1', success: true, message: 'Marked active' } },
+      } as never);
+
+      const result = await repository.markActive('spot-1');
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: PLANTING_SPOT_MARK_ACTIVE,
+        variables: { input: { id: 'spot-1' } },
+      });
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'spot-1' });
+    });
+
+    it('throws when mutation success is false', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { plantingSpotMarkActive: { id: '', success: false, message: 'Failed' } },
+      } as never);
+
+      await expect(repository.markActive('spot-1')).rejects.toThrow('plantingSpotMarkActive mutation failed');
     });
   });
 });
