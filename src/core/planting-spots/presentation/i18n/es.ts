@@ -40,6 +40,9 @@ const dict = {
     tabInfo: 'Info del espacio',
     editSpot: 'Editar espacio',
     addPlant: 'Añadir planta',
+    markFallow: 'Marcar en barbecho',
+    markActive: 'Reactivar',
+    infoStatus: 'Estado',
     noActivePlants: 'No hay plantas asignadas actualmente a este espacio.',
     rotationHistoryEmpty: 'No hay historial de rotación todavía.',
     infoCapacity: 'Capacidad',
@@ -56,12 +59,26 @@ const dict = {
     plantsCount: 'plantas',
     position: 'Posición',
   },
+  addPlantModal: {
+    title: 'Añadir planta',
+    selectLabel: 'Planta',
+    selectPlaceholder: 'Selecciona una planta',
+    noPlantsAvailable: 'No hay plantas disponibles para añadir.',
+    submit: 'Añadir',
+    submitting: 'Añadiendo…',
+    cancel: 'Cancelar',
+    error: 'No se pudo añadir la planta. Inténtalo de nuevo.',
+  },
   types: {
     RAISED_BED: 'Bancal',
     POT: 'Maceta',
     CONTAINER: 'Contenedor',
     FIELD_SECTION: 'Sección de campo',
     OTHER: 'Otro',
+  },
+  statuses: {
+    ACTIVE: 'Activo',
+    FALLOW: 'En barbecho',
   },
 } as const satisfies PlantingSpotsDictTranslated;
 

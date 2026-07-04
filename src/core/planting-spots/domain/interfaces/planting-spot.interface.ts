@@ -1,4 +1,5 @@
 import type { PlantingSpotType } from '../types/planting-spot-type.type';
+import type { PlantingSpotStatus } from '../types/planting-spot-status.type';
 
 export interface PlantInSpot {
   id: string;
@@ -23,6 +24,8 @@ export interface PlantingSpot {
   dimensionsHeight?: number | null;
   dimensionsLength?: number | null;
   soilType?: string | null;
+  status: PlantingSpotStatus;
+  fallowSince?: string | null;
   userId: string;
   spaceId: string;
   resolvedPlants: PlantInSpot[];

@@ -38,10 +38,11 @@ describe('CareLogGqlRepository', () => {
       expect.objectContaining({
         variables: {
           input: {
-            filters: [{ field: 'plantId', operator: 'EQUALS', value: 'plant-1' }],
+            filters: [{ field: 'PLANT_ID', operator: 'EQUALS', value: 'plant-1' }],
             pagination: { page: 1, perPage: 50 },
           },
         },
+        fetchPolicy: 'network-only',
       }),
     );
   });
@@ -67,10 +68,11 @@ describe('CareLogGqlRepository', () => {
       expect.objectContaining({
         variables: {
           input: {
-            filters: [{ field: 'plantId', operator: 'EQUALS', value: 'plant-1' }],
+            filters: [{ field: 'PLANT_ID', operator: 'EQUALS', value: 'plant-1' }],
             pagination: { page: 1, perPage: 10 },
           },
         },
+        fetchPolicy: 'network-only',
       }),
     );
   });

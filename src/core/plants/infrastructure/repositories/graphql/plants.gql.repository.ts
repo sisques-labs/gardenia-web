@@ -1,6 +1,7 @@
 import { apolloClient } from '@/shared/infrastructure/http/apollo.client';
 import type { IPlantsRepository } from '@/core/plants/application/ports/plants.repository.port';
 import type { CreatePlantInput } from '@/core/plants/application/interfaces/create-plant-input.interface';
+import type { UpdatePlantInput } from '@/core/plants/application/interfaces/update-plant-input.interface';
 import type { PlantListCriteria } from '@/core/plants/application/interfaces/plant-list-criteria.interface';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 import type { CreatedEntity } from '@/shared/domain/interfaces/created-entity.interface';
@@ -8,10 +9,12 @@ import type { PaginatedResult } from '@/shared/domain/interfaces/paginated-resul
 import { PLANTS_FIND_BY_CRITERIA } from './queries/plants-find-by-criteria.query';
 import { PLANT_FIND_BY_ID } from './queries/plant-find-by-id.query';
 import { PLANT_CREATE } from './mutations/plant-create.mutation';
+import { PLANT_UPDATE } from './mutations/plant-update.mutation';
 import { PLANT_DELETE } from './mutations/plant-delete.mutation';
 import type { PlantsFindByCriteriaResponse } from './responses/plants-find-by-criteria.response';
 import type { PlantFindByIdResponse } from './responses/plant-find-by-id.response';
 import type { PlantCreateResponse } from './responses/plant-create.response';
+import type { PlantUpdateResponse } from './responses/plant-update.response';
 
 export class PlantsGqlRepository implements IPlantsRepository {
   async list(criteria?: PlantListCriteria): Promise<PaginatedResult<Plant>> {
@@ -48,6 +51,15 @@ export class PlantsGqlRepository implements IPlantsRepository {
     });
     if (!res.data?.plantCreate?.success) throw new Error('plantCreate mutation failed');
     return { id: res.data.plantCreate.id };
+  }
+
+  async update(input: UpdatePlantInput): Promise<CreatedEntity> {
+    const res = await apolloClient.mutate<PlantUpdateResponse>({
+      mutation: PLANT_UPDATE,
+      variables: { input },
+    });
+    if (!res.data?.plantUpdate?.success) throw new Error('plantUpdate mutation failed');
+    return { id: res.data.plantUpdate.id };
   }
 
   async delete(id: string): Promise<void> {

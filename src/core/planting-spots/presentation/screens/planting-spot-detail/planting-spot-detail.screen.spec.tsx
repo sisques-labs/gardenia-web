@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
 
@@ -19,10 +19,35 @@ vi.mock(
 );
 
 vi.mock(
+  '@/core/planting-spots/presentation/hooks/use-planting-spot-status-toggle/use-planting-spot-status-toggle.hook',
+  () => ({ usePlantingSpotStatusToggle: vi.fn() }),
+);
+
+vi.mock(
   '@/core/planting-spots/presentation/components/planting-spot-type-badge/planting-spot-type-badge',
   () => ({
     PlantingSpotTypeBadge: ({ type }: { type: string }) => (
       <span data-testid="type-badge">{type}</span>
+    ),
+  }),
+);
+
+vi.mock(
+  '@/core/planting-spots/presentation/components/planting-spot-status-badge/planting-spot-status-badge',
+  () => ({
+    PlantingSpotStatusBadge: ({ status }: { status: string }) => (
+      <span data-testid="status-badge">{status}</span>
+    ),
+  }),
+);
+
+vi.mock(
+  '@/core/planting-spots/presentation/components/add-plant-to-spot-modal/add-plant-to-spot-modal',
+  () => ({
+    AddPlantToSpotModal: ({ onClose }: { onClose: () => void }) => (
+      <div data-testid="add-plant-modal">
+        <button onClick={onClose}>close-add-plant-modal</button>
+      </div>
     ),
   }),
 );
@@ -37,6 +62,7 @@ vi.mock('@/shared/presentation/components/ui/tabs/tabs', () => ({
 }));
 
 import { usePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-planting-spot/use-planting-spot.hook';
+import { usePlantingSpotStatusToggle } from '@/core/planting-spots/presentation/hooks/use-planting-spot-status-toggle/use-planting-spot-status-toggle.hook';
 import { PlantingSpotDetailScreen } from './planting-spot-detail.screen';
 
 const dict = {
@@ -76,6 +102,9 @@ const dict = {
     tabInfo: 'Spot info',
     editSpot: 'Edit spot',
     addPlant: 'Add plant',
+    markFallow: 'Mark fallow',
+    markActive: 'Reactivate',
+    infoStatus: 'Status',
     noActivePlants: 'No plants currently assigned to this spot.',
     rotationHistoryEmpty: 'No rotation history yet.',
     infoCapacity: 'Capacity',
@@ -99,6 +128,20 @@ const dict = {
     FIELD_SECTION: 'Field section',
     OTHER: 'Other',
   },
+  statuses: {
+    ACTIVE: 'Active',
+    FALLOW: 'Fallow',
+  },
+  addPlantModal: {
+    title: 'Add plant',
+    selectLabel: 'Plant',
+    selectPlaceholder: 'Select a plant',
+    noPlantsAvailable: 'No plants available to add.',
+    submit: 'Add',
+    submitting: 'Adding…',
+    cancel: 'Cancel',
+    error: 'Could not add the plant. Try again.',
+  },
 };
 
 const baseSpot: PlantingSpot = {
@@ -115,6 +158,8 @@ const baseSpot: PlantingSpot = {
   soilType: null,
   userId: 'u1',
   spaceId: 's1',
+  status: 'ACTIVE',
+  fallowSince: null,
   resolvedPlants: [],
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
@@ -137,8 +182,18 @@ function mockNoSpot() {
 }
 
 describe('PlantingSpotDetailScreen', () => {
+  const toggleStatus = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(usePlantingSpotStatusToggle).mockImplementation(
+      (_spotId, status) =>
+        ({
+          isFallow: status === 'FALLOW',
+          isPending: false,
+          toggle: toggleStatus,
+        }) as never,
+    );
   });
 
   it('renders skeleton when loading', () => {
@@ -167,6 +222,67 @@ describe('PlantingSpotDetailScreen', () => {
     mockSpot();
     render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
     expect(screen.getByText('Edit spot')).toBeInTheDocument();
+  });
+
+  it('renders status badge with current status', () => {
+    mockSpot({ status: 'FALLOW' });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getAllByTestId('status-badge')[0]).toHaveTextContent('FALLOW');
+  });
+
+  it('shows "Mark fallow" action for an active spot', () => {
+    mockSpot({ status: 'ACTIVE' });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('Mark fallow')).toBeInTheDocument();
+  });
+
+  it('shows "Reactivate" action for a fallow spot', () => {
+    mockSpot({ status: 'FALLOW' });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByText('Reactivate')).toBeInTheDocument();
+  });
+
+  it('calls toggleStatus() when marking an active spot fallow', () => {
+    mockSpot({ status: 'ACTIVE' });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    screen.getByText('Mark fallow').click();
+
+    expect(toggleStatus).toHaveBeenCalledOnce();
+  });
+
+  it('calls toggleStatus() when reactivating a fallow spot', () => {
+    mockSpot({ status: 'FALLOW' });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    screen.getByText('Reactivate').click();
+
+    expect(toggleStatus).toHaveBeenCalledOnce();
+  });
+
+  it('does not render the add-plant modal by default', () => {
+    mockSpot();
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.queryByTestId('add-plant-modal')).not.toBeInTheDocument();
+  });
+
+  it('opens the add-plant modal when "Add plant" is clicked', () => {
+    mockSpot();
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    fireEvent.click(screen.getByText('Add plant'));
+
+    expect(screen.getByTestId('add-plant-modal')).toBeInTheDocument();
+  });
+
+  it('closes the add-plant modal when it calls onClose', () => {
+    mockSpot();
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    fireEvent.click(screen.getByText('Add plant'));
+    fireEvent.click(screen.getByText('close-add-plant-modal'));
+
+    expect(screen.queryByTestId('add-plant-modal')).not.toBeInTheDocument();
   });
 
   it('renders empty plants message when no plants', () => {

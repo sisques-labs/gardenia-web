@@ -7,6 +7,7 @@ describe('CreatePlantUseCase', () => {
     list: vi.fn(),
     getById: vi.fn(),
     create: vi.fn().mockResolvedValue({ id: 'p1' }),
+    update: vi.fn(),
     delete: vi.fn(),
   };
 

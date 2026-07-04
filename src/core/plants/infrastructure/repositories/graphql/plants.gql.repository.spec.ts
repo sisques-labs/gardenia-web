@@ -13,6 +13,7 @@ import { PlantsGqlRepository } from './plants.gql.repository';
 import { PLANTS_FIND_BY_CRITERIA } from './queries/plants-find-by-criteria.query';
 import { PLANT_FIND_BY_ID } from './queries/plant-find-by-id.query';
 import { PLANT_CREATE } from './mutations/plant-create.mutation';
+import { PLANT_UPDATE } from './mutations/plant-update.mutation';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 
 const mockPlants: Plant[] = [
@@ -67,6 +68,11 @@ describe('PlantsGqlRepository', () => {
     it('PLANT_CREATE is a valid GQL document', () => {
       expect(PLANT_CREATE).toBeDefined();
       expect((PLANT_CREATE as DocumentNode).kind).toBe('Document');
+    });
+
+    it('PLANT_UPDATE is a valid GQL document', () => {
+      expect(PLANT_UPDATE).toBeDefined();
+      expect((PLANT_UPDATE as DocumentNode).kind).toBe('Document');
     });
   });
 
@@ -170,6 +176,37 @@ describe('PlantsGqlRepository', () => {
     it('propagates errors from apolloClient.mutate', async () => {
       vi.mocked(apolloClient.mutate).mockRejectedValue(new Error('Network error'));
       await expect(repository.create({ name: 'Monstera' })).rejects.toThrow('Network error');
+    });
+  });
+
+  describe('update()', () => {
+    it('calls apolloClient.mutate with PLANT_UPDATE and returns just the updated id', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { plantUpdate: { id: 'plant-1', success: true, message: 'Plant updated successfully' } },
+      } as never);
+
+      const result = await repository.update({ id: 'plant-1', plantingSpotId: 'spot-1' });
+
+      expect(apolloClient.mutate).toHaveBeenCalledOnce();
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: PLANT_UPDATE,
+        variables: { input: { id: 'plant-1', plantingSpotId: 'spot-1' } },
+      });
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'plant-1' });
+    });
+
+    it('throws when success is false', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { plantUpdate: { id: '', success: false, message: 'Failed' } },
+      } as never);
+
+      await expect(repository.update({ id: 'plant-1', name: 'Renamed' })).rejects.toThrow('plantUpdate mutation failed');
+    });
+
+    it('propagates errors from apolloClient.mutate', async () => {
+      vi.mocked(apolloClient.mutate).mockRejectedValue(new Error('Network error'));
+      await expect(repository.update({ id: 'plant-1', name: 'Renamed' })).rejects.toThrow('Network error');
     });
   });
 });
