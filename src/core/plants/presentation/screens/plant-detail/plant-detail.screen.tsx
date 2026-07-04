@@ -6,6 +6,7 @@ import { usePlantCareLogs } from "@/core/care-log/presentation/hooks/use-plant-c
 import { CareScheduleList } from "@/core/care-schedule/presentation/components/care-schedule-list/care-schedule-list";
 import { useWaterPlant } from "@/core/care-schedule/presentation/hooks/use-water-plant/use-water-plant.hook";
 import { PlantDetailSkeleton } from "@/core/plants/presentation/components/plant-detail-skeleton/plant-detail-skeleton";
+import { PlantPlantingSpotField } from "@/core/plants/presentation/components/plant-planting-spot-field/plant-planting-spot-field";
 import { useDeletePlant } from "@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook";
 import { usePlant } from "@/core/plants/presentation/hooks/use-plant/use-plant.hook";
 import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store";
@@ -164,6 +165,12 @@ export function PlantDetailScreen({
                     </Chip>
                   )}
                 </div>
+
+                <PlantPlantingSpotField
+                  plantId={plantId}
+                  currentSpotId={plant.plantingSpot?.id}
+                  dict={dict.detail.plantingSpot}
+                />
 
                 <div className="dashed-rule" />
 

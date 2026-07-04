@@ -67,6 +67,12 @@ const dict = {
       neverWatered: 'Sin regar todavía',
     },
     addedOn: 'En tu jardín desde',
+    plantingSpot: {
+      label: 'Zona de cultivo',
+      unassigned: 'Sin asignar',
+      placeholder: 'Selecciona una zona de cultivo',
+      updateError: 'No se pudo actualizar la zona de cultivo. Inténtalo de nuevo.',
+    },
     qr: {
       label: 'Etiqueta · QR',
       hint: 'Imprime y pega en la maceta',

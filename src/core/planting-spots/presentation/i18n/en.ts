@@ -35,6 +35,9 @@ const dict = {
     tabInfo: 'Spot info',
     editSpot: 'Edit spot',
     addPlant: 'Add plant',
+    markFallow: 'Mark fallow',
+    markActive: 'Reactivate',
+    infoStatus: 'Status',
     noActivePlants: 'No plants currently assigned to this spot.',
     rotationHistoryEmpty: 'No rotation history yet.',
     infoCapacity: 'Capacity',
@@ -59,12 +62,26 @@ const dict = {
     waterSpotFailed: 'failed',
     waterSpotError: 'Could not water the spot. Try again.',
   },
+  addPlantModal: {
+    title: 'Add plant',
+    selectLabel: 'Plant',
+    selectPlaceholder: 'Select a plant',
+    noPlantsAvailable: 'No plants available to add.',
+    submit: 'Add',
+    submitting: 'Adding…',
+    cancel: 'Cancel',
+    error: 'Could not add the plant. Try again.',
+  },
   types: {
     RAISED_BED: 'Raised bed',
     POT: 'Pot',
     CONTAINER: 'Container',
     FIELD_SECTION: 'Field section',
     OTHER: 'Other',
+  },
+  statuses: {
+    ACTIVE: 'Active',
+    FALLOW: 'Fallow',
   },
 } as const;
 

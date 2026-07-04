@@ -1,6 +1,7 @@
 import { apolloClient } from '@/shared/infrastructure/http/apollo.client';
 import type { ICareLogRepository } from '@/core/care-log/application/ports/care-log.repository.port';
 import type { CareLogEntry } from '@/core/care-log/domain/interfaces/care-log-entry.interface';
+import { CareLogQueryableField } from '@/core/care-log/domain/enums/care-log-queryable-field.enum';
 import type { CreateCareLogInput } from '@/core/care-log/application/interfaces/create-care-log-input.interface';
 import type { CreatedEntity } from '@/shared/domain/interfaces/created-entity.interface';
 import { CARE_LOG_FIND_BY_PLANT } from './queries/care-log-find-by-plant.query';
@@ -14,10 +15,11 @@ export class CareLogGqlRepository implements ICareLogRepository {
       query: CARE_LOG_FIND_BY_PLANT,
       variables: {
         input: {
-          filters: [{ field: 'plantId', operator: 'EQUALS', value: plantId }],
+          filters: [{ field: CareLogQueryableField.PLANT_ID, operator: 'EQUALS', value: plantId }],
           pagination: { page: 1, perPage: limit },
         },
       },
+      fetchPolicy: 'network-only',
     });
     return res.data?.careLogFindByCriteria?.items ?? [];
   }

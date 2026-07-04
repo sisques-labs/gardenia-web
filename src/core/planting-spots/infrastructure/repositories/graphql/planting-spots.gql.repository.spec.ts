@@ -16,6 +16,8 @@ import { PLANTING_SPOT_CREATE } from './mutations/planting-spot-create.mutation'
 import { PLANTING_SPOT_UPDATE } from './mutations/planting-spot-update.mutation';
 import { PLANTING_SPOT_DELETE } from './mutations/planting-spot-delete.mutation';
 import { PLANTING_SPOT_WATER } from './mutations/planting-spot-water.mutation';
+import { PLANTING_SPOT_MARK_FALLOW } from './mutations/planting-spot-mark-fallow.mutation';
+import { PLANTING_SPOT_MARK_ACTIVE } from './mutations/planting-spot-mark-active.mutation';
 import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
 import type { WaterPlantingSpotResult } from '@/core/planting-spots/domain/interfaces/water-planting-spot-result.interface';
 
@@ -26,6 +28,8 @@ const mockSpot: PlantingSpot = {
   description: null,
   userId: 'user-1',
   spaceId: 'space-1',
+  status: 'ACTIVE',
+  fallowSince: null,
   resolvedPlants: [],
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
@@ -70,6 +74,16 @@ describe('PlantingSpotsGqlRepository', () => {
     it('PLANTING_SPOT_WATER is a valid GQL document', () => {
       expect(PLANTING_SPOT_WATER).toBeDefined();
       expect((PLANTING_SPOT_WATER as DocumentNode).kind).toBe('Document');
+    });
+
+    it('PLANTING_SPOT_MARK_FALLOW is a valid GQL document', () => {
+      expect(PLANTING_SPOT_MARK_FALLOW).toBeDefined();
+      expect((PLANTING_SPOT_MARK_FALLOW as DocumentNode).kind).toBe('Document');
+    });
+
+    it('PLANTING_SPOT_MARK_ACTIVE is a valid GQL document', () => {
+      expect(PLANTING_SPOT_MARK_ACTIVE).toBeDefined();
+      expect((PLANTING_SPOT_MARK_ACTIVE as DocumentNode).kind).toBe('Document');
     });
   });
 
@@ -260,6 +274,56 @@ describe('PlantingSpotsGqlRepository', () => {
       } as never);
 
       await expect(repository.waterAll('spot-1')).rejects.toThrow('plantingSpotWater mutation failed');
+    });
+  });
+
+  describe('markFallow()', () => {
+    it('calls apolloClient.mutate with PLANTING_SPOT_MARK_FALLOW and returns just the id', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { plantingSpotMarkFallow: { id: 'spot-1', success: true, message: 'Marked fallow' } },
+      } as never);
+
+      const result = await repository.markFallow('spot-1');
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: PLANTING_SPOT_MARK_FALLOW,
+        variables: { input: { id: 'spot-1' } },
+      });
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'spot-1' });
+    });
+
+    it('throws when mutation success is false', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { plantingSpotMarkFallow: { id: '', success: false, message: 'Failed' } },
+      } as never);
+
+      await expect(repository.markFallow('spot-1')).rejects.toThrow('plantingSpotMarkFallow mutation failed');
+    });
+  });
+
+  describe('markActive()', () => {
+    it('calls apolloClient.mutate with PLANTING_SPOT_MARK_ACTIVE and returns just the id', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { plantingSpotMarkActive: { id: 'spot-1', success: true, message: 'Marked active' } },
+      } as never);
+
+      const result = await repository.markActive('spot-1');
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: PLANTING_SPOT_MARK_ACTIVE,
+        variables: { input: { id: 'spot-1' } },
+      });
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'spot-1' });
+    });
+
+    it('throws when mutation success is false', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: { plantingSpotMarkActive: { id: '', success: false, message: 'Failed' } },
+      } as never);
+
+      await expect(repository.markActive('spot-1')).rejects.toThrow('plantingSpotMarkActive mutation failed');
     });
   });
 });

@@ -10,6 +10,8 @@ const mockSpot: PlantingSpot = {
   description: null,
   userId: 'user-1',
   spaceId: 'space-1',
+  status: 'ACTIVE',
+  fallowSince: null,
   resolvedPlants: [],
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
@@ -22,6 +24,8 @@ const mockRepository: IPlantingSpotsRepository = {
   update: vi.fn(),
   delete: vi.fn(),
   waterAll: vi.fn(),
+  markFallow: vi.fn(),
+  markActive: vi.fn(),
 };
 
 describe('GetPlantingSpotUseCase', () => {

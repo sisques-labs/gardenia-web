@@ -43,6 +43,10 @@ vi.mock('@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook
   useDeletePlant: vi.fn(() => ({ mutate: vi.fn(), isError: false })),
 }));
 
+vi.mock('@/core/plants/presentation/components/plant-planting-spot-field/plant-planting-spot-field', () => ({
+  PlantPlantingSpotField: () => null,
+}));
+
 vi.mock('next/link', () => ({
   default: ({ href, children }: { href: string; children: React.ReactNode }) => (
     <a href={href}>{children}</a>
@@ -131,6 +135,12 @@ const dict = {
       neverWatered: 'Not watered yet',
     },
     addedOn: 'In your garden since',
+    plantingSpot: {
+      label: 'Planting spot',
+      unassigned: 'Unassigned',
+      placeholder: 'Select a planting spot',
+      updateError: 'Could not update the planting spot. Try again.',
+    },
     qr: {
       label: 'Label · QR',
       hint: 'Print and stick on the pot',

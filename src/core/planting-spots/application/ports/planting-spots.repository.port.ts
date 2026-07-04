@@ -12,4 +12,6 @@ export interface IPlantingSpotsRepository {
   update(input: UpdatePlantingSpotInput): Promise<CreatedEntity>;
   delete(id: string): Promise<void>;
   waterAll(id: string, performedAt?: string): Promise<WaterPlantingSpotResult>;
+  markFallow(id: string): Promise<CreatedEntity>;
+  markActive(id: string): Promise<CreatedEntity>;
 }
