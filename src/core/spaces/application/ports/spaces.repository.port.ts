@@ -1,5 +1,6 @@
 import type { Space } from '@/core/spaces/domain/interfaces/space.interface';
 import type { SpaceDetail } from '@/core/spaces/domain/interfaces/space-detail.interface';
+import type { SpaceInvitationPreview } from '@/core/spaces/domain/interfaces/space-invitation-preview.interface';
 import type { SpaceInvitation } from '@/core/spaces/domain/types/space-invitation.type';
 import type { SpaceWeather } from '@/core/spaces/domain/interfaces/space-weather.interface';
 import type { CreateInvitationInput } from '@/core/spaces/application/interfaces/create-invitation-input.interface';
@@ -12,6 +13,7 @@ export interface ISpacesRepository {
   listByUser(): Promise<Space[]>;
   create(name: string): Promise<Space>;
   acceptInvitation(code: string): Promise<string>;
+  getInvitationPreview(code: string): Promise<SpaceInvitationPreview>;
   findById(spaceId: string): Promise<SpaceDetail>;
   createInvitation(input: CreateInvitationInput): Promise<SpaceInvitation>;
   addMember(input: MemberInput): Promise<void>;

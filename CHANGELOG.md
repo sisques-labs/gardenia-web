@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-## [0.23.1-beta.0] - 2026-07-02
+## [0.23.1] - 2026-07-02
 
 ### Refactor
 - **plants:** Simplify plant detail care tab (cd0b42f)

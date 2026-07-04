@@ -14,7 +14,7 @@ const meta = {
   title: "Inventory/InventoryTable",
   component: InventoryTable,
   tags: ["autodocs"],
-  args: { items: mockItems, dict, onEdit: () => {}, onAdjust: () => {}, onDelete: () => {} },
+  args: { items: mockItems, dict, onViewDetail: () => {}, onEdit: () => {}, onAdjust: () => {}, onDelete: () => {} },
   parameters: { layout: "padded" },
 } satisfies Meta<typeof InventoryTable>;
 

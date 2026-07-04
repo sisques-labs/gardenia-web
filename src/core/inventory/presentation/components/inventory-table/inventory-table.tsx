@@ -1,24 +1,51 @@
 'use client';
 
 import { useMemo } from 'react';
+import type { SortingState } from '@tanstack/react-table';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
-import { DataTable } from '@/shared/presentation/components/ui/table/table';
+import { DataTable, type DataTablePagination } from '@/shared/presentation/components/ui/table/table';
 import { getInventoryColumns } from './inventory-columns';
 
 type Props = {
   items: InventoryItem[];
   dict: AppDict['inventory'];
+  onViewDetail: (item: InventoryItem) => void;
   onEdit: (item: InventoryItem) => void;
   onAdjust: (item: InventoryItem) => void;
-  onDelete: (id: string) => void;
+  onDelete: (item: InventoryItem) => void;
+  onSelectionChange?: (items: InventoryItem[]) => void;
+  sorting?: SortingState;
+  onSortingChange?: (sorting: SortingState) => void;
+  pagination?: DataTablePagination;
 };
 
-export function InventoryTable({ items, dict, onEdit, onAdjust, onDelete }: Props) {
+export function InventoryTable({
+  items,
+  dict,
+  onViewDetail,
+  onEdit,
+  onAdjust,
+  onDelete,
+  onSelectionChange,
+  sorting,
+  onSortingChange,
+  pagination,
+}: Props) {
   const columns = useMemo(
-    () => getInventoryColumns({ dict, onEdit, onAdjust, onDelete }),
-    [dict, onEdit, onAdjust, onDelete],
+    () => getInventoryColumns({ dict, onViewDetail, onEdit, onAdjust, onDelete }),
+    [dict, onViewDetail, onEdit, onAdjust, onDelete],
   );
 
-  return <DataTable columns={columns} data={items} enableRowSelection={false} />;
+  return (
+    <DataTable
+      columns={columns}
+      data={items}
+      enableRowSelection
+      onSelectionChange={onSelectionChange}
+      sorting={sorting}
+      onSortingChange={onSortingChange}
+      pagination={pagination}
+    />
+  );
 }

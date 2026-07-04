@@ -20,6 +20,17 @@ const mockPlant: Plant = {
   },
   userId: "u1",
   spaceId: "space-1",
+  plantingSpot: { id: "ps-1", name: "Bancal norte", type: "RAISED_BED" },
+  qr: {
+    id: "qr-1",
+    spaceId: "space-1",
+    targetUrl: "https://gardenia.app/plants/plant-1",
+    generation: 1,
+    image:
+      "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=",
+    createdAt: "2026-05-01",
+    updatedAt: "2026-05-01",
+  },
   createdAt: "2026-05-01",
   updatedAt: "2026-05-01",
 };

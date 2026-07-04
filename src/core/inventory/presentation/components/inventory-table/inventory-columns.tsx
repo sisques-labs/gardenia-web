@@ -1,20 +1,31 @@
 import type { ColumnDef } from '@tanstack/react-table';
+import { MoreHorizontal } from 'lucide-react';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import { Badge } from '@/shared/presentation/components/ui/badge/badge';
 import { Button } from '@/shared/presentation/components/ui/button/button';
+import { SortableHeader } from '@/shared/presentation/components/ui/table/table';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/shared/presentation/components/ui/dropdown-menu/dropdown-menu';
 import { isLowStock } from '@/core/inventory/presentation/hooks/use-inventory-filters/is-low-stock';
 import { isExpiringSoon } from '@/core/inventory/presentation/hooks/use-inventory-filters/is-expiring-soon';
 
 export type InventoryColumnsParams = {
   dict: AppDict['inventory'];
+  onViewDetail: (item: InventoryItem) => void;
   onEdit: (item: InventoryItem) => void;
   onAdjust: (item: InventoryItem) => void;
-  onDelete: (id: string) => void;
+  onDelete: (item: InventoryItem) => void;
 };
 
 export function getInventoryColumns({
   dict,
+  onViewDetail,
   onEdit,
   onAdjust,
   onDelete,
@@ -22,7 +33,7 @@ export function getInventoryColumns({
   return [
     {
       accessorKey: 'name',
-      header: dict.form.name,
+      header: ({ column }) => <SortableHeader column={column}>{dict.form.name}</SortableHeader>,
       cell: ({ row }) => {
         const item = row.original;
         return (
@@ -36,11 +47,12 @@ export function getInventoryColumns({
     {
       accessorKey: 'itemType',
       header: dict.form.itemType,
+      enableSorting: false,
       cell: ({ row }) => dict.types[row.original.itemType],
     },
     {
       accessorKey: 'quantity',
-      header: dict.form.quantity,
+      header: ({ column }) => <SortableHeader column={column}>{dict.form.quantity}</SortableHeader>,
       cell: ({ row }) => `${row.original.quantity} ${dict.units[row.original.unit]}`,
     },
     {
@@ -67,35 +79,35 @@ export function getInventoryColumns({
       cell: ({ row }) => {
         const item = row.original;
         return (
-          <div className="flex justify-end gap-1">
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              aria-label={dict.row.adjust}
-              onClick={() => onAdjust(item)}
-            >
-              {dict.row.adjust}
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              aria-label={dict.row.edit}
-              onClick={() => onEdit(item)}
-            >
-              {dict.row.edit}
-            </Button>
-            <Button
-              type="button"
-              variant="ghost"
-              size="sm"
-              aria-label={dict.row.delete}
-              onClick={() => onDelete(item.id)}
-              className="text-[var(--terracotta)] hover:text-[var(--terracotta)]"
-            >
-              {dict.row.delete}
-            </Button>
+          <div className="flex justify-end">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  aria-label={dict.row.actionsMenu}
+                  className="p-2"
+                >
+                  <MoreHorizontal className="h-4 w-4" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onSelect={() => onViewDetail(item)}>
+                  {dict.row.viewDetail}
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => onAdjust(item)}>
+                  {dict.row.adjust}
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => onEdit(item)}>
+                  {dict.row.edit}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem danger onSelect={() => onDelete(item)}>
+                  {dict.row.delete}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         );
       },

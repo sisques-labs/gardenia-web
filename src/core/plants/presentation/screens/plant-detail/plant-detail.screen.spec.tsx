@@ -5,10 +5,12 @@ import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 import careScheduleDict from '@/core/care-schedule/presentation/i18n/en';
 
 const mockRedirect = vi.fn();
+const mockPush = vi.fn();
+const mockMutate = vi.fn();
 
 vi.mock('next/navigation', () => ({
   redirect: (url: string) => mockRedirect(url),
-  useRouter: vi.fn(() => ({ push: vi.fn() })),
+  useRouter: vi.fn(() => ({ push: mockPush })),
 }));
 
 vi.mock('@/core/plants/presentation/hooks/use-plant/use-plant.hook', () => ({
@@ -25,6 +27,10 @@ vi.mock('@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-l
   usePlantCareLogs: vi.fn(() => ({ data: {}, isLoading: false })),
 }));
 
+vi.mock('@/core/care-schedule/presentation/hooks/use-water-plant/use-water-plant.hook', () => ({
+  useWaterPlant: vi.fn(() => ({ mutate: mockMutate, isPending: false, isError: false })),
+}));
+
 vi.mock('@/core/care-log/presentation/components/care-log-summary/care-log-summary', () => ({
   CareLogSummary: () => null,
 }));
@@ -37,6 +43,10 @@ vi.mock('@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook
   useDeletePlant: vi.fn(() => ({ mutate: vi.fn(), isError: false })),
 }));
 
+vi.mock('@/core/plants/presentation/components/plant-planting-spot-field/plant-planting-spot-field', () => ({
+  PlantPlantingSpotField: () => null,
+}));
+
 vi.mock('next/link', () => ({
   default: ({ href, children }: { href: string; children: React.ReactNode }) => (
     <a href={href}>{children}</a>
@@ -44,6 +54,7 @@ vi.mock('next/link', () => ({
 }));
 
 import { usePlant } from '@/core/plants/presentation/hooks/use-plant/use-plant.hook';
+import { useWaterPlant } from '@/core/care-schedule/presentation/hooks/use-water-plant/use-water-plant.hook';
 import { CareScheduleList } from '@/core/care-schedule/presentation/components/care-schedule-list/care-schedule-list';
 import { PlantDetailScreen } from './plant-detail.screen';
 
@@ -54,6 +65,7 @@ const mockPlant: Plant = {
   spaceId: 's1',
   species: { id: 'sp1', scientificName: 'Monstera deliciosa', description: null, imageUrl: null, createdAt: '', updatedAt: '' },
   imageUrl: 'https://example.com/plant.jpg',
+  plantingSpot: { id: 'ps1', name: 'Bancal norte', type: 'RAISED_BED' },
   qr: {
     id: 'qr1',
     spaceId: 's1',
@@ -75,6 +87,8 @@ const dict = {
     empty: 'No plants yet',
     filterAll: 'All',
     filters: 'Filters',
+    searchPlaceholder: 'Search plants...',
+    searchChipLabel: 'Search',
     statsPlants: 'plants',
     statsSpecies: 'species',
     inProgress: 'Coming soon',
@@ -111,54 +125,28 @@ const dict = {
   },
   detail: {
     breadcrumbList: 'Inventory',
-    bancal: 'Plot',
-    qrPrint: 'Print QR',
-    noImage: 'No image',
     noSpecies: 'Unknown species',
     actions: {
       markWatered: 'Mark watered',
-      addPhoto: 'Add photo',
-      newNote: 'New note',
-    },
-    qr: {
-      label: 'ETIQUETA · QR',
-      hint: 'Imprime y pega en la maceta',
-      download: 'Descargar PDF',
-    },
-    tabs: { care: 'Care', calendar: 'Calendar', diary: 'Diary', harvests: 'Harvests', pests: 'Pests', associations: 'Associations' },
-    sections: {
-      care: { title: 'Care', inProgress: 'Coming soon' },
-      cycle: { title: 'Growth cycle', inProgress: 'Coming soon' },
-      photoHistory: { title: 'Photo history', inProgress: 'Coming soon' },
-      pests: { title: 'Pest tracking', inProgress: 'Coming soon' },
+      markWateredError: 'Could not log the watering. Try again.',
     },
     care: {
-      wateringLabel: 'WATERING',
-      wateringTitle: 'Every day · 250 ml',
-      wateringDesc: 'Reduce to 200ml when flowering. Deep, infrequent.',
-      sunLabel: 'SUN',
-      sunTitle: '6–8 h direct',
-      sunDesc: 'Face south. Heat tolerant but shade above 35°C.',
-      soilLabel: 'SOIL',
-      soilTitle: 'Rich, drained · pH 6.0–6.8',
-      soilDesc: 'Add compost every 3 weeks. Stake from day 21.',
-      pruningLabel: 'PRUNING',
-      pruningTitle: 'Remove suckers',
-      pruningDesc: 'Once a week. Lower leaves after first flowering.',
+      lastWatered: 'Last watered',
+      neverWatered: 'Not watered yet',
     },
-    cycle: {
-      title: 'CYCLE · 64 DAYS',
-      seedStage: 'Seed',
-      seedlingStage: 'Seedling',
-      vegetativeStage: 'Vegetative',
-      fruitingStage: 'Fruiting',
+    addedOn: 'In your garden since',
+    plantingSpot: {
+      label: 'Planting spot',
+      unassigned: 'Unassigned',
+      placeholder: 'Select a planting spot',
+      updateError: 'Could not update the planting spot. Try again.',
     },
-    photoHistory: {
-      title: 'PHOTO HISTORY',
+    qr: {
+      label: 'Label · QR',
+      hint: 'Print and stick on the pot',
+      download: 'Download PDF',
     },
-    pestTracking: {
-      title: 'PEST TRACKING',
-    },
+    calendarTitle: 'Upcoming tasks',
   },
   delete: {
     button: 'Delete plant',
@@ -167,18 +155,6 @@ const dict = {
     confirm: 'Delete',
     cancel: 'Cancel',
     error: 'Could not delete the plant. Try again.',
-  },
-  plantDetail: {
-    actions: {
-      markWatered: 'Mark watered',
-      addPhoto: 'Add photo',
-      newNote: 'New note',
-    },
-    qr: {
-      label: 'ETIQUETA · QR',
-      hint: 'Print and stick on the pot',
-      downloadPdf: 'Download PDF',
-    },
   },
 };
 
@@ -201,6 +177,7 @@ const careLogDict = {
 describe('PlantDetailScreen', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.mocked(useWaterPlant).mockReturnValue({ mutate: mockMutate, isPending: false, isError: false } as unknown as ReturnType<typeof useWaterPlant>);
   });
 
   it('renders plant name via data-testid="plant-name"', () => {
@@ -219,18 +196,59 @@ describe('PlantDetailScreen', () => {
     expect(screen.getByTestId('plant-species')).toHaveTextContent('Monstera deliciosa');
   });
 
-  it('renders 3 action buttons that are NOT disabled', () => {
+  it('renders a planting spot chip when plant.plantingSpot exists', () => {
     vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
 
     render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
 
-    const btnMarkWatered = screen.getByTestId('btn-mark-watered');
-    const btnAddPhoto = screen.getByTestId('btn-add-photo');
-    const btnNewNote = screen.getByTestId('btn-new-note');
+    expect(screen.getByTestId('chip-planting-spot')).toHaveTextContent('Bancal norte');
+  });
 
-    expect(btnMarkWatered).not.toBeDisabled();
-    expect(btnAddPhoto).not.toBeDisabled();
-    expect(btnNewNote).not.toBeDisabled();
+  it('does NOT render a planting spot chip when plant.plantingSpot is absent', () => {
+    const plantWithoutSpot: Plant = { ...mockPlant, plantingSpot: undefined };
+    vi.mocked(usePlant).mockReturnValue({ data: plantWithoutSpot, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.queryByTestId('chip-planting-spot')).not.toBeInTheDocument();
+  });
+
+  it('shows the "never watered" copy when there is no watering care log', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByTestId('plant-last-watered')).toHaveTextContent('Not watered yet');
+  });
+
+  it('renders only the mark-watered and delete actions (no add-photo/new-note)', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByTestId('btn-mark-watered')).not.toBeDisabled();
+    expect(screen.getByTestId('btn-delete-plant')).not.toBeDisabled();
+    expect(screen.queryByTestId('btn-add-photo')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('btn-new-note')).not.toBeInTheDocument();
+  });
+
+  it('calls useWaterPlant().mutate with plantId when "mark watered" is clicked', async () => {
+    const user = userEvent.setup();
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
+    await user.click(screen.getByTestId('btn-mark-watered'));
+
+    expect(mockMutate).toHaveBeenCalledWith({ plantId: 'p1' });
+  });
+
+  it('renders an error alert when marking watered fails', () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+    vi.mocked(useWaterPlant).mockReturnValue({ mutate: mockMutate, isPending: false, isError: true } as unknown as ReturnType<typeof useWaterPlant>);
+
+    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
+
+    expect(screen.getByText('Could not log the watering. Try again.')).toBeInTheDocument();
   });
 
   it('renders QR card when plant.qr exists', () => {
@@ -259,7 +277,6 @@ describe('PlantDetailScreen', () => {
     render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
 
     expect(screen.getByTestId('plant-image')).toBeInTheDocument();
-    // placeholder has no <img> inside
     expect(screen.queryByRole('img', { name: 'Monstera' })).not.toBeInTheDocument();
   });
 
@@ -315,63 +332,20 @@ describe('PlantDetailScreen', () => {
     expect(screen.getByTestId('plant-action-bar')).toBeInTheDocument();
   });
 
-  it('renders Calendar tab trigger', () => {
+  it('renders the care log and care schedule sections directly, without tab navigation', () => {
     vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
 
     render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
 
-    expect(screen.getByRole('tab', { name: 'Calendar' })).toBeInTheDocument();
+    expect(screen.getByTestId('care-log-section')).toBeInTheDocument();
+    expect(screen.getByTestId('care-schedule-section')).toBeInTheDocument();
+    expect(screen.queryAllByRole('tab')).toHaveLength(0);
   });
 
-  it('renders Diary tab trigger', () => {
+  it('renders CareScheduleList with the plant id and dict', () => {
     vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
 
     render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
-
-    expect(screen.getByRole('tab', { name: 'Diary' })).toBeInTheDocument();
-  });
-
-  it('renders Harvests tab trigger', () => {
-    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-
-    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
-
-    expect(screen.getByRole('tab', { name: 'Harvests' })).toBeInTheDocument();
-  });
-
-  it('renders Pests tab trigger', () => {
-    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-
-    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
-
-    expect(screen.getByRole('tab', { name: 'Pests' })).toBeInTheDocument();
-  });
-
-  it('renders Associations tab trigger', () => {
-    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-
-    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
-
-    expect(screen.getByRole('tab', { name: 'Associations' })).toBeInTheDocument();
-  });
-
-  it('all tab triggers are NOT disabled', () => {
-    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-
-    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
-
-    const tabs = screen.getAllByRole('tab');
-    tabs.forEach((tab) => {
-      expect(tab).not.toBeDisabled();
-    });
-  });
-
-  it('renders CareScheduleList in the calendar tab with the plant id and dict', async () => {
-    const user = userEvent.setup();
-    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
-
-    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
-    await user.click(screen.getByRole('tab', { name: 'Calendar' }));
 
     expect(vi.mocked(CareScheduleList)).toHaveBeenCalledWith(
       expect.objectContaining({ plantId: 'p1', dict: careScheduleDict }),

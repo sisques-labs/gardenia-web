@@ -69,6 +69,8 @@ const mockSpot = {
   soilType: null,
   userId: 'u1',
   spaceId: 's1',
+  status: 'ACTIVE',
+  fallowSince: null,
   resolvedPlants: [],
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',

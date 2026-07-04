@@ -7,8 +7,8 @@ import type { PlantingSpot } from "@/core/planting-spots/domain/interfaces/plant
 const dict = getDictionary("es").plantingSpots;
 
 const mockSpots: PlantingSpot[] = [
-  { id: "ps1", name: "Bancal norte", type: "RAISED_BED", capacity: 6, row: 1, column: 1, resolvedPlants: [], userId: "u1", spaceId: "s1", createdAt: "", updatedAt: "" },
-  { id: "ps2", name: "Maceta balcón", type: "POT", capacity: 1, resolvedPlants: [{ id: "p1", name: "Albahaca", userId: "u1", spaceId: "s1", createdAt: "", updatedAt: "" }], userId: "u1", spaceId: "s1", createdAt: "", updatedAt: "" },
+  { id: "ps1", name: "Bancal norte", type: "RAISED_BED", capacity: 6, row: 1, column: 1, status: "ACTIVE", fallowSince: null, resolvedPlants: [], userId: "u1", spaceId: "s1", createdAt: "", updatedAt: "" },
+  { id: "ps2", name: "Maceta balcón", type: "POT", capacity: 1, status: "ACTIVE", fallowSince: null, resolvedPlants: [{ id: "p1", name: "Albahaca", userId: "u1", spaceId: "s1", createdAt: "", updatedAt: "" }], userId: "u1", spaceId: "s1", createdAt: "", updatedAt: "" },
 ];
 
 const meta = {

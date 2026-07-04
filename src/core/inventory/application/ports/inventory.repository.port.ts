@@ -2,6 +2,10 @@ import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item
 import type { CreateInventoryItemInput } from '@/core/inventory/application/interfaces/create-inventory-item-input.interface';
 import type { UpdateInventoryItemInput } from '@/core/inventory/application/interfaces/update-inventory-item-input.interface';
 import type { AdjustInventoryItemQuantityInput } from '@/core/inventory/application/interfaces/adjust-inventory-item-quantity-input.interface';
+import type { InventoryListCriteria } from '@/core/inventory/application/interfaces/inventory-list-criteria.interface';
+import type { BulkDeleteResult } from '@/core/inventory/domain/interfaces/bulk-delete-result.interface';
+import type { CreatedEntity } from '@/shared/domain/interfaces/created-entity.interface';
+import type { PaginatedResult } from '@/shared/domain/interfaces/paginated-result.interface';
 
 export type {
   CreateInventoryItemInput,
@@ -10,10 +14,11 @@ export type {
 };
 
 export interface IInventoryRepository {
-  findByCriteria(): Promise<InventoryItem[]>;
+  findByCriteria(criteria?: InventoryListCriteria): Promise<PaginatedResult<InventoryItem>>;
   findById(id: string): Promise<InventoryItem>;
-  create(input: CreateInventoryItemInput): Promise<InventoryItem>;
-  update(input: UpdateInventoryItemInput): Promise<InventoryItem>;
-  adjustQuantity(input: AdjustInventoryItemQuantityInput): Promise<InventoryItem>;
+  create(input: CreateInventoryItemInput): Promise<CreatedEntity>;
+  update(input: UpdateInventoryItemInput): Promise<CreatedEntity>;
+  adjustQuantity(input: AdjustInventoryItemQuantityInput): Promise<CreatedEntity>;
   delete(id: string): Promise<void>;
+  deleteBulk(ids: string[]): Promise<BulkDeleteResult>;
 }
