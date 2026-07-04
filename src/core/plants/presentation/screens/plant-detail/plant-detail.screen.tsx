@@ -5,6 +5,7 @@ import { CareLogSummary } from "@/core/care-log/presentation/components/care-log
 import { usePlantCareLogs } from "@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-logs.hook";
 import { CareScheduleList } from "@/core/care-schedule/presentation/components/care-schedule-list/care-schedule-list";
 import { useWaterPlant } from "@/core/care-schedule/presentation/hooks/use-water-plant/use-water-plant.hook";
+import { EditPlantModal } from "@/core/plants/presentation/components/edit-plant-modal/edit-plant-modal";
 import { PlantDetailSkeleton } from "@/core/plants/presentation/components/plant-detail-skeleton/plant-detail-skeleton";
 import { PlantPlantingSpotField } from "@/core/plants/presentation/components/plant-planting-spot-field/plant-planting-spot-field";
 import { useDeletePlant } from "@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook";
@@ -22,7 +23,7 @@ import {
 import { Chip } from "@/shared/presentation/components/ui/chip/chip";
 import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
 import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
-import { CalendarDays, Droplets, MapPin, Sprout, Trash2 } from "lucide-react";
+import { CalendarDays, Droplets, MapPin, Pencil, Sprout, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -52,6 +53,7 @@ export function PlantDetailScreen({
   const deletePlant = useDeletePlant(spaceId);
   const waterPlant = useWaterPlant();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
 
   if (isLoading) return <PlantDetailSkeleton />;
   if (isError) redirect(`/${lang}/plants`);
@@ -193,6 +195,15 @@ export function PlantDetailScreen({
                   <Button
                     variant="outline"
                     size="sm"
+                    data-testid="btn-edit-plant"
+                    onClick={() => setIsEditOpen(true)}
+                  >
+                    <Pencil className="w-4 h-4" />
+                    {dict.detail.actions.edit}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
                     data-testid="btn-delete-plant"
                     className="text-destructive hover:bg-destructive/10 hover:text-destructive"
                     onClick={() => setIsDeleteOpen(true)}
@@ -287,6 +298,14 @@ export function PlantDetailScreen({
           </Card>
         </div>
       </div>
+
+      {isEditOpen && (
+        <EditPlantModal
+          plant={{ id: plant.id, name: plant.name, imageUrl: plant.imageUrl }}
+          dict={dict.edit}
+          onClose={() => setIsEditOpen(false)}
+        />
+      )}
 
       <ConfirmDialog
         open={isDeleteOpen}

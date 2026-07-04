@@ -1,6 +1,16 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.25.0-beta.0] - 2026-07-04
+
+### Documentation
+- **openspec:** Add plant-editing-ui change proposal (d92cad2)
+
+### Features
+- **plants:** Allow editing a plant's name and image (d7bff0d)
+
+### Testing
+- **plants:** Add missing Storybook story for EditPlantModal (23bcc90)
 ## [0.24.0] - 2026-07-04
 
 ### Bug Fixes
