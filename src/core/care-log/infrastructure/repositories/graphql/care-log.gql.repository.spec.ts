@@ -42,6 +42,7 @@ describe('CareLogGqlRepository', () => {
             pagination: { page: 1, perPage: 50 },
           },
         },
+        fetchPolicy: 'network-only',
       }),
     );
   });
@@ -71,6 +72,7 @@ describe('CareLogGqlRepository', () => {
             pagination: { page: 1, perPage: 10 },
           },
         },
+        fetchPolicy: 'network-only',
       }),
     );
   });

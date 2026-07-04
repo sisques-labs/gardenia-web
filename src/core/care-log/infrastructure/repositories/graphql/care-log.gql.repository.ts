@@ -19,6 +19,7 @@ export class CareLogGqlRepository implements ICareLogRepository {
           pagination: { page: 1, perPage: limit },
         },
       },
+      fetchPolicy: 'network-only',
     });
     return res.data?.careLogFindByCriteria?.items ?? [];
   }
