@@ -61,6 +61,16 @@ export const TodayAndSelected: Story = {
   },
 };
 
+export const WithTaskCount: Story = {
+  args: {
+    day: 12,
+    isToday: false,
+    isSelected: false,
+    onSelect: () => {},
+    taskCount: 3,
+  },
+};
+
 export const EmptySlot: Story = {
   args: {
     day: null,

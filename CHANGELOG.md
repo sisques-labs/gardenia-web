@@ -1,6 +1,17 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.26.0] - 2026-07-05
+
+### Bug Fixes
+- **ui:** Stack EntityRow content and actions on narrow containers (d32b3c1)
+- **ui:** Keep EntityRow actions on a single row, aligned with content (160aa5f)
+
+### Features
+- **calendar:** Redesign calendar screen for mobile and narrow desktop (7a52b87)
+
+### Refactor
+- **ui:** Redesign EntityRow as a garden checklist card (e68d588)
 ## [0.25.1] - 2026-07-04
 
 ### Bug Fixes

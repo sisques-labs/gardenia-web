@@ -75,7 +75,7 @@ describe('TodayTasksSection', () => {
   it('completes a task when its complete action is triggered', () => {
     mockUseCareSchedules.mockReturnValue({ careSchedules: [mockCareSchedule], isLoading: false });
     render(<TodayTasksSection dict={homeDict} careScheduleDict={careScheduleDict} />);
-    screen.getByText(careScheduleDict.row.complete).click();
+    screen.getByRole('button', { name: careScheduleDict.row.complete }).click();
     expect(mockCompleteMutate).toHaveBeenCalledWith({ id: 'cs-1' });
   });
 

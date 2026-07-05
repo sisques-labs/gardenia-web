@@ -150,6 +150,48 @@ describe('CareScheduleGqlRepository', () => {
       });
     });
 
+    it('translates dueFrom/dueTo to a NEXT_DUE_AT range bracketing that span', async () => {
+      vi.mocked(apolloClient.query).mockResolvedValue({
+        data: { careSchedulesFindByCriteria: { items: [] } },
+      } as never);
+
+      await repository.findByCriteria({ dueFrom: '2026-07-01', dueTo: '2026-07-31' });
+
+      expect(apolloClient.query).toHaveBeenCalledWith({
+        query: CARE_SCHEDULES_FIND_BY_CRITERIA,
+        variables: {
+          input: {
+            filters: [
+              { field: 'NEXT_DUE_AT', operator: 'GREATER_THAN_OR_EQUAL', value: '2026-07-01T00:00:00.000' },
+              { field: 'NEXT_DUE_AT', operator: 'LESS_THAN_OR_EQUAL', value: '2026-07-31T23:59:59.999' },
+            ],
+          },
+        },
+        fetchPolicy: 'network-only',
+      });
+    });
+
+    it('ignores dueFrom/dueTo when dueOnDay is also set', async () => {
+      vi.mocked(apolloClient.query).mockResolvedValue({
+        data: { careSchedulesFindByCriteria: { items: [] } },
+      } as never);
+
+      await repository.findByCriteria({ dueOnDay: '2026-07-05', dueFrom: '2026-07-01', dueTo: '2026-07-31' });
+
+      expect(apolloClient.query).toHaveBeenCalledWith({
+        query: CARE_SCHEDULES_FIND_BY_CRITERIA,
+        variables: {
+          input: {
+            filters: [
+              { field: 'NEXT_DUE_AT', operator: 'GREATER_THAN_OR_EQUAL', value: '2026-07-05T00:00:00.000' },
+              { field: 'NEXT_DUE_AT', operator: 'LESS_THAN_OR_EQUAL', value: '2026-07-05T23:59:59.999' },
+            ],
+          },
+        },
+        fetchPolicy: 'network-only',
+      });
+    });
+
     it('sends active: false as a real boolean, not an empty/falsy value', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
         data: { careSchedulesFindByCriteria: { items: [] } },
