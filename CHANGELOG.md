@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-## [0.26.0-beta.0] - 2026-07-05
+## [0.26.0] - 2026-07-05
 
 ### Bug Fixes
 - **ui:** Stack EntityRow content and actions on narrow containers (d32b3c1)
