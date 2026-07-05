@@ -6,4 +6,6 @@ export interface CareScheduleFilters {
   active?: boolean;
   /** Restrict to schedules whose nextDueAt falls on this exact calendar day ('YYYY-MM-DD'). */
   dueOnDay?: string;
+  /** Restrict to schedules whose nextDueAt is on or before the end of this calendar day ('YYYY-MM-DD') — overdue + due today. */
+  dueBefore?: string;
 }

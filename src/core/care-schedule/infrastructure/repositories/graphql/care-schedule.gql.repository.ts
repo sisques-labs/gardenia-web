@@ -46,6 +46,10 @@ function toApiFilters(filters?: CareScheduleFilters) {
     apiFilters.push({ field: CareScheduleQueryableField.NEXT_DUE_AT, operator: FilterOperator.GREATER_THAN_OR_EQUAL, value: `${filters.dueOnDay}T00:00:00.000` });
     apiFilters.push({ field: CareScheduleQueryableField.NEXT_DUE_AT, operator: FilterOperator.LESS_THAN_OR_EQUAL, value: `${filters.dueOnDay}T23:59:59.999` });
   }
+  // dueBefore includes everything overdue plus what's due today — a single upper bound on NEXT_DUE_AT.
+  if (filters.dueBefore) {
+    apiFilters.push({ field: CareScheduleQueryableField.NEXT_DUE_AT, operator: FilterOperator.LESS_THAN_OR_EQUAL, value: `${filters.dueBefore}T23:59:59.999` });
+  }
 
   return apiFilters.length ? { filters: apiFilters } : undefined;
 }

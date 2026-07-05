@@ -13,15 +13,18 @@ const dict = {
   sections: {
     todayTasks: {
       title: "Today's tasks",
-      inProgress: 'Coming soon',
+      empty: 'No tasks due today.',
     },
     growingNow: {
       title: 'Growing now',
-      inProgress: 'Coming soon',
+      empty: 'No active plants yet.',
+      andMore: 'and {count} more',
     },
-    miniMap: {
-      title: 'Garden map',
-      inProgress: 'Coming soon',
+    plantingSpotsSummary: {
+      title: 'Planting spots',
+      active: 'Active',
+      fallow: 'Fallow',
+      empty: 'No planting spots yet.',
     },
     harvestPace: {
       title: 'Harvest pace',
@@ -32,7 +35,6 @@ const dict = {
       inProgress: 'Coming soon',
     },
   },
-  inProgress: 'Coming soon',
 } as const;
 
 export default dict;

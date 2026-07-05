@@ -7,5 +7,5 @@ export default async function Page({ params }: { params: Promise<{ lang: string 
   const locale = isLocale(lang) ? lang : DEFAULT_LOCALE;
   const dict = getDictionary(locale);
 
-  return <HomeScreen dict={dict.home} />;
+  return <HomeScreen dict={dict.home} careScheduleDict={dict.careSchedule} plantingSpotsDict={dict.plantingSpots} />;
 }
