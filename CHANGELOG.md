@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.28.0-beta.0] - 2026-07-05
+
+### Features
+- **app:** Add branded favicon and app icons (9d23ed9)
 ## [0.27.0] - 2026-07-05
 
 ### Features
