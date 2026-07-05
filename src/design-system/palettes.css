@@ -51,6 +51,8 @@ html.dark body .paper-grain {
   --honey-bg:    oklch(0.28 0.05  75);
   --terra-bg:    oklch(0.28 0.05  35);
   --sage-bg:     oklch(0.28 0.03  130);
+  --plum-bg:     oklch(0.28 0.04  340);
+  --sky-bg:      oklch(0.28 0.04  230);
 }
 
 /* Dark mode visual refinements — explicit Gardenia palette toggle only */
@@ -112,4 +114,6 @@ body.palette-pastel {
   --honey-bg:    oklch(0.97 0.06  65);
   --terra-bg:    oklch(0.97 0.05  30);
   --sage-bg:     oklch(0.96 0.04  145);
+  --plum-bg:     oklch(0.95 0.04  340);
+  --sky-bg:      oklch(0.95 0.04  220);
 }

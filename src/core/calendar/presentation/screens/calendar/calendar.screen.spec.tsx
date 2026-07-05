@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { CalendarScreen } from './calendar.screen';
 import { useCalendarStore } from '../../../infrastructure/store/calendar.store';
 import { toISODate } from '../../utils/to-iso-date/to-iso-date.util';
+import { useCareSchedules } from '@/core/care-schedule/presentation/hooks/use-care-schedules/use-care-schedules.hook';
 import careScheduleDict from '@/core/care-schedule/presentation/i18n/en';
 
 vi.mock('../../components/calendar-grid/calendar-grid', () => ({
@@ -12,6 +13,7 @@ vi.mock('../../components/calendar-grid/calendar-grid', () => ({
       <span data-testid="grid-year">{String(props.year)}</span>
       <span data-testid="grid-month">{String(props.month)}</span>
       <span data-testid="grid-selected">{String(props.selectedDate)}</span>
+      <span data-testid="grid-task-counts">{JSON.stringify(props.taskCountByDate ?? null)}</span>
     </div>
   ),
 }));
@@ -163,5 +165,33 @@ describe('CalendarScreen', () => {
     fireEvent.click(screen.getByRole('button', { name: /nueva tarea/i }));
     fireEvent.click(screen.getByText('close'));
     expect(screen.queryByTestId('care-schedule-modal-mock')).toBeNull();
+  });
+
+  it('fetches active care schedules due within the full visible month (May 2026) for the badge counts', () => {
+    render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
+    const monthCall = vi.mocked(useCareSchedules).mock.calls.find(([filters]) => 'dueFrom' in (filters ?? {}));
+    expect(monthCall?.[0]).toEqual({ active: true, dueFrom: '2026-05-01', dueTo: '2026-05-31' });
+  });
+
+  it('passes a taskCountByDate map (grouped from the month care schedules) to the grid', () => {
+    vi.mocked(useCareSchedules).mockImplementation((filters?: { dueFrom?: string }) => {
+      if (filters?.dueFrom) {
+        return {
+          careSchedules: [
+            { nextDueAt: '2026-05-12' },
+            { nextDueAt: '2026-05-12' },
+            { nextDueAt: '2026-05-20' },
+          ] as never,
+          isLoading: false,
+          error: null,
+        };
+      }
+      return { careSchedules: [], isLoading: false, error: null };
+    });
+
+    render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
+    expect(screen.getByTestId('grid-task-counts').textContent).toBe(
+      JSON.stringify({ '2026-05-12': 2, '2026-05-20': 1 }),
+    );
   });
 });

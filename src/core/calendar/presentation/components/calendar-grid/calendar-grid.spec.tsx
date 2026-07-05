@@ -58,4 +58,14 @@ describe('CalendarGrid', () => {
     await userEvent.click(screen.getByRole('button', { name: 'Día 15' }));
     expect(onSelectDate).toHaveBeenCalledWith('2026-05-15');
   });
+
+  it('passes the matching task count to each day cell from taskCountByDate', () => {
+    render(<CalendarGrid {...baseProps} taskCountByDate={{ '2026-05-15': 2 }} />);
+    expect(screen.getByTestId('calendar-cell-task-count')).toHaveTextContent('2');
+  });
+
+  it('renders no task count badges when taskCountByDate is omitted', () => {
+    render(<CalendarGrid {...baseProps} />);
+    expect(screen.queryByTestId('calendar-cell-task-count')).toBeNull();
+  });
 });
