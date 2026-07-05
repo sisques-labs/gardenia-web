@@ -56,6 +56,8 @@
   --honey-bg:    oklch(0.96 0.04  75);
   --terra-bg:    oklch(0.94 0.04  35);
   --sage-bg:     oklch(0.94 0.03  130);
+  --plum-bg:     oklch(0.92 0.03  340);
+  --sky-bg:      oklch(0.93 0.03  230);
 
   /* Static */
   --white:       oklch(1 0 0);
@@ -103,6 +105,8 @@
   --color-honey-bg:    var(--honey-bg);
   --color-terra-bg:    var(--terra-bg);
   --color-sage-bg:     var(--sage-bg);
+  --color-plum-bg:     var(--plum-bg);
+  --color-sky-bg:      var(--sky-bg);
 
   --color-white:       var(--white);
 

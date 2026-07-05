@@ -65,3 +65,11 @@ export const WithTodayVisible: Story = {
     selectedDate: new Date().toISOString().slice(0, 10),
   },
 };
+
+export const WithTaskCounts: Story = {
+  args: {
+    year: 2026,
+    month: 4,
+    taskCountByDate: { '2026-05-05': 1, '2026-05-12': 3, '2026-05-21': 2 },
+  },
+};

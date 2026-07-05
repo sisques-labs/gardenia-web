@@ -91,4 +91,10 @@ describe('HarvestRow', () => {
 
     expect(onEdit).toHaveBeenCalledWith(mockHarvest);
   });
+
+  it('renders the harvest icon in an honey-colored badge', () => {
+    render(<HarvestRow harvest={mockHarvest} onDelete={vi.fn()} onEdit={vi.fn()} dict={dict} />);
+    const badge = document.querySelector('svg')?.parentElement;
+    expect(badge).toHaveClass('bg-[var(--honey-bg)]', 'text-[var(--honey-2)]');
+  });
 });

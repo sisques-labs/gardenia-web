@@ -57,3 +57,20 @@ describe('CalendarCell — day cell', () => {
     expect(onSelect).toHaveBeenCalledWith(7);
   });
 });
+
+describe('CalendarCell — task count badge', () => {
+  it('does not render a badge when taskCount is undefined', () => {
+    render(<CalendarCell day={15} isToday={false} isSelected={false} onSelect={vi.fn()} dict={dict} />);
+    expect(screen.queryByTestId('calendar-cell-task-count')).toBeNull();
+  });
+
+  it('does not render a badge when taskCount is 0', () => {
+    render(<CalendarCell day={15} isToday={false} isSelected={false} onSelect={vi.fn()} dict={dict} taskCount={0} />);
+    expect(screen.queryByTestId('calendar-cell-task-count')).toBeNull();
+  });
+
+  it('renders the task count when greater than 0', () => {
+    render(<CalendarCell day={15} isToday={false} isSelected={false} onSelect={vi.fn()} dict={dict} taskCount={3} />);
+    expect(screen.getByTestId('calendar-cell-task-count')).toHaveTextContent('3');
+  });
+});

@@ -45,6 +45,14 @@ function toApiFilters(filters?: CareScheduleFilters) {
   if (filters.dueOnDay) {
     apiFilters.push({ field: CareScheduleQueryableField.NEXT_DUE_AT, operator: FilterOperator.GREATER_THAN_OR_EQUAL, value: `${filters.dueOnDay}T00:00:00.000` });
     apiFilters.push({ field: CareScheduleQueryableField.NEXT_DUE_AT, operator: FilterOperator.LESS_THAN_OR_EQUAL, value: `${filters.dueOnDay}T23:59:59.999` });
+  } else {
+    // dueFrom/dueTo bracket a wider span (e.g. a whole visible month); same GTE/LTE mechanism as dueOnDay.
+    if (filters.dueFrom) {
+      apiFilters.push({ field: CareScheduleQueryableField.NEXT_DUE_AT, operator: FilterOperator.GREATER_THAN_OR_EQUAL, value: `${filters.dueFrom}T00:00:00.000` });
+    }
+    if (filters.dueTo) {
+      apiFilters.push({ field: CareScheduleQueryableField.NEXT_DUE_AT, operator: FilterOperator.LESS_THAN_OR_EQUAL, value: `${filters.dueTo}T23:59:59.999` });
+    }
   }
 
   return apiFilters.length ? { filters: apiFilters } : undefined;
