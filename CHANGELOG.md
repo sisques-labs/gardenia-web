@@ -1,17 +1,30 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.27.0-beta.0] - 2026-07-05
+
+### Features
+- **home:** Wire "Nueva planta" to the real create-plant flow (447db82)
+
+### Refactor
+- **home:** Move planting spots aggregation out of the component (53671c6)
 ## [0.26.0] - 2026-07-05
 
 ### Bug Fixes
+- **home:** Avoid stretched empty space in today's tasks card (f655a76)
 - **ui:** Stack EntityRow content and actions on narrow containers (d32b3c1)
 - **ui:** Keep EntityRow actions on a single row, aligned with content (160aa5f)
 
 ### Features
+- **home:** Wire real data into today's tasks, growing now and planting spots (9d69fef)
 - **calendar:** Redesign calendar screen for mobile and narrow desktop (7a52b87)
 
 ### Refactor
+- **home:** Simplify dashboard to shipped sections and polish visuals (c81d488)
 - **ui:** Redesign EntityRow as a garden checklist card (e68d588)
+
+### Style
+- **home:** Drop the boxed card wrapper around each dashboard section (cc18004)
 ## [0.25.1] - 2026-07-04
 
 ### Bug Fixes
