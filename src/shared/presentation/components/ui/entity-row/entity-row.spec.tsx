@@ -21,6 +21,25 @@ describe('EntityRow', () => {
     expect(container.firstChild).toHaveClass('custom-class');
     expect(container.firstChild).toHaveClass('rounded-lg', 'border');
   });
+
+  it('establishes a container-query context on the root so layout responds to its own width, not the viewport', () => {
+    const { container } = render(
+      <EntityRow actions={null}>
+        <span />
+      </EntityRow>,
+    );
+    expect(container.firstChild).toHaveClass('@container');
+  });
+
+  it('stacks content above actions in a narrow container, switching to a row once the container is wide enough', () => {
+    render(
+      <EntityRow actions={<span>actions-slot</span>}>
+        <span>content-slot</span>
+      </EntityRow>,
+    );
+    const layoutRow = screen.getByText('content-slot').parentElement;
+    expect(layoutRow).toHaveClass('flex-col', '@md:flex-row');
+  });
 });
 
 describe('EntityRowAction', () => {

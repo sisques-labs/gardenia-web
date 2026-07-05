@@ -9,9 +9,11 @@ type EntityRowProps = {
 
 function EntityRow({ children, actions, className }: EntityRowProps) {
   return (
-    <div className={cn('flex items-center justify-between rounded-lg border p-4', className)}>
-      {children}
-      <div className="flex gap-2">{actions}</div>
+    <div className={cn('@container w-full rounded-lg border p-4', className)}>
+      <div className="flex flex-col gap-2 @md:flex-row @md:items-center @md:justify-between @md:gap-0">
+        {children}
+        <div className="flex gap-2 justify-end">{actions}</div>
+      </div>
     </div>
   );
 }
