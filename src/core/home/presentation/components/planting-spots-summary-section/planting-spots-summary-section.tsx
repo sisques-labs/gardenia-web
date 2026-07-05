@@ -38,8 +38,8 @@ export function PlantingSpotsSummarySection({ dict, plantingSpotsDict }: Props) 
   }, {});
 
   return (
-    <div className="card">
-      <h2 className="text-base font-semibold mb-4">{dict.sections.plantingSpotsSummary.title}</h2>
+    <div>
+      <h2 className="text-base font-semibold mb-4 pb-3 border-b border-[var(--rule)]">{dict.sections.plantingSpotsSummary.title}</h2>
       <div className="grid grid-cols-2 gap-3 mb-4">
         <StatCard
           label={dict.sections.plantingSpotsSummary.active}

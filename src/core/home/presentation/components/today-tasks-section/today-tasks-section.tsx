@@ -32,8 +32,8 @@ export function TodayTasksSection({ dict, careScheduleDict }: Props) {
   if (isLoading) return <TodayTasksSkeleton />;
 
   return (
-    <div className="card">
-      <h2 className="text-base font-semibold mb-4">{dict.sections.todayTasks.title}</h2>
+    <div>
+      <h2 className="text-base font-semibold mb-4 pb-3 border-b border-[var(--rule)]">{dict.sections.todayTasks.title}</h2>
       {careSchedules.length === 0 ? (
         <EmptyState title={dict.sections.todayTasks.empty} />
       ) : (

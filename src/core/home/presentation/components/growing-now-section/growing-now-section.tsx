@@ -23,8 +23,8 @@ export function GrowingNowSection({ dict }: Props) {
   const remaining = visiblePlants.length - MAX_VISIBLE_PLANTS;
 
   return (
-    <div className="card">
-      <h2 className="text-base font-semibold mb-4">{dict.sections.growingNow.title}</h2>
+    <div>
+      <h2 className="text-base font-semibold mb-4 pb-3 border-b border-[var(--rule)]">{dict.sections.growingNow.title}</h2>
       {visiblePlants.length === 0 ? (
         <EmptyState title={dict.sections.growingNow.empty} />
       ) : (

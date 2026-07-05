@@ -2,7 +2,7 @@ const shimmer = 'bg-muted rounded animate-pulse';
 
 export function PlantingSpotsSummarySkeleton() {
   return (
-    <div className="card">
+    <div>
       <div className={`h-5 w-32 mb-4 ${shimmer}`} />
       <div className="grid grid-cols-2 gap-3 mb-4">
         <div className={`h-16 ${shimmer}`} />
