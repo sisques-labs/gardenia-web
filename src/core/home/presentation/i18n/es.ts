@@ -1,3 +1,8 @@
+import type { HomeDict } from './en';
+import type { WidenStringLiterals } from '@/shared/presentation/i18n/widen-literals';
+
+type HomeDictTranslated = WidenStringLiterals<HomeDict>;
+
 const dict = {
   topbar: {
     search: 'Buscar',
@@ -6,33 +11,26 @@ const dict = {
     createMenu: {
       label: 'Crear',
       newPlant: 'Nueva planta',
-      newJournalEntry: 'Nueva entrada del diario',
     },
   },
   greeting: 'Hola',
   sections: {
     todayTasks: {
       title: 'Tareas de hoy',
-      inProgress: 'En desarrollo',
+      empty: 'No tienes tareas pendientes para hoy.',
     },
     growingNow: {
       title: 'Creciendo ahora',
-      inProgress: 'En desarrollo',
+      empty: 'Todavía no tienes plantas activas.',
+      andMore: 'y {count} más',
     },
-    miniMap: {
-      title: 'Mapa del jardín',
-      inProgress: 'En desarrollo',
-    },
-    harvestPace: {
-      title: 'Ritmo de cosecha',
-      inProgress: 'En desarrollo',
-    },
-    journal: {
-      title: 'Diario',
-      inProgress: 'En desarrollo',
+    plantingSpotsSummary: {
+      title: 'Parcelas de cultivo',
+      active: 'Activas',
+      fallow: 'En barbecho',
+      empty: 'Todavía no tienes parcelas de cultivo.',
     },
   },
-  inProgress: 'En desarrollo',
-} as const;
+} as const satisfies HomeDictTranslated;
 
 export default dict;

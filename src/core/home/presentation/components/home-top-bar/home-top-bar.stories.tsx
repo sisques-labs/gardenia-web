@@ -7,7 +7,7 @@ const meta = {
   title: "Home/HomeTopBar",
   component: HomeTopBar,
   tags: ["autodocs"],
-  args: { dict: getDictionary("es").home },
+  args: { dict: getDictionary("es").home, plantsDict: getDictionary("es").plants.create },
   decorators: [
     (Story) => {
       useAuthStore.setState({ currentUser: { id: "u1", userId: "u1", email: "elena@example.com" } });
