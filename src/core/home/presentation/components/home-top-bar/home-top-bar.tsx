@@ -1,6 +1,7 @@
 'use client';
 
 import { Bell, ChevronDown, Leaf, BookOpen } from 'lucide-react';
+import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import {
   DropdownMenu,
@@ -23,57 +24,51 @@ export function HomeTopBar({ dict }: Props) {
   const availableSpaces = useSpacesStore((s) => s.availableSpaces);
   const currentSpaceId = useSpacesStore((s) => s.currentSpaceId);
 
-  const displayName = currentUser
-    ? currentUser.email.split('@')[0]
-    : (availableSpaces.find((s) => s.id === currentSpaceId)?.name ?? '');
+  const currentSpaceName = availableSpaces.find((s) => s.id === currentSpaceId)?.name;
+  const displayName = currentUser ? currentUser.email.split('@')[0] : (currentSpaceName ?? '');
 
+  // Only show the space name as a separate eyebrow when the greeting itself doesn't already
+  // fall back to it — otherwise the same name would render twice.
   return (
-    <div className="flex items-center justify-between gap-4 px-8 py-4 border-b" style={{ color: 'var(--ink)' }}>
-      <div className="text-lg font-semibold" style={{ color: 'var(--forest)' }}>
-        {dict.greeting}, {displayName}
-      </div>
+    <ScreenHeader
+      eyebrow={currentUser ? currentSpaceName : undefined}
+      title={`${dict.greeting}, ${displayName}`}
+      actions={
+        <>
+          <input
+            type="text"
+            placeholder={dict.topbar.search}
+            readOnly
+            className="w-40 sm:w-56 rounded-md border px-3 py-1.5 text-sm"
+            style={{ backgroundColor: 'var(--paper)', color: 'var(--ink-2)' }}
+          />
 
-      <div className="flex items-center gap-3 flex-1 max-w-sm mx-auto">
-        <input
-          type="text"
-          placeholder={dict.topbar.search}
-          readOnly
-          className="w-full rounded-md border px-3 py-1.5 text-sm"
-          style={{ backgroundColor: 'var(--paper)', color: 'var(--ink-2)' }}
-        />
-      </div>
+          <Button variant="ghost" size="sm" aria-label={dict.topbar.notifications} className="p-2">
+            <Bell size={18} />
+          </Button>
 
-      <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="sm"
-          aria-label={dict.topbar.notifications}
-          className="p-2"
-        >
-          <Bell size={18} />
-        </Button>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button size="sm" className="gap-1.5">
-              {dict.topbar.newEntry}
-              <ChevronDown className="h-3.5 w-3.5" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>{dict.topbar.createMenu.label}</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem disabled>
-              <Leaf className="h-4 w-4" />
-              {dict.topbar.createMenu.newPlant}
-            </DropdownMenuItem>
-            <DropdownMenuItem disabled>
-              <BookOpen className="h-4 w-4" />
-              {dict.topbar.createMenu.newJournalEntry}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-    </div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button size="sm" className="gap-1.5 bg-[var(--forest)] hover:bg-[var(--forest-2)] text-white">
+                {dict.topbar.newEntry}
+                <ChevronDown className="h-3.5 w-3.5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuLabel>{dict.topbar.createMenu.label}</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem disabled>
+                <Leaf className="h-4 w-4" />
+                {dict.topbar.createMenu.newPlant}
+              </DropdownMenuItem>
+              <DropdownMenuItem disabled>
+                <BookOpen className="h-4 w-4" />
+                {dict.topbar.createMenu.newJournalEntry}
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </>
+      }
+    />
   );
 }

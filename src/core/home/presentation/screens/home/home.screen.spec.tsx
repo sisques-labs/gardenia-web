@@ -55,8 +55,6 @@ const mockDict: AppDict['home'] = {
     todayTasks: { title: "Today's tasks", empty: 'No tasks due today.' },
     growingNow: { title: 'Growing now', empty: 'No active plants yet.', andMore: 'and {count} more' },
     plantingSpotsSummary: { title: 'Planting spots', active: 'Active', fallow: 'Fallow', empty: 'No planting spots yet.' },
-    harvestPace: { title: 'Harvest pace', inProgress: 'En desarrollo cosecha' },
-    journal: { title: 'Journal', inProgress: 'En desarrollo diario' },
   },
 };
 
@@ -93,13 +91,4 @@ describe('HomeScreen', () => {
     expect(screen.getByText('No planting spots yet.')).toBeInTheDocument();
   });
 
-  it('renders HarvestPaceSection title', () => {
-    render(<HomeScreen dict={mockDict} careScheduleDict={careScheduleDict} plantingSpotsDict={plantingSpotsDict} />);
-    expect(screen.getByText('Harvest pace')).toBeInTheDocument();
-  });
-
-  it('renders JournalSection inProgress text', () => {
-    render(<HomeScreen dict={mockDict} careScheduleDict={careScheduleDict} plantingSpotsDict={plantingSpotsDict} />);
-    expect(screen.getByText('En desarrollo diario')).toBeInTheDocument();
-  });
 });

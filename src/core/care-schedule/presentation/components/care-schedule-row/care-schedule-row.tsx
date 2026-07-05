@@ -36,14 +36,16 @@ type Props = {
   onComplete: (id: string) => void;
   onEdit?: (careSchedule: CareSchedule) => void;
   onDelete: (id: string) => void;
+  className?: string;
 };
 
-export function CareScheduleRow({ careSchedule, dict, plantName, onComplete, onEdit, onDelete }: Props) {
+export function CareScheduleRow({ careSchedule, dict, plantName, onComplete, onEdit, onDelete, className }: Props) {
   // Compare calendar days only — a task due "today" is not overdue just because its time-of-day already passed.
   const isOverdue = careSchedule.active && toISODate(new Date(careSchedule.nextDueAt)) < toISODate(new Date());
 
   return (
     <EntityRow
+      className={className}
       actions={
         <>
           {careSchedule.active && (

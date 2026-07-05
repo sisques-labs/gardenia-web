@@ -37,7 +37,7 @@ export function TodayTasksSection({ dict, careScheduleDict }: Props) {
       {careSchedules.length === 0 ? (
         <EmptyState title={dict.sections.todayTasks.empty} />
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col">
           {careSchedules.map((careSchedule) => (
             <CareScheduleRow
               key={careSchedule.id}
@@ -46,6 +46,7 @@ export function TodayTasksSection({ dict, careScheduleDict }: Props) {
               plantName={plantNameById[careSchedule.plantId]}
               onComplete={(id) => completeCareSchedule({ id })}
               onDelete={(id) => deleteCareSchedule(id)}
+              className="rounded-none border-0 border-b border-[var(--rule)] p-0 py-3 last:border-b-0 last:pb-0"
             />
           ))}
         </div>

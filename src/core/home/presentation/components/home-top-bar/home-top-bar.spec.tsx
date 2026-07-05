@@ -33,8 +33,6 @@ const dict: AppDict['home'] = {
     todayTasks: { title: "Today's tasks", empty: 'No tasks due today.' },
     growingNow: { title: 'Growing now', empty: 'No active plants yet.', andMore: 'and {count} more' },
     plantingSpotsSummary: { title: 'Planting spots', active: 'Active', fallow: 'Fallow', empty: 'No planting spots yet.' },
-    harvestPace: { title: 'Harvest pace', inProgress: 'En desarrollo' },
-    journal: { title: 'Journal', inProgress: 'En desarrollo' },
   },
 };
 

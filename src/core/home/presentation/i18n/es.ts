@@ -31,14 +31,6 @@ const dict = {
       fallow: 'En barbecho',
       empty: 'Todavía no tienes parcelas de cultivo.',
     },
-    harvestPace: {
-      title: 'Ritmo de cosecha',
-      inProgress: 'En desarrollo',
-    },
-    journal: {
-      title: 'Diario',
-      inProgress: 'En desarrollo',
-    },
   },
 } as const satisfies HomeDictTranslated;
 

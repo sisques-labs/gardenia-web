@@ -26,14 +26,6 @@ const dict = {
       fallow: 'Fallow',
       empty: 'No planting spots yet.',
     },
-    harvestPace: {
-      title: 'Harvest pace',
-      inProgress: 'Coming soon',
-    },
-    journal: {
-      title: 'Journal',
-      inProgress: 'Coming soon',
-    },
   },
 } as const;
 
