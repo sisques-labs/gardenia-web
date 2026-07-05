@@ -11,7 +11,6 @@ const dict = {
     createMenu: {
       label: 'Crear',
       newPlant: 'Nueva planta',
-      newJournalEntry: 'Nueva entrada del diario',
     },
   },
   greeting: 'Hola',

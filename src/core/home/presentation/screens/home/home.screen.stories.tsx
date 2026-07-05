@@ -46,7 +46,12 @@ const meta = {
   title: "Screens/Home",
   component: HomeScreen,
   tags: ["autodocs"],
-  args: { dict, careScheduleDict: getDictionary("es").careSchedule, plantingSpotsDict: getDictionary("es").plantingSpots },
+  args: {
+    dict,
+    careScheduleDict: getDictionary("es").careSchedule,
+    plantingSpotsDict: getDictionary("es").plantingSpots,
+    plantsDict: getDictionary("es").plants.create,
+  },
   parameters: { layout: "fullscreen" },
   decorators: [
     (Story) => {

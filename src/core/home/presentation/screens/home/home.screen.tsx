@@ -14,12 +14,13 @@ type Props = {
   dict: AppDict['home'];
   careScheduleDict: AppDict['careSchedule'];
   plantingSpotsDict: AppDict['plantingSpots'];
+  plantsDict: AppDict['plants']['create'];
 };
 
-export function HomeScreen({ dict, careScheduleDict, plantingSpotsDict }: Props) {
+export function HomeScreen({ dict, careScheduleDict, plantingSpotsDict, plantsDict }: Props) {
   return (
     <div className="flex flex-col h-full">
-      <HomeTopBar dict={dict} />
+      <HomeTopBar dict={dict} plantsDict={plantsDict} />
 
       <div className="flex-1 overflow-y-auto">
         <div className="flex flex-col gap-6 p-8">

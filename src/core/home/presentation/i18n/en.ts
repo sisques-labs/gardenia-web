@@ -6,7 +6,6 @@ const dict = {
     createMenu: {
       label: 'Create',
       newPlant: 'New plant',
-      newJournalEntry: 'New journal entry',
     },
   },
   greeting: 'Hello',
