@@ -11,8 +11,8 @@ const drawerContentVariants = cva(
   {
     variants: {
       side: {
-        right: 'inset-y-0 right-0 h-full w-80 data-[state=open]:translate-x-0 data-[state=closed]:translate-x-full',
-        left: 'inset-y-0 left-0 h-full w-80 data-[state=open]:translate-x-0 data-[state=closed]:-translate-x-full',
+        right: 'inset-y-0 right-0 h-full w-80 max-w-full data-[state=open]:translate-x-0 data-[state=closed]:translate-x-full',
+        left: 'inset-y-0 left-0 h-full w-80 max-w-full data-[state=open]:translate-x-0 data-[state=closed]:-translate-x-full',
         bottom: 'inset-x-0 bottom-0 w-full max-h-[80vh] data-[state=open]:translate-y-0 data-[state=closed]:translate-y-full',
       },
     },

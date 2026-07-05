@@ -29,7 +29,7 @@ export function GrowingNowSection({ dict }: Props) {
         <EmptyState title={dict.sections.growingNow.empty} />
       ) : (
         <>
-          <div className="grid grid-cols-3 gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             {visiblePlants.slice(0, MAX_VISIBLE_PLANTS).map((plant) => (
               <PlantCard key={plant.id} name={plant.name} species={plant.species?.scientificName} imageUrl={plant.imageUrl} />
             ))}

@@ -44,7 +44,7 @@ export function ScreenHeader({ title, eyebrow, subtitle, breadcrumbs, actions }:
       )}
 
       {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-      <div className="flex items-center">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
         <div className="flex items-baseline gap-2">
           <h1 className="headline text-[var(--ink)]">{title}</h1>
           {subtitle && (
@@ -57,7 +57,7 @@ export function ScreenHeader({ title, eyebrow, subtitle, breadcrumbs, actions }:
           )}
         </div>
         {actions && (
-          <div data-testid="screen-header-actions" className="ml-auto flex items-center gap-2">
+          <div data-testid="screen-header-actions" className="flex flex-wrap items-center gap-2 sm:ml-auto">
             {actions}
           </div>
         )}
