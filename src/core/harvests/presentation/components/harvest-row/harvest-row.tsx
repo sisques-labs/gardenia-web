@@ -1,3 +1,4 @@
+import { Pencil, ShoppingBasket, Trash2 } from 'lucide-react';
 import type { Harvest } from '@/core/harvests/domain/types/harvest.interface';
 import { EntityRow, EntityRowAction } from '@/shared/presentation/components/ui/entity-row/entity-row';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
@@ -12,10 +13,17 @@ type Props = {
 export function HarvestRow({ harvest, onDelete, onEdit, dict }: Props) {
   return (
     <EntityRow
+      icon={<ShoppingBasket className="w-4 h-4" />}
+      iconVariant="honey"
       actions={
         <>
-          <EntityRowAction label={dict.row.edit} onClick={() => onEdit(harvest)} />
-          <EntityRowAction label={dict.row.delete} onClick={() => onDelete(harvest.id)} variant="destructive" />
+          <EntityRowAction icon={<Pencil className="w-4 h-4" />} label={dict.row.edit} onClick={() => onEdit(harvest)} />
+          <EntityRowAction
+            icon={<Trash2 className="w-4 h-4" />}
+            label={dict.row.delete}
+            onClick={() => onDelete(harvest.id)}
+            variant="destructive"
+          />
         </>
       }
     >

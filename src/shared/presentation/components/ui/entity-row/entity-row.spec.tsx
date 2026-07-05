@@ -37,15 +37,91 @@ describe('EntityRow', () => {
         <span>content-slot</span>
       </EntityRow>,
     );
-    const layoutRow = screen.getByText('content-slot').parentElement;
-    expect(layoutRow).toHaveClass('flex-col', '@md:flex-row');
+    expect(screen.getByTestId('entity-row-layout')).toHaveClass('flex-col', '@md:flex-row');
+  });
+
+  it('does not render an actions container when actions is omitted', () => {
+    render(<EntityRow>content</EntityRow>);
+    expect(screen.getByTestId('entity-row-layout').children).toHaveLength(1);
+  });
+
+  describe('complete checkbox', () => {
+    it('does not render a checkbox when onComplete is not provided', () => {
+      render(<EntityRow actions={null}>content</EntityRow>);
+      expect(document.querySelector('.cbox')).toBeNull();
+    });
+
+    it('renders a checkbox when onComplete is provided', () => {
+      render(
+        <EntityRow actions={null} onComplete={() => {}} completeLabel="Complete">
+          content
+        </EntityRow>,
+      );
+      expect(screen.getByRole('button', { name: 'Complete' })).toHaveClass('cbox');
+    });
+
+    it('calls onComplete when the checkbox is clicked', () => {
+      const onComplete = vi.fn();
+      render(
+        <EntityRow actions={null} onComplete={onComplete} completeLabel="Complete">
+          content
+        </EntityRow>,
+      );
+      fireEvent.click(screen.getByRole('button', { name: 'Complete' }));
+      expect(onComplete).toHaveBeenCalledTimes(1);
+    });
+
+    it('shows the checkbox as done and disabled after it is clicked', () => {
+      render(
+        <EntityRow actions={null} onComplete={() => {}} completeLabel="Complete">
+          content
+        </EntityRow>,
+      );
+      const checkbox = screen.getByRole('button', { name: 'Complete' });
+      fireEvent.click(checkbox);
+      expect(checkbox).toHaveClass('done');
+      expect(checkbox).toBeDisabled();
+    });
+  });
+
+  describe('icon badge', () => {
+    it('does not render a badge when icon is omitted', () => {
+      render(<EntityRow actions={null}>content</EntityRow>);
+      expect(screen.queryByTestId('entity-row-icon')).toBeNull();
+    });
+
+    it('renders the icon inside a variant-colored badge', () => {
+      render(
+        <EntityRow actions={null} icon={<svg data-testid="entity-row-icon" />} iconVariant="sky">
+          content
+        </EntityRow>,
+      );
+      const badge = screen.getByTestId('entity-row-icon').parentElement;
+      expect(badge).toHaveClass('bg-[var(--sky-bg)]', 'text-[var(--sky)]');
+    });
+  });
+
+  describe('overdue accent', () => {
+    it('applies a terracotta left accent border when overdue', () => {
+      const { container } = render(
+        <EntityRow actions={null} overdue>
+          content
+        </EntityRow>,
+      );
+      expect(container.firstChild).toHaveClass('border-l-4', 'border-l-[var(--terracotta)]');
+    });
+
+    it('does not apply the accent border by default', () => {
+      const { container } = render(<EntityRow actions={null}>content</EntityRow>);
+      expect(container.firstChild).not.toHaveClass('border-l-4');
+    });
   });
 });
 
 describe('EntityRowAction', () => {
-  it('renders a labeled button and fires onClick', () => {
+  it('renders an icon button and fires onClick', () => {
     const onClick = vi.fn();
-    render(<EntityRowAction label="Edit" onClick={onClick} />);
+    render(<EntityRowAction icon={<svg />} label="Edit" onClick={onClick} />);
 
     const button = screen.getByRole('button', { name: 'Edit' });
     fireEvent.click(button);
@@ -53,13 +129,14 @@ describe('EntityRowAction', () => {
     expect(onClick).toHaveBeenCalledTimes(1);
   });
 
-  it('applies destructive styling for the destructive variant', () => {
-    render(<EntityRowAction label="Delete" onClick={() => {}} variant="destructive" />);
-    expect(screen.getByRole('button', { name: 'Delete' })).toHaveClass('text-destructive');
+  it('renders the icon, not the label, as visible content', () => {
+    render(<EntityRowAction icon={<svg data-testid="edit-icon" />} label="Edit" onClick={() => {}} />);
+    expect(screen.getByTestId('edit-icon')).toBeInTheDocument();
+    expect(screen.queryByText('Edit')).toBeNull();
   });
 
-  it('applies accent styling for the accent variant', () => {
-    render(<EntityRowAction label="Complete" onClick={() => {}} variant="accent" />);
-    expect(screen.getByRole('button', { name: 'Complete' })).toHaveClass('text-[var(--forest)]');
+  it('applies destructive styling for the destructive variant', () => {
+    render(<EntityRowAction icon={<svg />} label="Delete" onClick={() => {}} variant="destructive" />);
+    expect(screen.getByRole('button', { name: 'Delete' })).toHaveClass('text-destructive');
   });
 });

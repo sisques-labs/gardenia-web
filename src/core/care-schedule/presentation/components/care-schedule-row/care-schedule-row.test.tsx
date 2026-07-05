@@ -158,4 +158,32 @@ describe('CareScheduleRow', () => {
     );
     expect(screen.queryByRole('button', { name: en.row.complete })).toBeNull();
   });
+
+  it('renders the activity icon in a sky-colored badge for WATERING', () => {
+    render(
+      <CareScheduleRow
+        careSchedule={{ ...baseCareSchedule, activityType: 'WATERING' }}
+        dict={en}
+        onComplete={vi.fn()}
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    );
+    const badge = document.querySelector('svg')?.parentElement;
+    expect(badge).toHaveClass('bg-[var(--sky-bg)]', 'text-[var(--sky)]');
+  });
+
+  it('renders the activity icon in a honey-colored badge for FERTILIZING', () => {
+    render(
+      <CareScheduleRow
+        careSchedule={{ ...baseCareSchedule, activityType: 'FERTILIZING' }}
+        dict={en}
+        onComplete={vi.fn()}
+        onEdit={vi.fn()}
+        onDelete={vi.fn()}
+      />,
+    );
+    const badge = document.querySelector('svg')?.parentElement;
+    expect(badge).toHaveClass('bg-[var(--honey-bg)]', 'text-[var(--honey-2)]');
+  });
 });
