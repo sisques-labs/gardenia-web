@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-## [0.27.0-beta.0] - 2026-07-05
+## [0.27.0] - 2026-07-05
 
 ### Features
 - **home:** Wire "Nueva planta" to the real create-plant flow (447db82)
