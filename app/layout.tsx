@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Newsreader, DM_Sans, Caveat, JetBrains_Mono } from "next/font/google";
 import { Providers } from "@/shared/presentation/providers/providers";
 import { Toaster } from "@/shared/presentation/components/ui/toaster/toaster";
@@ -32,6 +32,11 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   title: "Gardenia",
   description: "Gardenia web application",
+  manifest: "/site.webmanifest",
+};
+
+export const viewport: Viewport = {
+  themeColor: "#2f5138",
 };
 
 export default function RootLayout({
