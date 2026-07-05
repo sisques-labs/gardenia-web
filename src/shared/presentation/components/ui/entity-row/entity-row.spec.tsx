@@ -22,22 +22,14 @@ describe('EntityRow', () => {
     expect(container.firstChild).toHaveClass('rounded-lg', 'border');
   });
 
-  it('establishes a container-query context on the root so layout responds to its own width, not the viewport', () => {
-    const { container } = render(
-      <EntityRow actions={null}>
-        <span />
-      </EntityRow>,
-    );
-    expect(container.firstChild).toHaveClass('@container');
-  });
-
-  it('stacks content above actions in a narrow container, switching to a row once the container is wide enough', () => {
+  it('keeps content and actions in a single row, vertically centered', () => {
     render(
       <EntityRow actions={<span>actions-slot</span>}>
         <span>content-slot</span>
       </EntityRow>,
     );
-    expect(screen.getByTestId('entity-row-layout')).toHaveClass('flex-col', '@md:flex-row');
+    expect(screen.getByTestId('entity-row-layout')).toHaveClass('items-center', 'justify-between');
+    expect(screen.getByTestId('entity-row-layout')).not.toHaveClass('flex-col');
   });
 
   it('does not render an actions container when actions is omitted', () => {

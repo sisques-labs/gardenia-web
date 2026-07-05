@@ -49,16 +49,13 @@ function EntityRow({
   return (
     <div
       className={cn(
-        '@container w-full rounded-lg border bg-[var(--paper)] p-4',
+        'w-full rounded-lg border bg-[var(--paper)] p-4',
         overdue ? 'border-l-4 border-l-[var(--terracotta)]' : undefined,
         className,
       )}
     >
-      <div
-        data-testid="entity-row-layout"
-        className="flex flex-col gap-3 @md:flex-row @md:items-center @md:justify-between"
-      >
-        <div data-testid="entity-row-leading" className="flex min-w-0 items-center gap-3">
+      <div data-testid="entity-row-layout" className="flex items-center justify-between gap-3">
+        <div data-testid="entity-row-leading" className="flex min-w-0 flex-1 items-center gap-3">
           {onComplete && (
             <button
               type="button"
@@ -80,7 +77,7 @@ function EntityRow({
           )}
           <div className="min-w-0 flex-1">{children}</div>
         </div>
-        {actions && <div className="flex shrink-0 justify-end gap-1">{actions}</div>}
+        {actions && <div className="flex shrink-0 items-center gap-1">{actions}</div>}
       </div>
     </div>
   );

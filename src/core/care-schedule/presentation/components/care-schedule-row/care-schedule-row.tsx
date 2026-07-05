@@ -81,16 +81,16 @@ export function CareScheduleRow({ careSchedule, dict, plantName, onComplete, onE
         </>
       }
     >
-      <div className="flex flex-col gap-1">
+      <div className="flex flex-col gap-0.5">
         <div className="flex items-center gap-2">
           <span className="font-semibold text-sm">{dict.row.activityTypes[careSchedule.activityType]}</span>
-          {plantName && <span className="text-xs text-muted-foreground">· {plantName}</span>}
           {isOverdue && (
             <Chip variant="terra" className="text-[10px]">
               {dict.row.overdueLabel}
             </Chip>
           )}
         </div>
+        {plantName && <span className="text-xs text-muted-foreground">{plantName}</span>}
         <span className="text-xs text-muted-foreground">
           {dict.row.dueLabel} {formatDueDate(careSchedule.nextDueAt)}
         </span>
