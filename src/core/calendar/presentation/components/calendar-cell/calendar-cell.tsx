@@ -15,9 +15,10 @@ type Props = {
   isSelected: boolean;
   onSelect: (day: number) => void;
   dict: Dict;
+  taskCount?: number;
 };
 
-export function CalendarCell({ day, isToday, isSelected, onSelect, dict }: Props) {
+export function CalendarCell({ day, isToday, isSelected, onSelect, dict, taskCount }: Props) {
   if (day === null) {
     return <div aria-hidden="true" data-testid="calendar-empty-slot" className="bg-[var(--paper-2)] h-full" />;
   }
@@ -37,7 +38,7 @@ export function CalendarCell({ day, isToday, isSelected, onSelect, dict }: Props
         aria-label={t(dict.dayAriaLabel, { day })}
         onClick={() => onSelect(day)}
         className={cn(
-          'w-full h-full p-2 justify-start items-start rounded-none transition-shadow',
+          'w-full h-full p-2 flex-col justify-start items-start rounded-none transition-shadow',
           isSelected && 'ring-2 ring-[var(--forest)] ring-inset',
           isToday ? 'text-[var(--honey-2)] font-semibold' : 'text-[var(--ink)]',
         )}
@@ -48,6 +49,14 @@ export function CalendarCell({ day, isToday, isSelected, onSelect, dict }: Props
             <span className="eyebrow text-[var(--honey-2)] text-[9px]">{dict.todayBadge}</span>
           )}
         </span>
+        {!!taskCount && (
+          <span
+            data-testid="calendar-cell-task-count"
+            className="mt-auto self-end flex h-4 min-w-4 items-center justify-center rounded-full bg-[var(--forest)] px-1 text-[10px] font-medium leading-none text-white"
+          >
+            {taskCount}
+          </span>
+        )}
       </Button>
     </div>
   );

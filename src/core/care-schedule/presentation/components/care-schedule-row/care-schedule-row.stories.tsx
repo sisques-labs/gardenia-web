@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { CareScheduleRow } from "./care-schedule-row";
 import { getDictionary } from "@/shared/presentation/i18n/get-dictionary";
-import type { CareSchedule } from "@/core/care-schedule/domain/types/care-schedule.interface";
+import type { CareSchedule, CareScheduleActivityType } from "@/core/care-schedule/domain/types/care-schedule.interface";
+import { CARE_SCHEDULE_ACTIVITY_TYPES } from "@/core/care-schedule/domain/types/care-schedule.interface";
 
 const dict = getDictionary("es").careSchedule;
 
@@ -42,4 +43,21 @@ export const Overdue: Story = {
 
 export const Inactive: Story = {
   args: { careSchedule: { ...mockSchedule, active: false }, onEdit: undefined },
+};
+
+export const ActivityTypeGallery: Story = {
+  decorators: [
+    (Story) => (
+      <div style={{ maxWidth: 480, display: "flex", flexDirection: "column", gap: 12 }}>
+        <Story />
+      </div>
+    ),
+  ],
+  render: (args) => (
+    <>
+      {(CARE_SCHEDULE_ACTIVITY_TYPES as readonly CareScheduleActivityType[]).map((activityType) => (
+        <CareScheduleRow key={activityType} {...args} careSchedule={{ ...mockSchedule, activityType }} />
+      ))}
+    </>
+  ),
 };

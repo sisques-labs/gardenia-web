@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { Droplets, Pencil, ShoppingBasket, Trash2 } from "lucide-react";
 import { EntityRow, EntityRowAction } from "./entity-row";
 
 const meta = {
@@ -14,8 +15,8 @@ const meta = {
     ),
     actions: (
       <>
-        <EntityRowAction label="Editar" onClick={() => {}} />
-        <EntityRowAction label="Eliminar" onClick={() => {}} variant="destructive" />
+        <EntityRowAction icon={<Pencil className="w-4 h-4" />} label="Editar" onClick={() => {}} />
+        <EntityRowAction icon={<Trash2 className="w-4 h-4" />} label="Eliminar" onClick={() => {}} variant="destructive" />
       </>
     ),
   },
@@ -34,14 +35,28 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {};
 
-export const WithAccentAction: Story = {
+export const WithIconBadge: Story = {
   args: {
-    actions: (
-      <>
-        <EntityRowAction label="Completar" onClick={() => {}} variant="accent" />
-        <EntityRowAction label="Editar" onClick={() => {}} />
-        <EntityRowAction label="Eliminar" onClick={() => {}} variant="destructive" />
-      </>
-    ),
+    icon: <Droplets className="w-4 h-4" />,
+    iconVariant: "sky",
+  },
+};
+
+export const WithCompleteCheckbox: Story = {
+  args: {
+    icon: <ShoppingBasket className="w-4 h-4" />,
+    iconVariant: "honey",
+    onComplete: () => {},
+    completeLabel: "Completar",
+  },
+};
+
+export const Overdue: Story = {
+  args: {
+    icon: <Droplets className="w-4 h-4" />,
+    iconVariant: "sky",
+    overdue: true,
+    onComplete: () => {},
+    completeLabel: "Completar",
   },
 };
