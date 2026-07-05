@@ -22,20 +22,20 @@ export function HomeScreen({ dict, careScheduleDict, plantingSpotsDict }: Props)
       <HomeTopBar dict={dict} />
 
       <div className="flex-1 overflow-y-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 p-8 items-start">
-          <div className="lg:row-span-2">
-            <Suspense fallback={<TodayTasksSkeleton />}>
-              <TodayTasksSection dict={dict} careScheduleDict={careScheduleDict} />
+        <div className="flex flex-col gap-6 p-8">
+          <Suspense fallback={<TodayTasksSkeleton />}>
+            <TodayTasksSection dict={dict} careScheduleDict={careScheduleDict} />
+          </Suspense>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+            <Suspense fallback={<GrowingNowSkeleton />}>
+              <GrowingNowSection dict={dict} />
+            </Suspense>
+
+            <Suspense fallback={<PlantingSpotsSummarySkeleton />}>
+              <PlantingSpotsSummarySection dict={dict} plantingSpotsDict={plantingSpotsDict} />
             </Suspense>
           </div>
-
-          <Suspense fallback={<GrowingNowSkeleton />}>
-            <GrowingNowSection dict={dict} />
-          </Suspense>
-
-          <Suspense fallback={<PlantingSpotsSummarySkeleton />}>
-            <PlantingSpotsSummarySection dict={dict} plantingSpotsDict={plantingSpotsDict} />
-          </Suspense>
         </div>
       </div>
     </div>
