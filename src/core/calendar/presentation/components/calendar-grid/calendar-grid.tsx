@@ -11,9 +11,10 @@ type Props = {
   selectedDate: string;
   onSelectDate: (iso: string) => void;
   dict: Pick<AppDict['calendar']['grid'], 'weekdays' | 'dayAriaLabel' | 'todayBadge'>;
+  taskCountByDate?: Record<string, number>;
 };
 
-export function CalendarGrid({ year, month, selectedDate, onSelectDate, dict }: Props) {
+export function CalendarGrid({ year, month, selectedDate, onSelectDate, dict, taskCountByDate }: Props) {
   const { cells, todayISO, handleSelectDay } = useCalendarGrid({ year, month, onSelectDate });
 
   return (
@@ -26,7 +27,7 @@ export function CalendarGrid({ year, month, selectedDate, onSelectDate, dict }: 
         ))}
       </div>
 
-      <div className="flex-1 grid grid-cols-7 gap-px [grid-auto-rows:1fr]">
+      <div className="flex-1 grid grid-cols-7 gap-px [grid-auto-rows:minmax(3.5rem,1fr)]">
         {cells.map((day, idx) => {
           const m = String(month + 1).padStart(2, '0');
           const d = day !== null ? String(day).padStart(2, '0') : null;
@@ -39,6 +40,7 @@ export function CalendarGrid({ year, month, selectedDate, onSelectDate, dict }: 
               isSelected={iso === selectedDate}
               onSelect={handleSelectDay}
               dict={{ dayAriaLabel: dict.dayAriaLabel, todayBadge: dict.todayBadge }}
+              taskCount={iso ? taskCountByDate?.[iso] : undefined}
             />
           );
         })}
