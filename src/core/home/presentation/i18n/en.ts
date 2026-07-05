@@ -6,33 +6,26 @@ const dict = {
     createMenu: {
       label: 'Create',
       newPlant: 'New plant',
-      newJournalEntry: 'New journal entry',
     },
   },
   greeting: 'Hello',
   sections: {
     todayTasks: {
       title: "Today's tasks",
-      inProgress: 'Coming soon',
+      empty: 'No tasks due today.',
     },
     growingNow: {
       title: 'Growing now',
-      inProgress: 'Coming soon',
+      empty: 'No active plants yet.',
+      andMore: 'and {count} more',
     },
-    miniMap: {
-      title: 'Garden map',
-      inProgress: 'Coming soon',
-    },
-    harvestPace: {
-      title: 'Harvest pace',
-      inProgress: 'Coming soon',
-    },
-    journal: {
-      title: 'Journal',
-      inProgress: 'Coming soon',
+    plantingSpotsSummary: {
+      title: 'Planting spots',
+      active: 'Active',
+      fallow: 'Fallow',
+      empty: 'No planting spots yet.',
     },
   },
-  inProgress: 'Coming soon',
 } as const;
 
 export default dict;

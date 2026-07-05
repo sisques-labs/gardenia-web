@@ -1,4 +1,5 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 
 const mockAuthSelector = vi.fn();
@@ -14,6 +15,14 @@ vi.mock('@/core/spaces/infrastructure/store/spaces.store', () => ({
     mockSpacesSelector(selector),
 }));
 
+vi.mock('@/core/plants/presentation/components/create-plant-modal/create-plant-modal', () => ({
+  CreatePlantModal: ({ onClose }: { onClose: () => void }) => (
+    <div data-testid="create-plant-modal-mock">
+      <button onClick={onClose}>close</button>
+    </div>
+  ),
+}));
+
 import { HomeTopBar } from './home-top-bar';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
@@ -25,19 +34,27 @@ const dict: AppDict['home'] = {
     createMenu: {
       label: 'Create',
       newPlant: 'New plant',
-      newJournalEntry: 'New journal entry',
     },
   },
   greeting: 'Hello',
   sections: {
-    todayTasks: { title: "Today's tasks", inProgress: 'En desarrollo' },
-    growingNow: { title: 'Growing now', inProgress: 'En desarrollo' },
-    miniMap: { title: 'Garden map', inProgress: 'En desarrollo' },
-    harvestPace: { title: 'Harvest pace', inProgress: 'En desarrollo' },
-    journal: { title: 'Journal', inProgress: 'En desarrollo' },
+    todayTasks: { title: "Today's tasks", empty: 'No tasks due today.' },
+    growingNow: { title: 'Growing now', empty: 'No active plants yet.', andMore: 'and {count} more' },
+    plantingSpotsSummary: { title: 'Planting spots', active: 'Active', fallow: 'Fallow', empty: 'No planting spots yet.' },
   },
-  inProgress: 'En desarrollo',
 };
+
+const plantsDict: AppDict['plants']['create'] = {
+  title: 'New plant',
+  name: 'Name',
+  namePlaceholder: 'Plant name',
+  imageUrl: 'Image URL',
+  imageUrlPlaceholder: 'https://...',
+  cancel: 'Cancel',
+  submit: 'Save',
+  submitting: 'Saving...',
+  error: 'Could not create the plant. Try again.',
+} as AppDict['plants']['create'];
 
 const defaultSpacesState = {
   availableSpaces: [{ id: 'space-1', name: 'Mi Huerto', ownerId: 'u1', createdAt: '' }],
@@ -59,28 +76,40 @@ describe('HomeTopBar', () => {
   });
 
   it('shows email prefix in greeting', () => {
-    render(<HomeTopBar dict={dict} />);
+    render(<HomeTopBar dict={dict} plantsDict={plantsDict} />);
     expect(screen.getByText(/ana/i)).toBeInTheDocument();
   });
 
   it('shows search input', () => {
-    render(<HomeTopBar dict={dict} />);
+    render(<HomeTopBar dict={dict} plantsDict={plantsDict} />);
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
   it('shows bell icon button', () => {
-    render(<HomeTopBar dict={dict} />);
+    render(<HomeTopBar dict={dict} plantsDict={plantsDict} />);
     expect(screen.getByRole('button', { name: /notifications/i })).toBeInTheDocument();
   });
 
   it('shows "Nueva entrada" button', () => {
-    render(<HomeTopBar dict={dict} />);
+    render(<HomeTopBar dict={dict} plantsDict={plantsDict} />);
     expect(screen.getByRole('button', { name: /nueva entrada/i })).toBeInTheDocument();
   });
 
   it('shows space name as fallback when currentUser is null', () => {
     setupMocks(null);
-    render(<HomeTopBar dict={dict} />);
+    render(<HomeTopBar dict={dict} plantsDict={plantsDict} />);
     expect(screen.getByText(/mi huerto/i)).toBeInTheDocument();
+  });
+
+  it('opens the create plant modal when "Nueva planta" is clicked', async () => {
+    const user = userEvent.setup();
+    render(<HomeTopBar dict={dict} plantsDict={plantsDict} />);
+    expect(screen.queryByTestId('create-plant-modal-mock')).not.toBeInTheDocument();
+
+    await user.click(screen.getByRole('button', { name: /nueva entrada/i }));
+    await waitFor(() => screen.getByText('New plant'));
+    await user.click(screen.getByText('New plant'));
+
+    expect(screen.getByTestId('create-plant-modal-mock')).toBeInTheDocument();
   });
 });
