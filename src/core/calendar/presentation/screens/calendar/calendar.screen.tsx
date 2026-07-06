@@ -83,8 +83,8 @@ export function CalendarScreen({ dict, careScheduleDict }: Props) {
         }
       />
 
-      <div className="flex flex-col md:flex-row flex-1 md:overflow-hidden">
-        <div className="flex-1 p-3 md:p-6 flex flex-col md:overflow-hidden">
+      <div className="flex flex-col flex-1">
+        <div className="flex-1 p-3 md:p-6 flex flex-col">
           <CalendarGrid
             year={currentYear}
             month={currentMonth}
@@ -99,7 +99,7 @@ export function CalendarScreen({ dict, careScheduleDict }: Props) {
           />
         </div>
 
-        <div className="md:w-72 md:shrink-0 md:overflow-y-auto">
+        <div className="w-full">
           <DayTasksPanel
             selectedDate={selectedDate}
             dict={dict.panel}
