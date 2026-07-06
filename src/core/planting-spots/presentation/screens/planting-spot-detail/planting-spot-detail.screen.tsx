@@ -64,7 +64,7 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
           { label: spot.name },
         ]}
         actions={
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <PlantingSpotStatusBadge status={spot.status} dict={dict.statuses} />
             <Button
               variant="outline"
@@ -136,7 +136,7 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
 
       <div className="px-6 pt-4">
         <Tabs defaultValue="plants">
-          <TabsList>
+          <TabsList className="flex w-full overflow-x-auto justify-start">
             <TabsTrigger value="plants">{d.tabActivePlants}</TabsTrigger>
             <TabsTrigger value="history">{d.tabRotationHistory}</TabsTrigger>
             <TabsTrigger value="info">{d.tabInfo}</TabsTrigger>

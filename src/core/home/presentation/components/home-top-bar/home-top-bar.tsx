@@ -44,7 +44,7 @@ export function HomeTopBar({ dict, plantsDict }: Props) {
               type="text"
               placeholder={dict.topbar.search}
               readOnly
-              className="w-40 sm:w-56 rounded-md border px-3 py-1.5 text-sm"
+              className="hidden sm:block sm:w-56 rounded-md border px-3 py-1.5 text-sm"
               style={{ backgroundColor: 'var(--paper)', color: 'var(--ink-2)' }}
             />
 

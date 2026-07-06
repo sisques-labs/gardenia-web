@@ -65,10 +65,11 @@ describe('ScreenHeader', () => {
     expect(screen.getByRole('button', { name: 'New Space' })).toBeInTheDocument();
   });
 
-  it('renders actions right-aligned via ml-auto', () => {
+  it('renders actions right-aligned via ml-auto on wider screens, wrapping on narrow ones', () => {
     render(<ScreenHeader title="Spaces" actions={<button>New</button>} />);
     const actionsContainer = screen.getByTestId('screen-header-actions');
-    expect(actionsContainer).toHaveClass('ml-auto');
+    expect(actionsContainer).toHaveClass('sm:ml-auto');
+    expect(actionsContainer).toHaveClass('flex-wrap');
   });
 
   it('does not render actions area when not provided', () => {

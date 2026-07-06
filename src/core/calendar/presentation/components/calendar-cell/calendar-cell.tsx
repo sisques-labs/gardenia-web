@@ -38,15 +38,15 @@ export function CalendarCell({ day, isToday, isSelected, onSelect, dict, taskCou
         aria-label={t(dict.dayAriaLabel, { day })}
         onClick={() => onSelect(day)}
         className={cn(
-          'w-full h-full p-2 flex-col justify-start items-start rounded-none transition-shadow',
+          'w-full h-full p-1 sm:p-2 flex-col justify-start items-start rounded-none transition-shadow',
           isSelected && 'ring-2 ring-[var(--forest)] ring-inset',
           isToday ? 'text-[var(--honey-2)] font-semibold' : 'text-[var(--ink)]',
         )}
       >
-        <span className="flex items-center gap-1.5 text-sm leading-none">
+        <span className="flex items-center gap-1.5 text-xs sm:text-sm leading-none">
           {day}
           {isToday && (
-            <span className="eyebrow text-[var(--honey-2)] text-[9px]">{dict.todayBadge}</span>
+            <span className="eyebrow text-[var(--honey-2)] text-[9px] hidden sm:inline">{dict.todayBadge}</span>
           )}
         </span>
         {!!taskCount && (
