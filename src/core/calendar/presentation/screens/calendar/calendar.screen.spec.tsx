@@ -128,6 +128,13 @@ describe('CalendarScreen', () => {
     expect(screen.getByTestId('panel-selected').textContent).toBe(todayISO);
   });
 
+  it('renders the task list below the calendar in document order', () => {
+    render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
+    const grid = screen.getByTestId('calendar-grid-mock');
+    const panel = screen.getByTestId('day-tasks-panel-mock');
+    expect(grid.compareDocumentPosition(panel) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
   it('prev-month button calls store prevMonth', async () => {
     const spy = vi.spyOn(useCalendarStore.getState(), 'prevMonth');
     render(<CalendarScreen dict={dict} careScheduleDict={careScheduleDict} />);
