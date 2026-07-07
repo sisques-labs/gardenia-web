@@ -56,64 +56,70 @@ export function SpaceSettingsScreen({ dict, weatherDict, memberListDict, lang }:
 
   return (
     <div className="flex flex-col">
-      <ScreenHeader title={dict.title} />
+      <ScreenHeader title={dict.title} breadcrumbs={[{ label: dict.title }]} />
 
-      <div className="p-6 flex flex-col gap-6 max-w-2xl">
-        <SpaceDetailsCard
-          space={space}
-          isLoading={isLoading}
-          isError={isError}
-          dict={dict}
-        />
+      <div className="mx-auto w-full max-w-5xl p-4 md:p-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="flex flex-col gap-6">
+            <SpaceDetailsCard
+              space={space}
+              isLoading={isLoading}
+              isError={isError}
+              dict={dict}
+            />
 
-        {space && (
-          <SpaceWeatherWidget
-            spaceId={space.id}
-            hasGeolocation={hasGeolocation}
-            weatherDict={weatherDict}
-          />
-        )}
+            {space && (
+              <SpaceWeatherWidget
+                spaceId={space.id}
+                hasGeolocation={hasGeolocation}
+                weatherDict={weatherDict}
+              />
+            )}
 
-        {isOwner && (
-          <SpaceGeolocationCard
-            dict={dict}
-            updateSpaceForm={updateSpaceForm}
-            onSubmit={onUpdateSpace}
-            isPending={updatePending}
-            isError={!!updateError}
-            isSuccess={updateSuccess}
-          />
-        )}
+            {isOwner && (
+              <SpaceGeolocationCard
+                dict={dict}
+                updateSpaceForm={updateSpaceForm}
+                onSubmit={onUpdateSpace}
+                isPending={updatePending}
+                isError={!!updateError}
+                isSuccess={updateSuccess}
+              />
+            )}
+          </div>
 
-        {isOwner && (
-          <SpaceInvitationCard
-            dict={dict}
-            invForm={invForm}
-            onSubmit={onCreateInvitation}
-            isPending={invPending}
-            isError={!!invError}
-            invitation={invitation}
-            copied={copied}
-            copy={copy}
-            inviteLink={inviteLink}
-          />
-        )}
+          <div className="flex flex-col gap-6">
+            {isOwner && (
+              <SpaceInvitationCard
+                dict={dict}
+                invForm={invForm}
+                onSubmit={onCreateInvitation}
+                isPending={invPending}
+                isError={!!invError}
+                invitation={invitation}
+                copied={copied}
+                copy={copy}
+                inviteLink={inviteLink}
+              />
+            )}
 
-        <SpaceMembersCard
-          dict={dict}
-          memberListDict={memberListDict}
-          isOwner={isOwner}
-          addForm={addForm}
-          removeForm={removeForm}
-          onAddMember={onAddMember}
-          onRemoveMember={onRemoveMember}
-          addPending={addPending}
-          addError={addError}
-          addSuccess={addSuccess}
-          removePending={removePending}
-          removeError={removeError}
-          removeSuccess={removeSuccess}
-        />
+            <SpaceMembersCard
+              dict={dict}
+              memberListDict={memberListDict}
+              isOwner={isOwner}
+              addForm={addForm}
+              removeForm={removeForm}
+              onAddMember={onAddMember}
+              onRemoveMember={onRemoveMember}
+              addPending={addPending}
+              addError={addError}
+              addSuccess={addSuccess}
+              removePending={removePending}
+              removeError={removeError}
+              removeSuccess={removeSuccess}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
