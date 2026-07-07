@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-## [0.28.1-beta.0] - 2026-07-06
+## [0.28.1] - 2026-07-06
 
 ### Bug Fixes
 - **calendar:** Stack task list below calendar on all viewports (e53ad6a)

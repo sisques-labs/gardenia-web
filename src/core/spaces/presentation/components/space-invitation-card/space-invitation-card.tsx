@@ -3,6 +3,7 @@
 import { Alert } from '@/shared/presentation/components/ui/alert/alert';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import { Card, CardContent } from '@/shared/presentation/components/ui/card/card';
+import { FormField } from '@/shared/presentation/components/ui/form-field/form-field';
 import { Input } from '@/shared/presentation/components/ui/input/input';
 import {
   Select,
@@ -15,7 +16,7 @@ import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import type { UseFormReturn } from 'react-hook-form';
 import type { CreateInvitationFormValues } from '@/core/spaces/presentation/schemas/create-invitation.schema';
 import type { SpaceInvitation } from '@/core/spaces/domain/types/space-invitation.type';
-import { Check, Copy } from 'lucide-react';
+import { Check, Copy, UserPlus } from 'lucide-react';
 import Image from 'next/image';
 
 interface SpaceInvitationCardProps {
@@ -43,15 +44,19 @@ export function SpaceInvitationCard({
 }: SpaceInvitationCardProps) {
   return (
     <Card>
-      <CardContent className="pt-6 flex flex-col gap-4">
-        <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {dict.invitation.title}
-        </p>
-        <form onSubmit={invForm.handleSubmit(onSubmit)} className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1">
-            <label className="text-sm text-muted-foreground">
-              {dict.invitation.roleLabel}
-            </label>
+      <CardContent className="flex flex-col gap-4 pt-6">
+        <div className="flex items-center gap-3">
+          <span
+            aria-hidden
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-forest-bg text-forest"
+          >
+            <UserPlus className="h-5 w-5" />
+          </span>
+          <p className="eyebrow">{dict.invitation.title}</p>
+        </div>
+
+        <form onSubmit={invForm.handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <FormField label={dict.invitation.roleLabel}>
             <Select
               defaultValue="member"
               onValueChange={(v) => invForm.setValue('role', v as 'owner' | 'member')}
@@ -64,33 +69,36 @@ export function SpaceInvitationCard({
                 <SelectItem value="owner">{dict.invitation.roleOwner}</SelectItem>
               </SelectContent>
             </Select>
-          </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-sm text-muted-foreground">
-              {dict.invitation.expiresLabel}
-            </label>
+          </FormField>
+
+          <FormField label={dict.invitation.expiresLabel}>
             <Input
               type="datetime-local"
               data-testid="invitation-expires-input"
               {...invForm.register('expiresAt')}
             />
+          </FormField>
+
+          {isError && <Alert variant="error" message={dict.errors.invitationFailed} />}
+
+          <div className="flex justify-end">
+            <Button type="submit" disabled={isPending} data-testid="invitation-submit">
+              {isPending ? dict.invitation.submitting : dict.invitation.submit}
+            </Button>
           </div>
-          {isError && (
-            <Alert variant="error" message={dict.errors.invitationFailed} />
-          )}
-          <Button type="submit" disabled={isPending} data-testid="invitation-submit">
-            {isPending ? dict.invitation.submitting : dict.invitation.submit}
-          </Button>
         </form>
 
         {invitation && (
           <div
             data-testid="invitation-result"
-            className="flex flex-col gap-3 pt-2 border-t border-[var(--rule)]"
+            className="dashed-rule flex flex-col gap-3 pt-4"
           >
-            <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">{dict.invitation.code}:</span>
-              <code data-testid="invitation-display-code" className="font-mono text-sm font-semibold">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="eyebrow">{dict.invitation.code}</span>
+              <code
+                data-testid="invitation-display-code"
+                className="chip forest font-mono font-semibold tracking-wide"
+              >
                 {invitation.displayCode}
               </code>
               <Button
@@ -100,13 +108,13 @@ export function SpaceInvitationCard({
                 onClick={() => copy(invitation.code, 'code')}
               >
                 {copied === 'code' ? (
-                  <><Check className="w-3 h-3" /> {dict.invitation.codeCopied}</>
+                  <><Check className="h-3 w-3" /> {dict.invitation.codeCopied}</>
                 ) : (
-                  <><Copy className="w-3 h-3" /> {dict.invitation.copyCode}</>
+                  <><Copy className="h-3 w-3" /> {dict.invitation.copyCode}</>
                 )}
               </Button>
             </div>
-            <div className="flex items-center gap-2">
+            <div>
               <Button
                 variant="outline"
                 size="sm"
@@ -114,14 +122,14 @@ export function SpaceInvitationCard({
                 onClick={() => copy(inviteLink(invitation), 'link')}
               >
                 {copied === 'link' ? (
-                  <><Check className="w-3 h-3" /> {dict.invitation.linkCopied}</>
+                  <><Check className="h-3 w-3" /> {dict.invitation.linkCopied}</>
                 ) : (
-                  <><Copy className="w-3 h-3" /> {dict.invitation.copyLink}</>
+                  <><Copy className="h-3 w-3" /> {dict.invitation.copyLink}</>
                 )}
               </Button>
             </div>
             {invitation.qrId && (
-              <div className="flex flex-col gap-2">
+              <div className="flex flex-col items-center gap-2 rounded-md bg-paper-2 p-4">
                 <Image
                   data-testid="invitation-qr"
                   src={`/api/qrs/${invitation.qrId}/image`}
@@ -129,9 +137,9 @@ export function SpaceInvitationCard({
                   width={128}
                   height={128}
                   unoptimized
-                  className="border border-[var(--rule)] rounded-md"
+                  className="rounded-md border border-rule bg-(--white)"
                 />
-                <p className="text-xs text-muted-foreground">{dict.invitation.qrHint}</p>
+                <p className="text-center text-xs text-ink-3">{dict.invitation.qrHint}</p>
               </div>
             )}
           </div>
