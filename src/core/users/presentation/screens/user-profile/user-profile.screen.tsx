@@ -1,11 +1,12 @@
 'use client';
 
-import { Globe, Clock } from 'lucide-react';
+import { AtSign, Calendar, Clock, FileText, Globe, Image as ImageIcon, User as UserIcon } from 'lucide-react';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import { Input } from '@/shared/presentation/components/ui/input/input';
 import { Textarea } from '@/shared/presentation/components/ui/textarea/textarea';
 import { Alert } from '@/shared/presentation/components/ui/alert/alert';
 import { FormField } from '@/shared/presentation/components/ui/form-field/form-field';
+import { Card, CardContent } from '@/shared/presentation/components/ui/card/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/shared/presentation/components/ui/avatar/avatar';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { useUser } from '@/core/users/presentation/hooks/use-user/use-user.hook';
@@ -36,7 +37,7 @@ export function UserProfileScreen({ dict, lang }: Props) {
     return (
       <div className="flex flex-col">
         <ScreenHeader title={t.title} breadcrumbs={[{ label: t.title }]} />
-        <div className="p-6 max-w-2xl">
+        <div className="p-4 md:p-6">
           <Alert variant="error" message={t.loadError} />
         </div>
       </div>
@@ -54,69 +55,106 @@ export function UserProfileScreen({ dict, lang }: Props) {
     <div className="flex flex-col">
       <ScreenHeader title={t.title} breadcrumbs={[{ label: t.title }]} />
 
-      <div className="p-6 flex flex-col gap-8 max-w-2xl">
-        {/* Avatar + identity */}
-        <div className="flex items-center gap-4">
-          <Avatar className="w-16 h-16 bg-[var(--forest-bg)]">
-            <AvatarImage src={user.avatarUrl ?? undefined} alt={user.username} />
-            <AvatarFallback className="text-xl font-semibold text-[var(--forest)] bg-[var(--forest-bg)]">
-              {initials}
-            </AvatarFallback>
-          </Avatar>
-          <div>
-            <p className="font-semibold text-[var(--ink)]">@{user.username}</p>
-            <p className="text-sm text-muted-foreground">
-              {t.memberSince}{' '}
-              {new Date(user.createdAt).toLocaleDateString(lang)}
-            </p>
-          </div>
+      <div className="p-4 md:p-6">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,20rem)_1fr]">
+          {/* Identity */}
+          <Card className="lg:sticky lg:top-6 lg:self-start">
+            <CardContent className="flex flex-col items-center gap-4 pt-6 text-center">
+              <Avatar className="h-24 w-24 bg-forest-bg">
+                <AvatarImage src={user.avatarUrl ?? undefined} alt={user.username} />
+                <AvatarFallback className="bg-forest-bg text-2xl font-semibold text-forest">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+              <div className="flex flex-col gap-1">
+                <p className="headline text-xl">@{user.username}</p>
+                <p className="flex items-center justify-center gap-1.5 text-sm text-ink-3">
+                  <Calendar className="h-3.5 w-3.5" aria-hidden />
+                  {t.memberSince} {new Date(user.createdAt).toLocaleDateString(lang)}
+                </p>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Edit form */}
+          <Card>
+            <CardContent className="flex flex-col gap-5 pt-6">
+              <div className="flex items-center gap-3">
+                <span
+                  aria-hidden
+                  className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-forest-bg text-forest"
+                >
+                  <UserIcon className="h-5 w-5" />
+                </span>
+                <div className="flex min-w-0 flex-col">
+                  <p className="eyebrow">{t.title}</p>
+                  <p className="text-sm text-ink-3">{t.subtitle}</p>
+                </div>
+              </div>
+
+              <form onSubmit={onSubmit} className="flex flex-col gap-5">
+                <FormField
+                  label={
+                    <span className="flex items-center gap-1.5">
+                      <AtSign className="h-3.5 w-3.5" aria-hidden /> {t.username}
+                    </span>
+                  }
+                  error={fieldError(errors.username?.message)}
+                >
+                  <Input {...register('username')} placeholder={t.usernamePlaceholder} />
+                </FormField>
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <FormField label={t.firstName}>
+                    <Input {...register('firstName')} placeholder={t.firstNamePlaceholder} />
+                  </FormField>
+                  <FormField label={t.lastName}>
+                    <Input {...register('lastName')} placeholder={t.lastNamePlaceholder} />
+                  </FormField>
+                </div>
+
+                <FormField
+                  label={
+                    <span className="flex items-center gap-1.5">
+                      <ImageIcon className="h-3.5 w-3.5" aria-hidden /> {t.avatarUrl}
+                    </span>
+                  }
+                >
+                  <Input {...register('avatarUrl')} placeholder={t.avatarUrlPlaceholder} />
+                </FormField>
+
+                <FormField
+                  label={
+                    <span className="flex items-center gap-1.5">
+                      <FileText className="h-3.5 w-3.5" aria-hidden /> {t.bio}
+                    </span>
+                  }
+                  error={fieldError(errors.bio?.message)}
+                >
+                  <Textarea {...register('bio')} placeholder={t.bioPlaceholder} rows={3} />
+                </FormField>
+
+                <div className="dashed-rule grid grid-cols-1 gap-4 pt-5 sm:grid-cols-2">
+                  <FormField label={<span className="flex items-center gap-1.5"><Globe className="h-3.5 w-3.5" aria-hidden />{t.locale}</span>}>
+                    <Input {...register('locale')} placeholder={t.localePlaceholder} />
+                  </FormField>
+                  <FormField label={<span className="flex items-center gap-1.5"><Clock className="h-3.5 w-3.5" aria-hidden />{t.timezone}</span>}>
+                    <Input {...register('timezone')} placeholder={t.timezonePlaceholder} />
+                  </FormField>
+                </div>
+
+                {isSuccess && <Alert variant="success" message={t.saveSuccess} />}
+                {error && <Alert variant="error" message={t.saveError} />}
+
+                <div className="flex justify-end">
+                  <Button type="submit" disabled={isPending}>
+                    {isPending ? t.saving : t.save}
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
         </div>
-
-        {/* Form */}
-        <form onSubmit={onSubmit} className="flex flex-col gap-5">
-          <FormField label={t.username} error={fieldError(errors.username?.message)}>
-            <Input {...register('username')} placeholder={t.usernamePlaceholder} />
-          </FormField>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FormField label={t.firstName}>
-              <Input {...register('firstName')} placeholder={t.firstNamePlaceholder} />
-            </FormField>
-            <FormField label={t.lastName}>
-              <Input {...register('lastName')} placeholder={t.lastNamePlaceholder} />
-            </FormField>
-          </div>
-
-          <FormField label={t.avatarUrl}>
-            <Input {...register('avatarUrl')} placeholder={t.avatarUrlPlaceholder} />
-          </FormField>
-
-          <FormField label={t.bio} error={fieldError(errors.bio?.message)}>
-            <Textarea
-              {...register('bio')}
-              placeholder={t.bioPlaceholder}
-              rows={3}
-            />
-          </FormField>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <FormField label={<span className="flex items-center gap-1.5"><Globe className="w-3.5 h-3.5" />{t.locale}</span>}>
-              <Input {...register('locale')} placeholder={t.localePlaceholder} />
-            </FormField>
-            <FormField label={<span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" />{t.timezone}</span>}>
-              <Input {...register('timezone')} placeholder={t.timezonePlaceholder} />
-            </FormField>
-          </div>
-
-          {isSuccess && <Alert variant="success" message={t.saveSuccess} />}
-          {error && <Alert variant="error" message={t.saveError} />}
-
-          <div className="flex justify-end">
-            <Button type="submit" disabled={isPending}>
-              {isPending ? t.saving : t.save}
-            </Button>
-          </div>
-        </form>
       </div>
     </div>
   );
