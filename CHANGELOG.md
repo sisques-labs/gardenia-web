@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.28.3-beta.0] - 2026-07-07
+
+### Bug Fixes
+- **shell:** Align sidebar header line with screen header line (aea3e15)
 ## [0.28.2] - 2026-07-07
 
 ### Bug Fixes
@@ -8,6 +12,7 @@ All notable changes to this project will be documented in this file.
 
 ### Refactor
 - **spaces:** Redesign space settings page (478f660)
+- **users:** Redesign profile page (d5e9139)
 ## [0.28.1] - 2026-07-06
 
 ### Bug Fixes
