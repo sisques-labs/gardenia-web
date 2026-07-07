@@ -23,7 +23,7 @@ interface ScreenHeaderProps {
 
 export function ScreenHeader({ title, eyebrow, subtitle, breadcrumbs, actions }: ScreenHeaderProps) {
   return (
-    <header className="flex flex-col gap-1 px-6 py-4 border-b border-[var(--rule)]">
+    <header className="flex min-h-16 flex-col justify-center gap-1 px-6 py-3 border-b border-[var(--rule)]">
       {breadcrumbs && breadcrumbs.length > 0 && (
         <Breadcrumb>
           <BreadcrumbList className="text-xs">
