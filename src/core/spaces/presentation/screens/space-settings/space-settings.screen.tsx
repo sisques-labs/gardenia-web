@@ -58,7 +58,7 @@ export function SpaceSettingsScreen({ dict, weatherDict, memberListDict, lang }:
     <div className="flex flex-col">
       <ScreenHeader title={dict.title} breadcrumbs={[{ label: dict.title }]} />
 
-      <div className="mx-auto w-full max-w-5xl p-4 md:p-6">
+      <div className="p-4 md:p-6">
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
           <div className="flex flex-col gap-6">
             <SpaceDetailsCard
