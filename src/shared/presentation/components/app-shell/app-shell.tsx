@@ -42,7 +42,7 @@ export function AppShell({ children, dict }: AppShellProps) {
         </aside>
         <main className="overflow-y-auto paper-grain">
           {/* Mobile hamburger — only visible below md */}
-          <div className="md:hidden flex items-center px-4 py-3 border-b border-[var(--rule)]">
+          <div className="md:hidden flex h-16 items-center px-4 border-b border-[var(--rule)]">
             <button
               onClick={openDrawer}
               aria-label={dict.openNavigation}

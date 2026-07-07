@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-## [0.28.2-beta.1] - 2026-07-07
+## [0.28.2] - 2026-07-07
 
 ### Bug Fixes
 - **spaces:** Make settings content full-width on desktop (5f973f9)

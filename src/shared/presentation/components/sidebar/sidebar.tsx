@@ -32,7 +32,7 @@ export function Sidebar({ inDrawer = false, dict }: SidebarProps) {
   const sidebarContent = (
     <nav data-testid="sidebar" className="flex flex-col h-full border-r border-[var(--rule)] paper-grain">
       {/* Brand header + collapse toggle */}
-      <div className={`border-b border-[var(--rule)] py-2 ${collapsed ? 'px-1' : 'px-2'}`}>
+      <div className={`flex h-16 items-center border-b border-[var(--rule)] ${collapsed ? 'px-1' : 'px-2'}`}>
         {collapsed ? (
           !inDrawer && (
             <button
@@ -45,7 +45,7 @@ export function Sidebar({ inDrawer = false, dict }: SidebarProps) {
             </button>
           )
         ) : (
-          <div className="flex items-center gap-2 px-1 py-2">
+          <div className="flex w-full items-center gap-2 px-1">
             <div className="flex min-w-0 flex-1 items-center gap-2">
               <Leaf className="w-5 h-5 shrink-0 text-[var(--forest)]" />
               <span className="text-sm font-semibold tracking-wide text-[var(--ink)]">Gardenia</span>
