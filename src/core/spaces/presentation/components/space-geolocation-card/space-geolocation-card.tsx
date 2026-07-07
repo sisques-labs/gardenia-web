@@ -1,8 +1,10 @@
 'use client';
 
+import { MapPin } from 'lucide-react';
 import { Alert } from '@/shared/presentation/components/ui/alert/alert';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import { Card, CardContent } from '@/shared/presentation/components/ui/card/card';
+import { FormField } from '@/shared/presentation/components/ui/form-field/form-field';
 import { Input } from '@/shared/presentation/components/ui/input/input';
 import {
   Select,
@@ -32,81 +34,76 @@ export function SpaceGeolocationCard({
   isError,
   isSuccess,
 }: SpaceGeolocationCardProps) {
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    formState: { errors },
+  } = updateSpaceForm;
+
   return (
     <Card>
-      <CardContent className="pt-6 flex flex-col gap-4">
-        <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          {dict.geolocation.title}
-        </p>
-        <p className="text-sm text-muted-foreground">{dict.geolocation.hint}</p>
-        <form onSubmit={updateSpaceForm.handleSubmit(onSubmit)} className="flex flex-col gap-3">
-          <div className="flex flex-col gap-1">
-            <label className="text-sm text-muted-foreground">
-              {dict.geolocation.nameLabel}
-            </label>
+      <CardContent className="flex flex-col gap-4 pt-6">
+        <div className="flex items-center gap-3">
+          <span
+            aria-hidden
+            className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-forest-bg text-forest"
+          >
+            <MapPin className="h-5 w-5" />
+          </span>
+          <div className="flex min-w-0 flex-col">
+            <p className="eyebrow">{dict.geolocation.title}</p>
+            <p className="text-sm text-ink-3">{dict.geolocation.hint}</p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <FormField label={dict.geolocation.nameLabel} error={errors.name?.message}>
             <Input
               type="text"
               placeholder={dict.geolocation.namePlaceholder}
               data-testid="geolocation-name-input"
-              {...updateSpaceForm.register('name')}
+              {...register('name')}
             />
-            {updateSpaceForm.formState.errors.name && (
-              <span className="text-destructive text-xs">
-                {updateSpaceForm.formState.errors.name.message}
-              </span>
-            )}
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div className="flex flex-col gap-1">
-              <label className="text-sm text-muted-foreground">
-                {dict.geolocation.latitudeLabel}
-              </label>
+          </FormField>
+
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <FormField
+              label={dict.geolocation.latitudeLabel}
+              error={errors.latitude?.message}
+            >
               <Input
                 type="number"
                 step="any"
                 placeholder={dict.geolocation.latitudePlaceholder}
                 data-testid="geolocation-latitude-input"
-                {...updateSpaceForm.register('latitude', {
+                {...register('latitude', {
                   setValueAs: (v) => (v === '' || v == null ? null : parseFloat(v as string)),
                 })}
               />
-              {updateSpaceForm.formState.errors.latitude && (
-                <span className="text-destructive text-xs">
-                  {updateSpaceForm.formState.errors.latitude.message}
-                </span>
-              )}
-            </div>
-            <div className="flex flex-col gap-1">
-              <label className="text-sm text-muted-foreground">
-                {dict.geolocation.longitudeLabel}
-              </label>
+            </FormField>
+            <FormField
+              label={dict.geolocation.longitudeLabel}
+              error={errors.longitude?.message}
+            >
               <Input
                 type="number"
                 step="any"
                 placeholder={dict.geolocation.longitudePlaceholder}
                 data-testid="geolocation-longitude-input"
-                {...updateSpaceForm.register('longitude', {
+                {...register('longitude', {
                   setValueAs: (v) => (v === '' || v == null ? null : parseFloat(v as string)),
                 })}
               />
-              {updateSpaceForm.formState.errors.longitude && (
-                <span className="text-destructive text-xs">
-                  {updateSpaceForm.formState.errors.longitude.message}
-                </span>
-              )}
-            </div>
+            </FormField>
           </div>
-          <div className="flex flex-col gap-1">
-            <label className="text-sm text-muted-foreground">
-              {dict.geolocation.environmentLabel}
-            </label>
+
+          <FormField label={dict.geolocation.environmentLabel}>
             <Select
-              value={updateSpaceForm.watch('environment') ?? ''}
+              value={watch('environment') ?? ''}
               onValueChange={(v) =>
-                updateSpaceForm.setValue(
-                  'environment',
-                  v === '' ? null : (v as 'INDOOR' | 'OUTDOOR' | 'MIXED'),
-                )
+                setValue('environment', v === '' ? null : (v as 'INDOOR' | 'OUTDOOR' | 'MIXED'))
               }
             >
               <SelectTrigger data-testid="geolocation-environment-select">
@@ -118,12 +115,16 @@ export function SpaceGeolocationCard({
                 <SelectItem value="MIXED">{dict.geolocation.environmentMixed}</SelectItem>
               </SelectContent>
             </Select>
-          </div>
+          </FormField>
+
           {isError && <Alert variant="error" message={dict.geolocation.saveError} />}
           {isSuccess && <Alert variant="success" message={dict.geolocation.saveSuccess} />}
-          <Button type="submit" disabled={isPending} data-testid="geolocation-save-submit">
-            {isPending ? dict.geolocation.saving : dict.geolocation.save}
-          </Button>
+
+          <div className="flex justify-end">
+            <Button type="submit" disabled={isPending} data-testid="geolocation-save-submit">
+              {isPending ? dict.geolocation.saving : dict.geolocation.save}
+            </Button>
+          </div>
         </form>
       </CardContent>
     </Card>
