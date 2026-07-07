@@ -8,6 +8,7 @@ All notable changes to this project will be documented in this file.
 
 ### Refactor
 - **spaces:** Redesign space settings page (478f660)
+- **users:** Redesign profile page (d5e9139)
 ## [0.28.1] - 2026-07-06
 
 ### Bug Fixes
