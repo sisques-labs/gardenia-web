@@ -39,6 +39,11 @@ vi.mock('@/core/care-schedule/presentation/components/care-schedule-list/care-sc
   CareScheduleList: vi.fn(() => null),
 }));
 
+const mockDownloadBase64Image = vi.fn();
+vi.mock('@/shared/presentation/utils/download-base64-image.util', () => ({
+  downloadBase64Image: (...args: unknown[]) => mockDownloadBase64Image(...args),
+}));
+
 vi.mock('@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook', () => ({
   useDeletePlant: vi.fn(() => ({ mutate: vi.fn(), isError: false })),
 }));
@@ -292,6 +297,19 @@ describe('PlantDetailScreen', () => {
     expect(screen.getByTestId('plant-qr-card')).toBeInTheDocument();
     expect(screen.getByTestId('qr-image')).toHaveAttribute('src', 'data:image/png;base64,base64data');
     expect(screen.getByTestId('qr-code')).toBeInTheDocument();
+  });
+
+  it('downloads the QR code image when the download button is clicked', async () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
+
+    const downloadBtn = screen.getByTestId('qr-download-btn');
+    expect(downloadBtn).not.toBeDisabled();
+
+    await userEvent.click(downloadBtn);
+
+    expect(mockDownloadBase64Image).toHaveBeenCalledWith('base64data', 'Monstera-qr.png');
   });
 
   it('does NOT render QR card when plant.qr is absent', () => {

@@ -85,7 +85,7 @@ const dict = {
     qr: {
       label: 'Label · QR',
       hint: 'Print and stick on the pot',
-      download: 'Download PDF',
+      download: 'Download image',
     },
     calendarTitle: 'Upcoming tasks',
   },

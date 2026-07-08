@@ -23,7 +23,8 @@ import {
 import { Chip } from "@/shared/presentation/components/ui/chip/chip";
 import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
 import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
-import { CalendarDays, Droplets, MapPin, Pencil, Sprout, Trash2 } from "lucide-react";
+import { downloadBase64Image } from "@/shared/presentation/utils/download-base64-image.util";
+import { CalendarDays, Download, Droplets, MapPin, Pencil, Sprout, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -69,6 +70,11 @@ export function PlantDetailScreen({
       onSuccess: () => router.push(`/${lang}/plants`),
       onSettled: () => setIsDeleteOpen(false),
     });
+  }
+
+  function handleQrDownload() {
+    if (!plant?.qr) return;
+    downloadBase64Image(plant.qr.image, `${plant.name}-qr.png`);
   }
 
   return (
@@ -250,12 +256,13 @@ export function PlantDetailScreen({
                     {dict.detail.qr.hint}
                   </p>
                   <Button
-                    disabled
                     variant="ghost"
                     size="sm"
                     data-testid="qr-download-btn"
                     className="text-xs text-[var(--forest)] w-full"
+                    onClick={handleQrDownload}
                   >
+                    <Download className="w-3.5 h-3.5" aria-hidden="true" />
                     {dict.detail.qr.download}
                   </Button>
                 </div>
