@@ -13,8 +13,10 @@ even shipped a `qr-download-btn` for it, but the button was left `disabled` with
   infrastructure changes, since the QR image is already returned by the existing `plant` query.
 - New shared util `downloadBase64Image` (`src/shared/presentation/utils/`) that turns a base64
   payload into a `Blob` and triggers a browser download via an anchor's `download` attribute.
+- New `useQrDownload` presentation hook (`plants/presentation/hooks/`) wrapping the util call —
+  the screen calls the hook, not the shared util directly, per the module's screen/hook split.
 - Enable the pre-existing (disabled) `qr-download-btn` in `plant-detail.screen.tsx`, wiring it
-  to the new util.
+  to the new hook.
 - i18n: correct `plants.detail.qr.download` copy — it read "Download PDF" in both locales,
   which doesn't match the PNG file actually produced.
 

@@ -19,21 +19,30 @@
   `URL.createObjectURL`, the anchor's `href`/`download` are set before `.click()`, and the
   object URL is revoked afterwards.
 
-## Phase 2 — Screen wiring
+## Phase 2 — Presentation hook
 
-- [x] T-3 — Enable `qr-download-btn` in `plant-detail.screen.tsx` (removed `disabled`), added a
-  `Download` icon, wired `onClick={handleQrDownload}` calling the util with `plant.qr.image`
-  and `` `${plant.name}-qr.png` ``.
-- [x] T-4 — `plant-detail.screen.spec.tsx`: new test asserting the button is enabled and
-  clicking it calls `downloadBase64Image` with the plant's QR data and expected file name.
+- [x] T-3 — `useQrDownload()` hook
+  (`src/core/plants/presentation/hooks/use-qr-download/use-qr-download.hook.ts`): exposes
+  `download(plantName, qr)`, guards on a missing `qr`, delegates to `downloadBase64Image`.
+  Extracted out of `plant-detail.screen.tsx` per review feedback — the screen should not call
+  the shared util directly.
+- [x] T-4 — `use-qr-download.hook.spec.ts`: asserts the util is called with the QR's `image`
+  and `` `${plantName}-qr.png` ``, and that it's a no-op when `qr` is undefined.
 
-## Phase 3 — i18n
+## Phase 3 — Screen wiring
 
-- [x] T-5 — Fixed `plants.detail.qr.download` copy in `en.ts`/`es.ts` from "Download
+- [x] T-5 — Enable `qr-download-btn` in `plant-detail.screen.tsx` (removed `disabled`), added a
+  `Download` icon, wired `onClick` to `useQrDownload().download(plant.name, plant.qr)`.
+- [x] T-6 — `plant-detail.screen.spec.tsx`: new test asserting the button is enabled and
+  clicking it calls the `useQrDownload` hook's `download` with the plant's name and QR.
+
+## Phase 4 — i18n
+
+- [x] T-7 — Fixed `plants.detail.qr.download` copy in `en.ts`/`es.ts` from "Download
   PDF"/"Descargar PDF" to "Download image"/"Descargar imagen"; `i18n-parity.test.ts` passes
   unchanged (same keys, corrected values).
 
-## Phase 4 — Verify & ship
+## Phase 5 — Verify & ship
 
-- [x] T-6 — `pnpm test` (1397 tests), `pnpm lint`, `pnpm tsc --noEmit` — all green.
-- [x] T-7 — PR opened against `develop` (#281).
+- [x] T-8 — `pnpm test`, `pnpm lint`, `pnpm tsc --noEmit` — all green.
+- [x] T-9 — PR opened against `develop` (#281).

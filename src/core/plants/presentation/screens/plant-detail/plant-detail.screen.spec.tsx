@@ -39,9 +39,9 @@ vi.mock('@/core/care-schedule/presentation/components/care-schedule-list/care-sc
   CareScheduleList: vi.fn(() => null),
 }));
 
-const mockDownloadBase64Image = vi.fn();
-vi.mock('@/shared/presentation/utils/download-base64-image.util', () => ({
-  downloadBase64Image: (...args: unknown[]) => mockDownloadBase64Image(...args),
+const mockQrDownload = vi.fn();
+vi.mock('@/core/plants/presentation/hooks/use-qr-download/use-qr-download.hook', () => ({
+  useQrDownload: () => ({ download: mockQrDownload }),
 }));
 
 vi.mock('@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook', () => ({
@@ -309,7 +309,7 @@ describe('PlantDetailScreen', () => {
 
     await userEvent.click(downloadBtn);
 
-    expect(mockDownloadBase64Image).toHaveBeenCalledWith('base64data', 'Monstera-qr.png');
+    expect(mockQrDownload).toHaveBeenCalledWith('Monstera', mockPlant.qr);
   });
 
   it('does NOT render QR card when plant.qr is absent', () => {
