@@ -20,9 +20,9 @@ La API no expone subida de fichero por GraphQL (igual que `files`, por diseño).
 
 Subir o borrar una foto puede cambiar `plants.imageUrl` en el backend (sync al más reciente). El hook de mutación invalida `['plant-photos', spaceId, plantId]` **y** `['plant', spaceId, plantId]` para que la imagen de cabecera del detalle (y las tarjetas del listado, si están montadas) reflejen el cambio sin recargar.
 
-### ADR-004 — Subida secuencial de múltiples ficheros
+### ADR-004 — Subida en paralelo de múltiples ficheros, orquestada en un hook
 
-El input de fichero acepta `multiple`. Cada fichero se sube con una llamada `POST /api/plant-photos` independiente (la API no soporta batch). El componente las lanza secuencialmente (no en paralelo) para que la barra de progreso/mensajes de error sean deterministas y para no saturar el input file de Multer; el fallo de una no cancela las demás.
+El input de fichero acepta `multiple`. Cada fichero se sube con una llamada `POST /api/plant-photos` independiente (la API no soporta batch). Las subidas se lanzan en **paralelo** vía `Promise.allSettled` (no secuencial — un `for...of` con `await` por iteración serializa peticiones independientes sin necesidad) y el fallo de una no cancela ni bloquea las demás. Esta orquestación vive en `usePlantPhotoUpload(plantId)` (`presentation/hooks/use-plant-photo-upload/`), no inline en `PlantPhotoGallery` — el componente solo le pasa el `FileList` y renderiza `isUploading`/`uploadFailed`.
 
 ### ADR-005 — Borrado solo visible para el autor
 
@@ -66,6 +66,9 @@ src/core/plant-photos/
       use-delete-plant-photo/
         use-delete-plant-photo.hook.ts
         use-delete-plant-photo.hook.spec.ts
+      use-plant-photo-upload/
+        use-plant-photo-upload.hook.ts        # orquesta la subida en paralelo (ADR-004)
+        use-plant-photo-upload.hook.spec.ts
     components/
       plant-photo-gallery/
         plant-photo-gallery.tsx

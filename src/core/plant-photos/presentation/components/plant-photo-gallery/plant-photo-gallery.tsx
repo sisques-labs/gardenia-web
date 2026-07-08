@@ -1,12 +1,12 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import Image from 'next/image';
 import { ImagePlus, Trash2 } from 'lucide-react';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { useDeletePlantPhoto } from '@/core/plant-photos/presentation/hooks/use-delete-plant-photo/use-delete-plant-photo.hook';
+import { usePlantPhotoUpload } from '@/core/plant-photos/presentation/hooks/use-plant-photo-upload/use-plant-photo-upload.hook';
 import { usePlantPhotos } from '@/core/plant-photos/presentation/hooks/use-plant-photos/use-plant-photos.hook';
-import { useUploadPlantPhoto } from '@/core/plant-photos/presentation/hooks/use-upload-plant-photo/use-upload-plant-photo.hook';
 import { Alert } from '@/shared/presentation/components/ui/alert/alert';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
@@ -20,21 +20,11 @@ export function PlantPhotoGallery({ plantId, dict }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const currentUser = useAuthStore((s) => s.currentUser);
   const { data: photos = [] } = usePlantPhotos(plantId);
-  const uploadPhoto = useUploadPlantPhoto(plantId);
+  const { uploadFiles, isUploading, uploadFailed } = usePlantPhotoUpload(plantId);
   const deletePhoto = useDeletePlantPhoto(plantId);
-  const [uploadFailed, setUploadFailed] = useState(false);
 
   async function handleFilesSelected(files: FileList | null) {
-    if (!files || files.length === 0) return;
-    setUploadFailed(false);
-
-    for (const file of Array.from(files)) {
-      try {
-        await uploadPhoto.mutateAsync(file);
-      } catch {
-        setUploadFailed(true);
-      }
-    }
+    await uploadFiles(files);
     if (inputRef.current) inputRef.current.value = '';
   }
 
@@ -52,12 +42,12 @@ export function PlantPhotoGallery({ plantId, dict }: Props) {
       <Button
         variant="outline"
         size="sm"
-        loading={uploadPhoto.isPending}
+        loading={isUploading}
         data-testid="btn-add-photo"
         onClick={() => inputRef.current?.click()}
       >
         <ImagePlus className="w-4 h-4" />
-        {uploadPhoto.isPending ? dict.uploading : dict.addPhoto}
+        {isUploading ? dict.uploading : dict.addPhoto}
       </Button>
 
       {uploadFailed && <Alert variant="error" message={dict.uploadError} />}

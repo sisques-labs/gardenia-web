@@ -2,15 +2,15 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-const mockUploadMutateAsync = vi.fn();
+const mockUploadFiles = vi.fn();
 const mockDeleteMutate = vi.fn();
 
 vi.mock('@/core/plant-photos/presentation/hooks/use-plant-photos/use-plant-photos.hook', () => ({
   usePlantPhotos: vi.fn(),
 }));
 
-vi.mock('@/core/plant-photos/presentation/hooks/use-upload-plant-photo/use-upload-plant-photo.hook', () => ({
-  useUploadPlantPhoto: vi.fn(() => ({ mutateAsync: mockUploadMutateAsync, isPending: false })),
+vi.mock('@/core/plant-photos/presentation/hooks/use-plant-photo-upload/use-plant-photo-upload.hook', () => ({
+  usePlantPhotoUpload: vi.fn(() => ({ uploadFiles: mockUploadFiles, isUploading: false, uploadFailed: false })),
 }));
 
 vi.mock('@/core/plant-photos/presentation/hooks/use-delete-plant-photo/use-delete-plant-photo.hook', () => ({
@@ -24,7 +24,7 @@ vi.mock('@/core/auth/infrastructure/store/auth.store', () => ({
 }));
 
 import { usePlantPhotos } from '@/core/plant-photos/presentation/hooks/use-plant-photos/use-plant-photos.hook';
-import { useUploadPlantPhoto } from '@/core/plant-photos/presentation/hooks/use-upload-plant-photo/use-upload-plant-photo.hook';
+import { usePlantPhotoUpload } from '@/core/plant-photos/presentation/hooks/use-plant-photo-upload/use-plant-photo-upload.hook';
 import { useDeletePlantPhoto } from '@/core/plant-photos/presentation/hooks/use-delete-plant-photo/use-delete-plant-photo.hook';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { PlantPhotoGallery } from './plant-photo-gallery';
@@ -54,10 +54,11 @@ describe('PlantPhotoGallery', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.mocked(usePlantPhotos).mockReturnValue({ data: [] } as unknown as ReturnType<typeof usePlantPhotos>);
-    vi.mocked(useUploadPlantPhoto).mockReturnValue({
-      mutateAsync: mockUploadMutateAsync,
-      isPending: false,
-    } as unknown as ReturnType<typeof useUploadPlantPhoto>);
+    vi.mocked(usePlantPhotoUpload).mockReturnValue({
+      uploadFiles: mockUploadFiles,
+      isUploading: false,
+      uploadFailed: false,
+    });
     vi.mocked(useDeletePlantPhoto).mockReturnValue({
       mutate: mockDeleteMutate,
       isError: false,
@@ -88,8 +89,7 @@ describe('PlantPhotoGallery', () => {
     expect(screen.queryByTestId('plant-photo-gallery')).not.toBeInTheDocument();
   });
 
-  it('uploads each selected file via useUploadPlantPhoto', async () => {
-    mockUploadMutateAsync.mockResolvedValue(photoA);
+  it('delegates the selected files to usePlantPhotoUpload().uploadFiles', async () => {
     const user = userEvent.setup();
     render(<PlantPhotoGallery plantId="plant-1" dict={dict} />);
 
@@ -97,21 +97,34 @@ describe('PlantPhotoGallery', () => {
     const input = screen.getByTestId('plant-photo-input') as HTMLInputElement;
     await user.upload(input, file);
 
-    await waitFor(() => expect(mockUploadMutateAsync).toHaveBeenCalledWith(file));
+    await waitFor(() => expect(mockUploadFiles).toHaveBeenCalled());
+    const passedFiles = mockUploadFiles.mock.calls[0][0] as FileList;
+    expect(passedFiles).toHaveLength(1);
+    expect(passedFiles[0]).toBe(file);
   });
 
-  it('shows an upload error alert when a file fails to upload (e.g. server-side rejection)', async () => {
-    mockUploadMutateAsync.mockRejectedValue(new Error('File too large'));
-    const user = userEvent.setup();
+  it('shows the uploading label while a batch is in flight', () => {
+    vi.mocked(usePlantPhotoUpload).mockReturnValue({
+      uploadFiles: mockUploadFiles,
+      isUploading: true,
+      uploadFailed: false,
+    });
+
     render(<PlantPhotoGallery plantId="plant-1" dict={dict} />);
 
-    // Client-side accept="image/*" only filters obviously wrong types; a
-    // same-typed file can still be rejected server-side (size, corrupt data...).
-    const file = new File(['x'], 'huge.png', { type: 'image/png' });
-    const input = screen.getByTestId('plant-photo-input') as HTMLInputElement;
-    await user.upload(input, file);
+    expect(screen.getByTestId('btn-add-photo')).toHaveTextContent(dict.uploading);
+  });
 
-    await waitFor(() => expect(screen.getByText(dict.uploadError)).toBeInTheDocument());
+  it('shows an upload error alert when usePlantPhotoUpload reports a failure', () => {
+    vi.mocked(usePlantPhotoUpload).mockReturnValue({
+      uploadFiles: mockUploadFiles,
+      isUploading: false,
+      uploadFailed: true,
+    });
+
+    render(<PlantPhotoGallery plantId="plant-1" dict={dict} />);
+
+    expect(screen.getByText(dict.uploadError)).toBeInTheDocument();
   });
 
   it('shows a delete button only for the uploader own photos', () => {
