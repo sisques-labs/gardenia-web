@@ -90,7 +90,7 @@ const dict = {
     qr: {
       label: 'Etiqueta · QR',
       hint: 'Imprime y pega en la maceta',
-      download: 'Descargar PDF',
+      download: 'Descargar imagen',
     },
     calendarTitle: 'Próximas tareas',
   },

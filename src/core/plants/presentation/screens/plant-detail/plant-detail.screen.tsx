@@ -10,6 +10,7 @@ import { PlantDetailSkeleton } from "@/core/plants/presentation/components/plant
 import { PlantPlantingSpotField } from "@/core/plants/presentation/components/plant-planting-spot-field/plant-planting-spot-field";
 import { useDeletePlant } from "@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook";
 import { usePlant } from "@/core/plants/presentation/hooks/use-plant/use-plant.hook";
+import { useQrDownload } from "@/core/plants/presentation/hooks/use-qr-download/use-qr-download.hook";
 import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store";
 import { formatRelativeTime } from "@/shared/lib/format-relative-time";
 import { formatShortDate } from "@/shared/presentation/utils/format-short-date.util";
@@ -23,7 +24,7 @@ import {
 import { Chip } from "@/shared/presentation/components/ui/chip/chip";
 import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
 import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
-import { CalendarDays, Droplets, MapPin, Pencil, Sprout, Trash2 } from "lucide-react";
+import { CalendarDays, Download, Droplets, MapPin, Pencil, Sprout, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -52,6 +53,7 @@ export function PlantDetailScreen({
   const { data: lastCareByType = {} } = usePlantCareLogs(plantId);
   const deletePlant = useDeletePlant(spaceId);
   const waterPlant = useWaterPlant();
+  const qrDownload = useQrDownload();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
 
@@ -250,12 +252,13 @@ export function PlantDetailScreen({
                     {dict.detail.qr.hint}
                   </p>
                   <Button
-                    disabled
                     variant="ghost"
                     size="sm"
                     data-testid="qr-download-btn"
                     className="text-xs text-[var(--forest)] w-full"
+                    onClick={() => qrDownload.download(plant.name, plant.qr)}
                   >
+                    <Download className="w-3.5 h-3.5" aria-hidden="true" />
                     {dict.detail.qr.download}
                   </Button>
                 </div>
