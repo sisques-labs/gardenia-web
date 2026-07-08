@@ -15,6 +15,8 @@ import { ConfirmDialog } from '@/shared/presentation/components/ui/confirm-dialo
 import { usePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-planting-spot/use-planting-spot.hook';
 import { usePlantingSpotStatusToggle } from '@/core/planting-spots/presentation/hooks/use-planting-spot-status-toggle/use-planting-spot-status-toggle.hook';
 import { useWaterPlantingSpotConfirm } from '@/core/planting-spots/presentation/hooks/use-water-planting-spot-confirm/use-water-planting-spot-confirm.hook';
+import { useQrDownload } from '@/shared/presentation/hooks/use-qr-download/use-qr-download.hook';
+import { QrCard } from '@/shared/presentation/components/qr-card/qr-card';
 import { PlantingSpotTypeBadge } from '@/core/planting-spots/presentation/components/planting-spot-type-badge/planting-spot-type-badge';
 import { PlantingSpotStatusBadge } from '@/core/planting-spots/presentation/components/planting-spot-status-badge/planting-spot-status-badge';
 import { AddPlantToSpotModal } from '@/core/planting-spots/presentation/components/add-plant-to-spot-modal/add-plant-to-spot-modal';
@@ -46,6 +48,7 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
     isError: isWaterError,
   } = useWaterPlantingSpotConfirm(spotId);
   const [isAddPlantOpen, setIsAddPlantOpen] = useState(false);
+  const qrDownload = useQrDownload();
   const d = dict.detail;
 
   if (isLoading) return <PlantingSpotDetailSkeleton />;
@@ -94,6 +97,19 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
           </div>
         }
       />
+
+      {spot.qr && (
+        <div className="px-6 pt-4 flex justify-end">
+          <QrCard
+            image={spot.qr.image}
+            code={spot.qr.id}
+            label={d.qr.label}
+            hint={d.qr.hint}
+            downloadLabel={d.qr.download}
+            onDownload={() => qrDownload.download(spot.name, spot.qr)}
+          />
+        </div>
+      )}
 
       {(waterResult || isWaterError) && (
         <div className="px-6 pt-4 flex flex-col gap-2">

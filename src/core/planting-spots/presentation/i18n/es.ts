@@ -66,6 +66,11 @@ const dict = {
     waterSpotWatered: 'regadas',
     waterSpotFailed: 'fallidas',
     waterSpotError: 'No se ha podido regar el bancal. Inténtalo de nuevo.',
+    qr: {
+      label: 'Etiqueta · QR',
+      hint: 'Imprime y pégalo en la maceta o zona de cultivo',
+      download: 'Descargar imagen',
+    },
   },
   addPlantModal: {
     title: 'Añadir planta',

@@ -40,7 +40,7 @@ vi.mock('@/core/care-schedule/presentation/components/care-schedule-list/care-sc
 }));
 
 const mockQrDownload = vi.fn();
-vi.mock('@/core/plants/presentation/hooks/use-qr-download/use-qr-download.hook', () => ({
+vi.mock('@/shared/presentation/hooks/use-qr-download/use-qr-download.hook', () => ({
   useQrDownload: () => ({ download: mockQrDownload }),
 }));
 
@@ -294,7 +294,7 @@ describe('PlantDetailScreen', () => {
 
     render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
 
-    expect(screen.getByTestId('plant-qr-card')).toBeInTheDocument();
+    expect(screen.getByTestId('qr-card')).toBeInTheDocument();
     expect(screen.getByTestId('qr-image')).toHaveAttribute('src', 'data:image/png;base64,base64data');
     expect(screen.getByTestId('qr-code')).toBeInTheDocument();
   });
@@ -318,7 +318,7 @@ describe('PlantDetailScreen', () => {
 
     render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
 
-    expect(screen.queryByTestId('plant-qr-card')).not.toBeInTheDocument();
+    expect(screen.queryByTestId('qr-card')).not.toBeInTheDocument();
   });
 
   it('renders placeholder image when plant.imageUrl is null', () => {

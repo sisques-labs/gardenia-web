@@ -30,6 +30,11 @@ vi.mock(
   () => ({ useWaterPlantingSpot: vi.fn() }),
 );
 
+const mockQrDownload = vi.fn();
+vi.mock('@/shared/presentation/hooks/use-qr-download/use-qr-download.hook', () => ({
+  useQrDownload: () => ({ download: mockQrDownload }),
+}));
+
 vi.mock(
   '@/core/planting-spots/presentation/components/planting-spot-type-badge/planting-spot-type-badge',
   () => ({
@@ -136,6 +141,11 @@ const dict = {
     waterSpotWatered: 'watered',
     waterSpotFailed: 'failed',
     waterSpotError: 'Could not water the spot. Try again.',
+    qr: {
+      label: 'Label · QR',
+      hint: 'Print and stick on the pot or spot',
+      download: 'Download image',
+    },
   },
   types: {
     RAISED_BED: 'Raised bed',
@@ -615,5 +625,53 @@ describe('PlantingSpotDetailScreen', () => {
     render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
 
     expect(screen.getByTestId('btn-water-spot')).toBeDisabled();
+  });
+
+  it('renders QR card when spot.qr exists', () => {
+    mockSpot({
+      qr: {
+        id: 'qr1',
+        spaceId: 's1',
+        targetUrl: 'https://example.com',
+        generation: 1,
+        image: 'base64data',
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01',
+      },
+    });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    expect(screen.getByTestId('qr-card')).toBeInTheDocument();
+    expect(screen.getByTestId('qr-image')).toHaveAttribute('src', 'data:image/png;base64,base64data');
+    expect(screen.getByTestId('qr-code')).toHaveTextContent('qr1');
+  });
+
+  it('downloads the QR code image when the download button is clicked', async () => {
+    mockSpot({
+      qr: {
+        id: 'qr1',
+        spaceId: 's1',
+        targetUrl: 'https://example.com',
+        generation: 1,
+        image: 'base64data',
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01',
+      },
+    });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    await userEvent.click(screen.getByTestId('qr-download-btn'));
+
+    expect(mockQrDownload).toHaveBeenCalledWith(
+      'Main Bed',
+      expect.objectContaining({ id: 'qr1' }),
+    );
+  });
+
+  it('does NOT render QR card when spot.qr is absent', () => {
+    mockSpot({ qr: undefined });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    expect(screen.queryByTestId('qr-card')).not.toBeInTheDocument();
   });
 });

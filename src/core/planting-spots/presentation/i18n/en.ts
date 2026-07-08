@@ -61,6 +61,11 @@ const dict = {
     waterSpotWatered: 'watered',
     waterSpotFailed: 'failed',
     waterSpotError: 'Could not water the spot. Try again.',
+    qr: {
+      label: 'Label · QR',
+      hint: 'Print and stick on the pot or spot',
+      download: 'Download image',
+    },
   },
   addPlantModal: {
     title: 'Add plant',
