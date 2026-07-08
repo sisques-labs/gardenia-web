@@ -102,6 +102,7 @@ export function PlantDetailScreen({
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                       sizes="(max-width: 1024px) 100vw, 300px"
+                      unoptimized
                     />
                   ) : (
                     <div className="placeholder-img leaf flex flex-col items-center justify-center gap-2 w-full h-full">
