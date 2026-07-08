@@ -10,6 +10,7 @@ import { PlantDetailSkeleton } from "@/core/plants/presentation/components/plant
 import { PlantPlantingSpotField } from "@/core/plants/presentation/components/plant-planting-spot-field/plant-planting-spot-field";
 import { useDeletePlant } from "@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook";
 import { usePlant } from "@/core/plants/presentation/hooks/use-plant/use-plant.hook";
+import { PlantPhotoGallery } from "@/core/plant-photos/presentation/components/plant-photo-gallery/plant-photo-gallery";
 import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store";
 import { formatRelativeTime } from "@/shared/lib/format-relative-time";
 import { formatShortDate } from "@/shared/presentation/utils/format-short-date.util";
@@ -32,6 +33,7 @@ type Props = {
   dict: AppDict["plants"];
   careLogDict: AppDict["careLog"];
   careScheduleDict: AppDict["careSchedule"];
+  photosDict: AppDict["plantPhotos"];
   lang: string;
   spaceId: string | null;
   plantId: string;
@@ -41,6 +43,7 @@ export function PlantDetailScreen({
   dict,
   careLogDict,
   careScheduleDict,
+  photosDict,
   lang,
   spaceId: spaceIdProp,
   plantId,
@@ -218,6 +221,8 @@ export function PlantDetailScreen({
                 {deletePlant.isError && (
                   <Alert variant="error" message={dict.delete.error} />
                 )}
+
+                <PlantPhotoGallery plantId={plantId} dict={photosDict} />
               </div>
 
               {/* QR — rendered like the printable pot tag it actually is */}
