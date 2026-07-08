@@ -56,6 +56,7 @@ export function PlantCard({
             width={224}
             height={144}
             className="h-36 w-full object-cover"
+            unoptimized
           />
         ) : (
           <div className="placeholder-img leaf h-36" aria-hidden="true" />

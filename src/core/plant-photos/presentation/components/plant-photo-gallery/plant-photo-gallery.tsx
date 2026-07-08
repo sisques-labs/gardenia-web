@@ -59,9 +59,16 @@ export function PlantPhotoGallery({ plantId, dict }: Props) {
             <div
               key={photo.id}
               data-testid={`plant-photo-${photo.id}`}
-              className="group relative h-20 w-20 shrink-0 overflow-hidden rounded-lg ring-1 ring-[var(--rule)]"
+              className="group relative h-20 w-20 shrink-0 overflow-hidden rounded-lg ring-1 ring-rule"
             >
-              <Image src={photo.url} alt="" fill className="object-cover" sizes="80px" />
+              <Image
+                src={photo.url}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="80px"
+                unoptimized
+              />
               {currentUser?.userId === photo.userId && (
                 <button
                   type="button"
