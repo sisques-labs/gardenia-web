@@ -43,6 +43,11 @@ vi.mock('@/core/plant-photos/presentation/components/plant-photo-gallery/plant-p
   PlantPhotoGallery: () => <button data-testid="btn-add-photo">Add photo</button>,
 }));
 
+const mockQrDownload = vi.fn();
+vi.mock('@/core/plants/presentation/hooks/use-qr-download/use-qr-download.hook', () => ({
+  useQrDownload: () => ({ download: mockQrDownload }),
+}));
+
 vi.mock('@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook', () => ({
   useDeletePlant: vi.fn(() => ({ mutate: vi.fn(), isError: false })),
 }));
@@ -304,6 +309,19 @@ describe('PlantDetailScreen', () => {
     expect(screen.getByTestId('plant-qr-card')).toBeInTheDocument();
     expect(screen.getByTestId('qr-image')).toHaveAttribute('src', 'data:image/png;base64,base64data');
     expect(screen.getByTestId('qr-code')).toBeInTheDocument();
+  });
+
+  it('downloads the QR code image when the download button is clicked', async () => {
+    vi.mocked(usePlant).mockReturnValue({ data: mockPlant, isLoading: false, isError: false } as ReturnType<typeof usePlant>);
+
+    render(<PlantDetailScreen dict={dict} careLogDict={careLogDict} careScheduleDict={careScheduleDict} lang="en" spaceId="s1" plantId="p1" />);
+
+    const downloadBtn = screen.getByTestId('qr-download-btn');
+    expect(downloadBtn).not.toBeDisabled();
+
+    await userEvent.click(downloadBtn);
+
+    expect(mockQrDownload).toHaveBeenCalledWith('Monstera', mockPlant.qr);
   });
 
   it('does NOT render QR card when plant.qr is absent', () => {
