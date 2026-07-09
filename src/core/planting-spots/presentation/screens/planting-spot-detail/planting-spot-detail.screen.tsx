@@ -10,7 +10,8 @@ import {
   TabsTrigger,
   TabsContent,
 } from '@/shared/presentation/components/ui/tabs/tabs';
-import { Button, buttonVariants } from '@/shared/presentation/components/ui/button/button';
+import { Button } from '@/shared/presentation/components/ui/button/button';
+import { buttonVariants } from '@/shared/presentation/components/ui/button/button-variants';
 import { Alert } from '@/shared/presentation/components/ui/alert/alert';
 import { ConfirmDialog } from '@/shared/presentation/components/ui/confirm-dialog/confirm-dialog';
 import { usePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-planting-spot/use-planting-spot.hook';

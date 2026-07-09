@@ -17,8 +17,3 @@ export const inventoryItemSchema = z.object({
 });
 
 export type InventoryItemFormValues = z.infer<typeof inventoryItemSchema>;
-
-/** Edit reuses the same fields minus `quantity` (stock changes via adjust). */
-export const editInventoryItemSchema = inventoryItemSchema.omit({ quantity: true });
-
-export type EditInventoryItemFormValues = z.infer<typeof editInventoryItemSchema>;

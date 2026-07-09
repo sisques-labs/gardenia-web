@@ -36,7 +36,7 @@ export function LoginScreen({ dict, locale }: Props) {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div className="flex flex-col gap-5">
       <AuthHead
         eyebrow={dict.eyebrow}
         title={dict.title}
@@ -49,11 +49,7 @@ export function LoginScreen({ dict, locale }: Props) {
       {oauthError && (
         <div
           role="alert"
-          style={{
-            display: 'flex', alignItems: 'flex-start', gap: 10, padding: '12px 14px',
-            background: 'oklch(0.93 0.05 35)', border: '1px solid oklch(0.84 0.06 35)', borderRadius: 9,
-            fontSize: '12.5px', color: 'var(--ink)', lineHeight: 1.45,
-          }}
+          className="flex items-start gap-2.5 py-3 px-3.5 bg-[oklch(0.93_0.05_35)] border border-[oklch(0.84_0.06_35)] rounded-[9px] text-[12.5px] text-[var(--ink)] leading-[1.45]"
         >
           {dict.oauthFailed}
         </div>
@@ -62,17 +58,13 @@ export function LoginScreen({ dict, locale }: Props) {
       {error && (
         <div
           role="alert"
-          style={{
-            display: 'flex', alignItems: 'flex-start', gap: 10, padding: '12px 14px',
-            background: 'oklch(0.93 0.05 35)', border: '1px solid oklch(0.84 0.06 35)', borderRadius: 9,
-            fontSize: '12.5px', color: 'var(--ink)', lineHeight: 1.45,
-          }}
+          className="flex items-start gap-2.5 py-3 px-3.5 bg-[oklch(0.93_0.05_35)] border border-[oklch(0.84_0.06_35)] rounded-[9px] text-[12.5px] text-[var(--ink)] leading-[1.45]"
         >
           {dict.invalidCredentials}
         </div>
       )}
 
-      <form onSubmit={handleSubmit(onSubmit)} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+      <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
         <AuthField
           id="email"
           label={dict.email}
@@ -82,17 +74,17 @@ export function LoginScreen({ dict, locale }: Props) {
           registration={register('email')}
         />
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+        <div className="flex flex-col gap-1.5">
+          <div className="flex justify-between items-baseline">
             <label
               htmlFor="password"
-              style={{ fontFamily: 'var(--mono)', fontSize: '10.5px', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--ink-2)' }}
+              className="font-[var(--mono)] text-[10.5px] uppercase tracking-[0.05em] text-[var(--ink-2)]"
             >
               {dict.password}
             </label>
             <Link
               href="../forgot-password"
-              style={{ fontSize: '12px', color: 'var(--forest)', textDecoration: 'none' }}
+              className="text-xs text-[var(--forest)] no-underline"
             >
               {dict.forgotPassword}
             </Link>
@@ -109,7 +101,7 @@ export function LoginScreen({ dict, locale }: Props) {
           />
         </div>
 
-        <label htmlFor="keep-session" style={{ display: 'flex', alignItems: 'center', gap: 9, cursor: 'pointer' }}>
+        <label htmlFor="keep-session" className="flex items-center gap-[9px] cursor-pointer">
           <input
             id="keep-session"
             type="checkbox"
@@ -118,7 +110,7 @@ export function LoginScreen({ dict, locale }: Props) {
             className="sr-only"
           />
           <span className={cn('cbox', keepSession && 'done')} aria-hidden="true" />
-          <span style={{ fontSize: '13px', color: 'var(--ink-2)' }}>{dict.keepSession}</span>
+          <span className="text-[13px] text-[var(--ink-2)]">{dict.keepSession}</span>
         </label>
 
         <AuthSubmit
@@ -128,8 +120,8 @@ export function LoginScreen({ dict, locale }: Props) {
         />
       </form>
 
-      <p style={{ fontSize: '13px', color: 'var(--ink-3)', textAlign: 'center', margin: 0 }}>
-        <Link href="../register" style={{ color: 'var(--forest)', textDecoration: 'none' }}>
+      <p className="text-[13px] text-[var(--ink-3)] text-center m-0">
+        <Link href="../register" className="text-[var(--forest)] no-underline">
           {dict.register}
         </Link>
       </p>
