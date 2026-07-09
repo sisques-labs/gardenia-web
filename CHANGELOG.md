@@ -1,6 +1,41 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.29.0-beta.0] - 2026-07-09
+
+### Bug Fixes
+- **plant-detail:** Enable unoptimized image loading for better performance (3b0de25)
+- **a11y:** Associate labels with controls and fix react-doctor accessibility findings (d33d77a)
+- **bugs:** Resolve react-doctor correctness findings (f6c0072)
+- **perf,security:** Resolve react-doctor performance and security findings (1edffe3)
+- **plants:** Proxy protected file images through same-origin route (999afc1)
+
+### CI
+- **release-train:** Remove notify-e2e job (1a3e636)
+- **husky:** Run only changed tests on pre-push (9095ee4)
+
+### Chore
+- **config:** Enhance image handling with remote patterns and unoptimized loading (1e10000)
+
+### Documentation
+- **openspec:** Add qr-code-download change proposal (915ee77)
+- **planting-spots:** Add OpenSpec change docs for QR support (287184f)
+
+### Features
+- **plant-photos:** Add photo upload and history gallery to plant detail (fc36c67)
+- **plants:** Enable QR code download on plant detail page (d159010)
+- **planting-spots:** Display and download QR code on detail page (87e5a6e)
+
+### Refactor
+- **plant-photos:** Apply review feedback from PR #282 (ff4bd86)
+- **plants:** Extract QR download into useQrDownload hook (f558ce2)
+- **maintainability:** Resolve react-doctor maintainability findings (8ecec9b)
+- **planting-spots:** Redesign detail screen and turn new/edit into modals (9a6e24d)
+- **planting-spots:** Shrink the detail hero, drop the duplicated title (e15250a)
+- **plant-photos:** Move file-select handling fully into upload hook (d0ac4f5)
+
+### Testing
+- **plant-detail:** Update and enhance test setup for PlantDetailScreen (6eebe47)
 ## [0.28.3] - 2026-07-07
 
 ### Bug Fixes
