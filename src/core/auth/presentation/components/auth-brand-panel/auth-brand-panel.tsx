@@ -49,7 +49,7 @@ export function AuthBrandPanel({ dict }: Props) {
         </span>
         <span
           className="eyebrow"
-          style={{ color: 'oklch(0.72 0.07 145)', fontSize: '10px' }}
+          style={{ color: 'oklch(0.72 0.07 145)', fontSize: '12px' }}
         >
           {dict.tagline}
         </span>
@@ -81,7 +81,7 @@ export function AuthBrandPanel({ dict }: Props) {
       <p
         style={{
           fontFamily: 'var(--mono)',
-          fontSize: '11px',
+          fontSize: '12px',
           color: 'oklch(0.72 0.07 145)',
           margin: 0,
           zIndex: 1,

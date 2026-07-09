@@ -38,6 +38,7 @@ const Lightbox = ({ className, photos, initialIndex = 0, open, onClose, ref, ...
   return (
     <div
       ref={ref}
+      role="presentation"
       className={cn('fixed inset-0 z-50 flex items-center justify-center bg-black/80', className)}
       onClick={onClose}
       {...props}

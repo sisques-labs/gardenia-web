@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -12,6 +13,7 @@ import { AuthSubmit } from '@/core/auth/presentation/components/auth-submit/auth
 import { AuthSocial } from '@/core/auth/presentation/components/auth-social/auth-social';
 import { AuthDivider } from '@/core/auth/presentation/components/auth-divider/auth-divider';
 import { resolveFieldError } from '@/shared/presentation/utils/resolve-field-error';
+import { cn } from '@/shared/lib/utils';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = { dict: AppDict['auth']['login']; locale: string };
@@ -21,6 +23,7 @@ export function LoginScreen({ dict, locale }: Props) {
   const searchParams = useSearchParams();
   const { mutate: login, isPending, error } = useLogin();
   const oauthError = searchParams.get('error') === 'oauth_failed';
+  const [keepSession, setKeepSession] = useState(false);
 
   const { register, handleSubmit, formState: { errors } } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -89,7 +92,7 @@ export function LoginScreen({ dict, locale }: Props) {
             </label>
             <Link
               href="../forgot-password"
-              style={{ fontSize: '11.5px', color: 'var(--forest)', textDecoration: 'none' }}
+              style={{ fontSize: '12px', color: 'var(--forest)', textDecoration: 'none' }}
             >
               {dict.forgotPassword}
             </Link>
@@ -106,8 +109,15 @@ export function LoginScreen({ dict, locale }: Props) {
           />
         </div>
 
-        <label style={{ display: 'flex', alignItems: 'center', gap: 9, cursor: 'pointer' }}>
-          <span className="cbox" />
+        <label htmlFor="keep-session" style={{ display: 'flex', alignItems: 'center', gap: 9, cursor: 'pointer' }}>
+          <input
+            id="keep-session"
+            type="checkbox"
+            checked={keepSession}
+            onChange={(e) => setKeepSession(e.target.checked)}
+            className="sr-only"
+          />
+          <span className={cn('cbox', keepSession && 'done')} aria-hidden="true" />
           <span style={{ fontSize: '13px', color: 'var(--ink-2)' }}>{dict.keepSession}</span>
         </label>
 

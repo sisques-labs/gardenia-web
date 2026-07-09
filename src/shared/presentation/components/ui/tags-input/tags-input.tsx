@@ -77,7 +77,6 @@ const TagsInput = ({ className, value, defaultValue, onChange, placeholder = 'Ad
       ))}
       <input
         type="text"
-        role="textbox"
         value={inputValue}
         onChange={handleChange}
         onKeyDown={handleKeyDown}

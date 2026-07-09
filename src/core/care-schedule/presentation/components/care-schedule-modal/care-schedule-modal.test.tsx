@@ -126,4 +126,15 @@ describe('CareScheduleModal', () => {
 
     expect(vi.mocked(useCareScheduleForm)).toHaveBeenCalledWith({ careSchedule: mockCareSchedule, lockedPlantId: undefined, onClose });
   });
+
+  it('every visible field label is associated with its control', () => {
+    render(<CareScheduleModal dict={en} onClose={vi.fn()} />);
+    expect(screen.getByLabelText(en.form.plant)).toBeInTheDocument();
+    expect(screen.getByLabelText(en.form.activityType)).toBeInTheDocument();
+    expect(screen.getByLabelText(en.form.nextDueAt)).toBeInTheDocument();
+    expect(screen.getByLabelText(en.form.intervalDays)).toBeInTheDocument();
+    expect(screen.getByLabelText(en.form.quantity)).toBeInTheDocument();
+    expect(screen.getByLabelText(en.form.unit)).toBeInTheDocument();
+    expect(screen.getByLabelText(en.form.notes)).toBeInTheDocument();
+  });
 });

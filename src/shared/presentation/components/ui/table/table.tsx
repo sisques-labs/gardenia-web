@@ -144,6 +144,17 @@ function DataTableInner<TData, TValue = unknown>(
                         ? header.column.getToggleSortingHandler()
                         : undefined
                     }
+                    onKeyDown={
+                      header.column.getCanSort()
+                        ? (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              header.column.getToggleSortingHandler()?.(e);
+                            }
+                          }
+                        : undefined
+                    }
+                    tabIndex={header.column.getCanSort() ? 0 : undefined}
                     style={header.column.getCanSort() ? { cursor: 'pointer' } : undefined}
                   >
                     {header.isPlaceholder

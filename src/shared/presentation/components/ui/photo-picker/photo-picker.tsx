@@ -46,12 +46,21 @@ const PhotoPicker = ({ className, photos, mode = 'single', selected, onSelection
         return (
           <div
             key={`${photo.src}-${i}`}
+            role="button"
+            tabIndex={0}
+            aria-pressed={isSelected}
             data-selected={isSelected ? 'true' : undefined}
             className={cn(
               'relative overflow-hidden rounded cursor-pointer aspect-square',
               isSelected && 'ring-2 ring-[var(--forest)] ring-offset-1',
             )}
             onClick={() => toggle(i)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggle(i);
+              }
+            }}
           >
             <img
               src={photo.src}

@@ -69,8 +69,8 @@ export function PlantingSpotFormScreen({ dict, lang, mode, spotId }: Props) {
 
             {/* Name */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm text-muted-foreground">{formDict.name}</label>
-              <Input {...register('name')} />
+              <label htmlFor="planting-spot-name" className="text-sm text-muted-foreground">{formDict.name}</label>
+              <Input id="planting-spot-name" {...register('name')} />
               {errors.name && (
                 <span className="text-destructive text-xs">{errors.name.message}</span>
               )}
@@ -78,13 +78,13 @@ export function PlantingSpotFormScreen({ dict, lang, mode, spotId }: Props) {
 
             {/* Type */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm text-muted-foreground">{formDict.type}</label>
+              <label htmlFor="planting-spot-type" className="text-sm text-muted-foreground">{formDict.type}</label>
               <Controller
                 control={control}
                 name="type"
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger>
+                    <SelectTrigger id="planting-spot-type">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -104,8 +104,9 @@ export function PlantingSpotFormScreen({ dict, lang, mode, spotId }: Props) {
 
             {/* Description */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm text-muted-foreground">{formDict.description}</label>
+              <label htmlFor="planting-spot-description" className="text-sm text-muted-foreground">{formDict.description}</label>
               <textarea
+                id="planting-spot-description"
                 {...register('description')}
                 className="flex min-h-[80px] w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
               />
@@ -113,7 +114,7 @@ export function PlantingSpotFormScreen({ dict, lang, mode, spotId }: Props) {
 
             {/* Capacity */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm text-muted-foreground">{formDict.capacity}</label>
+              <label htmlFor="planting-spot-capacity" className="text-sm text-muted-foreground">{formDict.capacity}</label>
               <div className="flex items-center gap-2">
                 <button
                   type="button"
@@ -124,6 +125,7 @@ export function PlantingSpotFormScreen({ dict, lang, mode, spotId }: Props) {
                   −
                 </button>
                 <Input
+                  id="planting-spot-capacity"
                   type="number"
                   min={1}
                   className="w-20 text-center"
@@ -207,8 +209,8 @@ export function PlantingSpotFormScreen({ dict, lang, mode, spotId }: Props) {
 
             {/* Soil type */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm text-muted-foreground">{formDict.soilType}</label>
-              <Input {...register('soilType')} placeholder="e.g. Loamy, Sandy…" />
+              <label htmlFor="planting-spot-soil-type" className="text-sm text-muted-foreground">{formDict.soilType}</label>
+              <Input id="planting-spot-soil-type" {...register('soilType')} placeholder="e.g. Loamy, Sandy…" />
             </div>
 
             <div className="flex items-center justify-between gap-2 pt-2">

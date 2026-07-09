@@ -173,6 +173,16 @@ describe('PlantingSpotFormScreen', () => {
     expect(screen.getAllByText('Edit planting spot').length).toBeGreaterThan(0);
   });
 
+  it('every visible field label is associated with its control', () => {
+    vi.mocked(usePlantingSpotForm).mockReturnValue(buildHookReturn() as never);
+    render(<PlantingSpotFormScreen dict={dict} lang="en" mode="edit" spotId="spot-1" />);
+    expect(screen.getByLabelText(dict.form.name)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.form.type)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.form.description)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.form.capacity)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.form.soilType)).toBeInTheDocument();
+  });
+
   it('renders delete button only in edit mode', () => {
     vi.mocked(usePlantingSpotForm).mockReturnValue(buildHookReturn() as never);
     render(<PlantingSpotFormScreen dict={dict} lang="en" mode="edit" spotId="spot-1" />);

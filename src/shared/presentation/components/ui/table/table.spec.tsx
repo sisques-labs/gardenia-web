@@ -69,6 +69,24 @@ describe('DataTable', () => {
     expect(firstAfterSecond).not.toBe(firstAfterFirst);
   });
 
+  it('sortable header responds to Enter key for keyboard users', async () => {
+    const user = userEvent.setup();
+    render(<DataTable columns={columns} data={data} />);
+
+    const header = screen.getByText('Age');
+    header.focus();
+    await user.keyboard('{Enter}');
+
+    const cellsAfterFirst = screen.getAllByRole('cell');
+    const firstAfterFirst = cellsAfterFirst[1].textContent;
+
+    await user.keyboard('{Enter}');
+    const cellsAfterSecond = screen.getAllByRole('cell');
+    const firstAfterSecond = cellsAfterSecond[1].textContent;
+
+    expect(firstAfterSecond).not.toBe(firstAfterFirst);
+  });
+
   it('calls onSelectionChange when row checkbox is clicked', async () => {
     const user = userEvent.setup();
     const onSelectionChange = vi.fn();

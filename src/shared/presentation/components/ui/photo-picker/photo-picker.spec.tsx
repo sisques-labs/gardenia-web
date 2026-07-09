@@ -34,4 +34,17 @@ describe('PhotoPicker', () => {
     const { container } = render(<PhotoPicker photos={photos} className="gap-2" />);
     expect(container.firstChild).toHaveClass('gap-2');
   });
+
+  it('each photo tile is a focusable button for keyboard/screen-reader users', () => {
+    render(<PhotoPicker photos={photos} />);
+    expect(screen.getAllByRole('button')).toHaveLength(2);
+  });
+
+  it('pressing Enter on a photo tile toggles selection', async () => {
+    const fn = vi.fn();
+    render(<PhotoPicker photos={photos} onSelectionChange={fn} />);
+    screen.getAllByRole('button')[0].focus();
+    await userEvent.keyboard('{Enter}');
+    expect(fn).toHaveBeenCalledWith([0]);
+  });
 });

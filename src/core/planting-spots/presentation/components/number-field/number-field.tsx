@@ -1,3 +1,4 @@
+import { useId } from 'react';
 import { Input } from '@/shared/presentation/components/ui/input/input';
 
 type Props = {
@@ -12,10 +13,12 @@ type Props = {
 };
 
 export function NumberField({ label, value, onChange, error, min, integer = true, step }: Props) {
+  const inputId = useId();
   return (
     <div className="flex flex-col gap-1">
-      <label className="text-sm text-muted-foreground">{label}</label>
+      <label htmlFor={inputId} className="text-sm text-muted-foreground">{label}</label>
       <Input
+        id={inputId}
         type="number"
         min={min}
         step={step}
