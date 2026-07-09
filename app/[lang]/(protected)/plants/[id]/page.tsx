@@ -12,6 +12,7 @@ export default async function Page({ params }: { params: Promise<{ lang: string;
       dict={dict.plants}
       careLogDict={dict.careLog}
       careScheduleDict={dict.careSchedule}
+      photosDict={dict.plantPhotos}
       lang={locale}
       spaceId={null}
       plantId={id}

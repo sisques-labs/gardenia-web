@@ -1,10 +1,12 @@
 "use client";
 
+import { useAuthStore } from "@/core/auth/infrastructure/store/auth.store";
 import { CareLogActivityType } from "@/core/care-log/domain/interfaces/care-log-entry.interface";
 import { CareLogSummary } from "@/core/care-log/presentation/components/care-log-summary/care-log-summary";
 import { usePlantCareLogs } from "@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-logs.hook";
 import { CareScheduleList } from "@/core/care-schedule/presentation/components/care-schedule-list/care-schedule-list";
 import { useWaterPlant } from "@/core/care-schedule/presentation/hooks/use-water-plant/use-water-plant.hook";
+import { PlantPhotoGallery } from "@/core/plant-photos/presentation/components/plant-photo-gallery/plant-photo-gallery";
 import { EditPlantModal } from "@/core/plants/presentation/components/edit-plant-modal/edit-plant-modal";
 import { PlantDetailSkeleton } from "@/core/plants/presentation/components/plant-detail-skeleton/plant-detail-skeleton";
 import { PlantPlantingSpotField } from "@/core/plants/presentation/components/plant-planting-spot-field/plant-planting-spot-field";
@@ -14,7 +16,6 @@ import { useQrDownload } from "@/shared/presentation/hooks/use-qr-download/use-q
 import { QrCard } from "@/shared/presentation/components/qr-card/qr-card";
 import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store";
 import { formatRelativeTime } from "@/shared/lib/format-relative-time";
-import { formatShortDate } from "@/shared/presentation/utils/format-short-date.util";
 import { ScreenHeader } from "@/shared/presentation/components/screen-header/screen-header";
 import { Alert } from "@/shared/presentation/components/ui/alert/alert";
 import { Button } from "@/shared/presentation/components/ui/button/button";
@@ -25,7 +26,16 @@ import {
 import { Chip } from "@/shared/presentation/components/ui/chip/chip";
 import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
 import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
-import { CalendarDays, Droplets, MapPin, Pencil, Sprout, Trash2 } from "lucide-react";
+import { formatShortDate } from "@/shared/presentation/utils/format-short-date.util";
+import { getAuthenticatedImageUrl } from "@/shared/presentation/utils/get-authenticated-image-url.util";
+import {
+  CalendarDays,
+  Droplets,
+  MapPin,
+  Pencil,
+  Sprout,
+  Trash2,
+} from "lucide-react";
 import Image from "next/image";
 import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -34,6 +44,7 @@ type Props = {
   dict: AppDict["plants"];
   careLogDict: AppDict["careLog"];
   careScheduleDict: AppDict["careSchedule"];
+  photosDict: AppDict["plantPhotos"];
   lang: string;
   spaceId: string | null;
   plantId: string;
@@ -43,6 +54,7 @@ export function PlantDetailScreen({
   dict,
   careLogDict,
   careScheduleDict,
+  photosDict,
   lang,
   spaceId: spaceIdProp,
   plantId,
@@ -57,10 +69,13 @@ export function PlantDetailScreen({
   const qrDownload = useQrDownload();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const accessToken = useAuthStore((s) => s.accessToken);
 
   if (isLoading) return <PlantDetailSkeleton />;
   if (isError) redirect(`/${lang}/plants`);
   if (!plant) return null;
+
+  const imageSrc = getAuthenticatedImageUrl(plant.imageUrl, accessToken, spaceId);
 
   const lastWatered = lastCareByType[CareLogActivityType.WATERING];
   const wateredLabel = lastWatered
@@ -95,13 +110,14 @@ export function PlantDetailScreen({
                   data-testid="plant-image"
                   className="group relative aspect-square rounded-2xl overflow-hidden ring-1 ring-[var(--rule)] shadow-md"
                 >
-                  {plant.imageUrl ? (
+                  {imageSrc ? (
                     <Image
-                      src={plant.imageUrl}
+                      src={imageSrc}
                       alt={plant.name}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                       sizes="(max-width: 1024px) 100vw, 300px"
+                      unoptimized
                     />
                   ) : (
                     <div className="placeholder-img leaf flex flex-col items-center justify-center gap-2 w-full h-full">
@@ -147,7 +163,8 @@ export function PlantDetailScreen({
                     className="text-base text-[var(--terracotta)] mt-0.5"
                     style={{ fontFamily: "var(--font-hand)" }}
                   >
-                    {dict.detail.addedOn} {formatShortDate(plant.createdAt, lang)}
+                    {dict.detail.addedOn}{" "}
+                    {formatShortDate(plant.createdAt, lang)}
                   </p>
                   {plant.species?.description && (
                     <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
@@ -216,11 +233,16 @@ export function PlantDetailScreen({
                   </Button>
                 </div>
                 {waterPlant.isError && (
-                  <Alert variant="error" message={dict.detail.actions.markWateredError} />
+                  <Alert
+                    variant="error"
+                    message={dict.detail.actions.markWateredError}
+                  />
                 )}
                 {deletePlant.isError && (
                   <Alert variant="error" message={dict.delete.error} />
                 )}
+
+                <PlantPhotoGallery plantId={plantId} dict={photosDict} />
               </div>
 
               {/* QR — rendered like the printable pot tag it actually is */}
@@ -244,6 +266,7 @@ export function PlantDetailScreen({
             data-testid="care-log-section"
             className="rounded-2xl border-l-4 border-l-[var(--forest)] transition-shadow duration-200 hover:shadow-md"
           >
+            s{" "}
             <CardContent className="pt-6">
               <CareLogSummary
                 lastCareByType={lastCareByType}
