@@ -19,7 +19,7 @@ export function SpacesProviders({ children, lang }: Props) {
   useEffect(() => {
     if (!isAuthenticated || !spaces) return;
     resolveActiveSpace(spaces, currentSpaceId);
-  }, [isAuthenticated, spaces]);
+  }, [isAuthenticated, spaces, currentSpaceId, resolveActiveSpace]);
 
   if (isResolved && !currentSpaceId) {
     redirect(`/${lang}/spaces/new`);

@@ -19,6 +19,4 @@ export interface CareLogEntry {
 
 export type LastCareByType = Partial<Record<CareLogActivityType, CareLogEntry>>;
 
-export const CARE_LOG_UNITS = ['ML', 'L', 'G', 'KG'] as const;
-
-export type CareLogUnit = (typeof CARE_LOG_UNITS)[number];
+export type CareLogUnit = 'ML' | 'L' | 'G' | 'KG';

@@ -50,7 +50,7 @@ export interface PageButtonProps extends React.ButtonHTMLAttributes<HTMLButtonEl
   square?: boolean;
 }
 
-export function PageButton({
+function PageButton({
   active = false,
   disabled = false,
   square = true,

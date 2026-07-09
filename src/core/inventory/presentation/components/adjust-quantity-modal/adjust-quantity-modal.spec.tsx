@@ -54,6 +54,12 @@ describe('AdjustQuantityModal', () => {
     expect(screen.getByText(/5 packets/)).toBeInTheDocument();
   });
 
+  it('every visible field label is associated with its control', () => {
+    render(<AdjustQuantityModal dict={dict} item={mockItem} onClose={vi.fn()} />);
+    expect(screen.getByLabelText(dict.adjust.delta)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.adjust.reason)).toBeInTheDocument();
+  });
+
   it('passes item and onClose to the form hook', () => {
     const onClose = vi.fn();
     render(<AdjustQuantityModal dict={dict} item={mockItem} onClose={onClose} />);

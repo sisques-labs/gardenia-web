@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Droplets, MapPin, Pencil, Trash2 } from 'lucide-react';
@@ -223,9 +224,12 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
                 {spot.resolvedPlants.map((plant) => (
                   <div key={plant.id} className="flex items-center gap-3 px-4 py-3">
                     {plant.imageUrl ? (
-                      <img
+                      <Image
                         src={plant.imageUrl}
                         alt={plant.name}
+                        width={36}
+                        height={36}
+                        unoptimized
                         className="h-9 w-9 rounded-md object-cover flex-shrink-0"
                       />
                     ) : (

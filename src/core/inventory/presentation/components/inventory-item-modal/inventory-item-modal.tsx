@@ -44,9 +44,9 @@ export function InventoryItemModal({ dict, onClose, item }: Props) {
       submittingLabel={dict.form.submitting}
     >
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-ink-2">{dict.form.itemType}</label>
+            <label htmlFor="inventory-item-type" className="text-sm text-ink-2">{dict.form.itemType}</label>
             <Select value={selectedType} onValueChange={setType}>
-              <SelectTrigger>
+              <SelectTrigger id="inventory-item-type">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -60,20 +60,20 @@ export function InventoryItemModal({ dict, onClose, item }: Props) {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-ink-2">{dict.form.name}</label>
-            <Input {...register('name')} />
+            <label htmlFor="inventory-item-name" className="text-sm text-ink-2">{dict.form.name}</label>
+            <Input id="inventory-item-name" {...register('name')} />
             {errors.name && <span className="text-destructive text-xs">{errors.name.message}</span>}
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-ink-2">{dict.form.brand}</label>
-            <Input {...register('brand')} />
+            <label htmlFor="inventory-item-brand" className="text-sm text-ink-2">{dict.form.brand}</label>
+            <Input id="inventory-item-brand" {...register('brand')} />
           </div>
 
           {!isEditing && (
             <div className="flex flex-col gap-1">
-              <label className="text-sm text-ink-2">{dict.form.quantity}</label>
-              <Input type="number" step="any" {...register('quantity')} />
+              <label htmlFor="inventory-item-quantity" className="text-sm text-ink-2">{dict.form.quantity}</label>
+              <Input id="inventory-item-quantity" type="number" step="any" {...register('quantity')} />
               {errors.quantity && (
                 <span className="text-destructive text-xs">{errors.quantity.message}</span>
               )}
@@ -81,9 +81,9 @@ export function InventoryItemModal({ dict, onClose, item }: Props) {
           )}
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-ink-2">{dict.form.unit}</label>
+            <label htmlFor="inventory-item-unit" className="text-sm text-ink-2">{dict.form.unit}</label>
             <Select value={selectedUnit} onValueChange={setUnit}>
-              <SelectTrigger>
+              <SelectTrigger id="inventory-item-unit">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -97,24 +97,24 @@ export function InventoryItemModal({ dict, onClose, item }: Props) {
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-ink-2">{dict.form.lowStockThreshold}</label>
-            <Input type="number" step="any" {...register('lowStockThreshold')} />
+            <label htmlFor="inventory-item-low-stock-threshold" className="text-sm text-ink-2">{dict.form.lowStockThreshold}</label>
+            <Input id="inventory-item-low-stock-threshold" type="number" step="any" {...register('lowStockThreshold')} />
           </div>
 
           <div className="flex gap-3">
             <div className="flex flex-col gap-1 flex-1">
-              <label className="text-sm text-ink-2">{dict.form.acquiredAt}</label>
-              <Input type="date" {...register('acquiredAt')} />
+              <label htmlFor="inventory-item-acquired-at" className="text-sm text-ink-2">{dict.form.acquiredAt}</label>
+              <Input id="inventory-item-acquired-at" type="date" {...register('acquiredAt')} />
             </div>
             <div className="flex flex-col gap-1 flex-1">
-              <label className="text-sm text-ink-2">{dict.form.expiresAt}</label>
-              <Input type="date" {...register('expiresAt')} />
+              <label htmlFor="inventory-item-expires-at" className="text-sm text-ink-2">{dict.form.expiresAt}</label>
+              <Input id="inventory-item-expires-at" type="date" {...register('expiresAt')} />
             </div>
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-ink-2">{dict.form.notes}</label>
-            <Textarea rows={3} {...register('notes')} />
+            <label htmlFor="inventory-item-notes" className="text-sm text-ink-2">{dict.form.notes}</label>
+            <Textarea id="inventory-item-notes" rows={3} {...register('notes')} />
           </div>
     </FormModal>
   );

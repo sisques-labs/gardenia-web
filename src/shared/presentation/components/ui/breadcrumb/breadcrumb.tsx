@@ -29,9 +29,7 @@ const BreadcrumbLink = ({ ref, className, ...props }: React.ComponentPropsWithou
 const BreadcrumbPage = ({ ref, className, ...props }: React.ComponentPropsWithoutRef<'span'> & { ref?: React.Ref<HTMLSpanElement> }) => (
   <span
     ref={ref}
-    role="link"
     aria-current="page"
-    aria-disabled="true"
     className={cn('font-medium text-[var(--ink)]', className)}
     {...props}
   />

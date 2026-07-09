@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useSpaceMembers } from '@/core/spaces/presentation/hooks/use-space-members/use-space-members.hook';
 
 type Props = {
@@ -42,9 +43,12 @@ export function SpaceMembersList({ dict }: Props) {
         return (
           <li key={user.id} className="flex items-center gap-3">
             {user.avatarUrl ? (
-              <img
+              <Image
                 src={user.avatarUrl}
                 alt={displayName}
+                width={32}
+                height={32}
+                unoptimized
                 className="h-8 w-8 rounded-full object-cover"
               />
             ) : (

@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import type { ColumnDef } from '@tanstack/react-table';
-import { DataTable } from './table';
+import { DataTable, SortableHeader } from './table';
 
 type Person = { name: string; age: number };
 
@@ -66,6 +66,30 @@ describe('DataTable', () => {
     const firstAfterSecond = cellsAfterSecond[1].textContent;
 
     // Second click reverses the order from the first click
+    expect(firstAfterSecond).not.toBe(firstAfterFirst);
+  });
+
+  it('SortableHeader button has type="button" so it never accidentally submits a form', () => {
+    const column = { getIsSorted: () => false as const, toggleSorting: vi.fn() };
+    render(<SortableHeader column={column}>Name</SortableHeader>);
+    expect(screen.getByRole('button', { name: /name/i })).toHaveAttribute('type', 'button');
+  });
+
+  it('sortable header responds to Enter key for keyboard users', async () => {
+    const user = userEvent.setup();
+    render(<DataTable columns={columns} data={data} />);
+
+    const header = screen.getByText('Age');
+    header.focus();
+    await user.keyboard('{Enter}');
+
+    const cellsAfterFirst = screen.getAllByRole('cell');
+    const firstAfterFirst = cellsAfterFirst[1].textContent;
+
+    await user.keyboard('{Enter}');
+    const cellsAfterSecond = screen.getAllByRole('cell');
+    const firstAfterSecond = cellsAfterSecond[1].textContent;
+
     expect(firstAfterSecond).not.toBe(firstAfterFirst);
   });
 

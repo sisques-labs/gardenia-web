@@ -40,6 +40,12 @@ describe('EditPlantModal', () => {
     expect(screen.getByRole('dialog')).toHaveClass('card');
   });
 
+  it('every visible field label is associated with its control', () => {
+    render(<EditPlantModal plant={plant} dict={dict} onClose={vi.fn()} />);
+    expect(screen.getByLabelText(dict.name)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.imageUrl)).toBeInTheDocument();
+  });
+
   it('calls onClose when cancel is clicked', async () => {
     const onClose = vi.fn();
     const user = userEvent.setup();

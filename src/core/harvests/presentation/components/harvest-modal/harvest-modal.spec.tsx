@@ -89,6 +89,14 @@ describe('HarvestModal', () => {
     expect(screen.getByText(dict.form.harvestedAt)).toBeInTheDocument();
   });
 
+  it('every visible field label is associated with its control', () => {
+    render(<HarvestModal dict={dict} onClose={vi.fn()} />);
+    expect(screen.getByLabelText(dict.form.cropType)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.form.quantity)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.form.unit)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.form.harvestedAt)).toBeInTheDocument();
+  });
+
   it('renders create title when no harvest prop provided', () => {
     render(<HarvestModal dict={dict} onClose={vi.fn()} />);
 

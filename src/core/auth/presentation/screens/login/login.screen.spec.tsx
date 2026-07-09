@@ -143,4 +143,13 @@ describe('LoginScreen', () => {
     const alerts = screen.queryAllByRole('alert');
     expect(alerts).toHaveLength(0);
   });
+
+  it('keep-session control is a real checkbox associated with its label', () => {
+    render(<LoginScreen dict={dict} locale="es" />, { wrapper: createWrapper() });
+
+    const checkbox = screen.getByLabelText(dict.keepSession);
+    expect(checkbox).toHaveAttribute('type', 'checkbox');
+    fireEvent.click(checkbox);
+    expect(checkbox).toBeChecked();
+  });
 });

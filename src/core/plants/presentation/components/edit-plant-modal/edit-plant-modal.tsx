@@ -30,8 +30,8 @@ export function EditPlantModal({ plant, dict, onClose }: Props) {
       submittingLabel={dict.submitting}
     >
       <div className="flex flex-col gap-1">
-        <label className="text-sm text-ink-2">{dict.name}</label>
-        <Input placeholder={dict.namePlaceholder} {...register('name')} />
+        <label htmlFor="edit-plant-name" className="text-sm text-ink-2">{dict.name}</label>
+        <Input id="edit-plant-name" placeholder={dict.namePlaceholder} {...register('name')} />
         {errors.name && (
           <span className="text-destructive text-xs">
             {resolveFieldError(errors.name.message, dict)}
@@ -40,8 +40,8 @@ export function EditPlantModal({ plant, dict, onClose }: Props) {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-sm text-ink-2">{dict.imageUrl}</label>
-        <Input placeholder={dict.imageUrlPlaceholder} {...register('imageUrl')} />
+        <label htmlFor="edit-plant-image-url" className="text-sm text-ink-2">{dict.imageUrl}</label>
+        <Input id="edit-plant-image-url" placeholder={dict.imageUrlPlaceholder} {...register('imageUrl')} />
       </div>
 
       {error && <span className="text-destructive text-xs">{dict.error}</span>}
