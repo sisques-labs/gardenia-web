@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi } from 'vitest';
 import type { ColumnDef } from '@tanstack/react-table';
-import { DataTable } from './table';
+import { DataTable, SortableHeader } from './table';
 
 type Person = { name: string; age: number };
 
@@ -67,6 +67,12 @@ describe('DataTable', () => {
 
     // Second click reverses the order from the first click
     expect(firstAfterSecond).not.toBe(firstAfterFirst);
+  });
+
+  it('SortableHeader button has type="button" so it never accidentally submits a form', () => {
+    const column = { getIsSorted: () => false as const, toggleSorting: vi.fn() };
+    render(<SortableHeader column={column}>Name</SortableHeader>);
+    expect(screen.getByRole('button', { name: /name/i })).toHaveAttribute('type', 'button');
   });
 
   it('sortable header responds to Enter key for keyboard users', async () => {

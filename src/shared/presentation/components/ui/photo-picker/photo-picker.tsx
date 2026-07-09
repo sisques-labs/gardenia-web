@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import Image from 'next/image';
 import { Check } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 
@@ -45,7 +46,7 @@ const PhotoPicker = ({ className, photos, mode = 'single', selected, onSelection
         const isSelected = selectedSet.has(i);
         return (
           <div
-            key={`${photo.src}-${i}`}
+            key={photo.src}
             role="button"
             tabIndex={0}
             aria-pressed={isSelected}
@@ -62,10 +63,13 @@ const PhotoPicker = ({ className, photos, mode = 'single', selected, onSelection
               }
             }}
           >
-            <img
+            <Image
               src={photo.src}
               alt={photo.alt}
-              className="w-full h-full object-cover"
+              fill
+              unoptimized
+              sizes="33vw"
+              className="object-cover"
             />
             {isSelected && (
               <div className="absolute top-1 right-1 bg-[var(--forest)] text-white rounded-full p-0.5">

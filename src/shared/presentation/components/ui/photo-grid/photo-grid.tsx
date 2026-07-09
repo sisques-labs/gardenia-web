@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Image from 'next/image';
 import { cn } from '@/shared/lib/utils';
 
 export interface PhotoGridPhoto {
@@ -22,15 +23,18 @@ const PhotoGrid = ({ className, photos, columns = 3, onPhotoClick, ref, ...props
   >
     {photos.map((photo, i) => (
       <button
-        key={`${photo.src}-${i}`}
+        key={photo.src}
         type="button"
         onClick={() => onPhotoClick?.(i)}
         className="relative overflow-hidden rounded aspect-square btn-reset"
       >
-        <img
+        <Image
           src={photo.src}
           alt={photo.alt}
-          className="w-full h-full object-cover transition-transform hover:scale-105"
+          fill
+          unoptimized
+          sizes={`${Math.round(100 / columns)}vw`}
+          className="object-cover transition-transform hover:scale-105"
         />
       </button>
     ))}
