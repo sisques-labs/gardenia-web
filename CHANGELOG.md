@@ -1,7 +1,7 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
-## [0.29.0-beta.0] - 2026-07-09
+## [0.29.0] - 2026-07-09
 
 ### Bug Fixes
 - **plant-detail:** Enable unoptimized image loading for better performance (3b0de25)
