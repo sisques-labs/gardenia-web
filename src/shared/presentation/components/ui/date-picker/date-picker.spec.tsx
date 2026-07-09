@@ -48,4 +48,12 @@ describe('DatePicker', () => {
     const { container } = render(<DatePicker className="w-48" />);
     expect(container.firstChild).toHaveClass('w-48');
   });
+
+  it('month navigation buttons have accessible labels', () => {
+    render(<DatePicker />);
+    const input = screen.getByRole('textbox');
+    fireEvent.click(input);
+    expect(screen.getByRole('button', { name: /previous month/i })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /next month/i })).toBeInTheDocument();
+  });
 });

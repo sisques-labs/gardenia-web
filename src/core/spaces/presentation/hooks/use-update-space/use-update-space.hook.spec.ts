@@ -57,4 +57,23 @@ describe('useUpdateSpace', () => {
 
     await waitFor(() => expect(result.current.isError).toBe(true));
   });
+
+  it('invalidates the space-detail query for the updated space on success', async () => {
+    mockExecute.mockResolvedValue(undefined);
+    const queryClient = new QueryClient({ defaultOptions: { mutations: { retry: false } } });
+    const invalidateSpy = vi.spyOn(queryClient, 'invalidateQueries');
+    function Wrapper({ children }: { children: React.ReactNode }) {
+      return createElement(QueryClientProvider, { client: queryClient }, children);
+    }
+
+    const { result } = renderHook(() => useUpdateSpace(), { wrapper: Wrapper });
+
+    await act(async () => {
+      result.current.mutate(input);
+    });
+
+    await waitFor(() =>
+      expect(invalidateSpy).toHaveBeenCalledWith({ queryKey: ['space-detail', 'space-1'] }),
+    );
+  });
 });

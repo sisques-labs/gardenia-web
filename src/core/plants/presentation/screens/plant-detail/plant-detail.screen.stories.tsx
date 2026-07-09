@@ -48,6 +48,7 @@ const meta = {
     dict: dict.plants,
     careLogDict: dict.careLog,
     careScheduleDict: dict.careSchedule,
+    photosDict: dict.plantPhotos,
     lang: "es",
     spaceId: null,
     plantId: "plant-1",

@@ -28,4 +28,10 @@ describe('StarRating', () => {
     const { container } = render(<StarRating value={3} readOnly className="gap-1" />);
     expect(container.firstChild).toHaveClass('gap-1');
   });
+
+  it('interactive: each star button has an accessible label', () => {
+    render(<StarRating value={2} max={5} />);
+    expect(screen.getByRole('button', { name: 'Rate 1 star' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Rate 4 stars' })).toBeInTheDocument();
+  });
 });

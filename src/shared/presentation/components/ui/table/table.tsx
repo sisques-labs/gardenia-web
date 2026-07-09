@@ -51,6 +51,7 @@ export function SortableHeader({
   const sorted = column.getIsSorted();
   return (
     <button
+      type="button"
       className="flex items-center gap-1 text-left font-medium"
       onClick={() => column.toggleSorting(sorted === 'asc')}
     >
@@ -144,6 +145,17 @@ function DataTableInner<TData, TValue = unknown>(
                         ? header.column.getToggleSortingHandler()
                         : undefined
                     }
+                    onKeyDown={
+                      header.column.getCanSort()
+                        ? (e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              header.column.getToggleSortingHandler()?.(e);
+                            }
+                          }
+                        : undefined
+                    }
+                    tabIndex={header.column.getCanSort() ? 0 : undefined}
                     style={header.column.getCanSort() ? { cursor: 'pointer' } : undefined}
                   >
                     {header.isPlaceholder

@@ -35,4 +35,16 @@ describe('Lightbox', () => {
     // className is passed to the overlay div
     expect(container.querySelector('.z-100')).toBeInTheDocument();
   });
+
+  it('clicking the backdrop calls onClose', () => {
+    const fn = vi.fn();
+    const { container } = render(<Lightbox photos={photos} open onClose={fn} />);
+    fireEvent.click(container.firstChild as HTMLElement);
+    expect(fn).toHaveBeenCalledOnce();
+  });
+
+  it('backdrop is marked as non-interactive for assistive tech (real dismissal is the Close button/Escape)', () => {
+    const { container } = render(<Lightbox photos={photos} open onClose={() => {}} />);
+    expect(container.firstChild).toHaveAttribute('role', 'presentation');
+  });
 });

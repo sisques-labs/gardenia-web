@@ -44,6 +44,7 @@ export function AppShell({ children, dict }: AppShellProps) {
           {/* Mobile hamburger — only visible below md */}
           <div className="md:hidden flex h-16 items-center px-4 border-b border-[var(--rule)]">
             <button
+              type="button"
               onClick={openDrawer}
               aria-label={dict.openNavigation}
               className="p-1 rounded-md hover:bg-[var(--forest-bg)] text-[var(--ink)]"

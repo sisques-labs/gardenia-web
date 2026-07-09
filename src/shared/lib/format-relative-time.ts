@@ -1,7 +1,18 @@
+const formattersByLocale = new Map<string, Intl.RelativeTimeFormat>();
+
+function getFormatter(locale: string): Intl.RelativeTimeFormat {
+  let rtf = formattersByLocale.get(locale);
+  if (!rtf) {
+    rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+    formattersByLocale.set(locale, rtf);
+  }
+  return rtf;
+}
+
 export function formatRelativeTime(isoDate: string, locale: string): string {
   const diffMs = new Date(isoDate).getTime() - Date.now();
   const diffSecs = Math.round(diffMs / 1000);
-  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+  const rtf = getFormatter(locale);
   const abs = Math.abs(diffSecs);
   if (abs < 60) return rtf.format(diffSecs, 'second');
   if (abs < 3600) return rtf.format(Math.round(diffSecs / 60), 'minute');
