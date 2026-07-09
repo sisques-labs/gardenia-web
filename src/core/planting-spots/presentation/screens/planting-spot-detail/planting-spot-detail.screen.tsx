@@ -86,14 +86,12 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
         ]}
       />
 
-      <div className="p-6 flex flex-col gap-8">
-        {/* Hero — the spot's identity card, with the printable QR tag alongside */}
-        <Card className="rounded-3xl paper-grain">
-          <CardContent className="p-6 lg:p-8">
-            <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-8 lg:gap-10 items-start">
-              <div className="flex flex-col gap-4 min-w-0">
-                <h1 className="headline text-4xl lg:text-5xl tracking-tight">{spot.name}</h1>
-
+      <div className="p-6 flex flex-col gap-6">
+        {/* Hero — compact status/actions strip, with the printable QR tag alongside */}
+        <Card className="rounded-2xl paper-grain">
+          <CardContent className="p-4 lg:p-5">
+            <div className="grid grid-cols-1 lg:grid-cols-[1fr_auto] gap-5 lg:gap-6 items-start">
+              <div className="flex flex-col gap-3 min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
                   <PlantingSpotStatusBadge status={spot.status} dict={dict.statuses} />
                   <PlantingSpotTypeBadge type={spot.type} dict={dict.types} />
@@ -189,7 +187,7 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
                 )}
               </div>
 
-              {/* QR — rendered like the printable pot tag it actually is */}
+              {/* QR — the printable pot tag, docked next to the status strip */}
               {spot.qr && (
                 <QrCard
                   image={spot.qr.image}
