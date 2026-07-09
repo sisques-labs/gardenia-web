@@ -75,4 +75,9 @@ describe('AppShell', () => {
     render(<AppShell dict={shellDict}><p>content</p></AppShell>);
     expect(screen.queryByTestId('sidebar-overlay')).not.toBeInTheDocument();
   });
+
+  it('mobile hamburger button has type="button" so it never accidentally submits a form', () => {
+    render(<AppShell dict={shellDict}><p>content</p></AppShell>);
+    expect(screen.getByLabelText(shellDict.openNavigation)).toHaveAttribute('type', 'button');
+  });
 });

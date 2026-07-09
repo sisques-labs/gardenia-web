@@ -35,9 +35,9 @@ const ContextMenu = ({ items, children, contentClassName }: ContextMenuProps) =>
   <ContextMenuPrimitive.Root>
     <ContextMenuPrimitive.Trigger asChild>{children}</ContextMenuPrimitive.Trigger>
     <ContextMenuContent className={contentClassName}>
-      {items.map((item, i) => (
+      {items.map((item) => (
         <ContextMenuPrimitive.Item
-          key={`${item.label}-${i}`}
+          key={item.label}
           disabled={item.disabled}
           onSelect={item.action}
           className="flex items-center gap-2 rounded px-2 py-1.5 cursor-pointer hover:bg-[var(--paper-2)] outline-none aria-disabled:opacity-50 aria-disabled:cursor-not-allowed"

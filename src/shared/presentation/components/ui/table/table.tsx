@@ -51,6 +51,7 @@ export function SortableHeader({
   const sorted = column.getIsSorted();
   return (
     <button
+      type="button"
       className="flex items-center gap-1 text-left font-medium"
       onClick={() => column.toggleSorting(sorted === 'asc')}
     >

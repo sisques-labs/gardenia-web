@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import {
@@ -9,7 +10,8 @@ import {
   TabsTrigger,
   TabsContent,
 } from '@/shared/presentation/components/ui/tabs/tabs';
-import { Button, buttonVariants } from '@/shared/presentation/components/ui/button/button';
+import { Button } from '@/shared/presentation/components/ui/button/button';
+import { buttonVariants } from '@/shared/presentation/components/ui/button/button-variants';
 import { Alert } from '@/shared/presentation/components/ui/alert/alert';
 import { ConfirmDialog } from '@/shared/presentation/components/ui/confirm-dialog/confirm-dialog';
 import { usePlantingSpot } from '@/core/planting-spots/presentation/hooks/use-planting-spot/use-planting-spot.hook';
@@ -156,9 +158,12 @@ export function PlantingSpotDetailScreen({ dict, lang, spotId }: Props) {
                 {spot.resolvedPlants.map((plant) => (
                   <div key={plant.id} className="flex items-center gap-3 px-4 py-3">
                     {plant.imageUrl ? (
-                      <img
+                      <Image
                         src={plant.imageUrl}
                         alt={plant.name}
+                        width={36}
+                        height={36}
+                        unoptimized
                         className="h-9 w-9 rounded-md object-cover flex-shrink-0"
                       />
                     ) : (
