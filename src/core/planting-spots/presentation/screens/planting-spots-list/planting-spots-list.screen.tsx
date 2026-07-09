@@ -1,10 +1,11 @@
 'use client';
 
-import Link from 'next/link';
+import { useState } from 'react';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { PlantingSpotCard } from '@/core/planting-spots/presentation/components/planting-spot-card/planting-spot-card';
 import { usePlantingSpots } from '@/core/planting-spots/presentation/hooks/use-planting-spots/use-planting-spots.hook';
-import { buttonVariants } from '@/shared/presentation/components/ui/button/button';
+import { Button } from '@/shared/presentation/components/ui/button/button';
+import { CreatePlantingSpotModal } from '@/core/planting-spots/presentation/components/create-planting-spot-modal/create-planting-spot-modal';
 import { PlantingSpotsListSkeleton } from '@/core/planting-spots/presentation/components/planting-spots-list-skeleton/planting-spots-list-skeleton';
 import { Pagination } from '@/shared/presentation/components/ui/pagination/pagination';
 import { useUrlPage } from '@/shared/presentation/hooks/use-url-page/use-url-page.hook';
@@ -18,15 +19,16 @@ type Props = {
 export function PlantingSpotsListScreen({ dict, lang }: Props) {
   const { page, onPageChange } = useUrlPage();
   const { spots, totalPages, currentPage, isLoading } = usePlantingSpots(page);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   return (
     <div>
       <ScreenHeader
         title={dict.list.title}
         actions={
-          <Link href={`/${lang}/planting-spots/new`} className={buttonVariants({ size: 'sm' })}>
+          <Button size="sm" onClick={() => setIsCreateOpen(true)}>
             {dict.list.new}
-          </Link>
+          </Button>
         }
       />
 
@@ -54,6 +56,10 @@ export function PlantingSpotsListScreen({ dict, lang }: Props) {
           </>
         )}
       </div>
+
+      {isCreateOpen && (
+        <CreatePlantingSpotModal dict={dict} onClose={() => setIsCreateOpen(false)} />
+      )}
     </div>
   );
 }

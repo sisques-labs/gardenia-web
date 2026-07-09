@@ -59,11 +59,13 @@ const dict = {
     dimensionsHeight: 'Height (optional)',
     dimensionsLength: 'Length (optional)',
     soilType: 'Soil type (optional)',
+    soilTypePlaceholder: 'e.g. Loamy, Sandy…',
     save: 'Save',
     saving: 'Saving…',
     delete: 'Delete',
     deleteConfirm: 'Are you sure you want to delete this planting spot?',
     cancel: 'Cancel',
+    error: 'Could not save the planting spot. Try again.',
   },
   detail: {
     tabActivePlants: 'Active plants',
@@ -97,6 +99,14 @@ const dict = {
     waterSpotWatered: 'watered',
     waterSpotFailed: 'failed',
     waterSpotError: 'Could not water the spot. Try again.',
+    plantColumn: 'Plant',
+    addedColumn: 'Added',
+    viewPlant: 'View',
+    qr: {
+      label: 'Label · QR',
+      hint: 'Print and stick on the pot or spot',
+      download: 'Download image',
+    },
   },
   types: {
     RAISED_BED: 'Raised bed',

@@ -16,6 +16,15 @@ export const PLANTING_SPOT_FIND_BY_ID = gql`
       soilType
       status
       fallowSince
+      qr {
+        id
+        spaceId
+        targetUrl
+        generation
+        image
+        createdAt
+        updatedAt
+      }
       userId
       spaceId
       resolvedPlants {
