@@ -1,10 +1,10 @@
-const PROTECTED_FILE_PATHNAME = /^\/(api\/)?files\/[^/]+\/content$/;
+const PROTECTED_FILE_PATHNAME = /^\/(api\/)?files\/([^/]+)\/content$/;
 
-function isProtectedFileUrl(url: string): boolean {
+function extractProtectedFileId(url: string): string | undefined {
   try {
-    return PROTECTED_FILE_PATHNAME.test(new URL(url).pathname);
+    return new URL(url).pathname.match(PROTECTED_FILE_PATHNAME)?.[2];
   } catch {
-    return false;
+    return undefined;
   }
 }
 
@@ -14,10 +14,13 @@ export function getAuthenticatedImageUrl(
   spaceId: string | null,
 ): string | undefined {
   if (!url) return undefined;
-  if (!isProtectedFileUrl(url)) return url;
 
-  const params = new URLSearchParams({ url });
+  const fileId = extractProtectedFileId(url);
+  if (!fileId) return url;
+
+  const params = new URLSearchParams();
   if (accessToken) params.set('token', accessToken);
   if (spaceId) params.set('spaceId', spaceId);
-  return `/api/image-proxy?${params.toString()}`;
+  const query = params.toString();
+  return `/api/image-proxy/${fileId}${query ? `?${query}` : ''}`;
 }
