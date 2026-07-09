@@ -1,4 +1,6 @@
+import { useAuthStore } from "@/core/auth/infrastructure/store/auth.store";
 import type { Plant } from "@/core/plants/domain/interfaces/plant.interface";
+import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store";
 import { Button } from "@/shared/presentation/components/ui/button/button";
 import { Chip } from "@/shared/presentation/components/ui/chip/chip";
 import {
@@ -6,6 +8,7 @@ import {
   type StatusDotStatus,
 } from "@/shared/presentation/components/ui/status-dot/status-dot";
 import { formatShortDate } from "@/shared/presentation/utils/format-short-date.util";
+import { getAuthenticatedImageUrl } from "@/shared/presentation/utils/get-authenticated-image-url.util";
 import { Calendar, Trash2 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -41,6 +44,9 @@ export function PlantCard({
   onDelete,
 }: Props) {
   const showFooter = Boolean(careDate || status);
+  const accessToken = useAuthStore((s) => s.accessToken);
+  const currentSpaceId = useSpacesStore((s) => s.currentSpaceId);
+  const imageSrc = getAuthenticatedImageUrl(plant.imageUrl, accessToken, currentSpaceId);
 
   return (
     <Link
@@ -49,9 +55,9 @@ export function PlantCard({
       data-testid="plant-card"
     >
       <div className="relative">
-        {plant.imageUrl ? (
+        {imageSrc ? (
           <Image
-            src={plant.imageUrl}
+            src={imageSrc}
             alt={plant.name}
             width={224}
             height={144}

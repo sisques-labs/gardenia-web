@@ -7,9 +7,11 @@ import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { useDeletePlantPhoto } from '@/core/plant-photos/presentation/hooks/use-delete-plant-photo/use-delete-plant-photo.hook';
 import { usePlantPhotoUpload } from '@/core/plant-photos/presentation/hooks/use-plant-photo-upload/use-plant-photo-upload.hook';
 import { usePlantPhotos } from '@/core/plant-photos/presentation/hooks/use-plant-photos/use-plant-photos.hook';
+import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import { Alert } from '@/shared/presentation/components/ui/alert/alert';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
+import { getAuthenticatedImageUrl } from '@/shared/presentation/utils/get-authenticated-image-url.util';
 
 type Props = {
   plantId: string;
@@ -19,6 +21,8 @@ type Props = {
 export function PlantPhotoGallery({ plantId, dict }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
   const currentUser = useAuthStore((s) => s.currentUser);
+  const accessToken = useAuthStore((s) => s.accessToken);
+  const currentSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const { data: photos = [] } = usePlantPhotos(plantId);
   const { uploadFiles, isUploading, uploadFailed } = usePlantPhotoUpload(plantId);
   const deletePhoto = useDeletePlantPhoto(plantId);
@@ -62,7 +66,10 @@ export function PlantPhotoGallery({ plantId, dict }: Props) {
               className="group relative h-20 w-20 shrink-0 overflow-hidden rounded-lg ring-1 ring-rule"
             >
               <Image
-                src={photo.url}
+                src={
+                  getAuthenticatedImageUrl(photo.url, accessToken, currentSpaceId) ??
+                  photo.url
+                }
                 alt=""
                 fill
                 className="object-cover"

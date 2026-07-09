@@ -1,5 +1,6 @@
 "use client";
 
+import { useAuthStore } from "@/core/auth/infrastructure/store/auth.store";
 import { CareLogActivityType } from "@/core/care-log/domain/interfaces/care-log-entry.interface";
 import { CareLogSummary } from "@/core/care-log/presentation/components/care-log-summary/care-log-summary";
 import { usePlantCareLogs } from "@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-logs.hook";
@@ -26,6 +27,7 @@ import { Chip } from "@/shared/presentation/components/ui/chip/chip";
 import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
 import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
 import { formatShortDate } from "@/shared/presentation/utils/format-short-date.util";
+import { getAuthenticatedImageUrl } from "@/shared/presentation/utils/get-authenticated-image-url.util";
 import {
   CalendarDays,
   Droplets,
@@ -67,10 +69,13 @@ export function PlantDetailScreen({
   const qrDownload = useQrDownload();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const accessToken = useAuthStore((s) => s.accessToken);
 
   if (isLoading) return <PlantDetailSkeleton />;
   if (isError) redirect(`/${lang}/plants`);
   if (!plant) return null;
+
+  const imageSrc = getAuthenticatedImageUrl(plant.imageUrl, accessToken, spaceId);
 
   const lastWatered = lastCareByType[CareLogActivityType.WATERING];
   const wateredLabel = lastWatered
@@ -105,9 +110,9 @@ export function PlantDetailScreen({
                   data-testid="plant-image"
                   className="group relative aspect-square rounded-2xl overflow-hidden ring-1 ring-[var(--rule)] shadow-md"
                 >
-                  {plant.imageUrl ? (
+                  {imageSrc ? (
                     <Image
-                      src={plant.imageUrl}
+                      src={imageSrc}
                       alt={plant.name}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
