@@ -1,12 +1,13 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen, fireEvent, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
 import type { WaterPlantingSpotResult } from '@/core/planting-spots/domain/interfaces/water-planting-spot-result.interface';
 
+const mockPush = vi.fn();
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push: vi.fn() }),
+  useRouter: () => ({ push: mockPush }),
 }));
 
 vi.mock('next/link', () => ({
@@ -29,6 +30,17 @@ vi.mock(
   '@/core/planting-spots/presentation/hooks/use-water-planting-spot/use-water-planting-spot.hook',
   () => ({ useWaterPlantingSpot: vi.fn() }),
 );
+
+const mockDeleteMutate = vi.fn();
+vi.mock(
+  '@/core/planting-spots/presentation/hooks/use-delete-planting-spot/use-delete-planting-spot.hook',
+  () => ({ useDeletePlantingSpot: () => ({ mutate: mockDeleteMutate, isPending: false }) }),
+);
+
+const mockQrDownload = vi.fn();
+vi.mock('@/shared/presentation/hooks/use-qr-download/use-qr-download.hook', () => ({
+  useQrDownload: () => ({ download: mockQrDownload }),
+}));
 
 vi.mock(
   '@/core/planting-spots/presentation/components/planting-spot-type-badge/planting-spot-type-badge',
@@ -54,6 +66,17 @@ vi.mock(
     AddPlantToSpotModal: ({ onClose }: { onClose: () => void }) => (
       <div data-testid="add-plant-modal">
         <button onClick={onClose}>close-add-plant-modal</button>
+      </div>
+    ),
+  }),
+);
+
+vi.mock(
+  '@/core/planting-spots/presentation/components/edit-planting-spot-modal/edit-planting-spot-modal',
+  () => ({
+    EditPlantingSpotModal: ({ onClose }: { onClose: () => void }) => (
+      <div data-testid="edit-spot-modal">
+        <button onClick={onClose}>close-edit-spot-modal</button>
       </div>
     ),
   }),
@@ -98,11 +121,13 @@ const dict = {
     dimensionsHeight: 'Height (optional)',
     dimensionsLength: 'Length (optional)',
     soilType: 'Soil type (optional)',
+    soilTypePlaceholder: 'e.g. Loamy, Sandy…',
     save: 'Save',
     saving: 'Saving…',
     delete: 'Delete',
     deleteConfirm: 'Are you sure you want to delete this planting spot?',
     cancel: 'Cancel',
+    error: 'Could not save the planting spot. Try again.',
   },
   detail: {
     tabActivePlants: 'Active plants',
@@ -136,6 +161,14 @@ const dict = {
     waterSpotWatered: 'watered',
     waterSpotFailed: 'failed',
     waterSpotError: 'Could not water the spot. Try again.',
+    plantColumn: 'Plant',
+    addedColumn: 'Added',
+    viewPlant: 'View',
+    qr: {
+      label: 'Label · QR',
+      hint: 'Print and stick on the pot or spot',
+      download: 'Download image',
+    },
   },
   types: {
     RAISED_BED: 'Raised bed',
@@ -239,10 +272,64 @@ describe('PlantingSpotDetailScreen', () => {
     expect(screen.getAllByText('Main Bed').length).toBeGreaterThan(0);
   });
 
-  it('renders edit link', () => {
+  it('renders the edit button', () => {
     mockSpot();
     render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
-    expect(screen.getByText('Edit spot')).toBeInTheDocument();
+    expect(screen.getByTestId('btn-edit-spot')).toBeInTheDocument();
+  });
+
+  it('does not render the edit modal by default', () => {
+    mockSpot();
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.queryByTestId('edit-spot-modal')).not.toBeInTheDocument();
+  });
+
+  it('opens the edit modal when the edit button is clicked', () => {
+    mockSpot();
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    fireEvent.click(screen.getByTestId('btn-edit-spot'));
+
+    expect(screen.getByTestId('edit-spot-modal')).toBeInTheDocument();
+  });
+
+  it('closes the edit modal when it calls onClose', () => {
+    mockSpot();
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    fireEvent.click(screen.getByTestId('btn-edit-spot'));
+    fireEvent.click(screen.getByText('close-edit-spot-modal'));
+
+    expect(screen.queryByTestId('edit-spot-modal')).not.toBeInTheDocument();
+  });
+
+  it('renders the delete button', () => {
+    mockSpot();
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+    expect(screen.getByTestId('btn-delete-spot')).toBeInTheDocument();
+  });
+
+  it('opens the delete confirmation dialog when the delete button is clicked', async () => {
+    const user = userEvent.setup();
+    mockSpot();
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    await user.click(screen.getByTestId('btn-delete-spot'));
+
+    expect(screen.getByText('Are you sure you want to delete this planting spot?')).toBeInTheDocument();
+  });
+
+  it('deletes the spot and navigates to the list on confirm', async () => {
+    const user = userEvent.setup();
+    mockDeleteMutate.mockImplementation((_id, options) => options?.onSuccess?.());
+    mockSpot();
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    await user.click(screen.getByTestId('btn-delete-spot'));
+    await user.click(within(screen.getByRole('dialog')).getByRole('button', { name: 'Delete' }));
+
+    expect(mockDeleteMutate).toHaveBeenCalledWith('spot-1', expect.objectContaining({ onSuccess: expect.any(Function) }));
+    expect(mockPush).toHaveBeenCalledWith('/en/planting-spots');
   });
 
   it('renders status badge with current status', () => {
@@ -329,25 +416,25 @@ describe('PlantingSpotDetailScreen', () => {
   it('shows position label with row and column', () => {
     mockSpot({ capacity: 5, row: 2, column: 3, resolvedPlants: [] });
     render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
-    expect(screen.getByText('Position: F2 · C3')).toBeInTheDocument();
+    expect(screen.getAllByText('F2 · C3').length).toBeGreaterThan(0);
   });
 
   it('shows position label with row only', () => {
     mockSpot({ capacity: 5, row: 1, column: null, resolvedPlants: [] });
     render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
-    expect(screen.getByText('Position: F1')).toBeInTheDocument();
+    expect(screen.getAllByText('F1').length).toBeGreaterThan(0);
   });
 
   it('shows position label with column only', () => {
     mockSpot({ capacity: 5, row: null, column: 4, resolvedPlants: [] });
     render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
-    expect(screen.getByText('Position: C4')).toBeInTheDocument();
+    expect(screen.getAllByText('C4').length).toBeGreaterThan(0);
   });
 
-  it('does not show position label when row and column are null', () => {
+  it('does not show a position chip when row and column are null', () => {
     mockSpot({ capacity: 5, row: null, column: null, resolvedPlants: [] });
     render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
-    expect(screen.queryByText(/Position:/)).not.toBeInTheDocument();
+    expect(screen.queryAllByText(/^[FC]\d/)).toHaveLength(0);
   });
 
   it('renders plant with image when imageUrl is set', () => {
@@ -411,7 +498,7 @@ describe('PlantingSpotDetailScreen', () => {
   it('renders description in info tab when present', () => {
     mockSpot({ description: 'A lovely raised bed' });
     render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
-    expect(screen.getByText('A lovely raised bed')).toBeInTheDocument();
+    expect(screen.getAllByText('A lovely raised bed').length).toBeGreaterThan(0);
   });
 
   it('shows no limit when capacity is null in info tab', () => {
@@ -443,7 +530,7 @@ describe('PlantingSpotDetailScreen', () => {
   it('renders soil type when set', () => {
     mockSpot({ soilType: 'Loamy' });
     render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
-    expect(screen.getByText('Loamy')).toBeInTheDocument();
+    expect(screen.getAllByText('Loamy').length).toBeGreaterThan(0);
   });
 
   it('renders capacity bar in over-capacity state (current > capacity)', () => {
@@ -615,5 +702,53 @@ describe('PlantingSpotDetailScreen', () => {
     render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
 
     expect(screen.getByTestId('btn-water-spot')).toBeDisabled();
+  });
+
+  it('renders QR card when spot.qr exists', () => {
+    mockSpot({
+      qr: {
+        id: 'qr1',
+        spaceId: 's1',
+        targetUrl: 'https://example.com',
+        generation: 1,
+        image: 'base64data',
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01',
+      },
+    });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    expect(screen.getByTestId('qr-card')).toBeInTheDocument();
+    expect(screen.getByTestId('qr-image')).toHaveAttribute('src', 'data:image/png;base64,base64data');
+    expect(screen.getByTestId('qr-code')).toHaveTextContent('qr1');
+  });
+
+  it('downloads the QR code image when the download button is clicked', async () => {
+    mockSpot({
+      qr: {
+        id: 'qr1',
+        spaceId: 's1',
+        targetUrl: 'https://example.com',
+        generation: 1,
+        image: 'base64data',
+        createdAt: '2024-01-01',
+        updatedAt: '2024-01-01',
+      },
+    });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    await userEvent.click(screen.getByTestId('qr-download-btn'));
+
+    expect(mockQrDownload).toHaveBeenCalledWith(
+      'Main Bed',
+      expect.objectContaining({ id: 'qr1' }),
+    );
+  });
+
+  it('does NOT render QR card when spot.qr is absent', () => {
+    mockSpot({ qr: undefined });
+    render(<PlantingSpotDetailScreen dict={dict} lang="en" spotId="spot-1" />);
+
+    expect(screen.queryByTestId('qr-card')).not.toBeInTheDocument();
   });
 });

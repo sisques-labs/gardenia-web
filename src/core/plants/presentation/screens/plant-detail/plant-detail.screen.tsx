@@ -1,18 +1,21 @@
 "use client";
 
+import { useAuthStore } from "@/core/auth/infrastructure/store/auth.store";
 import { CareLogActivityType } from "@/core/care-log/domain/interfaces/care-log-entry.interface";
 import { CareLogSummary } from "@/core/care-log/presentation/components/care-log-summary/care-log-summary";
 import { usePlantCareLogs } from "@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-logs.hook";
 import { CareScheduleList } from "@/core/care-schedule/presentation/components/care-schedule-list/care-schedule-list";
 import { useWaterPlant } from "@/core/care-schedule/presentation/hooks/use-water-plant/use-water-plant.hook";
+import { PlantPhotoGallery } from "@/core/plant-photos/presentation/components/plant-photo-gallery/plant-photo-gallery";
 import { EditPlantModal } from "@/core/plants/presentation/components/edit-plant-modal/edit-plant-modal";
 import { PlantDetailSkeleton } from "@/core/plants/presentation/components/plant-detail-skeleton/plant-detail-skeleton";
 import { PlantPlantingSpotField } from "@/core/plants/presentation/components/plant-planting-spot-field/plant-planting-spot-field";
 import { useDeletePlant } from "@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook";
 import { usePlant } from "@/core/plants/presentation/hooks/use-plant/use-plant.hook";
+import { useQrDownload } from "@/shared/presentation/hooks/use-qr-download/use-qr-download.hook";
+import { QrCard } from "@/shared/presentation/components/qr-card/qr-card";
 import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store";
 import { formatRelativeTime } from "@/shared/lib/format-relative-time";
-import { formatShortDate } from "@/shared/presentation/utils/format-short-date.util";
 import { ScreenHeader } from "@/shared/presentation/components/screen-header/screen-header";
 import { Alert } from "@/shared/presentation/components/ui/alert/alert";
 import { Button } from "@/shared/presentation/components/ui/button/button";
@@ -23,7 +26,16 @@ import {
 import { Chip } from "@/shared/presentation/components/ui/chip/chip";
 import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
 import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
-import { CalendarDays, Droplets, MapPin, Pencil, Sprout, Trash2 } from "lucide-react";
+import { formatShortDate } from "@/shared/presentation/utils/format-short-date.util";
+import { getAuthenticatedImageUrl } from "@/shared/presentation/utils/get-authenticated-image-url.util";
+import {
+  CalendarDays,
+  Droplets,
+  MapPin,
+  Pencil,
+  Sprout,
+  Trash2,
+} from "lucide-react";
 import Image from "next/image";
 import { redirect, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -32,6 +44,7 @@ type Props = {
   dict: AppDict["plants"];
   careLogDict: AppDict["careLog"];
   careScheduleDict: AppDict["careSchedule"];
+  photosDict: AppDict["plantPhotos"];
   lang: string;
   spaceId: string | null;
   plantId: string;
@@ -41,6 +54,7 @@ export function PlantDetailScreen({
   dict,
   careLogDict,
   careScheduleDict,
+  photosDict,
   lang,
   spaceId: spaceIdProp,
   plantId,
@@ -52,12 +66,16 @@ export function PlantDetailScreen({
   const { data: lastCareByType = {} } = usePlantCareLogs(plantId);
   const deletePlant = useDeletePlant(spaceId);
   const waterPlant = useWaterPlant();
+  const qrDownload = useQrDownload();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
+  const accessToken = useAuthStore((s) => s.accessToken);
 
   if (isLoading) return <PlantDetailSkeleton />;
   if (isError) redirect(`/${lang}/plants`);
   if (!plant) return null;
+
+  const imageSrc = getAuthenticatedImageUrl(plant.imageUrl, accessToken, spaceId);
 
   const lastWatered = lastCareByType[CareLogActivityType.WATERING];
   const wateredLabel = lastWatered
@@ -92,13 +110,14 @@ export function PlantDetailScreen({
                   data-testid="plant-image"
                   className="group relative aspect-square rounded-2xl overflow-hidden ring-1 ring-[var(--rule)] shadow-md"
                 >
-                  {plant.imageUrl ? (
+                  {imageSrc ? (
                     <Image
-                      src={plant.imageUrl}
+                      src={imageSrc}
                       alt={plant.name}
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                       sizes="(max-width: 1024px) 100vw, 300px"
+                      unoptimized
                     />
                   ) : (
                     <div className="placeholder-img leaf flex flex-col items-center justify-center gap-2 w-full h-full">
@@ -144,7 +163,8 @@ export function PlantDetailScreen({
                     className="text-base text-[var(--terracotta)] mt-0.5"
                     style={{ fontFamily: "var(--font-hand)" }}
                   >
-                    {dict.detail.addedOn} {formatShortDate(plant.createdAt, lang)}
+                    {dict.detail.addedOn}{" "}
+                    {formatShortDate(plant.createdAt, lang)}
                   </p>
                   {plant.species?.description && (
                     <p className="text-sm text-muted-foreground line-clamp-2 mt-1">
@@ -213,52 +233,28 @@ export function PlantDetailScreen({
                   </Button>
                 </div>
                 {waterPlant.isError && (
-                  <Alert variant="error" message={dict.detail.actions.markWateredError} />
+                  <Alert
+                    variant="error"
+                    message={dict.detail.actions.markWateredError}
+                  />
                 )}
                 {deletePlant.isError && (
                   <Alert variant="error" message={dict.delete.error} />
                 )}
+
+                <PlantPhotoGallery plantId={plantId} dict={photosDict} />
               </div>
 
               {/* QR — rendered like the printable pot tag it actually is */}
               {plant.qr && (
-                <div
-                  data-testid="plant-qr-card"
-                  className="relative w-full lg:w-52 -rotate-2 hover:rotate-0 transition-transform duration-300 rounded-2xl border-2 border-dashed border-[var(--rule)] bg-[var(--paper-2)] px-5 py-6 flex flex-col items-center gap-3 shadow-sm"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="absolute -top-2.5 left-1/2 -translate-x-1/2 h-3 w-3 rounded-full border border-[var(--rule)] bg-[var(--paper)]"
-                  />
-                  <p className="eyebrow text-center">{dict.detail.qr.label}</p>
-                  <Image
-                    data-testid="qr-image"
-                    src={`data:image/png;base64,${plant.qr.image}`}
-                    alt="QR"
-                    width={96}
-                    height={96}
-                    unoptimized
-                    className="w-24 h-24 rounded-md ring-1 ring-[var(--rule)] bg-[var(--white)] p-1.5"
-                  />
-                  <p
-                    data-testid="qr-code"
-                    className="text-xs text-center text-muted-foreground font-mono"
-                  >
-                    {plant.qr.id}
-                  </p>
-                  <p className="text-xs text-center text-muted-foreground">
-                    {dict.detail.qr.hint}
-                  </p>
-                  <Button
-                    disabled
-                    variant="ghost"
-                    size="sm"
-                    data-testid="qr-download-btn"
-                    className="text-xs text-[var(--forest)] w-full"
-                  >
-                    {dict.detail.qr.download}
-                  </Button>
-                </div>
+                <QrCard
+                  image={plant.qr.image}
+                  code={plant.qr.id}
+                  label={dict.detail.qr.label}
+                  hint={dict.detail.qr.hint}
+                  downloadLabel={dict.detail.qr.download}
+                  onDownload={() => qrDownload.download(plant.name, plant.qr)}
+                />
               )}
             </div>
           </CardContent>
@@ -270,6 +266,7 @@ export function PlantDetailScreen({
             data-testid="care-log-section"
             className="rounded-2xl border-l-4 border-l-[var(--forest)] transition-shadow duration-200 hover:shadow-md"
           >
+            s{" "}
             <CardContent className="pt-6">
               <CareLogSummary
                 lastCareByType={lastCareByType}

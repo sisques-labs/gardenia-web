@@ -63,9 +63,9 @@ export function CareScheduleModal({ dict, onClose, careSchedule, lockedPlantId }
     >
           {showPlantPicker && (
             <div className="flex flex-col gap-1">
-              <label className="text-sm text-ink-2">{dict.form.plant}</label>
+              <label htmlFor="care-schedule-plant" className="text-sm text-ink-2">{dict.form.plant}</label>
               <Select value={plantId} onValueChange={setPlantId}>
-                <SelectTrigger>
+                <SelectTrigger id="care-schedule-plant">
                   <SelectValue placeholder={dict.form.plantPlaceholder} />
                 </SelectTrigger>
                 <SelectContent>
@@ -80,9 +80,9 @@ export function CareScheduleModal({ dict, onClose, careSchedule, lockedPlantId }
           )}
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-ink-2">{dict.form.activityType}</label>
+            <label htmlFor="care-schedule-activity-type" className="text-sm text-ink-2">{dict.form.activityType}</label>
             <Select value={activityType} onValueChange={setActivityType}>
-              <SelectTrigger>
+              <SelectTrigger id="care-schedule-activity-type">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -97,8 +97,8 @@ export function CareScheduleModal({ dict, onClose, careSchedule, lockedPlantId }
 
           {!isEditing && (
             <div className="flex flex-col gap-1">
-              <label className="text-sm text-ink-2">{dict.form.nextDueAt}</label>
-              <Input type="date" {...register('nextDueAt')} />
+              <label htmlFor="care-schedule-next-due-at" className="text-sm text-ink-2">{dict.form.nextDueAt}</label>
+              <Input id="care-schedule-next-due-at" type="date" {...register('nextDueAt')} />
               {errors.nextDueAt && (
                 <span className="text-destructive text-xs">{errors.nextDueAt.message}</span>
               )}
@@ -118,8 +118,8 @@ export function CareScheduleModal({ dict, onClose, careSchedule, lockedPlantId }
 
           {isRecurring && (
             <div className="flex flex-col gap-1">
-              <label className="text-sm text-ink-2">{dict.form.intervalDays}</label>
-              <Input type="number" step="1" min="1" {...register('intervalDays')} />
+              <label htmlFor="care-schedule-interval-days" className="text-sm text-ink-2">{dict.form.intervalDays}</label>
+              <Input id="care-schedule-interval-days" type="number" step="1" min="1" {...register('intervalDays')} />
               {errors.intervalDays && (
                 <span className="text-destructive text-xs">{errors.intervalDays.message}</span>
               )}
@@ -127,17 +127,17 @@ export function CareScheduleModal({ dict, onClose, careSchedule, lockedPlantId }
           )}
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-ink-2">{dict.form.quantity}</label>
-            <Input type="number" step="any" {...register('quantity')} />
+            <label htmlFor="care-schedule-quantity" className="text-sm text-ink-2">{dict.form.quantity}</label>
+            <Input id="care-schedule-quantity" type="number" step="any" {...register('quantity')} />
             {errors.quantity && (
               <span className="text-destructive text-xs">{errors.quantity.message}</span>
             )}
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-ink-2">{dict.form.unit}</label>
+            <label htmlFor="care-schedule-unit" className="text-sm text-ink-2">{dict.form.unit}</label>
             <Select value={unit} onValueChange={(value) => setUnit(value as typeof unit)}>
-              <SelectTrigger>
+              <SelectTrigger id="care-schedule-unit">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -151,8 +151,8 @@ export function CareScheduleModal({ dict, onClose, careSchedule, lockedPlantId }
           </div>
 
           <div className="flex flex-col gap-1">
-            <label className="text-sm text-ink-2">{dict.form.notes}</label>
-            <Textarea {...register('notes')} />
+            <label htmlFor="care-schedule-notes" className="text-sm text-ink-2">{dict.form.notes}</label>
+            <Textarea id="care-schedule-notes" {...register('notes')} />
             {errors.notes && <span className="text-destructive text-xs">{errors.notes.message}</span>}
           </div>
     </FormModal>

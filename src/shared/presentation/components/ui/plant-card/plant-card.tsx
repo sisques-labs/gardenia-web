@@ -1,4 +1,5 @@
 import * as React from 'react';
+import Image from 'next/image';
 import { cn } from '@/shared/lib/utils';
 import { Chip, type ChipVariant } from '../chip/chip';
 
@@ -30,7 +31,9 @@ function getInitials(name: string): string {
 const PlantCard = ({ ref, className, name, species, status, imageUrl, ...props }: PlantCardProps) => (
   <div ref={ref} className={cn('card p-4 flex flex-col gap-2', className)} {...props}>
     {imageUrl ? (
-      <img src={imageUrl} alt={name} className="w-full h-40 object-cover rounded" />
+      <div className="relative w-full h-40">
+        <Image src={imageUrl} alt={name} fill unoptimized sizes="100vw" className="object-cover rounded" />
+      </div>
     ) : (
       <div className="placeholder-img leaf w-full h-40 rounded text-sm font-medium">
         {getInitials(name)}
