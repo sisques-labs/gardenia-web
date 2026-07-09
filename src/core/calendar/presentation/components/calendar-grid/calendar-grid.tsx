@@ -34,7 +34,7 @@ export function CalendarGrid({ year, month, selectedDate, onSelectDate, dict, ta
           const iso = d ? `${year}-${m}-${d}` : null;
           return (
             <CalendarCell
-              key={idx}
+              key={iso ?? `blank-${idx}`}
               day={day}
               isToday={iso === todayISO}
               isSelected={iso === selectedDate}

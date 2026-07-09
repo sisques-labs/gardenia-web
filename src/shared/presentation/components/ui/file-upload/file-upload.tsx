@@ -46,6 +46,8 @@ const FileUpload = ({ className, accept, multiple, maxSizeMB, onChange, ref, ...
   return (
     <div
       ref={ref}
+      role="button"
+      tabIndex={0}
       className={cn(
         'flex flex-col items-center justify-center gap-2 rounded-md border border-dashed border-[var(--rule)] p-6 text-sm text-[var(--ink-3)] transition-colors cursor-pointer',
         dragging && 'border-[var(--forest)] bg-[var(--forest-bg)]',
@@ -55,6 +57,12 @@ const FileUpload = ({ className, accept, multiple, maxSizeMB, onChange, ref, ...
       onDragLeave={() => setDragging(false)}
       onDrop={handleDrop}
       onClick={() => inputRef.current?.click()}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          inputRef.current?.click();
+        }
+      }}
       {...props}
     >
       <input
@@ -62,6 +70,7 @@ const FileUpload = ({ className, accept, multiple, maxSizeMB, onChange, ref, ...
         type="file"
         accept={accept}
         multiple={multiple}
+        aria-label="Upload files"
         className="sr-only"
         onChange={handleChange}
         onClick={(e) => e.stopPropagation()}

@@ -5,89 +5,32 @@ type Props = { dict: AppDict['auth']['brandPanel'] };
 
 export function AuthBrandPanel({ dict }: Props) {
   return (
-    <div
-      style={{
-        width: '560px',
-        flexShrink: 0,
-        minHeight: '100vh',
-        background:
-          'linear-gradient(160deg, var(--forest) 0%, oklch(0.34 0.06 150) 60%, oklch(0.30 0.05 160) 100%)',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        padding: '48px 40px',
-        gap: 32,
-        position: 'relative',
-        overflow: 'hidden',
-      }}
-    >
+    <div className="w-[560px] shrink-0 min-h-screen bg-[linear-gradient(160deg,var(--forest)_0%,oklch(0.34_0.06_150)_60%,oklch(0.30_0.05_160)_100%)] flex flex-col items-center justify-center py-12 px-10 gap-8 relative overflow-hidden">
       {/* Grain overlay */}
-      <div
-        className="paper-grain"
-        aria-hidden="true"
-        style={{
-          position: 'absolute',
-          inset: 0,
-          opacity: 0.08,
-          pointerEvents: 'none',
-        }}
-      />
+      <div className="paper-grain absolute inset-0 opacity-[0.08] pointer-events-none" aria-hidden="true" />
 
       {/* Logo */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, zIndex: 1 }}>
-        <span
-          style={{
-            fontSize: '28px',
-            fontFamily: 'var(--serif)',
-            fontWeight: 600,
-            color: 'var(--paper)',
-            letterSpacing: '-0.5px',
-          }}
-        >
+      <div className="flex items-center gap-2.5 z-10">
+        <span className="text-[28px] font-[var(--serif)] font-semibold text-[var(--paper)] tracking-[-0.5px]">
           Gardenia
         </span>
-        <span
-          className="eyebrow"
-          style={{ color: 'oklch(0.72 0.07 145)', fontSize: '10px' }}
-        >
+        <span className="eyebrow text-[oklch(0.72_0.07_145)] text-xs">
           {dict.tagline}
         </span>
       </div>
 
       {/* Notebook illustration */}
-      <div style={{ zIndex: 1 }}>
+      <div className="z-10">
         <AuthNotebook />
       </div>
 
       {/* Quote */}
-      <blockquote
-        style={{
-          fontFamily: 'var(--serif)',
-          fontStyle: 'italic',
-          fontSize: '20px',
-          color: 'oklch(0.90 0.02 80)',
-          textAlign: 'center',
-          margin: 0,
-          maxWidth: '360px',
-          lineHeight: 1.45,
-          zIndex: 1,
-        }}
-      >
+      <blockquote className="font-[var(--serif)] italic text-xl text-[oklch(0.90_0.02_80)] text-center m-0 max-w-[360px] leading-[1.45] z-10">
         {dict.quote}
       </blockquote>
 
       {/* OSS stats */}
-      <p
-        style={{
-          fontFamily: 'var(--mono)',
-          fontSize: '11px',
-          color: 'oklch(0.72 0.07 145)',
-          margin: 0,
-          zIndex: 1,
-          letterSpacing: '0.03em',
-        }}
-      >
+      <p className="font-[var(--mono)] text-xs text-[oklch(0.72_0.07_145)] m-0 z-10 tracking-[0.03em]">
         {dict.stats}
       </p>
     </div>

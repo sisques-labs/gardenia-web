@@ -67,7 +67,7 @@ vi.mock(
 
 const mockQrDownload = vi.fn();
 vi.mock(
-  "@/core/plants/presentation/hooks/use-qr-download/use-qr-download.hook",
+  "@/shared/presentation/hooks/use-qr-download/use-qr-download.hook",
   () => ({
     useQrDownload: () => ({ download: mockQrDownload }),
   }),
@@ -510,7 +510,7 @@ describe("PlantDetailScreen", () => {
       />,
     );
 
-    expect(screen.getByTestId("plant-qr-card")).toBeInTheDocument();
+    expect(screen.getByTestId("qr-card")).toBeInTheDocument();
     expect(screen.getByTestId("qr-image")).toHaveAttribute(
       "src",
       "data:image/png;base64,base64data",
@@ -565,7 +565,7 @@ describe("PlantDetailScreen", () => {
       />,
     );
 
-    expect(screen.queryByTestId("plant-qr-card")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("qr-card")).not.toBeInTheDocument();
   });
 
   it("renders placeholder image when plant.imageUrl is null", () => {

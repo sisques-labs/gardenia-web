@@ -37,6 +37,7 @@ const StarRating = ({ className, value = 0, onChange, readOnly = false, max = 5,
         <button
           key={i}
           type="button"
+          aria-label={`Rate ${starValue} star${starValue === 1 ? '' : 's'}`}
           data-filled={isFilled ? 'true' : 'false'}
           onClick={() => onChange?.(starValue)}
           className={cn(

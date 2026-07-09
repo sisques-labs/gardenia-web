@@ -38,4 +38,16 @@ describe('FileUpload', () => {
     const { container } = render(<FileUpload className="border-2" />);
     expect(container.firstChild).toHaveClass('border-2');
   });
+
+  it('drop zone exposes an interactive role for keyboard/screen-reader users', () => {
+    const { container } = render(<FileUpload />);
+    expect(container.firstChild).toHaveAttribute('role', 'button');
+    expect(container.firstChild).toHaveAttribute('tabindex', '0');
+  });
+
+  it('file input has an accessible label', () => {
+    const { container } = render(<FileUpload />);
+    const input = container.querySelector('input[type="file"]') as HTMLInputElement;
+    expect(input).toHaveAccessibleName();
+  });
 });

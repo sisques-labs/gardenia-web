@@ -8,7 +8,7 @@ export function AuthLegal({ children }: AuthLegalProps) {
   return (
     <p
       style={{
-        fontSize: '11px',
+        fontSize: '12px',
         color: 'var(--ink-3)',
         textAlign: 'center',
         margin: 0,
