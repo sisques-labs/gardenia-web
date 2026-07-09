@@ -6,32 +6,24 @@ describe('getAuthenticatedImageUrl', () => {
     expect(getAuthenticatedImageUrl(undefined, 'token-123', 'space-1')).toBeUndefined();
   });
 
-  it('routes a protected /api/files/*/content url through the image proxy with token and space', () => {
+  it('routes a protected /api/files/{id}/content url through the image proxy by id', () => {
     const result = getAuthenticatedImageUrl(
       'http://localhost:3000/api/files/abc-123/content',
       'token-123',
       'space-1',
     );
 
-    expect(result).toBe(
-      '/api/image-proxy?url=' +
-        encodeURIComponent('http://localhost:3000/api/files/abc-123/content') +
-        '&token=token-123&spaceId=space-1',
-    );
+    expect(result).toBe('/api/image-proxy/abc-123?token=token-123&spaceId=space-1');
   });
 
-  it('routes a protected /files/*/content url (no /api prefix) through the image proxy', () => {
+  it('routes a protected /files/{id}/content url (no /api prefix) through the image proxy', () => {
     const result = getAuthenticatedImageUrl(
-      'http://localhost:3000/files/abc-123/content',
+      'http://gardenia-api.jsisques.net/files/abc-123/content',
       'token-123',
       'space-1',
     );
 
-    expect(result).toBe(
-      '/api/image-proxy?url=' +
-        encodeURIComponent('http://localhost:3000/files/abc-123/content') +
-        '&token=token-123&spaceId=space-1',
-    );
+    expect(result).toBe('/api/image-proxy/abc-123?token=token-123&spaceId=space-1');
   });
 
   it('omits the token param when there is no access token', () => {
@@ -41,11 +33,7 @@ describe('getAuthenticatedImageUrl', () => {
       'space-1',
     );
 
-    expect(result).toBe(
-      '/api/image-proxy?url=' +
-        encodeURIComponent('http://localhost:3000/api/files/abc-123/content') +
-        '&spaceId=space-1',
-    );
+    expect(result).toBe('/api/image-proxy/abc-123?spaceId=space-1');
   });
 
   it('omits the spaceId param when there is no current space', () => {
@@ -55,11 +43,7 @@ describe('getAuthenticatedImageUrl', () => {
       null,
     );
 
-    expect(result).toBe(
-      '/api/image-proxy?url=' +
-        encodeURIComponent('http://localhost:3000/api/files/abc-123/content') +
-        '&token=token-123',
-    );
+    expect(result).toBe('/api/image-proxy/abc-123?token=token-123');
   });
 
   it('passes through a non-protected url unchanged', () => {
