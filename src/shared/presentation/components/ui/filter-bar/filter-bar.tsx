@@ -59,6 +59,8 @@ export interface FilterBarProps {
   className?: string;
 }
 
+const EMPTY_CHIPS: ActiveFilter[] = [];
+
 function selectTriggerLabel(filter: Extract<FilterDescriptor, { type: 'select' }>): string {
   if (filter.selected.length === 0) return filter.allLabel;
   if (filter.selected.length === 1) {
@@ -67,7 +69,7 @@ function selectTriggerLabel(filter: Extract<FilterDescriptor, { type: 'select' }
   return `${filter.selected.length} ${filter.selectedSuffix}`;
 }
 
-const FilterBar = ({ filters, chips = [], onRemoveChip, className, ref }: FilterBarProps) => (
+const FilterBar = ({ filters, chips = EMPTY_CHIPS, onRemoveChip, className, ref }: FilterBarProps) => (
   <div ref={ref} className={cn('flex flex-col gap-3', className)}>
     <div className="flex flex-wrap items-center gap-4">
       {filters.map((filter) => {
