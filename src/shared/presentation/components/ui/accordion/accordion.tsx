@@ -28,10 +28,12 @@ const Accordion = ({ className, items, mode = 'single', defaultOpen = [], ref, .
     });
   };
 
+  const openSet = React.useMemo(() => new Set(openItems), [openItems]);
+
   return (
     <div ref={ref} className={cn('flex flex-col divide-y divide-[var(--rule)]', className)} {...props}>
       {items.map((item) => {
-        const isOpen = openItems.includes(item.id);
+        const isOpen = openSet.has(item.id);
         const triggerId = `accordion-trigger-${item.id}`;
         const contentId = `accordion-content-${item.id}`;
 

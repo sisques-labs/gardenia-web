@@ -59,4 +59,4 @@ const Alert = ({ className, variant = 'info', message, title, ref, ...props }: A
 
 Alert.displayName = 'Alert';
 
-export { Alert, alertVariants };
+export { Alert };

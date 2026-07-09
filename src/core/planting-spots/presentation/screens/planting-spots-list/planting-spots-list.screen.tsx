@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { PlantingSpotCard } from '@/core/planting-spots/presentation/components/planting-spot-card/planting-spot-card';
 import { usePlantingSpots } from '@/core/planting-spots/presentation/hooks/use-planting-spots/use-planting-spots.hook';
-import { buttonVariants } from '@/shared/presentation/components/ui/button/button';
+import { buttonVariants } from '@/shared/presentation/components/ui/button/button-variants';
 import { PlantingSpotsListSkeleton } from '@/core/planting-spots/presentation/components/planting-spots-list-skeleton/planting-spots-list-skeleton';
 import { Pagination } from '@/shared/presentation/components/ui/pagination/pagination';
 import { useUrlPage } from '@/shared/presentation/hooks/use-url-page/use-url-page.hook';
