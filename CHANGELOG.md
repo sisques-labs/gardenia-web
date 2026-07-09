@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.29.1] - 2026-07-09
+
+### Bug Fixes
+- **image-proxy:** Resolve upstream via INTERNAL_API_URL instead of a host allowlist (cb7183d)
 ## [0.29.0] - 2026-07-09
 
 ### Bug Fixes
