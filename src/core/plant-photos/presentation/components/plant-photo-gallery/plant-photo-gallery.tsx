@@ -24,13 +24,8 @@ export function PlantPhotoGallery({ plantId, dict }: Props) {
   const accessToken = useAuthStore((s) => s.accessToken);
   const currentSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const { data: photos = [] } = usePlantPhotos(plantId);
-  const { uploadFiles, isUploading, uploadFailed } = usePlantPhotoUpload(plantId);
+  const { uploadFiles, isUploading, uploadFailed } = usePlantPhotoUpload(plantId, inputRef);
   const deletePhoto = useDeletePlantPhoto(plantId);
-
-  async function handleFilesSelected(files: FileList | null) {
-    await uploadFiles(files);
-    if (inputRef.current) inputRef.current.value = '';
-  }
 
   return (
     <div className="flex flex-col gap-2">
@@ -41,7 +36,7 @@ export function PlantPhotoGallery({ plantId, dict }: Props) {
         multiple
         hidden
         data-testid="plant-photo-input"
-        onChange={(e) => handleFilesSelected(e.target.files)}
+        onChange={(e) => uploadFiles(e.target.files)}
       />
       <Button
         variant="outline"

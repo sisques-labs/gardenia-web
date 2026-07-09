@@ -82,4 +82,31 @@ describe('usePlantPhotoUpload', () => {
     });
     expect(result.current.uploadFailed).toBe(false);
   });
+
+  it('clears the given input ref after a successful upload', async () => {
+    mockMutateAsync.mockResolvedValue(undefined);
+    const fileA = new File(['a'], 'a.png', { type: 'image/png' });
+    const fileList = { 0: fileA, length: 1, item: () => null } as unknown as FileList;
+    const inputRef = { current: { value: 'C:\\fakepath\\a.png' } as HTMLInputElement };
+
+    const { result } = renderHook(() => usePlantPhotoUpload('plant-1', inputRef));
+
+    await act(async () => {
+      await result.current.uploadFiles(fileList);
+    });
+
+    expect(inputRef.current.value).toBe('');
+  });
+
+  it('does not touch the input ref when there are no files', async () => {
+    const inputRef = { current: { value: 'C:\\fakepath\\a.png' } as HTMLInputElement };
+
+    const { result } = renderHook(() => usePlantPhotoUpload('plant-1', inputRef));
+
+    await act(async () => {
+      await result.current.uploadFiles(null);
+    });
+
+    expect(inputRef.current.value).toBe('C:\\fakepath\\a.png');
+  });
 });

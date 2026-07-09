@@ -1,7 +1,10 @@
-import { useState } from 'react';
+import { useState, type RefObject } from 'react';
 import { useUploadPlantPhoto } from '@/core/plant-photos/presentation/hooks/use-upload-plant-photo/use-upload-plant-photo.hook';
 
-export function usePlantPhotoUpload(plantId: string) {
+export function usePlantPhotoUpload(
+  plantId: string,
+  inputRef?: RefObject<HTMLInputElement | null>,
+) {
   const uploadPhoto = useUploadPlantPhoto(plantId);
   const [uploadFailed, setUploadFailed] = useState(false);
 
@@ -16,6 +19,7 @@ export function usePlantPhotoUpload(plantId: string) {
     if (results.some((result) => result.status === 'rejected')) {
       setUploadFailed(true);
     }
+    if (inputRef?.current) inputRef.current.value = '';
   }
 
   return { uploadFiles, isUploading: uploadPhoto.isPending, uploadFailed };
