@@ -10,6 +10,8 @@ import { PlantDetailSkeleton } from "@/core/plants/presentation/components/plant
 import { PlantPlantingSpotField } from "@/core/plants/presentation/components/plant-planting-spot-field/plant-planting-spot-field";
 import { useDeletePlant } from "@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook";
 import { usePlant } from "@/core/plants/presentation/hooks/use-plant/use-plant.hook";
+import { useQrDownload } from "@/shared/presentation/hooks/use-qr-download/use-qr-download.hook";
+import { QrCard } from "@/shared/presentation/components/qr-card/qr-card";
 import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store";
 import { formatRelativeTime } from "@/shared/lib/format-relative-time";
 import { formatShortDate } from "@/shared/presentation/utils/format-short-date.util";
@@ -52,6 +54,7 @@ export function PlantDetailScreen({
   const { data: lastCareByType = {} } = usePlantCareLogs(plantId);
   const deletePlant = useDeletePlant(spaceId);
   const waterPlant = useWaterPlant();
+  const qrDownload = useQrDownload();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
   const [isEditOpen, setIsEditOpen] = useState(false);
 
@@ -222,43 +225,14 @@ export function PlantDetailScreen({
 
               {/* QR — rendered like the printable pot tag it actually is */}
               {plant.qr && (
-                <div
-                  data-testid="plant-qr-card"
-                  className="relative w-full lg:w-52 -rotate-2 hover:rotate-0 transition-transform duration-300 rounded-2xl border-2 border-dashed border-[var(--rule)] bg-[var(--paper-2)] px-5 py-6 flex flex-col items-center gap-3 shadow-sm"
-                >
-                  <span
-                    aria-hidden="true"
-                    className="absolute -top-2.5 left-1/2 -translate-x-1/2 h-3 w-3 rounded-full border border-[var(--rule)] bg-[var(--paper)]"
-                  />
-                  <p className="eyebrow text-center">{dict.detail.qr.label}</p>
-                  <Image
-                    data-testid="qr-image"
-                    src={`data:image/png;base64,${plant.qr.image}`}
-                    alt="QR"
-                    width={96}
-                    height={96}
-                    unoptimized
-                    className="w-24 h-24 rounded-md ring-1 ring-[var(--rule)] bg-[var(--white)] p-1.5"
-                  />
-                  <p
-                    data-testid="qr-code"
-                    className="text-xs text-center text-muted-foreground font-mono"
-                  >
-                    {plant.qr.id}
-                  </p>
-                  <p className="text-xs text-center text-muted-foreground">
-                    {dict.detail.qr.hint}
-                  </p>
-                  <Button
-                    disabled
-                    variant="ghost"
-                    size="sm"
-                    data-testid="qr-download-btn"
-                    className="text-xs text-[var(--forest)] w-full"
-                  >
-                    {dict.detail.qr.download}
-                  </Button>
-                </div>
+                <QrCard
+                  image={plant.qr.image}
+                  code={plant.qr.id}
+                  label={dict.detail.qr.label}
+                  hint={dict.detail.qr.hint}
+                  downloadLabel={dict.detail.qr.download}
+                  onDownload={() => qrDownload.download(plant.name, plant.qr)}
+                />
               )}
             </div>
           </CardContent>
