@@ -28,11 +28,13 @@ const dict = {
     dimensionsHeight: 'Alto (opcional)',
     dimensionsLength: 'Largo (opcional)',
     soilType: 'Tipo de suelo (opcional)',
+    soilTypePlaceholder: 'Ej: franco, arenoso…',
     save: 'Guardar',
     saving: 'Guardando…',
     delete: 'Eliminar',
     deleteConfirm: '¿Estás seguro de que quieres eliminar esta zona de cultivo?',
     cancel: 'Cancelar',
+    error: 'No se ha podido guardar la zona de cultivo. Inténtalo de nuevo.',
   },
   detail: {
     tabActivePlants: 'Plantas activas',
@@ -66,6 +68,9 @@ const dict = {
     waterSpotWatered: 'regadas',
     waterSpotFailed: 'fallidas',
     waterSpotError: 'No se ha podido regar el bancal. Inténtalo de nuevo.',
+    plantColumn: 'Planta',
+    addedColumn: 'Añadida',
+    viewPlant: 'Ver',
     qr: {
       label: 'Etiqueta · QR',
       hint: 'Imprime y pégalo en la maceta o zona de cultivo',

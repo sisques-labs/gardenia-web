@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import { vi, describe, it, expect, beforeEach } from 'vitest';
 import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
 
@@ -12,9 +12,11 @@ vi.mock('@/core/planting-spots/presentation/components/planting-spot-card/planti
   ),
 }));
 
-vi.mock('next/link', () => ({
-  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
+vi.mock('@/core/planting-spots/presentation/components/create-planting-spot-modal/create-planting-spot-modal', () => ({
+  CreatePlantingSpotModal: ({ onClose }: { onClose: () => void }) => (
+    <div data-testid="create-planting-spot-modal">
+      <button onClick={onClose}>Close modal</button>
+    </div>
   ),
 }));
 
@@ -80,11 +82,13 @@ const dict = {
     dimensionsHeight: 'Height (optional)',
     dimensionsLength: 'Length (optional)',
     soilType: 'Soil type (optional)',
+    soilTypePlaceholder: 'e.g. Loamy, Sandy…',
     save: 'Save',
     saving: 'Saving…',
     delete: 'Delete',
     deleteConfirm: 'Are you sure?',
     cancel: 'Cancel',
+    error: 'Could not save the planting spot. Try again.',
   },
   detail: {
     tabActivePlants: 'Active plants',
@@ -118,6 +122,9 @@ const dict = {
     waterSpotWatered: 'watered',
     waterSpotFailed: 'failed',
     waterSpotError: 'Could not water the spot. Try again.',
+    plantColumn: 'Plant',
+    addedColumn: 'Added',
+    viewPlant: 'View',
     qr: {
       label: 'Label · QR',
       hint: 'Print and stick on the pot or spot',
@@ -186,12 +193,30 @@ describe('PlantingSpotsListScreen', () => {
     expect(screen.getByText('Herb Pot')).toBeInTheDocument();
   });
 
-  it('renders new planting spot button with correct href', () => {
+  it('does not render the create modal by default', () => {
     vi.mocked(usePlantingSpots).mockReturnValue({ spots: [], total: 0, totalPages: 1, currentPage: 1, isLoading: false, error: null });
 
     render(<PlantingSpotsListScreen dict={dict} lang="en" />);
 
-    const link = screen.getByRole('link', { name: 'New planting spot' });
-    expect(link).toHaveAttribute('href', '/en/planting-spots/new');
+    expect(screen.queryByTestId('create-planting-spot-modal')).not.toBeInTheDocument();
+  });
+
+  it('opens the create modal when "New planting spot" button is clicked', () => {
+    vi.mocked(usePlantingSpots).mockReturnValue({ spots: [], total: 0, totalPages: 1, currentPage: 1, isLoading: false, error: null });
+
+    render(<PlantingSpotsListScreen dict={dict} lang="en" />);
+    fireEvent.click(screen.getByRole('button', { name: 'New planting spot' }));
+
+    expect(screen.getByTestId('create-planting-spot-modal')).toBeInTheDocument();
+  });
+
+  it('closes the create modal when it calls onClose', () => {
+    vi.mocked(usePlantingSpots).mockReturnValue({ spots: [], total: 0, totalPages: 1, currentPage: 1, isLoading: false, error: null });
+
+    render(<PlantingSpotsListScreen dict={dict} lang="en" />);
+    fireEvent.click(screen.getByRole('button', { name: 'New planting spot' }));
+    fireEvent.click(screen.getByText('Close modal'));
+
+    expect(screen.queryByTestId('create-planting-spot-modal')).not.toBeInTheDocument();
   });
 });
