@@ -8,6 +8,7 @@ import { cn } from '@/shared/lib/utils';
 export interface LightboxPhoto {
   src: string;
   alt: string;
+  caption?: string;
 }
 
 export interface LightboxProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -56,6 +57,10 @@ const Lightbox = ({ className, photos, initialIndex = 0, open, onClose, ref, ...
           unoptimized
           className="h-auto w-auto max-h-[80vh] max-w-full rounded"
         />
+
+        {photo.caption && (
+          <p className="mt-2 text-center text-sm text-white/80">{photo.caption}</p>
+        )}
 
         {/* Close button */}
         <button

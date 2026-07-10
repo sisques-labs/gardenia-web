@@ -254,6 +254,7 @@ const photosDict = {
   uploadError: "Could not upload the photo. Try again.",
   deletePhoto: "Delete photo",
   deleteError: "Could not delete the photo. Try again.",
+  uploadedOn: "Uploaded on",
 };
 
 describe("PlantDetailScreen", () => {
