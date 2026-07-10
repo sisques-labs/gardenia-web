@@ -1,6 +1,13 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.29.2] - 2026-07-10
+
+### Bug Fixes
+- **storybook:** Freeze the clock in Storybook to stop Chromatic drift (fc7761f)
+
+### Documentation
+- Add Docker Hub description for gardenia-web (6d3647a)
 ## [0.29.1] - 2026-07-09
 
 ### Bug Fixes
