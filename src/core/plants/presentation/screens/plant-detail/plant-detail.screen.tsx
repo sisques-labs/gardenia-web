@@ -242,7 +242,7 @@ export function PlantDetailScreen({
                   <Alert variant="error" message={dict.delete.error} />
                 )}
 
-                <PlantPhotoGallery plantId={plantId} dict={photosDict} />
+                <PlantPhotoGallery plantId={plantId} lang={lang} dict={photosDict} />
               </div>
 
               {/* QR — rendered like the printable pot tag it actually is */}
