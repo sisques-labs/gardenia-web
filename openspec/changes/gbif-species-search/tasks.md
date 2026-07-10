@@ -1,0 +1,110 @@
+# Tasks: gbif-species-search (web)
+
+## Phase 1: Domain + application
+
+- [ ] 1.1 Update `domain/interfaces/plant.interface.ts`: remove `PlantSpecies`
+      interface, `plantSpeciesId`, `species` from `Plant`; add
+      `gbifSpeciesKey: number | null`, `speciesScientificName: string | null`.
+- [ ] 1.2 Create `domain/interfaces/gbif-species-suggestion.interface.ts`:
+      `GbifSpeciesSuggestion { gbifSpeciesKey: number; scientificName: string }`.
+- [ ] 1.3 Update `application/interfaces/create-plant-input.interface.ts` and
+      `update-plant-input.interface.ts`: replace `plantSpeciesId?` with
+      `gbifSpeciesKey?: number | null`, `speciesScientificName?: string | null`.
+- [ ] 1.4 Update `application/ports/plants.repository.port.ts`: add
+      `searchSpecies(name: string, limit?: number): Promise<GbifSpeciesSuggestion[]>`.
+- [ ] 1.5 Create `application/use-cases/search-species/search-species.use-case.ts`
+      (`SearchSpeciesUseCase`, constructor takes `IPlantsRepository`) +
+      `search-species.use-case.spec.ts` (RED then GREEN: happy path, empty
+      result, propagates repository error).
+
+## Phase 2: Infrastructure (GraphQL)
+
+- [ ] 2.1 Create `infrastructure/repositories/graphql/queries/gbif-species-search.query.ts`
+      — gql document for `gbifSpeciesSearch(input: { name, limit })` matching
+      the api's new query shape (`gbifKey`/`scientificName` per result).
+- [ ] 2.2 Update `queries/plant-find-by-id.query.ts` and
+      `queries/plants-find-by-criteria.query.ts`: remove the nested
+      `species { id scientificName description imageUrl createdAt updatedAt }`
+      selection; add `gbifSpeciesKey`, `speciesScientificName` as plain
+      scalar fields.
+- [ ] 2.3 Update `mutations/create-plant.mutation.ts` and
+      `mutations/update-plant.mutation.ts`: input field swap
+      (`plantSpeciesId` → `gbifSpeciesKey`/`speciesScientificName`).
+- [ ] 2.4 Update `infrastructure/repositories/graphql/plants.gql.repository.ts`
+      (+ spec, extend `plants.gql.repository.spec.ts`): implement
+      `searchSpecies` (mock `apolloClient.query` per existing pattern); update
+      `create`/`update`/`list`/`getById` mappings for the field swap.
+
+## Phase 3: Presentation — search hook + combobox
+
+- [ ] 3.1 Create `presentation/hooks/use-species-search/useSpeciesSearch.hook.ts`
+      + co-located spec: debounces raw query via the shared
+      `useDebouncedValue(value, 300)`, calls `SearchSpeciesUseCase`, `enabled`
+      guard for short queries, `retry: false`, exposes `data`/`isLoading`/`isError`.
+- [ ] 3.2 Create `presentation/components/species-combobox/species-combobox.tsx`
+      (controlled `value`/`onChange` of `{ gbifSpeciesKey, scientificName } |
+      null`, built on `cmdk` `Command` primitives) + `.test.tsx` (RED then
+      GREEN: renders results, selection fires `onChange`, loading/empty/error
+      states) + `species-combobox.stories.tsx` (seed `useSpeciesSearch`'s
+      TanStack Query cache via `queryClient.setQueryData`, per the mandatory
+      hook-backed-component storybook convention — do not mock the hook).
+
+## Phase 4: Wire into forms
+
+- [ ] 4.1 Update `presentation/schemas/create-plant.schema.ts` (and the edit
+      schema, if separate): add optional
+      `species: z.object({ gbifSpeciesKey: z.number(), scientificName: z.string() }).nullable().optional()`.
+- [ ] 4.2 Update `presentation/hooks/use-create-plant-form/use-create-plant-form.hook.ts`:
+      destructure `species` into flat `gbifSpeciesKey`/`speciesScientificName`
+      when calling `createPlant`.
+- [ ] 4.3 Update `presentation/hooks/use-edit-plant-form/use-edit-plant-form.hook.ts`:
+      same destructuring for `updatePlant`; pre-fill the combobox's initial
+      value from the plant's current `speciesScientificName`/`gbifSpeciesKey`
+      when opening the edit modal.
+- [ ] 4.4 Update `presentation/components/create-plant-modal/create-plant-modal.tsx`
+      and `edit-plant-modal/edit-plant-modal.tsx`: wire `SpeciesCombobox` via
+      `Controller` (React Hook Form) as the new `species` field, alongside the
+      existing `name`/`imageUrl` inputs. Extend their `.test.tsx` files.
+
+## Phase 5: Read-side updates
+
+- [ ] 5.1 Update `presentation/components/plant-card/plant-card.tsx` (+ test):
+      read `plant.speciesScientificName` instead of `plant.species?.name`,
+      same fallback.
+- [ ] 5.2 Update `presentation/screens/plant-detail/plant-detail.screen.tsx`
+      (+ test): same field-path change.
+- [ ] 5.3 Grep the repo for any other `.species` / `plantSpeciesId` reference
+      in `gardenia-web` (e.g. `planting-spot-plant` type if the web mirrors
+      it) and update.
+
+## Phase 6: i18n
+
+- [ ] 6.1 Add `plants.speciesSearch.{label,placeholder,noResults,unavailable}`
+      to `presentation/i18n/en.ts` and `es.ts` (Castellano de España, tuteo,
+      no voseo/latinoamericanismos).
+- [ ] 6.2 Confirm `i18n-parity.test.ts` (existing, `plants` module) passes
+      with the new keys.
+
+## Phase 7: Verification
+
+- [ ] 7.1 `pnpm lint` clean.
+- [ ] 7.2 `pnpm tsc --noEmit` clean.
+- [ ] 7.3 `pnpm test` — full unit suite green, including all new/updated specs
+      above.
+- [ ] 7.4 `pnpm test:coverage` — confirm no regression.
+- [ ] 7.5 Confirm Storybook builds (`species-combobox.stories.tsx` renders).
+- [ ] 7.6 Manual smoke check against a running api (once the paired api
+      change is deployed to a reachable environment): create a plant with a
+      searched species, edit it to change the species, confirm plant
+      card/detail render the chosen name.
+
+## Sequencing note
+
+Phases 1–2 (domain/application/infrastructure field rename) should not be
+merged ahead of the paired `gardenia-api` `gbif-species-search` change
+reaching an environment this app points at — see proposal.md's Rollback
+section. Phases 3–6 (new search UI) have no hard dependency on the schema
+rename and could theoretically ship independently, but splitting them
+further is not recommended: the combobox is useless without somewhere to
+plug its output into, and the field rename is meaningless without the UI to
+set it.
