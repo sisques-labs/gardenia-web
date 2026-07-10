@@ -11,12 +11,8 @@ const mockPlant: Plant = {
   id: "plant-1",
   name: "Tomate cherry",
   species: {
-    id: "sp1",
+    gbifKey: 8879946,
     scientificName: "Solanum lycopersicum var. cerasiforme",
-    description: null,
-    imageUrl: null,
-    createdAt: "2026-01-01",
-    updatedAt: "2026-01-01",
   },
   userId: "u1",
   spaceId: "space-1",

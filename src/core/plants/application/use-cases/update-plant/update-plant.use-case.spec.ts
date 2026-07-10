@@ -9,6 +9,7 @@ describe('UpdatePlantUseCase', () => {
     create: vi.fn(),
     update: vi.fn().mockResolvedValue({ id: 'plant-1' }),
     delete: vi.fn(),
+    searchSpecies: vi.fn(),
   };
 
   it('delegates to repository.update and returns the updated id', async () => {

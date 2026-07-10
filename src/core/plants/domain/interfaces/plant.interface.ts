@@ -1,10 +1,6 @@
 export interface PlantSpecies {
-  id: string;
+  gbifKey: number | null;
   scientificName: string;
-  description: string | null;
-  imageUrl: string | null;
-  createdAt: string;
-  updatedAt: string;
 }
 
 export interface PlantQr {

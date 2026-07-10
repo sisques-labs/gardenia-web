@@ -14,6 +14,7 @@ import { PLANTS_FIND_BY_CRITERIA } from './queries/plants-find-by-criteria.query
 import { PLANT_FIND_BY_ID } from './queries/plant-find-by-id.query';
 import { PLANT_CREATE } from './mutations/plant-create.mutation';
 import { PLANT_UPDATE } from './mutations/plant-update.mutation';
+import { GBIF_SPECIES_SEARCH } from './queries/gbif-species-search.query';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
 
 const mockPlants: Plant[] = [
@@ -40,7 +41,7 @@ const mockPlant: Plant = {
   name: 'Monstera',
   userId: 'user-1',
   spaceId: 'space-1',
-  species: { id: 'species-1', scientificName: 'Monstera deliciosa', description: null, imageUrl: null, createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+  species: { gbifKey: 2882337, scientificName: 'Monstera deliciosa' },
   imageUrl: 'https://example.com/monstera.jpg',
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
@@ -73,6 +74,11 @@ describe('PlantsGqlRepository', () => {
     it('PLANT_UPDATE is a valid GQL document', () => {
       expect(PLANT_UPDATE).toBeDefined();
       expect((PLANT_UPDATE as DocumentNode).kind).toBe('Document');
+    });
+
+    it('GBIF_SPECIES_SEARCH is a valid GQL document', () => {
+      expect(GBIF_SPECIES_SEARCH).toBeDefined();
+      expect((GBIF_SPECIES_SEARCH as DocumentNode).kind).toBe('Document');
     });
   });
 
@@ -208,6 +214,35 @@ describe('PlantsGqlRepository', () => {
     it('propagates errors from apolloClient.mutate', async () => {
       vi.mocked(apolloClient.mutate).mockRejectedValue(new Error('Network error'));
       await expect(repository.update({ id: 'plant-1', name: 'Renamed' })).rejects.toThrow('Network error');
+    });
+  });
+
+  describe('searchSpecies()', () => {
+    it('calls apolloClient.query with GBIF_SPECIES_SEARCH and returns the suggestions', async () => {
+      vi.mocked(apolloClient.query).mockResolvedValue({
+        data: { gbifSpeciesSearch: [{ gbifKey: 2882337, scientificName: 'Monstera deliciosa' }] },
+      } as never);
+
+      const result = await repository.searchSpecies('Monstera', 10);
+
+      expect(apolloClient.query).toHaveBeenCalledWith({
+        query: GBIF_SPECIES_SEARCH,
+        variables: { input: { name: 'Monstera', limit: 10 } },
+        fetchPolicy: 'network-only',
+      });
+      expect(result).toEqual([{ gbifKey: 2882337, scientificName: 'Monstera deliciosa' }]);
+    });
+
+    it('returns an empty array when data is missing', async () => {
+      vi.mocked(apolloClient.query).mockResolvedValue({ data: undefined } as never);
+
+      const result = await repository.searchSpecies('zzz');
+      expect(result).toEqual([]);
+    });
+
+    it('propagates errors from apolloClient.query', async () => {
+      vi.mocked(apolloClient.query).mockRejectedValue(new Error('Network error'));
+      await expect(repository.searchSpecies('Monstera')).rejects.toThrow('Network error');
     });
   });
 });
