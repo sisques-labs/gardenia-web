@@ -1,6 +1,16 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.30.0] - 2026-07-10
+
+### Documentation
+- **plant-photos:** Propose plant-photo-timeline change for GDN-38 (1023e19)
+- **openspec:** Propose gbif-species-search change (GDN-35) (ce3b724)
+- **openspec:** Revise gbif-species-search read-side for kept catalog (f7927ba)
+
+### Features
+- **plant-photos:** View photo history in a full-size lightbox (3de760b)
+- **plants:** Add GBIF species autocomplete to create/edit plant forms (ef33428)
 ## [0.29.2] - 2026-07-10
 
 ### Bug Fixes
