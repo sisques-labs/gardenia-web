@@ -4,10 +4,12 @@ import type { CreatePlantInput } from '@/core/plants/application/interfaces/crea
 import type { UpdatePlantInput } from '@/core/plants/application/interfaces/update-plant-input.interface';
 import type { PlantListCriteria } from '@/core/plants/application/interfaces/plant-list-criteria.interface';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
+import type { GbifSpeciesSuggestion } from '@/core/plants/domain/interfaces/gbif-species-suggestion.interface';
 import type { CreatedEntity } from '@/shared/domain/interfaces/created-entity.interface';
 import type { PaginatedResult } from '@/shared/domain/interfaces/paginated-result.interface';
 import { PLANTS_FIND_BY_CRITERIA } from './queries/plants-find-by-criteria.query';
 import { PLANT_FIND_BY_ID } from './queries/plant-find-by-id.query';
+import { GBIF_SPECIES_SEARCH } from './queries/gbif-species-search.query';
 import { PLANT_CREATE } from './mutations/plant-create.mutation';
 import { PLANT_UPDATE } from './mutations/plant-update.mutation';
 import { PLANT_DELETE } from './mutations/plant-delete.mutation';
@@ -15,6 +17,7 @@ import type { PlantsFindByCriteriaResponse } from './responses/plants-find-by-cr
 import type { PlantFindByIdResponse } from './responses/plant-find-by-id.response';
 import type { PlantCreateResponse } from './responses/plant-create.response';
 import type { PlantUpdateResponse } from './responses/plant-update.response';
+import type { GbifSpeciesSearchResponse } from './responses/gbif-species-search.response';
 
 export class PlantsGqlRepository implements IPlantsRepository {
   async list(criteria?: PlantListCriteria): Promise<PaginatedResult<Plant>> {
@@ -69,6 +72,15 @@ export class PlantsGqlRepository implements IPlantsRepository {
       variables: { input: { id } },
     });
     if (!res.data?.plantDelete?.success) throw new Error('plantDelete mutation failed');
+  }
+
+  async searchSpecies(name: string, limit?: number): Promise<GbifSpeciesSuggestion[]> {
+    const res = await apolloClient.query<GbifSpeciesSearchResponse>({
+      query: GBIF_SPECIES_SEARCH,
+      variables: { input: { name, limit } },
+      fetchPolicy: 'network-only',
+    });
+    return res.data?.gbifSpeciesSearch ?? [];
   }
 }
 

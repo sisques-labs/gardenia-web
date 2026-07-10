@@ -33,6 +33,7 @@ const mockRepository: IPlantsRepository = {
   create: vi.fn(),
   update: vi.fn(),
   delete: vi.fn(),
+  searchSpecies: vi.fn(),
 };
 
 describe('GetPlantsUseCase', () => {

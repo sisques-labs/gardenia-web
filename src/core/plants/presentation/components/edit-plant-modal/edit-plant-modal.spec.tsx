@@ -15,22 +15,29 @@ const dict = {
   submit: 'Save',
   submitting: 'Saving…',
   error: 'Something went wrong',
+  speciesSearch: {
+    label: 'Species',
+    placeholder: 'Search species…',
+    noResults: 'No matches found',
+    unavailable: 'Species search is unavailable right now',
+  },
 };
 
-const plant = { id: 'plant-1', name: 'Monstera', imageUrl: 'https://example.com/img.png' };
+const plant = {
+  id: 'plant-1',
+  name: 'Monstera',
+  imageUrl: 'https://example.com/img.png',
+  species: { gbifKey: 2882337, scientificName: 'Monstera deliciosa' },
+};
 
-const mockOnSubmit = vi.fn((e: React.FormEvent) => e.preventDefault());
+const mockMutate = vi.fn();
 
-vi.mock('@/core/plants/presentation/hooks/use-edit-plant-form/use-edit-plant-form.hook', () => ({
-  useEditPlantForm: () => ({
-    form: {
-      register: vi.fn(() => ({})),
-      formState: { errors: {} },
-    },
-    onSubmit: mockOnSubmit,
-    isPending: false,
-    error: null,
-  }),
+vi.mock('@/core/plants/presentation/hooks/use-update-plant/use-update-plant.hook', () => ({
+  useUpdatePlant: () => ({ mutate: mockMutate, isPending: false, error: null }),
+}));
+
+vi.mock('@/core/plants/presentation/hooks/use-species-search/use-species-search.hook', () => ({
+  useSpeciesSearch: () => ({ data: [], isFetching: false, isError: false }),
 }));
 
 describe('EditPlantModal', () => {
@@ -43,7 +50,13 @@ describe('EditPlantModal', () => {
   it('every visible field label is associated with its control', () => {
     render(<EditPlantModal plant={plant} dict={dict} onClose={vi.fn()} />);
     expect(screen.getByLabelText(dict.name)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.speciesSearch.label)).toBeInTheDocument();
     expect(screen.getByLabelText(dict.imageUrl)).toBeInTheDocument();
+  });
+
+  it('pre-fills the species field with the plant current species', () => {
+    render(<EditPlantModal plant={plant} dict={dict} onClose={vi.fn()} />);
+    expect(screen.getByLabelText(dict.speciesSearch.label)).toHaveValue('Monstera deliciosa');
   });
 
   it('calls onClose when cancel is clicked', async () => {
@@ -54,5 +67,17 @@ describe('EditPlantModal', () => {
     await user.click(screen.getByRole('button', { name: /cancel/i }));
 
     expect(onClose).toHaveBeenCalledOnce();
+  });
+
+  it('resubmitting unchanged keeps the species link', async () => {
+    const user = userEvent.setup();
+    render(<EditPlantModal plant={plant} dict={dict} onClose={vi.fn()} />);
+
+    await user.click(screen.getByRole('button', { name: /save/i }));
+
+    expect(mockMutate).toHaveBeenCalledWith(
+      expect.objectContaining({ gbifSpeciesKey: 2882337, speciesScientificName: 'Monstera deliciosa' }),
+      expect.anything(),
+    );
   });
 });

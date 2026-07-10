@@ -1,4 +1,5 @@
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
+import type { GbifSpeciesSuggestion } from '@/core/plants/domain/interfaces/gbif-species-suggestion.interface';
 import type { CreatePlantInput } from '@/core/plants/application/interfaces/create-plant-input.interface';
 import type { UpdatePlantInput } from '@/core/plants/application/interfaces/update-plant-input.interface';
 import type { PlantListCriteria } from '@/core/plants/application/interfaces/plant-list-criteria.interface';
@@ -13,4 +14,5 @@ export interface IPlantsRepository {
   create(input: CreatePlantInput): Promise<CreatedEntity>;
   update(input: UpdatePlantInput): Promise<CreatedEntity>;
   delete(id: string): Promise<void>;
+  searchSpecies(name: string, limit?: number): Promise<GbifSpeciesSuggestion[]>;
 }
