@@ -46,6 +46,12 @@ const dict = {
     submitting: 'Creando...',
     cancel: 'Cancelar',
     error: 'No se pudo crear la planta. Inténtalo de nuevo.',
+    speciesSearch: {
+      label: 'Especie',
+      placeholder: 'Buscar especie…',
+      noResults: 'No se han encontrado coincidencias',
+      unavailable: 'La búsqueda de especies no está disponible ahora mismo',
+    },
   },
   edit: {
     title: 'Editar planta',
@@ -59,6 +65,12 @@ const dict = {
     submitting: 'Guardando...',
     cancel: 'Cancelar',
     error: 'No se pudo actualizar la planta. Inténtalo de nuevo.',
+    speciesSearch: {
+      label: 'Especie',
+      placeholder: 'Buscar especie…',
+      noResults: 'No se han encontrado coincidencias',
+      unavailable: 'La búsqueda de especies no está disponible ahora mismo',
+    },
   },
   delete: {
     button: 'Eliminar planta',

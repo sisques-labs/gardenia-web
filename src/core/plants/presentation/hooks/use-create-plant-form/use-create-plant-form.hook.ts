@@ -10,9 +10,14 @@ export function useCreatePlantForm(spaceId: string | null, onClose: () => void) 
     resolver: zodResolver(createPlantSchema),
   });
 
-  const onSubmit = form.handleSubmit(({ name, imageUrl }) => {
+  const onSubmit = form.handleSubmit(({ name, imageUrl, species }) => {
     createPlant(
-      { name, imageUrl: imageUrl || undefined },
+      {
+        name,
+        imageUrl: imageUrl || undefined,
+        gbifSpeciesKey: species?.gbifKey,
+        speciesScientificName: species?.scientificName,
+      },
       { onSuccess: onClose },
     );
   });

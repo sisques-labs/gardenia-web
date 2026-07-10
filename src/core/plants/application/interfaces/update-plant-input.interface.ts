@@ -1,7 +1,8 @@
 export interface UpdatePlantInput {
   id: string;
   name?: string;
-  plantSpeciesId?: string | null;
+  gbifSpeciesKey?: number | null;
+  speciesScientificName?: string | null;
   imageUrl?: string | null;
   plantingSpotId?: string | null;
 }

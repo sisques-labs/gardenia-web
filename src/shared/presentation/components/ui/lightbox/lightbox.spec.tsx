@@ -47,4 +47,20 @@ describe('Lightbox', () => {
     const { container } = render(<Lightbox photos={photos} open onClose={() => {}} />);
     expect(container.firstChild).toHaveAttribute('role', 'presentation');
   });
+
+  it('renders the caption when the current photo has one', () => {
+    render(
+      <Lightbox
+        photos={[{ src: '/a.jpg', alt: 'A', caption: 'Uploaded on 12 Mar 2026' }]}
+        open
+        onClose={() => {}}
+      />
+    );
+    expect(screen.getByText('Uploaded on 12 Mar 2026')).toBeInTheDocument();
+  });
+
+  it('renders no caption text when the current photo has none', () => {
+    render(<Lightbox photos={[{ src: '/a.jpg', alt: 'A' }]} open onClose={() => {}} />);
+    expect(screen.queryByText(/uploaded/i)).not.toBeInTheDocument();
+  });
 });

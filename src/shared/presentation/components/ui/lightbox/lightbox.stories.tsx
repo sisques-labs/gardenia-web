@@ -28,3 +28,20 @@ function LightboxDemo() {
 }
 
 export const Default: Story = { render: () => <LightboxDemo /> };
+
+const photosWithCaption = [
+  { src: STORY_PLANT_IMAGE, alt: "Monstera leaf", caption: "Uploaded on Mar 12" },
+  { src: STORY_PLANT_IMAGE_ALT, alt: "Pothos vine", caption: "Uploaded on Feb 3" },
+];
+
+function LightboxWithCaptionDemo() {
+  const [open, setOpen] = React.useState(false);
+  return (
+    <>
+      <Button onClick={() => setOpen(true)}>Open lightbox</Button>
+      <Lightbox photos={photosWithCaption} open={open} onClose={() => setOpen(false)} />
+    </>
+  );
+}
+
+export const WithCaption: Story = { render: () => <LightboxWithCaptionDemo /> };

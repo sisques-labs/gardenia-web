@@ -1,5 +1,6 @@
 export interface CreatePlantInput {
   name: string;
-  plantSpeciesId?: string;
+  gbifSpeciesKey?: number;
+  speciesScientificName?: string;
   imageUrl?: string;
 }

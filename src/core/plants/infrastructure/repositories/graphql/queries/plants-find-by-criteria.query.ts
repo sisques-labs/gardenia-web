@@ -8,12 +8,8 @@ export const PLANTS_FIND_BY_CRITERIA = gql`
         name
         plantSpeciesId
         species {
-          id
+          gbifKey
           scientificName
-          description
-          imageUrl
-          createdAt
-          updatedAt
         }
         imageUrl
         userId
