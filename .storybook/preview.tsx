@@ -1,3 +1,9 @@
+// Layer 0: freeze the clock before anything else loads — several components
+// compute "today" at module or render scope (calendar highlights, overdue
+// badges, relative-time text), and letting that read the real wall clock is
+// what makes their snapshots drift day over day. Must be the first import so
+// it runs before any story/component reads Date.
+import "./mock-date";
 import type { Preview } from "@storybook/react";
 import { withThemeByClassName } from "@storybook/addon-themes";
 import * as React from "react";
