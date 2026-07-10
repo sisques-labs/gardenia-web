@@ -50,12 +50,8 @@ describe('PlantCard', () => {
     const plant: Plant = {
       ...basePlant,
       species: {
-        id: 'sp1',
+        gbifKey: 2882337,
         scientificName: 'Monstera deliciosa',
-        description: null,
-        imageUrl: null,
-        createdAt: '',
-        updatedAt: '',
       },
     };
     render(

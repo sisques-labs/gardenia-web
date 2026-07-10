@@ -9,6 +9,7 @@ describe('CreatePlantUseCase', () => {
     create: vi.fn().mockResolvedValue({ id: 'p1' }),
     update: vi.fn(),
     delete: vi.fn(),
+    searchSpecies: vi.fn(),
   };
 
   it('delegates to repository.create and returns the created id', async () => {
@@ -20,11 +21,17 @@ describe('CreatePlantUseCase', () => {
 
   it('passes optional fields through', async () => {
     const useCase = new CreatePlantUseCase(mockRepo);
-    await useCase.execute({ name: 'Monstera', imageUrl: 'https://example.com/img.jpg', plantSpeciesId: 'sp-1' });
+    await useCase.execute({
+      name: 'Monstera',
+      imageUrl: 'https://example.com/img.jpg',
+      gbifSpeciesKey: 2882337,
+      speciesScientificName: 'Monstera deliciosa',
+    });
     expect(mockRepo.create).toHaveBeenCalledWith({
       name: 'Monstera',
       imageUrl: 'https://example.com/img.jpg',
-      plantSpeciesId: 'sp-1',
+      gbifSpeciesKey: 2882337,
+      speciesScientificName: 'Monstera deliciosa',
     });
   });
 

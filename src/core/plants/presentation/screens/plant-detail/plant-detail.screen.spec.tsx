@@ -117,12 +117,8 @@ const mockPlant: Plant = {
   userId: "u1",
   spaceId: "s1",
   species: {
-    id: "sp1",
+    gbifKey: 2882337,
     scientificName: "Monstera deliciosa",
-    description: null,
-    imageUrl: null,
-    createdAt: "",
-    updatedAt: "",
   },
   imageUrl: "https://example.com/plant.jpg",
   plantingSpot: { id: "ps1", name: "Bancal norte", type: "RAISED_BED" },
@@ -182,6 +178,12 @@ const dict = {
     submitting: "Creating...",
     cancel: "Cancel",
     error: "Could not create the plant. Try again.",
+    speciesSearch: {
+      label: "Species",
+      placeholder: "Search species…",
+      noResults: "No matches found",
+      unavailable: "Species search is unavailable right now",
+    },
   },
   edit: {
     title: "Edit plant",
@@ -195,6 +197,12 @@ const dict = {
     submitting: "Saving...",
     cancel: "Cancel",
     error: "Could not update the plant. Try again.",
+    speciesSearch: {
+      label: "Species",
+      placeholder: "Search species…",
+      noResults: "No matches found",
+      unavailable: "Species search is unavailable right now",
+    },
   },
   detail: {
     breadcrumbList: "Inventory",
@@ -254,6 +262,7 @@ const photosDict = {
   uploadError: "Could not upload the photo. Try again.",
   deletePhoto: "Delete photo",
   deleteError: "Could not delete the photo. Try again.",
+  uploadedOn: "Uploaded on",
 };
 
 describe("PlantDetailScreen", () => {

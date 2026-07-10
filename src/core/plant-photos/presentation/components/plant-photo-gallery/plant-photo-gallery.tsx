@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { ImagePlus, Trash2 } from 'lucide-react';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
@@ -10,16 +10,20 @@ import { usePlantPhotos } from '@/core/plant-photos/presentation/hooks/use-plant
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import { Alert } from '@/shared/presentation/components/ui/alert/alert';
 import { Button } from '@/shared/presentation/components/ui/button/button';
+import { Lightbox } from '@/shared/presentation/components/ui/lightbox/lightbox';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
+import { formatShortDate } from '@/shared/presentation/utils/format-short-date.util';
 import { getAuthenticatedImageUrl } from '@/shared/presentation/utils/get-authenticated-image-url.util';
 
 type Props = {
   plantId: string;
+  lang: string;
   dict: AppDict['plantPhotos'];
 };
 
-export function PlantPhotoGallery({ plantId, dict }: Props) {
+export function PlantPhotoGallery({ plantId, lang, dict }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const currentUser = useAuthStore((s) => s.currentUser);
   const accessToken = useAuthStore((s) => s.accessToken);
   const currentSpaceId = useSpacesStore((s) => s.currentSpaceId);
@@ -54,11 +58,17 @@ export function PlantPhotoGallery({ plantId, dict }: Props) {
 
       {photos.length > 0 && (
         <div data-testid="plant-photo-gallery" className="flex gap-2 overflow-x-auto">
-          {photos.map((photo) => (
+          {photos.map((photo, index) => (
             <div
               key={photo.id}
               data-testid={`plant-photo-${photo.id}`}
-              className="group relative h-20 w-20 shrink-0 overflow-hidden rounded-lg ring-1 ring-rule"
+              role="button"
+              tabIndex={0}
+              onClick={() => setSelectedIndex(index)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') setSelectedIndex(index);
+              }}
+              className="group relative h-20 w-20 shrink-0 cursor-pointer overflow-hidden rounded-lg ring-1 ring-rule"
             >
               <Image
                 src={
@@ -76,7 +86,10 @@ export function PlantPhotoGallery({ plantId, dict }: Props) {
                   type="button"
                   aria-label={dict.deletePhoto}
                   data-testid={`btn-delete-photo-${photo.id}`}
-                  onClick={() => deletePhoto.mutate(photo.id)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deletePhoto.mutate(photo.id);
+                  }}
                   className="absolute top-1 right-1 rounded-full bg-black/60 p-1 opacity-0 transition-opacity group-hover:opacity-100"
                 >
                   <Trash2 className="h-3 w-3 text-white" />
@@ -86,6 +99,17 @@ export function PlantPhotoGallery({ plantId, dict }: Props) {
           ))}
         </div>
       )}
+
+      <Lightbox
+        photos={photos.map((photo) => ({
+          src: getAuthenticatedImageUrl(photo.url, accessToken, currentSpaceId) ?? photo.url,
+          alt: '',
+          caption: `${dict.uploadedOn} ${formatShortDate(photo.createdAt, lang)}`,
+        }))}
+        initialIndex={selectedIndex ?? 0}
+        open={selectedIndex !== null}
+        onClose={() => setSelectedIndex(null)}
+      />
     </div>
   );
 }

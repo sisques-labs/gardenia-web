@@ -8,7 +8,7 @@ const mockPlant: Plant = {
   name: 'Monstera',
   userId: 'user-1',
   spaceId: 'space-1',
-  species: { id: 'species-1', scientificName: 'Monstera deliciosa', description: null, imageUrl: null, createdAt: '2024-01-01', updatedAt: '2024-01-01' },
+  species: { gbifKey: 2882337, scientificName: 'Monstera deliciosa' },
   imageUrl: 'https://example.com/monstera.jpg',
   createdAt: '2024-01-01',
   updatedAt: '2024-01-01',
@@ -20,6 +20,7 @@ const mockRepository: IPlantsRepository = {
   create: vi.fn(),
   update: vi.fn(),
   delete: vi.fn(),
+  searchSpecies: vi.fn(),
 };
 
 describe('GetPlantUseCase', () => {
