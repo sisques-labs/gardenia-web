@@ -31,12 +31,13 @@ an inline "search unavailable" state (`plants.speciesSearch.unavailable`) and
 MUST NOT crash the modal or block the rest of the form (name/imageUrl remain
 editable and submittable without a species selected).
 
-### R-5 — Read side shows the plant's own chosen name, not a resolved catalog entry
+### R-5 — Read side renders the resolved species' scientific name
 
 `PlantCard` and the plant detail screen MUST render
-`plant.speciesScientificName` (falling back to the existing "no species"
-placeholder when null/undefined). Neither MUST reference the removed
-`plant.species` nested object.
+`plant.species?.scientificName` (falling back to the existing "no species"
+placeholder when `species` is null/undefined) — the nested `species` object
+is unchanged in shape by this proposal, only trimmed to `{ gbifKey,
+scientificName }` on the api side.
 
 ### R-6 — i18n parity
 
@@ -69,12 +70,14 @@ created plant has no species.
 the combobox shows "Species search is unavailable right now" instead of a
 spinner or a crash; the rest of the form stays usable.
 
-**S-5**: A plant card/detail for a plant with `speciesScientificName: "Ficus
-lyrata"` renders "Ficus lyrata"; a plant with `speciesScientificName: null`
-renders the existing "no species" placeholder — unchanged from today's
-behavior other than the underlying field name.
+**S-5**: A plant card/detail for a plant with `species: { gbifKey: 2882337,
+scientificName: "Ficus lyrata" }` renders "Ficus lyrata"; a plant with
+`species: null` renders the existing "no species" placeholder — unchanged
+from today's behavior (the nested shape and rendering logic don't change,
+only the fields available on `species` shrink).
 
 **S-6**: User edits an existing plant that already has a species, opens
 "Edit" → the species field is pre-filled with the plant's current
-`speciesScientificName` (no `gbifSpeciesKey` round-trip needed to display
-it — the name alone is enough to show the pre-filled value).
+`species.scientificName` (the resolved object already carries `gbifKey` too,
+so the pre-filled combobox value carries both, ready to resubmit unchanged
+or replace with a new pick).

@@ -2,11 +2,12 @@
 
 ## Phase 1: Domain + application
 
-- [ ] 1.1 Update `domain/interfaces/plant.interface.ts`: remove `PlantSpecies`
-      interface, `plantSpeciesId`, `species` from `Plant`; add
-      `gbifSpeciesKey: number | null`, `speciesScientificName: string | null`.
+- [ ] 1.1 Update `domain/interfaces/plant.interface.ts`: trim `PlantSpecies`
+      to `{ gbifKey: number | null; scientificName: string }` (drop `id`,
+      `description`, `imageUrl`, `createdAt`, `updatedAt`). `Plant.plantSpeciesId`
+      and `Plant.species` stay as-is (unchanged shape/nesting).
 - [ ] 1.2 Create `domain/interfaces/gbif-species-suggestion.interface.ts`:
-      `GbifSpeciesSuggestion { gbifSpeciesKey: number; scientificName: string }`.
+      `GbifSpeciesSuggestion { gbifKey: number; scientificName: string }`.
 - [ ] 1.3 Update `application/interfaces/create-plant-input.interface.ts` and
       `update-plant-input.interface.ts`: replace `plantSpeciesId?` with
       `gbifSpeciesKey?: number | null`, `speciesScientificName?: string | null`.
@@ -23,10 +24,10 @@
       — gql document for `gbifSpeciesSearch(input: { name, limit })` matching
       the api's new query shape (`gbifKey`/`scientificName` per result).
 - [ ] 2.2 Update `queries/plant-find-by-id.query.ts` and
-      `queries/plants-find-by-criteria.query.ts`: remove the nested
+      `queries/plants-find-by-criteria.query.ts`: trim the existing nested
       `species { id scientificName description imageUrl createdAt updatedAt }`
-      selection; add `gbifSpeciesKey`, `speciesScientificName` as plain
-      scalar fields.
+      selection down to `species { gbifKey scientificName }` — keep the
+      nesting, just drop the fields the api no longer returns.
 - [ ] 2.3 Update `mutations/create-plant.mutation.ts` and
       `mutations/update-plant.mutation.ts`: input field swap
       (`plantSpeciesId` → `gbifSpeciesKey`/`speciesScientificName`).
@@ -42,7 +43,7 @@
       `useDebouncedValue(value, 300)`, calls `SearchSpeciesUseCase`, `enabled`
       guard for short queries, `retry: false`, exposes `data`/`isLoading`/`isError`.
 - [ ] 3.2 Create `presentation/components/species-combobox/species-combobox.tsx`
-      (controlled `value`/`onChange` of `{ gbifSpeciesKey, scientificName } |
+      (controlled `value`/`onChange` of `{ gbifKey, scientificName } |
       null`, built on `cmdk` `Command` primitives) + `.test.tsx` (RED then
       GREEN: renders results, selection fires `onChange`, loading/empty/error
       states) + `species-combobox.stories.tsx` (seed `useSpeciesSearch`'s
@@ -53,13 +54,16 @@
 
 - [ ] 4.1 Update `presentation/schemas/create-plant.schema.ts` (and the edit
       schema, if separate): add optional
-      `species: z.object({ gbifSpeciesKey: z.number(), scientificName: z.string() }).nullable().optional()`.
+      `species: z.object({ gbifKey: z.number(), scientificName: z.string() }).nullable().optional()`
+      (field names match the combobox/search-result shape — `gbifKey`, not
+      `gbifSpeciesKey`).
 - [ ] 4.2 Update `presentation/hooks/use-create-plant-form/use-create-plant-form.hook.ts`:
-      destructure `species` into flat `gbifSpeciesKey`/`speciesScientificName`
-      when calling `createPlant`.
+      destructure `species` and map it to the mutation's flat input field
+      names when calling `createPlant`: `gbifSpeciesKey: species?.gbifKey`,
+      `speciesScientificName: species?.scientificName`.
 - [ ] 4.3 Update `presentation/hooks/use-edit-plant-form/use-edit-plant-form.hook.ts`:
-      same destructuring for `updatePlant`; pre-fill the combobox's initial
-      value from the plant's current `speciesScientificName`/`gbifSpeciesKey`
+      same mapping for `updatePlant`; pre-fill the combobox's initial value
+      from the plant's current `species` (`{ gbifKey, scientificName }`)
       when opening the edit modal.
 - [ ] 4.4 Update `presentation/components/create-plant-modal/create-plant-modal.tsx`
       and `edit-plant-modal/edit-plant-modal.tsx`: wire `SpeciesCombobox` via
@@ -69,8 +73,9 @@
 ## Phase 5: Read-side updates
 
 - [ ] 5.1 Update `presentation/components/plant-card/plant-card.tsx` (+ test):
-      read `plant.speciesScientificName` instead of `plant.species?.name`,
-      same fallback.
+      confirm/fix it reads `plant.species?.scientificName` (not a stale
+      `.name`), same fallback — field path itself is unchanged by this
+      proposal.
 - [ ] 5.2 Update `presentation/screens/plant-detail/plant-detail.screen.tsx`
       (+ test): same field-path change.
 - [ ] 5.3 Grep the repo for any other `.species` / `plantSpeciesId` reference

@@ -14,12 +14,18 @@ or a "no species" fallback) but nothing ever writes them. This is greenfield
 on the web side.
 
 This proposal is paired with an already-drafted `gardenia-api` change (same
-change name, `gbif-species-search`) that deletes the local `plant-species`
-catalog and its `Plant.plantSpeciesId` FK entirely, replacing them with two
-plain fields owned by `Plant`: `gbifSpeciesKey` (GBIF's numeric `usageKey`)
-and `speciesScientificName` (the name as chosen by the user). It also adds a
-new `gbifSpeciesSearch(input: { name, limit })` GraphQL query that proxies
-GBIF's `/species/suggest` endpoint live, with zero persistence anywhere.
+change name, `gbif-species-search`) that **keeps** the local `plant-species`
+catalog and `Plant.plantSpeciesId` FK (revised from an earlier draft that
+deleted them — see that proposal's own revision note), but trims the catalog
+to just `scientificName` + `gbifKey`, and adds a new
+`gbifSpeciesSearch(input: { name, limit })` GraphQL query that proxies GBIF's
+`/species/suggest` endpoint live, with zero persistence anywhere. Creating or
+updating a plant now accepts `gbifSpeciesKey` + `speciesScientificName`
+(what a live search pick gives you) instead of a raw `plantSpeciesId`; the
+api resolves that pair to a catalog id internally (find-or-create). The
+**read side is unaffected in shape**: `Plant.species` stays a nested resolved
+object exactly as it is today, just trimmed to `{ gbifKey, scientificName }`
+(no more `description`/`imageUrl`).
 
 **Sequencing dependency**: this web change consumes the api change's new
 query and its updated `Plant` shape. It should not be merged/deployed ahead of
@@ -30,20 +36,27 @@ independently in the meantime).
 
 - `gardenia-web`, `plants` bounded context — domain, application,
   infrastructure, and presentation layers, plus one new shared UI primitive.
-- `domain/interfaces/plant.interface.ts`: drop `plantSpeciesId`/`species`
-  (and the now-unused `PlantSpecies` interface); add `gbifSpeciesKey: number
-  | null`, `speciesScientificName: string | null`.
+- `domain/interfaces/plant.interface.ts`: `PlantSpecies` interface trimmed to
+  `{ gbifKey: number | null; scientificName: string }` (drop `id`,
+  `description`, `imageUrl`, `createdAt`, `updatedAt` — nothing else reads
+  them). `Plant.plantSpeciesId`/`Plant.species` **stay as-is** (still a
+  nested, optional, read-only resolved field — unchanged shape, just a
+  trimmed `PlantSpecies`).
 - `application/interfaces/create-plant-input.interface.ts` /
-  `update-plant-input.interface.ts`: same field swap.
+  `update-plant-input.interface.ts`: replace `plantSpeciesId?: string` with
+  `gbifSpeciesKey?: number`, `speciesScientificName?: string` (paired) — this
+  is the one real write-side change, since the client only ever has a live
+  search pick, never a local catalog id.
 - New use case `SearchSpeciesUseCase` (`application/use-cases/search-species/`)
   + port method `IPlantsRepository.searchSpecies(name, limit?)`.
 - `infrastructure/repositories/graphql/plants.gql.repository.ts`: implement
   `searchSpecies`; add `queries/gbif-species-search.query.ts`; update
   `queries/plant-find-by-id.query.ts` and
-  `queries/plants-find-by-criteria.query.ts` to fetch `gbifSpeciesKey`/
-  `speciesScientificName` instead of the nested `species { ... }` selection;
-  update `mutations/create-plant.mutation.ts` /
-  `mutations/update-plant.mutation.ts` inputs.
+  `queries/plants-find-by-criteria.query.ts`'s existing `species { ... }`
+  selection to the trimmed field set (`gbifKey`, `scientificName` — drop
+  `description`/`imageUrl`); update `mutations/create-plant.mutation.ts` /
+  `mutations/update-plant.mutation.ts` inputs (`plantSpeciesId` →
+  `gbifSpeciesKey`/`speciesScientificName`).
 - New hook `presentation/hooks/use-species-search/useSpeciesSearch.hook.ts`
   (TanStack Query, debounced per the mandatory `useDebouncedValue` rule).
 - New presentation component `SpeciesCombobox`
@@ -52,8 +65,11 @@ independently in the meantime).
   / `use-edit-plant-form` hooks and `create-plant.schema.ts` /
   `edit-plant.schema.ts`.
 - Update `PlantCard` / `plant-detail.screen.tsx` (and any other place reading
-  `plant.species?.name`) to read `plant.speciesScientificName` directly, same
-  "no species" fallback UX.
+  `plant.species?.name` or `plant.species?.scientificName`) to read
+  `plant.species?.scientificName` — same "no species" fallback UX, no
+  structural change (this was already the field name post-enrichment; verify
+  at apply time whether the current code still says `.name` as tech debt and
+  fix it while here).
 - i18n: new `plants.speciesSearch.*` keys (`en`/`es`) — label, placeholder,
   no-results text, "search unavailable" text (AC4).
 
@@ -77,20 +93,22 @@ independently in the meantime).
 
 ## Rollback
 
-Additive on the domain/application/infrastructure side (new fields, new use
-case, new query/hook/component) plus one breaking field rename
-(`plantSpeciesId`/`species` → `gbifSpeciesKey`/`speciesScientificName`) that
-is coupled to the api change. Rollback plan:
+Mostly additive (new fields, new use case, new query/hook/component). The
+one real coupling to the api change is the **write side**: the create/update
+plant mutation inputs move from `plantSpeciesId` to
+`gbifSpeciesKey`/`speciesScientificName`. Rollback plan:
 
-- If the api change has NOT shipped yet: do not merge this change. The field
-  rename in `plant.interface.ts` would break `PlantCard`/detail rendering
-  against the current (pre-change) api schema.
+- If the api change has NOT shipped yet: do not merge this change's Phase 2
+  (mutation input field swap) ahead of it — the api wouldn't recognize the
+  new input field names yet. The read-side trim (`PlantSpecies` interface,
+  query selection sets) is low-risk either way since it only drops fields
+  (`description`/`imageUrl`) the UI never rendered from GBIF-sourced data in
+  the first place.
 - If the api change HAS shipped: reverting this PR removes the combobox/use
-  case/hook and reverts the field rename; since the api no longer serves
-  `plantSpeciesId`/`species` after its own change ships, reverting this PR
-  without also reverting the api change would leave the web app unable to
-  read species at all (fields would be `undefined`) — acceptable degraded
-  state (falls back to "no species" UI) but not a full rollback. True
-  rollback requires reverting both changes together.
+  case/hook and reverts the mutation input field names back to
+  `plantSpeciesId` — which the api would then reject post-its-own-change, so
+  a full rollback requires reverting both changes together (same dependency
+  as before, just scoped to the write path now instead of the whole `Plant`
+  read shape).
 - No backend/API call in this change is destructive; nothing here risks data
   loss on the web side.

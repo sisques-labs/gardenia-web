@@ -4,9 +4,9 @@
 
 ```
 domain/
-  interfaces/plant.interface.ts          — Plant.gbifSpeciesKey / speciesScientificName
-                                            (drop PlantSpecies, plantSpeciesId, species)
-  interfaces/gbif-species-suggestion.interface.ts   — NEW: { gbifSpeciesKey: number; scientificName: string }
+  interfaces/plant.interface.ts          — Plant.plantSpeciesId / species UNCHANGED in shape;
+                                            PlantSpecies trimmed to { gbifKey, scientificName }
+  interfaces/gbif-species-suggestion.interface.ts   — NEW: { gbifKey: number; scientificName: string }
 
 application/
   interfaces/create-plant-input.interface.ts        — field swap
@@ -16,10 +16,10 @@ application/
 
 infrastructure/
   repositories/graphql/queries/gbif-species-search.query.ts   — NEW gql query doc
-  repositories/graphql/queries/plant-find-by-id.query.ts       — drop `species{...}`, add 2 scalars
+  repositories/graphql/queries/plant-find-by-id.query.ts       — trim `species{...}` selection
   repositories/graphql/queries/plants-find-by-criteria.query.ts — same
-  repositories/graphql/mutations/create-plant.mutation.ts       — input field swap
-  repositories/graphql/mutations/update-plant.mutation.ts       — input field swap
+  repositories/graphql/mutations/create-plant.mutation.ts       — input field swap (write side only)
+  repositories/graphql/mutations/update-plant.mutation.ts       — input field swap (write side only)
   repositories/graphql/plants.gql.repository.ts                 — implement searchSpecies
 
 presentation/
@@ -32,8 +32,8 @@ presentation/
   hooks/use-edit-plant-form/use-edit-plant-form.hook.ts       — pass through 2 new fields
   schemas/create-plant.schema.ts                              — + 2 optional fields, paired refine
   schemas/edit-plant.schema.ts (or shared schema if identical) — same
-  components/plant-card/plant-card.tsx                        — read speciesScientificName
-  screens/plant-detail/plant-detail.screen.tsx                — read speciesScientificName
+  components/plant-card/plant-card.tsx                        — read species?.scientificName (trimmed shape, same nesting)
+  screens/plant-detail/plant-detail.screen.tsx                — read species?.scientificName (trimmed shape, same nesting)
   i18n/en.ts, i18n/es.ts                                        — plants.speciesSearch.*
 ```
 
@@ -110,20 +110,26 @@ it's intentionally not named/shaped as a filters hook, since it drives a
 combobox's options, not a list's `criteria`. Called out explicitly so this
 isn't read as a missed-convention deviation.
 
-## 4. ADR-002 — form wiring: `Controller`, not `register`
+## 4. ADR-002 — form wiring: `Controller`, not `register`; `gbifKey` (form) vs. `gbifSpeciesKey` (mutation input)
 
-**Decision**: `gbifSpeciesKey`/`speciesScientificName` are wired into
-`CreatePlantModal`/`EditPlantModal`'s React Hook Form via `Controller`, not
-`register` (which the existing `name`/`imageUrl` plain `<Input>` fields use).
+**Decision**: the species field is wired into `CreatePlantModal`/
+`EditPlantModal`'s React Hook Form via `Controller`, not `register` (which
+the existing `name`/`imageUrl` plain `<Input>` fields use). The form value
+uses `{ gbifKey, scientificName }` (matching the combobox/search-result
+shape and the api's own resolved-`species`-object field names); the
+`useCreatePlantForm`/`useEditPlantForm` hooks translate that into the flat
+`gbifSpeciesKey`/`speciesScientificName` names the `createPlant`/`updatePlant`
+mutations actually expect (the api's command *input* uses different, flat
+field names from its *output* `species` object — see the paired api change's
+design.md §6.3).
 
 **Context**: `SpeciesCombobox` is a controlled component (`value`/`onChange`
-of a compound `{ gbifSpeciesKey, scientificName }` selection, not a single
-string), so it can't be spread with `{...register('field')}` like a plain
-input.
+of a compound `{ gbifKey, scientificName }` selection, not a single string),
+so it can't be spread with `{...register('field')}` like a plain input.
 
 ```tsx
 <Controller
-  name="species" // a single form field holding { gbifSpeciesKey, scientificName } | null
+  name="species" // a single form field holding { gbifKey, scientificName } | null
   control={control}
   render={({ field }) => (
     <SpeciesCombobox
@@ -135,27 +141,44 @@ input.
 />
 ```
 
+```ts
+// inside useCreatePlantForm's onSubmit
+createPlant({
+  name,
+  imageUrl,
+  gbifSpeciesKey: species?.gbifKey,
+  speciesScientificName: species?.scientificName,
+});
+```
+
 `createPlantSchema`/the edit equivalent model this as a single optional
-`species: z.object({ gbifSpeciesKey: z.number(), scientificName: z.string() }).nullable().optional()`
-field (nullable = explicitly cleared, undefined = untouched), and
-`useCreatePlantForm`/`useEditPlantForm` destructure it into the two flat
-`gbifSpeciesKey`/`speciesScientificName` fields when calling
-`createPlant`/`updatePlant` — this keeps the domain-facing
-`CreatePlantInput`/`UpdatePlantInput` shape flat (matches the api's plain
-two-field shape) while the form-facing shape stays a single combobox value.
+`species: z.object({ gbifKey: z.number(), scientificName: z.string() }).nullable().optional()`
+field (nullable = explicitly cleared, undefined = untouched); the
+translation to the mutation's flat field names happens once, at the form
+hook's submit boundary — the rest of the presentation layer (combobox, form
+state, pre-fill from a read `Plant.species`) only ever deals with the
+`{ gbifKey, scientificName }` shape, never the mutation-specific flat names.
 
 ## 5. Read-side: `PlantCard` / plant detail
 
-**Decision**: both read `plant.speciesScientificName` directly (a plain
-string) instead of `plant.species?.name`. Same fallback UX
-(`dict.unknownSpecies` / "no species" placeholder) when the field is
-`null`/`undefined` — no behavior change from the user's point of view, only
-the field path changes. `plant-find-by-id.query.ts` and
-`plants-find-by-criteria.query.ts` drop the nested `species { id
-scientificName description imageUrl createdAt updatedAt }` selection (that
-whole sub-object no longer exists on the api's `Plant` GraphQL type after the
-paired api change ships) and add `gbifSpeciesKey` / `speciesScientificName` as
-plain scalar fields to the selection set.
+**Decision**: unchanged nesting — both continue to read
+`plant.species?.scientificName` (the api still resolves `species` as a
+nested object on `Plant`; only its field set shrinks). Same fallback UX
+(`dict.unknownSpecies` / "no species" placeholder) when `species` is
+`null`/`undefined`. `plant-find-by-id.query.ts` and
+`plants-find-by-criteria.query.ts` trim their existing `species { id
+scientificName description imageUrl createdAt updatedAt }` selection down to
+`species { gbifKey scientificName }` — `description`/`imageUrl`/`id`/
+timestamps are dropped because the api's `plant-species` catalog no longer
+carries them (see the paired api change), not because the resolved-field
+mechanism itself changed.
+
+This is a smaller, lower-risk change than the flat-field version originally
+drafted: no `Plant` field renames, no `PlantCard`/detail component logic
+changes beyond the query's selection set — verify at apply time whether the
+current code actually reads `.name` (stale, pre-enrichment) or already reads
+`.scientificName`; fix it to `.scientificName` while touching this file
+either way.
 
 ## 6. i18n additions
 
@@ -186,15 +209,18 @@ the safety net wanted here).
   selecting a species and submitting sends `gbifSpeciesKey`/
   `speciesScientificName` in the mutation call.
 - `plant-card.test.tsx` / plant-detail screen tests (extend) — render with
-  `speciesScientificName` set and unset, assert fallback text.
+  `species` set (`{ gbifKey, scientificName }`) and `species` unset/null,
+  assert fallback text.
 - `i18n-parity.test.ts` (existing, `plants` module) — passes with new keys
   added to both locales.
 
 ## 8. Risks
 
-1. **Sequencing with the api change** — this change's `Plant` field rename
-   only makes sense once the api ships its own `gbif-species-search` change.
-   See proposal's Rollback section.
+1. **Sequencing with the api change** — this change's mutation-input field
+   rename (`plantSpeciesId` → `gbifSpeciesKey`/`speciesScientificName`) only
+   makes sense once the api ships its own `gbif-species-search` change. The
+   read-side query trim is lower-risk (only drops unused fields). See
+   proposal's Rollback section.
 2. **GBIF result volume** — `useSpeciesSearch`'s `limit: 10` and the 300ms
    debounce keep both request volume and combobox list length small; no
    further pagination is implemented (matches AC scope — this is autocomplete,
