@@ -1,6 +1,7 @@
 'use client';
 
 import type { CSSProperties, ReactNode } from 'react';
+import { useMemo } from 'react';
 import { useSidebarStore } from '@/shared/infrastructure/store/sidebar/sidebar.store';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import { Sidebar } from '../sidebar/sidebar';
@@ -14,6 +15,10 @@ interface AppShellProps {
 export function AppShell({ children, dict }: AppShellProps) {
   const { collapsed, openDrawer, drawerOpen, closeDrawer } = useSidebarStore();
   const sidebarWidth = collapsed ? '64px' : '240px';
+  const mobileMenu = useMemo(
+    () => ({ label: dict.openNavigation, onOpen: openDrawer }),
+    [dict.openNavigation, openDrawer],
+  );
 
   return (
     <>
@@ -43,7 +48,7 @@ export function AppShell({ children, dict }: AppShellProps) {
         <main className="overflow-y-auto paper-grain">
           {/* ScreenHeader renders the mobile menu toggle inline via MobileMenuContext,
               so there is a single header bar on mobile instead of two stacked ones. */}
-          <MobileMenuContext.Provider value={{ label: dict.openNavigation, onOpen: openDrawer }}>
+          <MobileMenuContext.Provider value={mobileMenu}>
             {children}
           </MobileMenuContext.Provider>
         </main>
