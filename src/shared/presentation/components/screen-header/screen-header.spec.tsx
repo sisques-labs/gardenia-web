@@ -1,6 +1,8 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { ScreenHeader } from './screen-header';
+import { MobileMenuContext } from '@/shared/presentation/components/app-shell/mobile-menu.context';
 
 // Mock next/link used inside breadcrumbs
 vi.mock('next/link', () => ({
@@ -94,5 +96,23 @@ describe('ScreenHeader', () => {
   it('does not render subtitle when omitted', () => {
     render(<ScreenHeader title="Test" />);
     expect(screen.queryByText(/primavera/)).not.toBeInTheDocument();
+  });
+
+  it('does not render a mobile menu toggle when no MobileMenuContext is provided', () => {
+    render(<ScreenHeader title="Spaces" />);
+    expect(screen.queryByRole('button')).not.toBeInTheDocument();
+  });
+
+  it('renders a mobile menu toggle wired to the context when MobileMenuContext is provided', async () => {
+    const onOpen = vi.fn();
+    const user = userEvent.setup();
+    render(
+      <MobileMenuContext.Provider value={{ label: 'Open navigation', onOpen }}>
+        <ScreenHeader title="Spaces" />
+      </MobileMenuContext.Provider>,
+    );
+    const toggle = screen.getByRole('button', { name: 'Open navigation' });
+    await user.click(toggle);
+    expect(onOpen).toHaveBeenCalledOnce();
   });
 });

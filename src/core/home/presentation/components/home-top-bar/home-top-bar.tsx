@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Bell, ChevronDown, Leaf } from 'lucide-react';
+import { Bell, ChevronDown, Leaf, Plus } from 'lucide-react';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import {
@@ -44,7 +44,7 @@ export function HomeTopBar({ dict, plantsDict }: Props) {
               type="text"
               placeholder={dict.topbar.search}
               readOnly
-              className="w-40 sm:w-56 rounded-md border px-3 py-1.5 text-sm"
+              className="w-24 sm:w-56 rounded-md border px-3 py-1.5 text-sm"
               style={{ backgroundColor: 'var(--paper)', color: 'var(--ink-2)' }}
             />
 
@@ -54,8 +54,13 @@ export function HomeTopBar({ dict, plantsDict }: Props) {
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button size="sm" className="gap-1.5 bg-[var(--forest)] hover:bg-[var(--forest-2)] text-white">
-                  {dict.topbar.newEntry}
+                <Button
+                  size="sm"
+                  aria-label={dict.topbar.newEntry}
+                  className="gap-1.5 bg-[var(--forest)] hover:bg-[var(--forest-2)] text-white"
+                >
+                  <Plus className="h-3.5 w-3.5" />
+                  <span className="hidden sm:inline">{dict.topbar.newEntry}</span>
                   <ChevronDown className="h-3.5 w-3.5" />
                 </Button>
               </DropdownMenuTrigger>
