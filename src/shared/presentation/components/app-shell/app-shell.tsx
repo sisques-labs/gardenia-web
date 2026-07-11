@@ -1,10 +1,10 @@
 'use client';
 
 import type { CSSProperties, ReactNode } from 'react';
-import { Menu } from 'lucide-react';
 import { useSidebarStore } from '@/shared/infrastructure/store/sidebar/sidebar.store';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import { Sidebar } from '../sidebar/sidebar';
+import { MobileMenuContext } from './mobile-menu.context';
 
 interface AppShellProps {
   children: ReactNode;
@@ -41,18 +41,11 @@ export function AppShell({ children, dict }: AppShellProps) {
           <Sidebar dict={dict} />
         </aside>
         <main className="overflow-y-auto paper-grain">
-          {/* Mobile hamburger — only visible below md */}
-          <div className="md:hidden flex h-16 items-center px-4 border-b border-[var(--rule)]">
-            <button
-              type="button"
-              onClick={openDrawer}
-              aria-label={dict.openNavigation}
-              className="p-1 rounded-md hover:bg-[var(--forest-bg)] text-[var(--ink)]"
-            >
-              <Menu className="w-5 h-5" />
-            </button>
-          </div>
-          {children}
+          {/* ScreenHeader renders the mobile menu toggle inline via MobileMenuContext,
+              so there is a single header bar on mobile instead of two stacked ones. */}
+          <MobileMenuContext.Provider value={{ label: dict.openNavigation, onOpen: openDrawer }}>
+            {children}
+          </MobileMenuContext.Provider>
         </main>
       </div>
     </>
