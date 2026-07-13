@@ -1,0 +1,31 @@
+change: notifications-web
+status: proposal
+created: 2026-07-13
+artifact_store: hybrid
+context: notifications
+phases:
+  explore: skipped
+  proposal: done
+  spec: done
+  design: done
+  tasks: done
+  apply: pending
+  verify: pending
+  archive: pending
+next_recommended:
+  - sdd-apply
+notes: |
+  Full proposal authored manually (the `openspec` CLI binary is not installed
+  in this environment; artifacts follow the exact structure/conventions of
+  prior changes, e.g. care-schedule-web for module shape, dashboard-home for
+  the spec.md + specs/ index format).
+
+  Blocks on the companion change `notifications-module` in
+  sisques-labs/gardenia-api (same GraphQL shape assumed — see that change's
+  design.md for the field/enum contracts this proposal is written against).
+
+  Key decision: only HomeTopBar's already-reserved bell placeholder
+  (home-top-bar.tsx:51-53, aria-label already wired to
+  dict.topbar.notifications since dashboard-home) is wired up in this change.
+  Making the bell appear on every screen is explicitly out of scope — see
+  proposal.md.
