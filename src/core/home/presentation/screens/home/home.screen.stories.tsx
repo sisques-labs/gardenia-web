@@ -51,6 +51,7 @@ const meta = {
     careScheduleDict: getDictionary("es").careSchedule,
     plantingSpotsDict: getDictionary("es").plantingSpots,
     plantsDict: getDictionary("es").plants.create,
+    notificationsDict: getDictionary("es").notifications,
   },
   parameters: { layout: "fullscreen" },
   decorators: [

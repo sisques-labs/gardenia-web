@@ -34,10 +34,15 @@ vi.mock('@/core/planting-spots/presentation/hooks/use-planting-spots/use-plantin
   usePlantingSpots: vi.fn(() => ({ spots: [], isLoading: false })),
 }));
 
+vi.mock('@/core/notifications/presentation/components/notification-bell/notification-bell', () => ({
+  NotificationBell: () => <div data-testid="notification-bell-mock" />,
+}));
+
 import { HomeScreen } from './home.screen';
 import careScheduleDict from '@/core/care-schedule/presentation/i18n/en';
 import plantingSpotsDict from '@/core/planting-spots/presentation/i18n/en';
 import plantsDict from '@/core/plants/presentation/i18n/en';
+import notificationsDict from '@/core/notifications/presentation/i18n/en';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 const mockDict: AppDict['home'] = {
@@ -72,22 +77,22 @@ beforeEach(() => {
 
 describe('HomeScreen', () => {
   it('renders greeting text with email prefix', () => {
-    render(<HomeScreen dict={mockDict} careScheduleDict={careScheduleDict} plantingSpotsDict={plantingSpotsDict} plantsDict={plantsDict.create} />);
+    render(<HomeScreen dict={mockDict} careScheduleDict={careScheduleDict} plantingSpotsDict={plantingSpotsDict} plantsDict={plantsDict.create} notificationsDict={notificationsDict} />);
     expect(screen.getByText(/ana/i)).toBeInTheDocument();
   });
 
   it('renders TodayTasksSection empty state', () => {
-    render(<HomeScreen dict={mockDict} careScheduleDict={careScheduleDict} plantingSpotsDict={plantingSpotsDict} plantsDict={plantsDict.create} />);
+    render(<HomeScreen dict={mockDict} careScheduleDict={careScheduleDict} plantingSpotsDict={plantingSpotsDict} plantsDict={plantsDict.create} notificationsDict={notificationsDict} />);
     expect(screen.getByText('No tasks due today.')).toBeInTheDocument();
   });
 
   it('renders GrowingNowSection empty state', () => {
-    render(<HomeScreen dict={mockDict} careScheduleDict={careScheduleDict} plantingSpotsDict={plantingSpotsDict} plantsDict={plantsDict.create} />);
+    render(<HomeScreen dict={mockDict} careScheduleDict={careScheduleDict} plantingSpotsDict={plantingSpotsDict} plantsDict={plantsDict.create} notificationsDict={notificationsDict} />);
     expect(screen.getByText('No active plants yet.')).toBeInTheDocument();
   });
 
   it('renders PlantingSpotsSummarySection empty state', () => {
-    render(<HomeScreen dict={mockDict} careScheduleDict={careScheduleDict} plantingSpotsDict={plantingSpotsDict} plantsDict={plantsDict.create} />);
+    render(<HomeScreen dict={mockDict} careScheduleDict={careScheduleDict} plantingSpotsDict={plantingSpotsDict} plantsDict={plantsDict.create} notificationsDict={notificationsDict} />);
     expect(screen.getByText('No planting spots yet.')).toBeInTheDocument();
   });
 

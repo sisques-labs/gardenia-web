@@ -23,7 +23,14 @@ vi.mock('@/core/plants/presentation/components/create-plant-modal/create-plant-m
   ),
 }));
 
+vi.mock('@/core/notifications/presentation/components/notification-bell/notification-bell', () => ({
+  NotificationBell: ({ ariaLabel }: { ariaLabel: string }) => (
+    <button aria-label={ariaLabel}>bell</button>
+  ),
+}));
+
 import { HomeTopBar } from './home-top-bar';
+import notificationsDict from '@/core/notifications/presentation/i18n/en';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 const dict: AppDict['home'] = {
@@ -76,34 +83,34 @@ describe('HomeTopBar', () => {
   });
 
   it('shows email prefix in greeting', () => {
-    render(<HomeTopBar dict={dict} plantsDict={plantsDict} />);
+    render(<HomeTopBar dict={dict} plantsDict={plantsDict} notificationsDict={notificationsDict} />);
     expect(screen.getByText(/ana/i)).toBeInTheDocument();
   });
 
   it('shows search input', () => {
-    render(<HomeTopBar dict={dict} plantsDict={plantsDict} />);
+    render(<HomeTopBar dict={dict} plantsDict={plantsDict} notificationsDict={notificationsDict} />);
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
   it('shows bell icon button', () => {
-    render(<HomeTopBar dict={dict} plantsDict={plantsDict} />);
+    render(<HomeTopBar dict={dict} plantsDict={plantsDict} notificationsDict={notificationsDict} />);
     expect(screen.getByRole('button', { name: /notifications/i })).toBeInTheDocument();
   });
 
   it('shows "Nueva entrada" button', () => {
-    render(<HomeTopBar dict={dict} plantsDict={plantsDict} />);
+    render(<HomeTopBar dict={dict} plantsDict={plantsDict} notificationsDict={notificationsDict} />);
     expect(screen.getByRole('button', { name: /nueva entrada/i })).toBeInTheDocument();
   });
 
   it('shows space name as fallback when currentUser is null', () => {
     setupMocks(null);
-    render(<HomeTopBar dict={dict} plantsDict={plantsDict} />);
+    render(<HomeTopBar dict={dict} plantsDict={plantsDict} notificationsDict={notificationsDict} />);
     expect(screen.getByText(/mi huerto/i)).toBeInTheDocument();
   });
 
   it('opens the create plant modal when "Nueva planta" is clicked', async () => {
     const user = userEvent.setup();
-    render(<HomeTopBar dict={dict} plantsDict={plantsDict} />);
+    render(<HomeTopBar dict={dict} plantsDict={plantsDict} notificationsDict={notificationsDict} />);
     expect(screen.queryByTestId('create-plant-modal-mock')).not.toBeInTheDocument();
 
     await user.click(screen.getByRole('button', { name: /nueva entrada/i }));
