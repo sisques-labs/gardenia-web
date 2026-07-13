@@ -55,18 +55,62 @@ objects directly.
 
 ---
 
-### Requirement: Unread Count Polling
+### Requirement: Real-Time Delivery via SSE
 
-`useNotificationsUnreadCount()` MUST poll `notificationsUnreadCount` on a
-fixed interval (`refetchInterval`, default 60 000 ms) so the bell badge
-reflects server-side changes without requiring a page reload, and MUST be
-disabled (`enabled: false`) when there is no active space.
+`NotificationsProvider` MUST open a single connection to `GET
+/notifications/stream` (via `connectNotificationsStream`, using
+`@microsoft/fetch-event-source` so the `Authorization` Bearer header and
+`X-Space-ID` can be set — native `EventSource` cannot) for the lifetime of
+an authenticated session with an active space, and MUST NOT open more than
+one such connection at a time regardless of how many
+`NotificationBell`/`NotificationsScreen` instances are mounted. On receiving
+a `notification-created`, `notification-read`, or `notification-resolved`
+event, it MUST invalidate both the `['notifications', spaceId]` and
+`['notifications-unread-count', spaceId]` TanStack Query caches so the bell
+badge and any visible list reflect the change without a page reload. It
+MUST NOT open a connection when there is no active space, and MUST close the
+current connection and open a new one when the active space changes.
 
-#### Scenario: Badge updates without user interaction
+#### Scenario: Badge updates in real time on a new notification
 
-- GIVEN the unread count changes server-side between polls
-- WHEN the next poll interval elapses
-- THEN `NotificationBell`'s badge reflects the new count without any user action
+- GIVEN `NotificationsProvider` is connected
+- WHEN a `notification-created` event arrives on the stream
+- THEN `NotificationBell`'s badge reflects the new unread count without any user action or page reload
+
+#### Scenario: A single connection is shared across components
+
+- GIVEN both `NotificationBell` (in `HomeTopBar`) and `NotificationsScreen` (on `/notifications`) are mounted simultaneously
+- WHEN the app is inspected for open SSE connections
+- THEN there is exactly one, owned by `NotificationsProvider`
+
+#### Scenario: No connection without an active space
+
+- GIVEN no space is currently active
+- WHEN `NotificationsProvider` renders
+- THEN no SSE connection is opened
+
+#### Scenario: Reconnects on space switch
+
+- GIVEN `NotificationsProvider` is connected for space S1
+- WHEN the active space changes to S2
+- THEN the S1 connection is aborted and a new connection is opened scoped to S2
+
+---
+
+### Requirement: Fallback Polling
+
+Independently of the SSE connection's state, `useNotificationsUnreadCount()`
+MUST also poll `notificationsUnreadCount` on a coarse fixed interval
+(`refetchInterval`, default 5 minutes) as a safety net against a silently
+stalled SSE connection (proxy buffering, a resumed-from-sleep dead socket).
+This polling MUST be disabled (`enabled: false`) when there is no active
+space, matching every other space-scoped query in this codebase.
+
+#### Scenario: Fallback catches a stalled SSE connection
+
+- GIVEN the SSE connection has silently stopped delivering events (e.g. its underlying socket died without the client noticing)
+- WHEN the fallback poll interval elapses
+- THEN the unread count is refreshed via the ordinary GraphQL query, independent of SSE
 
 #### Scenario: No polling without an active space
 

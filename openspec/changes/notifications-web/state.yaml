@@ -29,3 +29,15 @@ notes: |
   dict.topbar.notifications since dashboard-home) is wired up in this change.
   Making the bell appear on every screen is explicitly out of scope — see
   proposal.md.
+
+  UPDATED per user request ("hay que hacerlo bien desde el principio con
+  SSE"): the API's companion change now ships GET /notifications/stream in
+  v1. This change adds a NotificationsProvider (mounted once in
+  providers.tsx) that owns a single @microsoft/fetch-event-source connection
+  (new dependency — native EventSource can't send the Authorization header
+  this app's auth needs) and writes into the TanStack Query cache on each
+  event. A coarse 5-min polling fallback stays as a safety net. See
+  design.md ADR-005/007/008/009/010. Confirmed by reading
+  src/shared/infrastructure/http/proxy.ts that the existing same-origin
+  proxy (app/api/[...path]/route.ts) already streams the response body
+  without buffering, so no proxy changes are needed on the web side.

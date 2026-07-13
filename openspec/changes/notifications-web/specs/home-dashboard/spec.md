@@ -15,9 +15,11 @@ derived from the authenticated user's email prefix and the active space name
 (sourced from `useAuthStore` and `useSpacesStore`), a search input (display
 only, non-functional), a **functional notification bell** (`NotificationBell`
 from `@/core/notifications/presentation/components/notification-bell/notification-bell`,
-showing an unread-count badge and opening a dropdown of recent notifications
-on click), and a "Nueva entrada" CTA (non-functional). The search input and
-CTA remain display-only; only the bell becomes functional in this change.
+showing a badge with the unread count — kept live via `NotificationsProvider`'s
+SSE connection, not a fixed poll — and opening a dropdown of recent
+notifications on click), and a "Nueva entrada" CTA (non-functional). The
+search input and CTA remain display-only; only the bell becomes functional
+in this change.
 
 #### Scenario: Top bar shows greeting with real user data
 
