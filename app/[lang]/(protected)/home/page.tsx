@@ -13,6 +13,7 @@ export default async function Page({ params }: { params: Promise<{ lang: string 
       careScheduleDict={dict.careSchedule}
       plantingSpotsDict={dict.plantingSpots}
       plantsDict={dict.plants.create}
+      notificationsDict={dict.notifications}
     />
   );
 }

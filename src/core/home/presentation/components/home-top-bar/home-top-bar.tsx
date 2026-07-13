@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Bell, ChevronDown, Leaf, Plus } from 'lucide-react';
+import { ChevronDown, Leaf, Plus } from 'lucide-react';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { Button } from '@/shared/presentation/components/ui/button/button';
 import {
@@ -13,6 +13,7 @@ import {
   DropdownMenuLabel,
 } from '@/shared/presentation/components/ui/dropdown-menu/dropdown-menu';
 import { CreatePlantModal } from '@/core/plants/presentation/components/create-plant-modal/create-plant-modal';
+import { NotificationBell } from '@/core/notifications/presentation/components/notification-bell/notification-bell';
 import { useAuthStore } from '@/core/auth/infrastructure/store/auth.store';
 import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
@@ -20,9 +21,10 @@ import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 type Props = {
   dict: AppDict['home'];
   plantsDict: AppDict['plants']['create'];
+  notificationsDict: AppDict['notifications'];
 };
 
-export function HomeTopBar({ dict, plantsDict }: Props) {
+export function HomeTopBar({ dict, plantsDict, notificationsDict }: Props) {
   const currentUser = useAuthStore((s) => s.currentUser);
   const availableSpaces = useSpacesStore((s) => s.availableSpaces);
   const currentSpaceId = useSpacesStore((s) => s.currentSpaceId);
@@ -48,9 +50,7 @@ export function HomeTopBar({ dict, plantsDict }: Props) {
               style={{ backgroundColor: 'var(--paper)', color: 'var(--ink-2)' }}
             />
 
-            <Button variant="ghost" size="sm" aria-label={dict.topbar.notifications} className="p-2">
-              <Bell size={18} />
-            </Button>
+            <NotificationBell ariaLabel={dict.topbar.notifications} dict={notificationsDict} />
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>

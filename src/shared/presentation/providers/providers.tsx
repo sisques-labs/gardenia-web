@@ -4,6 +4,7 @@ import { ApolloClientProvider } from './apollo.provider';
 import { ReactQueryProvider } from './query.provider';
 
 import { AuthProviders } from '@/core/auth/presentation/providers/auth.providers';
+import { NotificationsProvider } from '@/core/notifications/presentation/providers/notifications.providers';
 // SpacesProviders lives in app/[lang]/(protected)/layout.tsx — needs lang prop
 
 interface ProvidersProps {
@@ -15,7 +16,9 @@ export function Providers({ children }: ProvidersProps) {
     <ApolloClientProvider>
       <ReactQueryProvider>
         <AuthProviders>
-          {children}
+          <NotificationsProvider>
+            {children}
+          </NotificationsProvider>
         </AuthProviders>
       </ReactQueryProvider>
     </ApolloClientProvider>

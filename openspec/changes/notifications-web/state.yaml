@@ -9,11 +9,11 @@ phases:
   spec: done
   design: done
   tasks: done
-  apply: pending
-  verify: pending
+  apply: done
+  verify: partial
   archive: pending
 next_recommended:
-  - sdd-apply
+  - sdd-archive
 notes: |
   Full proposal authored manually (the `openspec` CLI binary is not installed
   in this environment; artifacts follow the exact structure/conventions of
@@ -41,3 +41,22 @@ notes: |
   src/shared/infrastructure/http/proxy.ts that the existing same-origin
   proxy (app/api/[...path]/route.ts) already streams the response body
   without buffering, so no proxy changes are needed on the web side.
+
+  IMPLEMENTED (all 9 phases): domain+application (types, port, 4 use-cases),
+  GraphQL infra (notification.gql.repository.ts + queries/mutations/
+  responses), SSE infra (@microsoft/fetch-event-source client +
+  NotificationsProvider), 4 presentation hooks, components (NotificationRow,
+  NotificationBell, NotificationList, NotificationsSkeleton,
+  NotificationsScreen), i18n (en/es + parity test), Providers/HomeTopBar
+  wiring, and the full /notifications route. pnpm test (full suite),
+  pnpm lint, and pnpm tsc --noEmit all green (one pre-existing, unrelated
+  failure in app/api/image-proxy/[id]/route.spec.ts — a Blob/Response
+  polyfill issue in this sandbox's Node version, not touched by this change).
+
+  Known gaps, honestly documented in tasks.md Phase 9:
+  - 9.3/9.4 (manual browser smoke test of the live SSE stream) not run —
+    no backend deployment or browser available in this sandbox.
+  - The API's CARE_SCHEDULE_DUE payload doesn't include a plant name (only
+    plantId/activityType/nextDueAt), so buildNotificationMessage renders
+    from activityType alone rather than the richer text ADR-002 envisioned.
+    A future notifications-module v2 could enrich the payload.
