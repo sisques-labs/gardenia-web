@@ -1,4 +1,4 @@
-import { Home, Leaf, Map, Calendar, BookOpen, Wheat, Boxes, Bug, Users, MapPin } from 'lucide-react';
+import { Home, Leaf, Map, Calendar, BookOpen, Wheat, Boxes, Bug, Users, MapPin, Cpu } from 'lucide-react';
 import type { ElementType } from 'react';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
@@ -22,4 +22,5 @@ export const NAV_ITEMS: NavItemConfig[] = [
   { key: 'pests', href: '/[lang]/pests', icon: Bug, disabled: true },
   { key: 'community', href: '/[lang]/community', icon: Users, disabled: true },
   { key: 'plantingSpots', href: '/[lang]/planting-spots', icon: MapPin },
+  { key: 'nodes', href: '/[lang]/nodes', icon: Cpu },
 ];
