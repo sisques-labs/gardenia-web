@@ -13,7 +13,7 @@ importers:
         version: 4.2.7(graphql@16.14.2)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(rxjs@7.8.2)
       '@hookform/resolvers':
         specifier: ^5.4.0
-        version: 5.4.0(react-hook-form@7.77.0(react@19.2.4))
+        version: 5.4.0(react-hook-form@7.81.0(react@19.2.4))
       '@radix-ui/react-avatar':
         specifier: ^1.1.11
         version: 1.1.11(@types/react-dom@19.2.3(@types/react@19.2.15))(@types/react@19.2.15)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -87,8 +87,8 @@ importers:
         specifier: 19.2.4
         version: 19.2.4(react@19.2.4)
       react-hook-form:
-        specifier: ^7.77.0
-        version: 7.77.0(react@19.2.4)
+        specifier: ^7.81.0
+        version: 7.81.0(react@19.2.4)
       sonner:
         specifier: ^2.0.7
         version: 2.0.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
@@ -5386,8 +5386,8 @@ packages:
     peerDependencies:
       react: ^19.2.4
 
-  react-hook-form@7.77.0:
-    resolution: {integrity: sha512-Sslh9YDYc0GDlWT/lxasnIduNo4v3yyvqRGvmGKUre5AFjDs/HV9/OafHGD8d+sB2yoL4UIL9L8X9i0WlZZebg==}
+  react-hook-form@7.81.0:
+    resolution: {integrity: sha512-ocbmr2p5KBMoAfj4WCUvped33lVi1Kd5DuDUvQDnB6VEAacOjPI/jMbtDdbhco4y9ct4xUuCmMY0b/C9L0QHjw==}
     engines: {node: '>=18.0.0'}
     peerDependencies:
       react: ^16.8.0 || ^17 || ^18 || ^19
@@ -7383,10 +7383,10 @@ snapshots:
     dependencies:
       graphql: 16.14.2
 
-  '@hookform/resolvers@5.4.0(react-hook-form@7.77.0(react@19.2.4))':
+  '@hookform/resolvers@5.4.0(react-hook-form@7.81.0(react@19.2.4))':
     dependencies:
       '@standard-schema/utils': 0.3.0
-      react-hook-form: 7.77.0(react@19.2.4)
+      react-hook-form: 7.81.0(react@19.2.4)
 
   '@humanfs/core@0.19.2':
     dependencies:
@@ -11907,7 +11907,7 @@ snapshots:
       react: 19.2.4
       scheduler: 0.27.0
 
-  react-hook-form@7.77.0(react@19.2.4):
+  react-hook-form@7.81.0(react@19.2.4):
     dependencies:
       react: 19.2.4
 
