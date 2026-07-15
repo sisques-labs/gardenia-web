@@ -1,6 +1,24 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.30.3] - 2026-07-15
+
+### Chore
+- **deps:** Bump @radix-ui/react-popover from 1.1.17 to 1.1.19 (0b37f93)
+- **deps:** Bump @radix-ui/react-tabs from 1.1.13 to 1.1.17 (d7e66d9)
+- **deps-dev:** Bump tailwindcss from 4.3.0 to 4.3.2 (a4daa5d)
+- **deps:** Bump @radix-ui/react-checkbox from 1.3.3 to 1.3.7 (fd32898)
+- **deps-dev:** Bump eslint-config-next from 16.2.6 to 16.2.10 (35750ca)
+- **deps:** Bump @radix-ui/react-slot from 1.2.4 to 1.3.0 (4796b19)
+- **deps-dev:** Bump lint-staged from 17.0.7 to 17.0.8 (482fe13)
+- **deps-dev:** Bump @types/node from 26.1.0 to 26.1.1 (7dc3f15)
+- **deps:** Bump @radix-ui/react-switch from 1.2.6 to 1.3.3 (ca7ec01)
+- **deps:** Bump @radix-ui/react-tooltip from 1.2.11 to 1.2.12 (4e98628)
+- **deps:** Bump @radix-ui/react-label from 2.1.8 to 2.1.11 (f78303e)
+- **deps:** Bump @radix-ui/react-select from 2.3.2 to 2.3.3 (a351582)
+- **deps:** Bump @radix-ui/react-dialog from 1.1.15 to 1.1.19 (b11d118)
+- **deps:** Bump @radix-ui/react-avatar from 1.1.11 to 1.2.2 (a187491)
+- **deps:** Bump @radix-ui/react-dropdown-menu from 2.1.16 to 2.1.20 (5376770)
 ## [0.30.2] - 2026-07-15
 
 ### Chore
