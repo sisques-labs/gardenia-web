@@ -1,6 +1,12 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.30.1] - 2026-07-13
+
+### Bug Fixes
+- **mobile:** Merge duplicate mobile header bar and stop header overlap (f1cdd21)
+- **home:** Keep top bar actions on one line on mobile (43067fd)
+- **mobile:** Memoize mobile menu context value (90c8626)
 ## [0.30.0] - 2026-07-10
 
 ### Documentation
