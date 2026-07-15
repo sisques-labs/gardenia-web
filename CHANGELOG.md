@@ -1,6 +1,14 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.30.2] - 2026-07-15
+
+### Chore
+- **deps-dev:** Bump @storybook/addon-docs from 10.4.6 to 10.5.0 (5039a7f)
+- **deps-dev:** Bump chromatic from 18.0.0 to 18.0.1 (e001531)
+- **deps:** Bump axios from 1.16.1 to 1.18.1 (95b81d8)
+- **deps-dev:** Bump @tanstack/react-query-devtools (d7425cd)
+- **deps:** Align Storybook packages to 10.5.0 (867e73c)
 ## [0.30.1] - 2026-07-13
 
 ### Bug Fixes
@@ -215,6 +223,15 @@ All notable changes to this project will be documented in this file.
 ### CI
 - **chromatic:** Skip visual regression job for dependabot PRs (f36a685)
 - Dispatch gardenia-e2e run after alpha/beta release (838dff7)
+
+### Chore
+- **deps:** Bump @radix-ui/react-radio-group from 1.3.8 to 1.4.3 (7205189)
+- **deps:** Bump lucide-react from 1.22.0 to 1.24.0 (ada91a3)
+- **deps:** Bump @radix-ui/react-context-menu from 2.3.1 to 2.3.3 (27d861a)
+- **deps:** Bump @apollo/client from 4.2.0 to 4.2.7 (1f25326)
+- **deps:** Bump react-hook-form from 7.77.0 to 7.81.0 (a220b67)
+- **deps-dev:** Bump @types/node from 26.1.0 to 26.1.1 (cbdf723)
+- **deps:** Downgrade @types/node from 26.1.1 to 26.1.0 and update related dependencies in pnpm-lock.yaml (85e680f)
 
 ### Documentation
 - **openspec:** Propose care-schedule-web integration change (8d7cf32)
