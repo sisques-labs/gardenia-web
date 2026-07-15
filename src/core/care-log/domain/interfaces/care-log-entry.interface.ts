@@ -18,3 +18,5 @@ export interface CareLogEntry {
 }
 
 export type LastCareByType = Partial<Record<CareLogActivityType, CareLogEntry>>;
+
+export type CareLogUnit = 'ML' | 'L' | 'G' | 'KG';

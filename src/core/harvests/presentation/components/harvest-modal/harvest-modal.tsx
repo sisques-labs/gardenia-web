@@ -41,25 +41,25 @@ export function HarvestModal({ dict, onClose, harvest }: Props) {
       submittingLabel={dict.form.submitting}
     >
       <div className="flex flex-col gap-1">
-        <label className="text-sm text-ink-2">{dict.form.cropType}</label>
-        <Input {...register('cropType')} />
+        <label htmlFor="harvest-crop-type" className="text-sm text-ink-2">{dict.form.cropType}</label>
+        <Input id="harvest-crop-type" {...register('cropType')} />
         {errors.cropType && (
           <span className="text-destructive text-xs">{errors.cropType.message}</span>
         )}
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-sm text-ink-2">{dict.form.quantity}</label>
-        <Input type="number" step="any" {...register('quantity')} />
+        <label htmlFor="harvest-quantity" className="text-sm text-ink-2">{dict.form.quantity}</label>
+        <Input id="harvest-quantity" type="number" step="any" {...register('quantity')} />
         {errors.quantity && (
           <span className="text-destructive text-xs">{errors.quantity.message}</span>
         )}
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-sm text-ink-2">{dict.form.unit}</label>
+        <label htmlFor="harvest-unit" className="text-sm text-ink-2">{dict.form.unit}</label>
         <Select value={selectedUnit} onValueChange={setUnit}>
-          <SelectTrigger>
+          <SelectTrigger id="harvest-unit">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -76,8 +76,8 @@ export function HarvestModal({ dict, onClose, harvest }: Props) {
       </div>
 
       <div className="flex flex-col gap-1">
-        <label className="text-sm text-ink-2">{dict.form.harvestedAt}</label>
-        <Input type="date" {...register('harvestedAt')} />
+        <label htmlFor="harvest-harvested-at" className="text-sm text-ink-2">{dict.form.harvestedAt}</label>
+        <Input id="harvest-harvested-at" type="date" {...register('harvestedAt')} />
         {errors.harvestedAt && (
           <span className="text-destructive text-xs">{errors.harvestedAt.message}</span>
         )}

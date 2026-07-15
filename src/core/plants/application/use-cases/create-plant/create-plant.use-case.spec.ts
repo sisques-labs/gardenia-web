@@ -1,39 +1,37 @@
 import { describe, it, expect, vi } from 'vitest';
 import { CreatePlantUseCase } from './create-plant.use-case';
 import type { IPlantsRepository } from '@/core/plants/application/ports/plants.repository.port';
-import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
-
-const mockPlant: Plant = {
-  id: 'p1',
-  name: 'Monstera',
-  userId: 'u1',
-  spaceId: 's1',
-  createdAt: '2024-01-01',
-  updatedAt: '2024-01-01',
-};
 
 describe('CreatePlantUseCase', () => {
   const mockRepo: IPlantsRepository = {
     list: vi.fn(),
     getById: vi.fn(),
-    create: vi.fn().mockResolvedValue(mockPlant),
+    create: vi.fn().mockResolvedValue({ id: 'p1' }),
+    update: vi.fn(),
     delete: vi.fn(),
+    searchSpecies: vi.fn(),
   };
 
-  it('delegates to repository.create and returns the plant', async () => {
+  it('delegates to repository.create and returns the created id', async () => {
     const useCase = new CreatePlantUseCase(mockRepo);
     const result = await useCase.execute({ name: 'Monstera' });
     expect(mockRepo.create).toHaveBeenCalledWith({ name: 'Monstera' });
-    expect(result).toEqual(mockPlant);
+    expect(result).toEqual({ id: 'p1' });
   });
 
   it('passes optional fields through', async () => {
     const useCase = new CreatePlantUseCase(mockRepo);
-    await useCase.execute({ name: 'Monstera', imageUrl: 'https://example.com/img.jpg', plantSpeciesId: 'sp-1' });
+    await useCase.execute({
+      name: 'Monstera',
+      imageUrl: 'https://example.com/img.jpg',
+      gbifSpeciesKey: 2882337,
+      speciesScientificName: 'Monstera deliciosa',
+    });
     expect(mockRepo.create).toHaveBeenCalledWith({
       name: 'Monstera',
       imageUrl: 'https://example.com/img.jpg',
-      plantSpeciesId: 'sp-1',
+      gbifSpeciesKey: 2882337,
+      speciesScientificName: 'Monstera deliciosa',
     });
   });
 

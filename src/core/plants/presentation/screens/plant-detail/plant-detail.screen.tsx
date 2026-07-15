@@ -1,49 +1,86 @@
-'use client';
+"use client";
 
-import Image from 'next/image';
-import { redirect, useRouter } from 'next/navigation';
-import { useState } from 'react';
-import { Droplets, Camera, StickyNote, Sun, Shovel, Scissors, Trash2 } from 'lucide-react';
-import { Button } from '@/shared/presentation/components/ui/button/button';
-import { Card, CardContent } from '@/shared/presentation/components/ui/card/card';
-import { Chip } from '@/shared/presentation/components/ui/chip/chip';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/shared/presentation/components/ui/tabs/tabs';
-import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
-import { CareCard } from '@/core/plants/presentation/components/care-card/care-card';
-import { GrowthTimeline } from '@/core/plants/presentation/components/growth-timeline/growth-timeline';
-import { InDevelopment } from '@/shared/presentation/components/in-development/in-development';
-import { usePlant } from '@/core/plants/presentation/hooks/use-plant/use-plant.hook';
-import { useDeletePlant } from '@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook';
-import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store';
-import { usePlantCareLogs } from '@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-logs.hook';
-import { CareLogSummary } from '@/core/care-log/presentation/components/care-log-summary/care-log-summary';
-import { CareScheduleList } from '@/core/care-schedule/presentation/components/care-schedule-list/care-schedule-list';
-import { ConfirmDialog } from '@/shared/presentation/components/ui/confirm-dialog/confirm-dialog';
-import { Alert } from '@/shared/presentation/components/ui/alert/alert';
-import { PlantDetailSkeleton } from '@/core/plants/presentation/components/plant-detail-skeleton/plant-detail-skeleton';
-import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
+import { useAuthStore } from "@/core/auth/infrastructure/store/auth.store";
+import { CareLogActivityType } from "@/core/care-log/domain/interfaces/care-log-entry.interface";
+import { CareLogSummary } from "@/core/care-log/presentation/components/care-log-summary/care-log-summary";
+import { usePlantCareLogs } from "@/core/care-log/presentation/hooks/use-plant-care-logs/use-plant-care-logs.hook";
+import { CareScheduleList } from "@/core/care-schedule/presentation/components/care-schedule-list/care-schedule-list";
+import { useWaterPlant } from "@/core/care-schedule/presentation/hooks/use-water-plant/use-water-plant.hook";
+import { PlantPhotoGallery } from "@/core/plant-photos/presentation/components/plant-photo-gallery/plant-photo-gallery";
+import { EditPlantModal } from "@/core/plants/presentation/components/edit-plant-modal/edit-plant-modal";
+import { PlantDetailSkeleton } from "@/core/plants/presentation/components/plant-detail-skeleton/plant-detail-skeleton";
+import { PlantPlantingSpotField } from "@/core/plants/presentation/components/plant-planting-spot-field/plant-planting-spot-field";
+import { useDeletePlant } from "@/core/plants/presentation/hooks/use-delete-plant/use-delete-plant.hook";
+import { usePlant } from "@/core/plants/presentation/hooks/use-plant/use-plant.hook";
+import { useQrDownload } from "@/shared/presentation/hooks/use-qr-download/use-qr-download.hook";
+import { QrCard } from "@/shared/presentation/components/qr-card/qr-card";
+import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store";
+import { formatRelativeTime } from "@/shared/lib/format-relative-time";
+import { ScreenHeader } from "@/shared/presentation/components/screen-header/screen-header";
+import { Alert } from "@/shared/presentation/components/ui/alert/alert";
+import { Button } from "@/shared/presentation/components/ui/button/button";
+import {
+  Card,
+  CardContent,
+} from "@/shared/presentation/components/ui/card/card";
+import { Chip } from "@/shared/presentation/components/ui/chip/chip";
+import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
+import type { AppDict } from "@/shared/presentation/i18n/get-dictionary";
+import { formatShortDate } from "@/shared/presentation/utils/format-short-date.util";
+import { getAuthenticatedImageUrl } from "@/shared/presentation/utils/get-authenticated-image-url.util";
+import {
+  CalendarDays,
+  Droplets,
+  MapPin,
+  Pencil,
+  Sprout,
+  Trash2,
+} from "lucide-react";
+import Image from "next/image";
+import { redirect, useRouter } from "next/navigation";
+import { useState } from "react";
 
 type Props = {
-  dict: AppDict['plants'];
-  careLogDict: AppDict['careLog'];
-  careScheduleDict: AppDict['careSchedule'];
+  dict: AppDict["plants"];
+  careLogDict: AppDict["careLog"];
+  careScheduleDict: AppDict["careSchedule"];
+  photosDict: AppDict["plantPhotos"];
   lang: string;
   spaceId: string | null;
   plantId: string;
 };
 
-export function PlantDetailScreen({ dict, careLogDict, careScheduleDict, lang, spaceId: spaceIdProp, plantId }: Props) {
+export function PlantDetailScreen({
+  dict,
+  careLogDict,
+  careScheduleDict,
+  photosDict,
+  lang,
+  spaceId: spaceIdProp,
+  plantId,
+}: Props) {
   const router = useRouter();
   const storeSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const spaceId = spaceIdProp ?? storeSpaceId;
   const { data: plant, isLoading, isError } = usePlant(spaceId, plantId);
   const { data: lastCareByType = {} } = usePlantCareLogs(plantId);
   const deletePlant = useDeletePlant(spaceId);
+  const waterPlant = useWaterPlant();
+  const qrDownload = useQrDownload();
   const [isDeleteOpen, setIsDeleteOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const accessToken = useAuthStore((s) => s.accessToken);
 
   if (isLoading) return <PlantDetailSkeleton />;
   if (isError) redirect(`/${lang}/plants`);
   if (!plant) return null;
+
+  const imageSrc = getAuthenticatedImageUrl(plant.imageUrl, accessToken, spaceId);
+
+  const lastWatered = lastCareByType[CareLogActivityType.WATERING];
+  const wateredLabel = lastWatered
+    ? formatRelativeTime(lastWatered.performedAt, lang)
+    : dict.detail.care.neverWatered;
 
   function handleDeleteConfirm() {
     deletePlant.mutate(plantId, {
@@ -54,7 +91,6 @@ export function PlantDetailScreen({ dict, careLogDict, careScheduleDict, lang, s
 
   return (
     <div className="flex flex-col">
-      {/* Breadcrumb nav */}
       <ScreenHeader
         title={plant.name}
         breadcrumbs={[
@@ -63,248 +99,213 @@ export function PlantDetailScreen({ dict, careLogDict, careScheduleDict, lang, s
         ]}
       />
 
-      <div className="p-6 flex flex-col gap-6">
-        {/* 3-column header grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Left column — Plant image */}
-          <div
-            data-testid="plant-image"
-            className="relative aspect-square rounded-xl overflow-hidden bg-muted flex items-center justify-center"
-          >
-            {plant.imageUrl ? (
-              <Image
-                src={plant.imageUrl}
-                alt={plant.name}
-                fill
-                className="object-cover"
-                sizes="(max-width: 768px) 100vw, 33vw"
-              />
-            ) : (
-              <div className="placeholder-img paper-grain flex items-center justify-center w-full h-full">
-                <span className="text-muted-foreground text-sm text-center px-2">{plant.name}</span>
-              </div>
-            )}
-          </div>
-
-          {/* Center column — Identity + Chips + Actions */}
-          <div className="flex flex-col gap-4">
-            <div className="flex flex-col gap-1">
-              <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                {dict.detail.bancal} · {plant.spaceId}
-              </p>
-              <h1
-                data-testid="plant-name"
-                className="headline text-3xl font-serif"
-              >
-                {plant.name}
-              </h1>
-              {plant.species?.scientificName && (
-                <p
-                  data-testid="plant-species"
-                  className="text-sm text-muted-foreground italic"
+      <div className="p-6 flex flex-col gap-8">
+        {/* Hero — the plant's specimen sheet */}
+        <Card className="rounded-3xl paper-grain">
+          <CardContent className="p-6 lg:p-8">
+            <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,300px)_1fr_auto] gap-8 lg:gap-10 items-start">
+              {/* Image, with a hanging "watered" tag */}
+              <div className="relative">
+                <div
+                  data-testid="plant-image"
+                  className="group relative aspect-square rounded-2xl overflow-hidden ring-1 ring-[var(--rule)] shadow-md"
                 >
-                  {plant.species.scientificName}
-                </p>
-              )}
-            </div>
-
-            {/* Chips row */}
-            <div className="flex flex-wrap gap-2">
-              {plant.species?.scientificName && (
-                <Chip variant="sage" data-testid="chip-species">
-                  {plant.species.scientificName}
-                </Chip>
-              )}
-            </div>
-
-            {/* Action bar */}
-            <div data-testid="plant-action-bar" className="flex flex-wrap gap-2">
-              <Button
-                variant="default"
-                size="sm"
-                data-testid="btn-mark-watered"
-              >
-                <Droplets className="w-4 h-4" />
-                {dict.detail.actions.markWatered}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                data-testid="btn-add-photo"
-              >
-                <Camera className="w-4 h-4" />
-                {dict.detail.actions.addPhoto}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                data-testid="btn-new-note"
-              >
-                <StickyNote className="w-4 h-4" />
-                {dict.detail.actions.newNote}
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                data-testid="btn-delete-plant"
-                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-                onClick={() => setIsDeleteOpen(true)}
-              >
-                <Trash2 className="w-4 h-4" />
-                {dict.delete.button}
-              </Button>
-            </div>
-            {deletePlant.isError && (
-              <Alert variant="error" message={dict.delete.error} />
-            )}
-          </div>
-
-          {/* Right column — QR Card */}
-          {plant.qr && (
-            <Card data-testid="plant-qr-card">
-              <CardContent className="flex flex-col gap-3 pt-6">
-                <p className="eyebrow text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                  {dict.detail.qr.label}
-                </p>
-                <Image
-                  data-testid="qr-image"
-                  src={`data:image/png;base64,${plant.qr.image}`}
-                  alt="QR"
-                  width={96}
-                  height={96}
-                  unoptimized
-                  className="w-24 h-24 mx-auto"
-                />
-                <p
-                  data-testid="qr-code"
-                  className="text-xs text-center text-muted-foreground font-mono"
-                >
-                  {plant.qr.id}
-                </p>
-                <p className="text-xs text-center text-muted-foreground">
-                  {dict.detail.qr.hint}
-                </p>
-                <Button
-                  disabled
-                  variant="ghost"
-                  size="sm"
-                  data-testid="qr-download-btn"
-                  className="text-xs text-[var(--forest)] w-full"
-                >
-                  {dict.detail.qr.download}
-                </Button>
-              </CardContent>
-            </Card>
-          )}
-        </div>
-
-        {/* Tab nav */}
-        <Tabs defaultValue="care">
-          <TabsList variant="line" className="w-full justify-start border-b rounded-none h-auto pb-0">
-            <TabsTrigger value="care">{dict.detail.tabs.care}</TabsTrigger>
-            <TabsTrigger value="calendar">{dict.detail.tabs.calendar}</TabsTrigger>
-            <TabsTrigger value="diary">{dict.detail.tabs.diary}</TabsTrigger>
-            <TabsTrigger value="harvests">{dict.detail.tabs.harvests}</TabsTrigger>
-            <TabsTrigger value="pests">{dict.detail.tabs.pests}</TabsTrigger>
-            <TabsTrigger value="associations">{dict.detail.tabs.associations}</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="care">
-            {(() => {
-              const careData = [
-                {
-                  icon: <Droplets className="w-4 h-4" />,
-                  label: dict.detail.care.wateringLabel,
-                  labelVariant: 'forest' as const,
-                  title: dict.detail.care.wateringTitle,
-                  description: dict.detail.care.wateringDesc,
-                },
-                {
-                  icon: <Sun className="w-4 h-4" />,
-                  label: dict.detail.care.sunLabel,
-                  labelVariant: 'honey' as const,
-                  title: dict.detail.care.sunTitle,
-                  description: dict.detail.care.sunDesc,
-                },
-                {
-                  icon: <Shovel className="w-4 h-4" />,
-                  label: dict.detail.care.soilLabel,
-                  labelVariant: 'terra' as const,
-                  title: dict.detail.care.soilTitle,
-                  description: dict.detail.care.soilDesc,
-                },
-                {
-                  icon: <Scissors className="w-4 h-4" />,
-                  label: dict.detail.care.pruningLabel,
-                  labelVariant: 'sage' as const,
-                  title: dict.detail.care.pruningTitle,
-                  description: dict.detail.care.pruningDesc,
-                },
-              ];
-
-              const growthStages = [
-                { name: dict.detail.cycle.seedStage, daysStart: 0, daysEnd: 14, color: 'var(--sage)' },
-                { name: dict.detail.cycle.seedlingStage, daysStart: 14, daysEnd: 28, color: 'var(--forest)' },
-                { name: dict.detail.cycle.vegetativeStage, daysStart: 28, daysEnd: 45, color: 'var(--honey)' },
-                { name: dict.detail.cycle.fruitingStage, daysStart: 45, daysEnd: 64, color: 'var(--terracotta)' },
-              ];
-
-              return (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 pt-6">
-                  {/* Left: care cards + cycle */}
-                  <div className="lg:col-span-2 flex flex-col gap-6">
-                    <CareLogSummary lastCareByType={lastCareByType} dict={careLogDict} lang={lang} />
-                    <div data-testid="care-grid" className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      {careData.map((care) => (
-                        <CareCard key={care.label} {...care} />
-                      ))}
-                    </div>
-                    <div>
-                      <p className="eyebrow mb-3">{dict.detail.cycle.title}</p>
-                      <GrowthTimeline
-                        stages={growthStages}
-                        currentDay={36}
-                        totalDays={64}
+                  {imageSrc ? (
+                    <Image
+                      src={imageSrc}
+                      alt={plant.name}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-105"
+                      sizes="(max-width: 1024px) 100vw, 300px"
+                      unoptimized
+                    />
+                  ) : (
+                    <div className="placeholder-img leaf flex flex-col items-center justify-center gap-2 w-full h-full">
+                      <Sprout
+                        className="w-8 h-8 text-[var(--forest-2)]"
+                        aria-hidden="true"
                       />
+                      <span className="text-center px-2">{plant.name}</span>
                     </div>
-                  </div>
-                  {/* Right: photo history + pest tracking */}
-                  <div className="flex flex-col gap-6">
-                    <div>
-                      <p className="eyebrow mb-3">{dict.detail.photoHistory.title}</p>
-                      <InDevelopment />
-                    </div>
-                    <div>
-                      <p className="eyebrow mb-3">{dict.detail.pestTracking.title}</p>
-                      <InDevelopment />
-                    </div>
-                  </div>
+                  )}
                 </div>
-              );
-            })()}
-          </TabsContent>
+                <div
+                  data-testid="plant-last-watered"
+                  aria-label={`${dict.detail.care.lastWatered}: ${wateredLabel}`}
+                  className="absolute -bottom-3 left-3 right-3 inline-flex items-center gap-1.5 rounded-full border border-[var(--rule)] bg-[var(--paper)] px-3 py-1.5 text-xs font-medium shadow-md w-fit max-w-[calc(100%-1.5rem)]"
+                >
+                  <Droplets
+                    className="w-3.5 h-3.5 text-[var(--forest)] shrink-0"
+                    aria-hidden="true"
+                  />
+                  <span className="truncate">{wateredLabel}</span>
+                </div>
+              </div>
 
-          <TabsContent value="calendar">
-            <CareScheduleList plantId={plantId} dict={careScheduleDict} />
-          </TabsContent>
+              {/* Identity + chips + actions */}
+              <div className="flex flex-col gap-4 min-w-0 pt-1">
+                <div className="flex flex-col gap-1">
+                  <h1
+                    data-testid="plant-name"
+                    className="headline text-4xl lg:text-5xl tracking-tight"
+                  >
+                    {plant.name}
+                  </h1>
+                  {plant.species?.scientificName && (
+                    <p
+                      data-testid="plant-species"
+                      className="text-base text-muted-foreground italic"
+                    >
+                      {plant.species.scientificName}
+                    </p>
+                  )}
+                  <p
+                    className="text-base text-[var(--terracotta)] mt-0.5"
+                    style={{ fontFamily: "var(--font-hand)" }}
+                  >
+                    {dict.detail.addedOn}{" "}
+                    {formatShortDate(plant.createdAt, lang)}
+                  </p>
+                </div>
 
-          <TabsContent value="diary">
-            <InDevelopment />
-          </TabsContent>
+                {/* Chips row */}
+                <div className="flex flex-wrap gap-2">
+                  {plant.species?.scientificName && (
+                    <Chip variant="sage" data-testid="chip-species">
+                      {plant.species.scientificName}
+                    </Chip>
+                  )}
+                  {plant.plantingSpot && (
+                    <Chip variant="outline" data-testid="chip-planting-spot">
+                      <MapPin className="w-3 h-3" aria-hidden="true" />
+                      {plant.plantingSpot.name}
+                    </Chip>
+                  )}
+                </div>
 
-          <TabsContent value="harvests">
-            <InDevelopment />
-          </TabsContent>
+                <PlantPlantingSpotField
+                  plantId={plantId}
+                  currentSpotId={plant.plantingSpot?.id}
+                  dict={dict.detail.plantingSpot}
+                />
 
-          <TabsContent value="pests">
-            <InDevelopment />
-          </TabsContent>
+                <div className="dashed-rule" />
 
-          <TabsContent value="associations">
-            <InDevelopment />
-          </TabsContent>
-        </Tabs>
+                {/* Action bar */}
+                <div
+                  data-testid="plant-action-bar"
+                  className="flex flex-wrap gap-2"
+                >
+                  <Button
+                    variant="default"
+                    size="sm"
+                    loading={waterPlant.isPending}
+                    data-testid="btn-mark-watered"
+                    className="shadow-sm"
+                    onClick={() => waterPlant.mutate({ plantId })}
+                  >
+                    <Droplets className="w-4 h-4" />
+                    {dict.detail.actions.markWatered}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    data-testid="btn-edit-plant"
+                    onClick={() => setIsEditOpen(true)}
+                  >
+                    <Pencil className="w-4 h-4" />
+                    {dict.detail.actions.edit}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    data-testid="btn-delete-plant"
+                    className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+                    onClick={() => setIsDeleteOpen(true)}
+                  >
+                    <Trash2 className="w-4 h-4" />
+                    {dict.delete.button}
+                  </Button>
+                </div>
+                {waterPlant.isError && (
+                  <Alert
+                    variant="error"
+                    message={dict.detail.actions.markWateredError}
+                  />
+                )}
+                {deletePlant.isError && (
+                  <Alert variant="error" message={dict.delete.error} />
+                )}
+
+                <PlantPhotoGallery plantId={plantId} lang={lang} dict={photosDict} />
+              </div>
+
+              {/* QR — rendered like the printable pot tag it actually is */}
+              {plant.qr && (
+                <QrCard
+                  image={plant.qr.image}
+                  code={plant.qr.id}
+                  label={dict.detail.qr.label}
+                  hint={dict.detail.qr.hint}
+                  downloadLabel={dict.detail.qr.download}
+                  onDownload={() => qrDownload.download(plant.name, plant.qr)}
+                />
+              )}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Care + calendar sections */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+          <Card
+            data-testid="care-log-section"
+            className="rounded-2xl border-l-4 border-l-[var(--forest)] transition-shadow duration-200 hover:shadow-md"
+          >
+            s{" "}
+            <CardContent className="pt-6">
+              <CareLogSummary
+                lastCareByType={lastCareByType}
+                dict={careLogDict}
+                lang={lang}
+              />
+            </CardContent>
+          </Card>
+
+          <Card
+            data-testid="care-schedule-section"
+            className="rounded-2xl border-l-4 border-l-[var(--honey)] transition-shadow duration-200 hover:shadow-md"
+          >
+            <CardContent className="pt-6">
+              <CareScheduleList
+                plantId={plantId}
+                dict={careScheduleDict}
+                title={
+                  <>
+                    <CalendarDays className="w-3.5 h-3.5" aria-hidden="true" />
+                    {dict.detail.calendarTitle}
+                  </>
+                }
+              />
+            </CardContent>
+          </Card>
+        </div>
       </div>
+
+      {isEditOpen && (
+        <EditPlantModal
+          plant={{
+            id: plant.id,
+            name: plant.name,
+            imageUrl: plant.imageUrl,
+            species:
+              plant.species && plant.species.gbifKey != null
+                ? { gbifKey: plant.species.gbifKey, scientificName: plant.species.scientificName }
+                : null,
+          }}
+          dict={dict.edit}
+          onClose={() => setIsEditOpen(false)}
+        />
+      )}
 
       <ConfirmDialog
         open={isDeleteOpen}

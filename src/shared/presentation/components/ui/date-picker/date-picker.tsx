@@ -73,7 +73,6 @@ const DatePicker = ({ className, value, onChange, minDate, maxDate, placeholder 
       <div className="relative flex items-center">
         <input
           type="text"
-          role="textbox"
           value={inputVal}
           readOnly
           placeholder={placeholder}
@@ -89,13 +88,13 @@ const DatePicker = ({ className, value, onChange, minDate, maxDate, placeholder 
         <div className="card absolute z-50 mt-1 p-3 min-w-[260px]">
           {/* Month navigation */}
           <div className="flex items-center justify-between mb-2">
-            <button type="button" onClick={prevMonth} className="p-1 hover:bg-[var(--paper-2)] rounded">
+            <button type="button" onClick={prevMonth} aria-label="Previous month" className="p-1 hover:bg-[var(--paper-2)] rounded">
               <ChevronLeft className="h-4 w-4" />
             </button>
             <span className="text-sm font-medium">
               {MONTHS[viewMonth - 1]} {viewYear}
             </span>
-            <button type="button" onClick={nextMonth} className="p-1 hover:bg-[var(--paper-2)] rounded">
+            <button type="button" onClick={nextMonth} aria-label="Next month" className="p-1 hover:bg-[var(--paper-2)] rounded">
               <ChevronRight className="h-4 w-4" />
             </button>
           </div>

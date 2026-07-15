@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import { Menu } from 'lucide-react';
 import {
   Breadcrumb,
   BreadcrumbList,
@@ -7,6 +8,7 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from '@/shared/presentation/components/ui/breadcrumb/breadcrumb';
+import { useMobileMenu } from '@/shared/presentation/components/app-shell/mobile-menu.context';
 
 interface BreadcrumbEntry {
   label: string;
@@ -16,13 +18,16 @@ interface BreadcrumbEntry {
 interface ScreenHeaderProps {
   title: string;
   eyebrow?: string;
+  subtitle?: string;
   breadcrumbs?: BreadcrumbEntry[];
   actions?: ReactNode;
 }
 
-export function ScreenHeader({ title, eyebrow, breadcrumbs, actions }: ScreenHeaderProps) {
+export function ScreenHeader({ title, eyebrow, subtitle, breadcrumbs, actions }: ScreenHeaderProps) {
+  const mobileMenu = useMobileMenu();
+
   return (
-    <header className="flex flex-col gap-1 px-6 py-4 border-b border-[var(--rule)]">
+    <header className="flex min-h-16 flex-col justify-center gap-1 px-4 sm:px-6 py-3 border-b border-[var(--rule)]">
       {breadcrumbs && breadcrumbs.length > 0 && (
         <Breadcrumb>
           <BreadcrumbList className="text-xs">
@@ -43,10 +48,30 @@ export function ScreenHeader({ title, eyebrow, breadcrumbs, actions }: ScreenHea
       )}
 
       {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-      <div className="flex items-center">
-        <h1 className="headline text-[var(--ink)]">{title}</h1>
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+        {mobileMenu && (
+          <button
+            type="button"
+            onClick={mobileMenu.onOpen}
+            aria-label={mobileMenu.label}
+            className="md:hidden -ml-1 shrink-0 rounded-md p-1 text-[var(--ink)] hover:bg-[var(--forest-bg)]"
+          >
+            <Menu className="w-5 h-5" />
+          </button>
+        )}
+        <div className="flex min-w-0 flex-wrap items-baseline gap-x-2 gap-y-1">
+          <h1 className="headline text-[var(--ink)]">{title}</h1>
+          {subtitle && (
+            <span
+              className="text-base italic text-[var(--terracotta)]"
+              style={{ fontFamily: 'var(--hand)' }}
+            >
+              {subtitle}
+            </span>
+          )}
+        </div>
         {actions && (
-          <div data-testid="screen-header-actions" className="ml-auto flex items-center gap-2">
+          <div data-testid="screen-header-actions" className="ml-auto flex flex-wrap items-center gap-2">
             {actions}
           </div>
         )}

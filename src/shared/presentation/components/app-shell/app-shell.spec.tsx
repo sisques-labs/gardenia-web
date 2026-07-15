@@ -1,8 +1,19 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { vi } from 'vitest';
 import { useSidebarStore } from '@/shared/infrastructure/store/sidebar/sidebar.store';
 import { AppShell } from './app-shell';
+import { useMobileMenu } from './mobile-menu.context';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
+
+function MobileMenuConsumer() {
+  const menu = useMobileMenu();
+  return menu ? (
+    <button type="button" aria-label={menu.label} onClick={menu.onOpen}>
+      toggle
+    </button>
+  ) : null;
+}
 
 const shellDict: AppDict['shell'] = {
   openNavigation: 'Open navigation',
@@ -74,5 +85,17 @@ describe('AppShell', () => {
   it('does not render overlay when drawer is closed', () => {
     render(<AppShell dict={shellDict}><p>content</p></AppShell>);
     expect(screen.queryByTestId('sidebar-overlay')).not.toBeInTheDocument();
+  });
+
+  it('exposes the mobile menu label and toggle via context so ScreenHeader renders one merged header', () => {
+    render(<AppShell dict={shellDict}><MobileMenuConsumer /></AppShell>);
+    expect(screen.getByLabelText(shellDict.openNavigation)).toHaveAttribute('type', 'button');
+  });
+
+  it('opens the drawer when the mobile menu context toggle is invoked', async () => {
+    const user = userEvent.setup();
+    render(<AppShell dict={shellDict}><MobileMenuConsumer /></AppShell>);
+    await user.click(screen.getByLabelText(shellDict.openNavigation));
+    expect(screen.getByTestId('sidebar-overlay')).toBeInTheDocument();
   });
 });

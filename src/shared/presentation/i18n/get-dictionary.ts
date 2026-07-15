@@ -12,6 +12,7 @@ import type { CareLogDict } from '@/core/care-log/presentation/i18n/en';
 import type { PlantingSpotsDict } from '@/core/planting-spots/presentation/i18n/en';
 import type { InventoryDict } from '@/core/inventory/presentation/i18n/en';
 import type { CareScheduleDict } from '@/core/care-schedule/presentation/i18n/en';
+import type { PlantPhotosDict } from '@/core/plant-photos/presentation/i18n/en';
 
 import enAuth from '@/core/auth/presentation/i18n/en';
 import esAuth from '@/core/auth/presentation/i18n/es';
@@ -37,6 +38,8 @@ import enInventory from '@/core/inventory/presentation/i18n/en';
 import esInventory from '@/core/inventory/presentation/i18n/es';
 import enCareSchedule from '@/core/care-schedule/presentation/i18n/en';
 import esCareSchedule from '@/core/care-schedule/presentation/i18n/es';
+import enPlantPhotos from '@/core/plant-photos/presentation/i18n/en';
+import esPlantPhotos from '@/core/plant-photos/presentation/i18n/es';
 
 export type AppDict = {
   auth: WidenStringLiterals<AuthDict>;
@@ -51,6 +54,7 @@ export type AppDict = {
   plantingSpots: WidenStringLiterals<PlantingSpotsDict>;
   inventory: WidenStringLiterals<InventoryDict>;
   careSchedule: WidenStringLiterals<CareScheduleDict>;
+  plantPhotos: WidenStringLiterals<PlantPhotosDict>;
 };
 
 const dictionaries: Record<Locale, AppDict> = {
@@ -67,6 +71,7 @@ const dictionaries: Record<Locale, AppDict> = {
     plantingSpots: enPlantingSpots,
     inventory: enInventory,
     careSchedule: enCareSchedule,
+    plantPhotos: enPlantPhotos,
   },
   es: {
     auth: esAuth,
@@ -81,6 +86,7 @@ const dictionaries: Record<Locale, AppDict> = {
     plantingSpots: esPlantingSpots,
     inventory: esInventory,
     careSchedule: esCareSchedule,
+    plantPhotos: esPlantPhotos,
   },
 };
 

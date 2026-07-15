@@ -12,6 +12,8 @@ const mockSpot: PlantingSpot = {
   capacity: 6,
   row: 1,
   column: 1,
+  status: "ACTIVE",
+  fallowSince: null,
   resolvedPlants: [
     { id: "p1", name: "Tomate", userId: "u1", spaceId: "s1", createdAt: "", updatedAt: "" },
   ],

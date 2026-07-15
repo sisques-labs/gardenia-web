@@ -16,6 +16,7 @@ import { INVENTORY_ITEM_CREATE } from './mutations/inventory-item-create.mutatio
 import { INVENTORY_ITEM_UPDATE } from './mutations/inventory-item-update.mutation';
 import { INVENTORY_ITEM_ADJUST_QUANTITY } from './mutations/inventory-item-adjust-quantity.mutation';
 import { INVENTORY_ITEM_DELETE } from './mutations/inventory-item-delete.mutation';
+import { INVENTORY_ITEMS_DELETE_BULK } from './mutations/inventory-items-delete-bulk.mutation';
 import type { InventoryItem } from '@/core/inventory/domain/types/inventory-item.interface';
 
 const mockItem: InventoryItem = {
@@ -51,6 +52,7 @@ describe('InventoryGqlRepository', () => {
       ['INVENTORY_ITEM_UPDATE', INVENTORY_ITEM_UPDATE],
       ['INVENTORY_ITEM_ADJUST_QUANTITY', INVENTORY_ITEM_ADJUST_QUANTITY],
       ['INVENTORY_ITEM_DELETE', INVENTORY_ITEM_DELETE],
+      ['INVENTORY_ITEMS_DELETE_BULK', INVENTORY_ITEMS_DELETE_BULK],
     ])('%s is a valid GQL document', (_name, doc) => {
       expect(doc).toBeDefined();
       expect((doc as DocumentNode).kind).toBe('Document');
@@ -58,27 +60,51 @@ describe('InventoryGqlRepository', () => {
   });
 
   describe('findByCriteria()', () => {
-    it('queries with pagination and returns items', async () => {
+    it('queries with no criteria and returns a paginated result', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { inventoryItemsFindByCriteria: { items: [mockItem] } },
+        data: {
+          inventoryItemsFindByCriteria: { items: [mockItem], total: 1, page: 1, perPage: 20, totalPages: 1 },
+        },
       } as never);
 
       const result = await repository.findByCriteria();
 
       expect(apolloClient.query).toHaveBeenCalledWith({
         query: INVENTORY_ITEMS_FIND_BY_CRITERIA,
-        variables: { input: { pagination: { page: 1, perPage: 100 } } },
+        variables: { input: undefined },
         fetchPolicy: 'network-only',
       });
-      expect(result).toEqual([mockItem]);
+      expect(result).toEqual({ items: [mockItem], total: 1, page: 1, perPage: 20, totalPages: 1 });
     });
 
-    it('returns empty array when there are no items', async () => {
+    it('forwards filters, sorts and pagination as the input variable', async () => {
       vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { inventoryItemsFindByCriteria: { items: [] } },
+        data: {
+          inventoryItemsFindByCriteria: { items: [], total: 0, page: 2, perPage: 5, totalPages: 0 },
+        },
       } as never);
 
-      expect(await repository.findByCriteria()).toEqual([]);
+      const criteria = {
+        filters: [{ field: 'NAME' as never, operator: 'LIKE' as never, value: 'seeds' }],
+        sorts: [{ field: 'QUANTITY' as never, direction: 'ASC' as never }],
+        pagination: { page: 2, perPage: 5 },
+      };
+      await repository.findByCriteria(criteria);
+
+      expect(apolloClient.query).toHaveBeenCalledWith({
+        query: INVENTORY_ITEMS_FIND_BY_CRITERIA,
+        variables: { input: criteria },
+        fetchPolicy: 'network-only',
+      });
+    });
+
+    it('returns empty items when there are no items', async () => {
+      vi.mocked(apolloClient.query).mockResolvedValue({
+        data: { inventoryItemsFindByCriteria: { items: [], total: 0, page: 1, perPage: 20, totalPages: 0 } },
+      } as never);
+
+      const result = await repository.findByCriteria();
+      expect(result.items).toEqual([]);
     });
 
     it('propagates query errors', async () => {
@@ -115,19 +141,17 @@ describe('InventoryGqlRepository', () => {
   });
 
   describe('create()', () => {
-    it('mutates then re-fetches by id', async () => {
+    it('mutates and returns just the created id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { inventoryItemCreate: { id: 'item-1', success: true, message: 'ok' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { inventoryItemFindById: mockItem },
       } as never);
 
       const input = { itemType: 'SEEDS' as const, name: 'Lettuce seeds', quantity: 3, unit: 'PACKETS' as const };
       const result = await repository.create(input);
 
       expect(apolloClient.mutate).toHaveBeenCalledWith({ mutation: INVENTORY_ITEM_CREATE, variables: { input } });
-      expect(result).toEqual(mockItem);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'item-1' });
     });
 
     it('throws when success is false', async () => {
@@ -142,29 +166,24 @@ describe('InventoryGqlRepository', () => {
   });
 
   describe('update()', () => {
-    it('mutates then re-fetches by id', async () => {
+    it('mutates and returns just the updated id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { inventoryItemUpdate: { id: 'item-1', success: true, message: 'ok' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { inventoryItemFindById: mockItem },
       } as never);
 
       const input = { id: 'item-1', name: 'Renamed' };
       const result = await repository.update(input);
 
       expect(apolloClient.mutate).toHaveBeenCalledWith({ mutation: INVENTORY_ITEM_UPDATE, variables: { input } });
-      expect(result).toEqual(mockItem);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'item-1' });
     });
   });
 
   describe('adjustQuantity()', () => {
-    it('mutates then re-fetches by id', async () => {
+    it('mutates and returns just the adjusted id', async () => {
       vi.mocked(apolloClient.mutate).mockResolvedValue({
         data: { inventoryItemAdjustQuantity: { id: 'item-1', success: true, message: 'ok' } },
-      } as never);
-      vi.mocked(apolloClient.query).mockResolvedValue({
-        data: { inventoryItemFindById: mockItem },
       } as never);
 
       const input = { id: 'item-1', delta: -2, reason: 'sowed' };
@@ -174,7 +193,8 @@ describe('InventoryGqlRepository', () => {
         mutation: INVENTORY_ITEM_ADJUST_QUANTITY,
         variables: { input },
       });
-      expect(result).toEqual(mockItem);
+      expect(apolloClient.query).not.toHaveBeenCalled();
+      expect(result).toEqual({ id: 'item-1' });
     });
   });
 
@@ -191,6 +211,57 @@ describe('InventoryGqlRepository', () => {
         mutation: INVENTORY_ITEM_DELETE,
         variables: { id: 'item-1' },
       });
+    });
+  });
+
+  describe('deleteBulk()', () => {
+    it('mutates with the ids and returns the full result', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: {
+          inventoryItemsDeleteBulk: {
+            deletedIds: ['item-1', 'item-2'],
+            notFoundIds: [],
+            deletedCount: 2,
+            requestedCount: 2,
+          },
+        },
+      } as never);
+
+      const result = await repository.deleteBulk(['item-1', 'item-2']);
+
+      expect(apolloClient.mutate).toHaveBeenCalledWith({
+        mutation: INVENTORY_ITEMS_DELETE_BULK,
+        variables: { input: { ids: ['item-1', 'item-2'] } },
+      });
+      expect(result).toEqual({
+        deletedIds: ['item-1', 'item-2'],
+        notFoundIds: [],
+        deletedCount: 2,
+        requestedCount: 2,
+      });
+    });
+
+    it('reports not-found ids without throwing', async () => {
+      vi.mocked(apolloClient.mutate).mockResolvedValue({
+        data: {
+          inventoryItemsDeleteBulk: {
+            deletedIds: ['item-1'],
+            notFoundIds: ['item-2'],
+            deletedCount: 1,
+            requestedCount: 2,
+          },
+        },
+      } as never);
+
+      const result = await repository.deleteBulk(['item-1', 'item-2']);
+
+      expect(result.notFoundIds).toEqual(['item-2']);
+      expect(result.deletedCount).toBe(1);
+    });
+
+    it('propagates mutation errors', async () => {
+      vi.mocked(apolloClient.mutate).mockRejectedValue(new Error('Network error'));
+      await expect(repository.deleteBulk(['item-1'])).rejects.toThrow('Network error');
     });
   });
 });

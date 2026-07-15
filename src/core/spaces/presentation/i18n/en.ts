@@ -21,10 +21,23 @@ const dict = {
     noSpace: 'No active space',
   },
   invite: {
-    accepting: 'Joining space...',
     missingCode: 'This invitation link is invalid or missing a code.',
-    error:
-      'Could not accept the invitation. It may be expired or you may already be a member.',
+    previewLoading: 'Loading invitation...',
+    joinPromptAuthenticated: "You've been invited to join.",
+    joinPromptUnauthenticated: 'Sign in to accept this invitation.',
+    signInCta: 'Sign in to continue',
+    joinCta: 'Join',
+    joining: 'Joining...',
+    success: "You've joined {spaceName}.",
+    roleMember: 'member',
+    roleOwner: 'owner',
+    errors: {
+      InvitationNotFoundException: 'This invitation was not found.',
+      InvitationExpiredException:
+        'This invitation has expired. Ask the space owner for a new link.',
+      DuplicateMembershipException: "You're already a member of this space.",
+      fallback: 'Could not accept the invitation. Try again.',
+    },
   },
   members: {
     list: {

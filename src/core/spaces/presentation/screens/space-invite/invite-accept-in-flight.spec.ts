@@ -1,7 +1,6 @@
 import { describe, expect, it, beforeEach } from 'vitest';
 import {
   claimInviteAccept,
-  isAlreadyMemberError,
   markInviteAcceptCompleted,
   releaseInviteAccept,
   wasInviteAcceptCompleted,
@@ -24,10 +23,5 @@ describe('invite-accept-in-flight', () => {
     expect(wasInviteAcceptCompleted('CODE-A')).toBe(false);
     markInviteAcceptCompleted('CODE-A');
     expect(wasInviteAcceptCompleted('CODE-A')).toBe(true);
-  });
-
-  it('detects already-member error messages', () => {
-    const error = new Error("User 'u1' is already a member of space 's1'");
-    expect(isAlreadyMemberError(error)).toBe(true);
   });
 });

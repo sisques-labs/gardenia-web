@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { UseFormRegisterReturn } from 'react-hook-form';
+import { cn } from '@/shared/lib/utils';
 
 export type AuthFieldProps = {
   id: string;
@@ -20,65 +21,39 @@ export function AuthField({ id, label, type = 'text', placeholder, error, regist
   const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+    <div className="flex flex-col gap-1.5">
       <label
         htmlFor={id}
-        style={{
-          fontFamily: 'var(--mono)',
-          fontSize: '10.5px',
-          textTransform: 'uppercase',
-          letterSpacing: '0.05em',
-          color: 'var(--ink-2)',
-        }}
+        className="font-[var(--mono)] text-[10.5px] uppercase tracking-[0.05em] text-[var(--ink-2)]"
       >
         {label}
       </label>
-      <div style={{ position: 'relative' }}>
+      <div className="relative">
         <input
           id={id}
           type={inputType}
           placeholder={placeholder}
           {...registration}
-          style={{
-            width: '100%',
-            fontFamily: 'var(--sans)',
-            fontSize: '14px',
-            padding: '10px 12px',
-            borderRadius: '9px',
-            border: `1.5px solid ${error ? 'var(--terracotta)' : 'oklch(0.84 0.03 70)'}`,
-            boxShadow: error
-              ? '0 0 0 3px oklch(0.62 0.13 35 / 0.14)'
-              : 'none',
-            outline: 'none',
-            background: 'var(--paper)',
-            color: 'var(--ink)',
-            boxSizing: 'border-box',
-          }}
+          className={cn(
+            'w-full box-border font-[var(--sans)] text-sm px-3 py-2.5 rounded-[9px] outline-none bg-[var(--paper)] text-[var(--ink)] border-[1.5px]',
+            error
+              ? 'border-[var(--terracotta)] shadow-[0_0_0_3px_oklch(0.62_0.13_35_/_0.14)]'
+              : 'border-[oklch(0.84_0.03_70)] shadow-none',
+          )}
         />
         {isPassword && (
           <button
             type="button"
             onClick={() => setShowPassword((v) => !v)}
             aria-label={showPassword ? hideLabel : showLabel}
-            style={{
-              position: 'absolute',
-              right: 10,
-              top: '50%',
-              transform: 'translateY(-50%)',
-              background: 'none',
-              border: 'none',
-              cursor: 'pointer',
-              color: 'var(--ink-3)',
-              padding: '4px',
-              fontSize: '12px',
-            }}
+            className="absolute right-2.5 top-1/2 -translate-y-1/2 bg-transparent border-0 cursor-pointer text-[var(--ink-3)] p-1 text-xs"
           >
             {showPassword ? hideLabel : showLabel}
           </button>
         )}
       </div>
       {error && (
-        <p role="alert" style={{ fontSize: '12px', color: 'var(--terracotta)', margin: 0 }}>
+        <p role="alert" className="text-xs text-[var(--terracotta)] m-0">
           {error}
         </p>
       )}

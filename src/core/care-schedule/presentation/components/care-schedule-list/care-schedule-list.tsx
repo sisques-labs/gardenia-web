@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { useCareSchedules } from '@/core/care-schedule/presentation/hooks/use-care-schedules/use-care-schedules.hook';
 import { useCompleteCareSchedule } from '@/core/care-schedule/presentation/hooks/use-complete-care-schedule/use-complete-care-schedule.hook';
 import { useDeleteCareSchedule } from '@/core/care-schedule/presentation/hooks/use-delete-care-schedule/use-delete-care-schedule.hook';
@@ -13,9 +13,11 @@ import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 type Props = {
   plantId: string;
   dict: AppDict['careSchedule'];
+  /** Rendered on the same row as the "new task" button, level with its baseline. */
+  title?: ReactNode;
 };
 
-export function CareScheduleList({ plantId, dict }: Props) {
+export function CareScheduleList({ plantId, dict, title }: Props) {
   const { careSchedules } = useCareSchedules({ plantId });
   const { mutate: completeCareSchedule } = useCompleteCareSchedule();
   const { mutate: deleteCareSchedule } = useDeleteCareSchedule();
@@ -24,8 +26,9 @@ export function CareScheduleList({ plantId, dict }: Props) {
 
   return (
     <>
-      <div className="pt-6 flex flex-col gap-4">
-        <div className="flex justify-end">
+      <div className="flex flex-col gap-4">
+        <div className={`flex items-center gap-2 ${title ? 'justify-between' : 'justify-end'}`}>
+          {title && <p className="eyebrow flex items-center gap-1.5">{title}</p>}
           <Button size="sm" onClick={() => setIsCreateOpen(true)}>
             + {dict.tab.newTask}
           </Button>

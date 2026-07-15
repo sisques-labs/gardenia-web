@@ -43,6 +43,11 @@ describe('Breadcrumb', () => {
     expect(screen.getByText('Plants')).toHaveAttribute('aria-current', 'page');
   });
 
+  it('current page item does not fake a link role', () => {
+    renderBreadcrumb();
+    expect(screen.getByText('Plants')).not.toHaveAttribute('role', 'link');
+  });
+
   it('renders separator between items', () => {
     const { container } = renderBreadcrumb();
     const separator = container.querySelector('[aria-hidden="true"]');

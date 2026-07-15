@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Button } from '@/shared/presentation/components/ui/button/button';
-import { PageHeader } from '@/shared/presentation/components/page-header/page-header';
+import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 import { useCareSchedules } from '@/core/care-schedule/presentation/hooks/use-care-schedules/use-care-schedules.hook';
 import { useCompleteCareSchedule } from '@/core/care-schedule/presentation/hooks/use-complete-care-schedule/use-complete-care-schedule.hook';
@@ -16,6 +16,8 @@ import { CalendarGrid } from '../../components/calendar-grid/calendar-grid';
 import { CalendarViewSwitcher } from '../../components/calendar-view-switcher/calendar-view-switcher';
 import { DayTasksPanel } from '../../components/day-tasks-panel/day-tasks-panel';
 import { getSeason } from '../../utils/get-season/get-season.util';
+import { getDaysInMonth } from '../../utils/get-days-in-month/get-days-in-month.util';
+import { groupCareSchedulesByDay } from '../../utils/group-care-schedules-by-day/group-care-schedules-by-day.util';
 import { MONTH_KEYS } from '../../../domain/constants/month-keys.constant';
 import { SEASON_KEYS } from '../../../domain/constants/season-keys.constant';
 
@@ -31,6 +33,20 @@ export function CalendarScreen({ dict, careScheduleDict }: Props) {
 
   const spaceId = useSpacesStore((s) => s.currentSpaceId);
   const { careSchedules, isLoading } = useCareSchedules({ active: true, dueOnDay: selectedDate });
+
+  const monthPrefix = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}`;
+  const monthStart = `${monthPrefix}-01`;
+  const monthEnd = `${monthPrefix}-${String(getDaysInMonth(currentYear, currentMonth)).padStart(2, '0')}`;
+  const { careSchedules: monthCareSchedules } = useCareSchedules({
+    active: true,
+    dueFrom: monthStart,
+    dueTo: monthEnd,
+  });
+  const taskCountByDate = useMemo(
+    () => groupCareSchedulesByDay(monthCareSchedules),
+    [monthCareSchedules],
+  );
+
   const { data: plants } = usePlants(spaceId);
   const { mutate: completeCareSchedule } = useCompleteCareSchedule();
   const { mutate: deleteCareSchedule } = useDeleteCareSchedule();
@@ -39,14 +55,16 @@ export function CalendarScreen({ dict, careScheduleDict }: Props) {
   const seasonLabel = dict.grid.seasons[SEASON_KEYS[getSeason(currentMonth)]];
 
   return (
-    <div className="flex flex-col h-full">
-      <PageHeader
+    <div className="flex flex-col md:h-full">
+      <ScreenHeader
         eyebrow={`${dict.screenTitle} · ${dict.monthlyView}`}
         title={`${monthName} ${currentYear}`}
         subtitle={`· ${seasonLabel}`}
         actions={
           <>
-            <CalendarViewSwitcher activeView="month" dict={dict.grid.viewSwitcher} />
+            <div className="hidden md:block">
+              <CalendarViewSwitcher activeView="month" dict={dict.grid.viewSwitcher} />
+            </div>
             <Button variant="ghost" size="icon" aria-label={dict.navigation.prevMonth} onClick={prevMonth}>
               <ChevronLeft size={18} />
             </Button>
@@ -55,17 +73,18 @@ export function CalendarScreen({ dict, careScheduleDict }: Props) {
             </Button>
             <Button
               size="sm"
+              aria-label={dict.addTask}
               className="ml-1 bg-[var(--forest)] hover:bg-[var(--forest-2)] text-white gap-1"
               onClick={() => setIsCreateOpen(true)}
             >
-              + {dict.addTask}
+              + <span className="hidden sm:inline">{dict.addTask}</span>
             </Button>
           </>
         }
       />
 
-      <div className="flex flex-1 overflow-hidden">
-        <div className="flex-1 overflow-hidden p-6 flex flex-col">
+      <div className="flex flex-col flex-1">
+        <div className="flex-1 p-3 md:p-6 flex flex-col">
           <CalendarGrid
             year={currentYear}
             month={currentMonth}
@@ -76,10 +95,11 @@ export function CalendarScreen({ dict, careScheduleDict }: Props) {
               dayAriaLabel: dict.grid.dayAriaLabel,
               todayBadge: dict.grid.todayBadge,
             }}
+            taskCountByDate={taskCountByDate}
           />
         </div>
 
-        <div className="w-72 shrink-0 overflow-y-auto">
+        <div className="w-full">
           <DayTasksPanel
             selectedDate={selectedDate}
             dict={dict.panel}

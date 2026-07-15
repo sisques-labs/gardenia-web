@@ -1,10 +1,23 @@
 import type { Meta, StoryObj } from "@storybook/react"
 import { PlantCard } from "./plant-card"
 
+const cardDict = {
+  delete: "Eliminar planta",
+  health: {
+    good: "Saludable",
+    warn: "Requiere atención",
+    bad: "En riesgo",
+    inactive: "Inactiva",
+  },
+}
+
 const mockPlant = {
   id: "1",
   name: "Tomate Cherry",
-  species: { id: "1", scientificName: "Solanum lycopersicum", description: null, imageUrl: null, createdAt: "2026-01-01", updatedAt: "2026-01-01" },
+  species: {
+    gbifKey: 2930768,
+    scientificName: "Solanum lycopersicum",
+  },
   imageUrl: undefined,
   userId: "user-1",
   spaceId: "space-1",
@@ -20,11 +33,12 @@ const meta = {
     plant: mockPlant,
     lang: "es",
     noSpecies: "Sin especie",
+    cardDict,
   },
   parameters: { layout: "centered" },
   decorators: [
     (Story) => (
-      <div style={{ width: 280 }}>
+      <div style={{ width: 224 }}>
         <Story />
       </div>
     ),
@@ -36,26 +50,35 @@ type Story = StoryObj<typeof meta>
 
 export const Default: Story = {}
 
-export const WithTag: Story = {
-  args: { tag: "Hortaliza" },
-}
-
-export const WithStatus: Story = {
-  args: { status: "good", tag: "Aromática" },
+export const WithCareInfo: Story = {
+  args: {
+    careLabel: "Riego",
+    careDate: "2026-04-12T10:00:00.000Z",
+    status: "good",
+  },
 }
 
 export const WithWarning: Story = {
-  args: { status: "warn", tag: "Árbol" },
+  args: {
+    careLabel: "Riego",
+    careDate: "2026-04-12T10:00:00.000Z",
+    status: "warn",
+  },
 }
 
 export const WithAlert: Story = {
-  args: { status: "bad", tag: "Hortaliza" },
+  args: {
+    careLabel: "Riego",
+    careDate: "2026-04-12T10:00:00.000Z",
+    status: "bad",
+  },
 }
 
 export const NoSpecies: Story = {
   args: {
     plant: { ...mockPlant, species: undefined },
-    tag: "Flor",
+    careLabel: "Riego",
     status: "good",
+    careDate: "2026-04-12T10:00:00.000Z",
   },
 }

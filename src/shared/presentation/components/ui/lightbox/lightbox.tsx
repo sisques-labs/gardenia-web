@@ -1,12 +1,14 @@
 'use client';
 
 import * as React from 'react';
+import Image from 'next/image';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 
 export interface LightboxPhoto {
   src: string;
   alt: string;
+  caption?: string;
 }
 
 export interface LightboxProps extends React.HTMLAttributes<HTMLDivElement> {
@@ -38,6 +40,7 @@ const Lightbox = ({ className, photos, initialIndex = 0, open, onClose, ref, ...
   return (
     <div
       ref={ref}
+      role="presentation"
       className={cn('fixed inset-0 z-50 flex items-center justify-center bg-black/80', className)}
       onClick={onClose}
       {...props}
@@ -46,7 +49,18 @@ const Lightbox = ({ className, photos, initialIndex = 0, open, onClose, ref, ...
         className="relative max-w-4xl max-h-screen p-4"
         onClick={(e) => e.stopPropagation()}
       >
-        <img src={photo.src} alt={photo.alt} className="max-h-[80vh] max-w-full rounded" />
+        <Image
+          src={photo.src}
+          alt={photo.alt}
+          width={1200}
+          height={900}
+          unoptimized
+          className="h-auto w-auto max-h-[80vh] max-w-full rounded"
+        />
+
+        {photo.caption && (
+          <p className="mt-2 text-center text-sm text-white/80">{photo.caption}</p>
+        )}
 
         {/* Close button */}
         <button

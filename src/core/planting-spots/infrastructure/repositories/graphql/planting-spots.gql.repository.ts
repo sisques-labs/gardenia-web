@@ -3,17 +3,25 @@ import type { IPlantingSpotsRepository } from '@/core/planting-spots/application
 import type { CreatePlantingSpotInput } from '@/core/planting-spots/application/interfaces/create-planting-spot-input.interface';
 import type { UpdatePlantingSpotInput } from '@/core/planting-spots/application/interfaces/update-planting-spot-input.interface';
 import type { PlantingSpot } from '@/core/planting-spots/domain/interfaces/planting-spot.interface';
+import type { WaterPlantingSpotResult } from '@/core/planting-spots/domain/interfaces/water-planting-spot-result.interface';
+import type { CreatedEntity } from '@/shared/domain/interfaces/created-entity.interface';
 import type { PaginatedResult } from '@/shared/domain/interfaces/paginated-result.interface';
 import { PLANTING_SPOTS_FIND_BY_CRITERIA } from './queries/planting-spots-find-by-criteria.query';
 import { PLANTING_SPOT_FIND_BY_ID } from './queries/planting-spot-find-by-id.query';
 import { PLANTING_SPOT_CREATE } from './mutations/planting-spot-create.mutation';
 import { PLANTING_SPOT_UPDATE } from './mutations/planting-spot-update.mutation';
 import { PLANTING_SPOT_DELETE } from './mutations/planting-spot-delete.mutation';
+import { PLANTING_SPOT_WATER } from './mutations/planting-spot-water.mutation';
+import { PLANTING_SPOT_MARK_FALLOW } from './mutations/planting-spot-mark-fallow.mutation';
+import { PLANTING_SPOT_MARK_ACTIVE } from './mutations/planting-spot-mark-active.mutation';
 import type { PlantingSpotsFindByCriteriaResponse } from './responses/planting-spots-find-by-criteria.response';
 import type { PlantingSpotFindByIdResponse } from './responses/planting-spot-find-by-id.response';
 import type { PlantingSpotCreateResponse } from './responses/planting-spot-create.response';
 import type { PlantingSpotUpdateResponse } from './responses/planting-spot-update.response';
 import type { PlantingSpotDeleteResponse } from './responses/planting-spot-delete.response';
+import type { PlantingSpotWaterResponse } from './responses/planting-spot-water.response';
+import type { PlantingSpotMarkFallowResponse } from './responses/planting-spot-mark-fallow.response';
+import type { PlantingSpotMarkActiveResponse } from './responses/planting-spot-mark-active.response';
 
 export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
   async list(page: number, perPage: number): Promise<PaginatedResult<PlantingSpot>> {
@@ -42,7 +50,7 @@ export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
     return res.data.plantingSpotFindById;
   }
 
-  async create(input: CreatePlantingSpotInput): Promise<PlantingSpot> {
+  async create(input: CreatePlantingSpotInput): Promise<CreatedEntity> {
     const { dimensionsWidth, dimensionsHeight, dimensionsLength, ...rest } = input;
     const hasDimensions = dimensionsWidth != null || dimensionsHeight != null || dimensionsLength != null;
     const res = await apolloClient.mutate<PlantingSpotCreateResponse>({
@@ -57,10 +65,10 @@ export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
       },
     });
     if (!res.data?.plantingSpotCreate?.success) throw new Error('plantingSpotCreate mutation failed');
-    return this.findById(res.data.plantingSpotCreate.id);
+    return { id: res.data.plantingSpotCreate.id };
   }
 
-  async update(input: UpdatePlantingSpotInput): Promise<PlantingSpot> {
+  async update(input: UpdatePlantingSpotInput): Promise<CreatedEntity> {
     const { dimensionsWidth, dimensionsHeight, dimensionsLength, ...rest } = input;
     const dimensionsUndefined = dimensionsWidth === undefined && dimensionsHeight === undefined && dimensionsLength === undefined;
     const hasDimensions = !dimensionsUndefined && (dimensionsWidth != null || dimensionsHeight != null || dimensionsLength != null);
@@ -78,7 +86,7 @@ export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
       },
     });
     if (!res.data?.plantingSpotUpdate?.success) throw new Error('plantingSpotUpdate mutation failed');
-    return this.findById(res.data.plantingSpotUpdate.id);
+    return { id: res.data.plantingSpotUpdate.id };
   }
 
   async delete(id: string): Promise<void> {
@@ -86,6 +94,33 @@ export class PlantingSpotsGqlRepository implements IPlantingSpotsRepository {
       mutation: PLANTING_SPOT_DELETE,
       variables: { input: { id } },
     });
+  }
+
+  async waterAll(id: string, performedAt?: string): Promise<WaterPlantingSpotResult> {
+    const res = await apolloClient.mutate<PlantingSpotWaterResponse>({
+      mutation: PLANTING_SPOT_WATER,
+      variables: { input: { id, performedAt } },
+    });
+    if (!res.data?.plantingSpotWater) throw new Error('plantingSpotWater mutation failed');
+    return res.data.plantingSpotWater;
+  }
+
+  async markFallow(id: string): Promise<CreatedEntity> {
+    const res = await apolloClient.mutate<PlantingSpotMarkFallowResponse>({
+      mutation: PLANTING_SPOT_MARK_FALLOW,
+      variables: { input: { id } },
+    });
+    if (!res.data?.plantingSpotMarkFallow?.success) throw new Error('plantingSpotMarkFallow mutation failed');
+    return { id: res.data.plantingSpotMarkFallow.id };
+  }
+
+  async markActive(id: string): Promise<CreatedEntity> {
+    const res = await apolloClient.mutate<PlantingSpotMarkActiveResponse>({
+      mutation: PLANTING_SPOT_MARK_ACTIVE,
+      variables: { input: { id } },
+    });
+    if (!res.data?.plantingSpotMarkActive?.success) throw new Error('plantingSpotMarkActive mutation failed');
+    return { id: res.data.plantingSpotMarkActive.id };
   }
 }
 

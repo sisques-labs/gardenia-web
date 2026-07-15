@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GetPlantsUseCase } from './get-plants.use-case';
 import type { IPlantsRepository } from '@/core/plants/application/ports/plants.repository.port';
 import type { Plant } from '@/core/plants/domain/interfaces/plant.interface';
+import type { PaginatedResult } from '@/shared/domain/interfaces/paginated-result.interface';
 
 const mockPlants: Plant[] = [
   {
@@ -22,11 +23,17 @@ const mockPlants: Plant[] = [
   },
 ];
 
+function paginated(items: Plant[]): PaginatedResult<Plant> {
+  return { items, total: items.length, page: 1, perPage: 10, totalPages: 1 };
+}
+
 const mockRepository: IPlantsRepository = {
   list: vi.fn(),
   getById: vi.fn(),
   create: vi.fn(),
+  update: vi.fn(),
   delete: vi.fn(),
+  searchSpecies: vi.fn(),
 };
 
 describe('GetPlantsUseCase', () => {
@@ -35,23 +42,33 @@ describe('GetPlantsUseCase', () => {
   });
 
   it('returns plants from repository', async () => {
-    vi.mocked(mockRepository.list).mockResolvedValue(mockPlants);
+    vi.mocked(mockRepository.list).mockResolvedValue(paginated(mockPlants));
     const useCase = new GetPlantsUseCase(mockRepository);
 
     const result = await useCase.execute();
 
-    expect(result).toEqual(mockPlants);
+    expect(result).toEqual(paginated(mockPlants));
     expect(mockRepository.list).toHaveBeenCalledOnce();
   });
 
-  it('returns empty array when repository returns no plants', async () => {
-    vi.mocked(mockRepository.list).mockResolvedValue([]);
+  it('returns empty result when repository returns no plants', async () => {
+    vi.mocked(mockRepository.list).mockResolvedValue(paginated([]));
     const useCase = new GetPlantsUseCase(mockRepository);
 
     const result = await useCase.execute();
 
-    expect(result).toEqual([]);
+    expect(result.items).toEqual([]);
     expect(mockRepository.list).toHaveBeenCalledOnce();
+  });
+
+  it('forwards criteria to the repository', async () => {
+    vi.mocked(mockRepository.list).mockResolvedValue(paginated(mockPlants));
+    const useCase = new GetPlantsUseCase(mockRepository);
+    const criteria = { pagination: { page: 2, perPage: 5 } };
+
+    await useCase.execute(criteria);
+
+    expect(mockRepository.list).toHaveBeenCalledWith(criteria);
   });
 
   it('propagates repository errors', async () => {

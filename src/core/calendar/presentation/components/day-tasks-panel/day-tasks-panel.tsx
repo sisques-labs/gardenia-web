@@ -49,7 +49,7 @@ export function DayTasksPanel({
   );
 
   return (
-    <div className="flex h-full flex-col border-l border-[var(--rule)] bg-[var(--paper)]">
+    <div className="flex h-full flex-col border-t border-[var(--rule)] bg-[var(--paper)]">
       <div className="border-b border-[var(--rule)] px-5 py-4">
         <p className="eyebrow">{header}</p>
       </div>

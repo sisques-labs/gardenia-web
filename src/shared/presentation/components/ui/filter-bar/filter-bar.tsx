@@ -1,76 +1,128 @@
 'use client';
 
 import * as React from 'react';
-import { LayoutGrid, List } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { cn } from '@/shared/lib/utils';
 import { SearchInput } from '../search-input/search-input';
+import { Switch } from '../switch/switch';
+import { Button } from '../button/button';
+import { ActiveFilterChips, type ActiveFilter } from '../active-filter-chips/active-filter-chips';
+import {
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuTrigger,
+} from '../dropdown-menu/dropdown-menu';
 
-export interface FilterBarProps extends React.HTMLAttributes<HTMLDivElement> {
-  ref?: React.Ref<HTMLDivElement>;
-  onSearch?: (q: string) => void;
-  onFilterChange?: (filters: Record<string, string>) => void;
-  onSortChange?: (sort: string) => void;
-  onViewChange?: (view: 'grid' | 'list') => void;
+export interface FilterOption {
+  value: string;
+  label: string;
 }
 
-const FilterBar = ({ className, onSearch, onFilterChange, onSortChange, onViewChange, ref, ...props }: FilterBarProps) => {
-  const [view, setView] = React.useState<'grid' | 'list'>('grid');
-  const [search, setSearch] = React.useState('');
+/**
+ * One control in a `FilterBar`. A discriminated union so new control kinds
+ * (e.g. a date range) can be added later without breaking existing callers.
+ * `select` is always multi-capable (`selected: string[]`) — a screen that
+ * wants single-select behavior just clears the rest of `selected` in its own
+ * `onToggle` handler.
+ */
+export type FilterDescriptor =
+  | {
+      type: 'search';
+      key: string;
+      placeholder: string;
+      value: string;
+      onChange: (value: string) => void;
+    }
+  | {
+      type: 'select';
+      key: string;
+      allLabel: string;
+      selectedSuffix: string;
+      options: FilterOption[];
+      selected: string[];
+      onToggle: (value: string) => void;
+    }
+  | {
+      type: 'toggle';
+      key: string;
+      label: string;
+      checked: boolean;
+      onChange: () => void;
+    };
 
-  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = e.target.value;
-    setSearch(val);
-    onSearch?.(val);
-  };
+export interface FilterBarProps {
+  ref?: React.Ref<HTMLDivElement>;
+  filters: FilterDescriptor[];
+  chips?: ActiveFilter[];
+  onRemoveChip?: (key: string) => void;
+  className?: string;
+}
 
-  const handleViewChange = (newView: 'grid' | 'list') => {
-    setView(newView);
-    onViewChange?.(newView);
-  };
+const EMPTY_CHIPS: ActiveFilter[] = [];
 
-  return (
-    <div ref={ref} className={cn('flex items-center gap-3', className)} {...props}>
-      <SearchInput
-        placeholder="Search…"
-        value={search}
-        onChange={handleSearch}
-        onClear={() => {
-          setSearch('');
-          onSearch?.('');
-        }}
-        className="flex-1"
-      />
+function selectTriggerLabel(filter: Extract<FilterDescriptor, { type: 'select' }>): string {
+  if (filter.selected.length === 0) return filter.allLabel;
+  if (filter.selected.length === 1) {
+    return filter.options.find((option) => option.value === filter.selected[0])?.label ?? filter.allLabel;
+  }
+  return `${filter.selected.length} ${filter.selectedSuffix}`;
+}
 
-      {/* View toggle */}
-      <div className="flex items-center gap-1 border border-[var(--rule)] rounded p-0.5">
-        <button
-          type="button"
-          aria-label="Grid view"
-          aria-pressed={view === 'grid'}
-          onClick={() => handleViewChange('grid')}
-          className={cn(
-            'p-1.5 rounded transition-colors',
-            view === 'grid' ? 'bg-[var(--paper-2)] text-[var(--ink)]' : 'text-[var(--ink-3)]'
-          )}
-        >
-          <LayoutGrid className="h-4 w-4" />
-        </button>
-        <button
-          type="button"
-          aria-label="List view"
-          aria-pressed={view === 'list'}
-          onClick={() => handleViewChange('list')}
-          className={cn(
-            'p-1.5 rounded transition-colors',
-            view === 'list' ? 'bg-[var(--paper-2)] text-[var(--ink)]' : 'text-[var(--ink-3)]'
-          )}
-        >
-          <List className="h-4 w-4" />
-        </button>
-      </div>
+const FilterBar = ({ filters, chips = EMPTY_CHIPS, onRemoveChip, className, ref }: FilterBarProps) => (
+  <div ref={ref} className={cn('flex flex-col gap-3', className)}>
+    <div className="flex flex-wrap items-center gap-4">
+      {filters.map((filter) => {
+        if (filter.type === 'search') {
+          return (
+            <SearchInput
+              key={filter.key}
+              placeholder={filter.placeholder}
+              value={filter.value}
+              onChange={(e) => filter.onChange(e.target.value)}
+              onClear={() => filter.onChange('')}
+              className="w-64"
+            />
+          );
+        }
+
+        if (filter.type === 'select') {
+          return (
+            <DropdownMenu key={filter.key}>
+              <DropdownMenuTrigger asChild>
+                <Button type="button" variant="outline" size="sm" className="w-48 justify-between font-normal">
+                  {selectTriggerLabel(filter)}
+                  <ChevronDown className="h-3.5 w-3.5 opacity-50" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" className="w-48">
+                {filter.options.map((option) => (
+                  <DropdownMenuCheckboxItem
+                    key={option.value}
+                    checked={filter.selected.includes(option.value)}
+                    onSelect={(e) => e.preventDefault()}
+                    onCheckedChange={() => filter.onToggle(option.value)}
+                  >
+                    {option.label}
+                  </DropdownMenuCheckboxItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          );
+        }
+
+        return (
+          <label key={filter.key} className="flex items-center gap-2 text-sm text-ink-2">
+            <Switch checked={filter.checked} onCheckedChange={filter.onChange} />
+            {filter.label}
+          </label>
+        );
+      })}
     </div>
-  );
-};
+
+    <ActiveFilterChips filters={chips} onRemove={(key) => onRemoveChip?.(key)} />
+  </div>
+);
 
 FilterBar.displayName = 'FilterBar';
 

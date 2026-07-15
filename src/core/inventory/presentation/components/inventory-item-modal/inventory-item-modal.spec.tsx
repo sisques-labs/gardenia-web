@@ -66,6 +66,19 @@ describe('InventoryItemModal', () => {
     expect(screen.queryByText(dict.form.quantity)).not.toBeInTheDocument();
   });
 
+  it('every visible field label is associated with its control', () => {
+    render(<InventoryItemModal dict={dict} onClose={vi.fn()} />);
+    expect(screen.getByLabelText(dict.form.itemType)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.form.name)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.form.brand)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.form.quantity)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.form.unit)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.form.lowStockThreshold)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.form.acquiredAt)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.form.expiresAt)).toBeInTheDocument();
+    expect(screen.getByLabelText(dict.form.notes)).toBeInTheDocument();
+  });
+
   it('passes item and onClose to the form hook', () => {
     const onClose = vi.fn();
     render(<InventoryItemModal dict={dict} onClose={onClose} item={mockItem} />);
