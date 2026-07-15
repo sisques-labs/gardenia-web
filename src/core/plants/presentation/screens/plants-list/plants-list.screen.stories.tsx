@@ -20,7 +20,7 @@ const meta = {
   title: "Screens/PlantsList",
   component: PlantsListScreen,
   tags: ["autodocs"],
-  args: { dict, lang: "es", spaceId: "space-1" },
+  args: { dict, lang: "es", spaceId: "space-1", identifyLabel: getDictionary("es").plantIdentification.submit },
   parameters: { layout: "fullscreen" },
 } satisfies Meta<typeof PlantsListScreen>;
 

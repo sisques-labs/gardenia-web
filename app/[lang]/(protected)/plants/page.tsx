@@ -11,7 +11,12 @@ export default async function Page({ params }: { params: Promise<{ lang: string 
 
   return (
     <Suspense fallback={<PlantsListSkeleton />}>
-      <PlantsListScreen dict={dict.plants} lang={locale} spaceId={null} />
+      <PlantsListScreen
+        dict={dict.plants}
+        lang={locale}
+        spaceId={null}
+        identifyLabel={dict.plantIdentification.submit}
+      />
     </Suspense>
   );
 }
