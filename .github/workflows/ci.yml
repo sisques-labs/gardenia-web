@@ -8,30 +8,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build:
-    name: Build gardenia-web
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Setup
-        uses: sisques-labs/workflows/.github/actions/setup@main
-        with:
-          node_version: "24"
-
-      - name: Install dependencies
-        uses: sisques-labs/workflows/.github/actions/install@main
-        with:
-          app_path: "."
-          frozen_lockfile: "true"
-
-      - name: Lint code
-        run: pnpm lint
-
-      - name: Type check
-        run: pnpm exec tsc --noEmit
-
-      - name: Run unit tests with coverage
-        run: pnpm test:coverage
-
-      - name: Build the app
-        run: pnpm build
+  ci:
+    name: Lint, Test & Build
+    uses: sisques-labs/workflows/.github/workflows/node-ci.yml@main
+    with:
+      node_version: "24"
+      test_command: "test:coverage"
+      extra_check_command: "exec tsc --noEmit"
