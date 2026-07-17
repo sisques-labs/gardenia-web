@@ -1,6 +1,14 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.30.6] - 2026-07-17
+
+### Bug Fixes
+- **deps:** Update npm minor and patch updates (5a2b489)
+
+### Chore
+- **deps:** Update github actions updates (924a560)
+- **deps:** Lock file maintenance (d2daca7)
 ## [0.30.5] - 2026-07-17
 
 ### CI
