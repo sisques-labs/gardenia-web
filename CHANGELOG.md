@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.30.4] - 2026-07-15
+
+### Chore
+- Adopt shared Renovate config, remove Dependabot (d614a59)
 ## [0.30.3] - 2026-07-15
 
 ### Chore
