@@ -9,7 +9,7 @@
     "url": "https://github.com/sisques-labs/gardenia-web.git"
   },
   "version": "0.30.5",
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@11.13.1",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -50,7 +50,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "^1.1.1",
-    "graphql": "^16.14.2",
+    "graphql": "^17.0.0",
     "lucide-react": "^1.24.0",
     "next": "16.2.10",
     "react": "19.2.4",
@@ -77,14 +77,14 @@
     "@vitejs/plugin-react": "^6.0.3",
     "@vitest/coverage-v8": "^4.1.8",
     "chromatic": "^18.0.1",
-    "eslint": "^9",
+    "eslint": "^10.0.0",
     "eslint-config-next": "16.2.10",
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "lint-staged": "^17.0.8",
     "storybook": "^10.5.0",
     "tailwindcss": "^4",
-    "typescript": "^5",
+    "typescript": "^7.0.0",
     "vitest": "^4.1.8"
   }
 }
