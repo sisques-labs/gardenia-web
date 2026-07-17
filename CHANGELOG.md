@@ -1,10 +1,20 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.30.7] - 2026-07-17
+
+### CI
+- **release-train:** Sync dependabot/updates after stable release (d09ae85)
+- Parallelize lint/test/build via node-ci (5728544)
+- **release:** Scan Docker image for vulnerabilities with Trivy (890b268)
+- **docker:** Block PR merge on CRITICAL image vulnerabilities (81a350b)
 ## [0.30.6] - 2026-07-17
 
 ### Bug Fixes
 - **deps:** Update npm minor and patch updates (5a2b489)
+
+### CI
+- **labeler:** Auto-label PRs by changed files (053053d)
 
 ### Chore
 - **deps:** Update github actions updates (924a560)
