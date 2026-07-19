@@ -51,7 +51,7 @@ presentation/
 shared/
   presentation/
     components/sidebar-nav-items/nav-items.ts
-      # + { key: 'identifyPlant', href: '/[lang]/plants/identify', icon: ScanSearch }
+      # + { key: 'identifyPlant', href: '/[lang]/identify', icon: ScanSearch }
     i18n/shell/en.ts, es.ts
       # + nav.identifyPlant
 core/plants/presentation/components/create-plant-modal/create-plant-modal.tsx

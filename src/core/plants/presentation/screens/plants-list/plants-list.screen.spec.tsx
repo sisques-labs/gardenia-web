@@ -212,7 +212,7 @@ describe('PlantsListScreen', () => {
 
     const identifyLink = screen.getByTestId('btn-identify-plant');
     expect(identifyLink).toHaveTextContent('Identify plant');
-    expect(identifyLink).toHaveAttribute('href', '/en/plants/identify');
+    expect(identifyLink).toHaveAttribute('href', '/en/identify');
     expect(screen.getByRole('button', { name: /new plant/i })).toBeInTheDocument();
   });
 

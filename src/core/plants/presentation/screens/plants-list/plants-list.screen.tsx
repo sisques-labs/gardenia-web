@@ -75,7 +75,7 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp, identifyLab
         actions={
           <div className="flex items-center gap-2">
             <Link
-              href={`/${lang}/plants/identify`}
+              href={`/${lang}/identify`}
               data-testid="btn-identify-plant"
               className={cn(buttonVariants({ variant: "outline", size: "sm" }), "gap-1")}
             >

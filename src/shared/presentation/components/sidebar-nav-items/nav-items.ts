@@ -15,7 +15,7 @@ export const NAV_ITEMS: NavItemConfig[] = [
   { key: 'home', href: '/[lang]/home', icon: Home },
   { key: 'map', href: '/[lang]/map', icon: Map, disabled: true },
   { key: 'plants', href: '/[lang]/plants', icon: Leaf },
-  { key: 'identifyPlant', href: '/[lang]/plants/identify', icon: ScanSearch },
+  { key: 'identifyPlant', href: '/[lang]/identify', icon: ScanSearch },
   { key: 'calendar', href: '/[lang]/calendar', icon: Calendar },
   { key: 'journal', href: '/[lang]/journal', icon: BookOpen, disabled: true },
   { key: 'harvests', href: '/[lang]/harvests', icon: Wheat },

@@ -5,7 +5,7 @@
 ### Requirement: Sidebar entry point
 
 The app sidebar MUST include a top-level "Identificar planta" navigation
-item linking to `/[lang]/plants/identify`, alongside the existing
+item linking to `/[lang]/identify`, alongside the existing
 Home/Plants/Calendar/etc. entries.
 
 #### Scenario: Navigating to plant identification from the sidebar

@@ -12,7 +12,7 @@
 ## Phase 1: Sidebar
 
 - [x] 1.1 `shared/presentation/i18n/shell/en.ts` / `es.ts` — add `nav.identifyPlant`
-- [x] 1.2 `shared/presentation/components/sidebar-nav-items/nav-items.ts` — add `{ key: 'identifyPlant', href: '/[lang]/plants/identify', icon: ScanSearch }`
+- [x] 1.2 `shared/presentation/components/sidebar-nav-items/nav-items.ts` — add `{ key: 'identifyPlant', href: '/[lang]/identify', icon: ScanSearch }`
 - [x] 1.3 Confirm `sidebar.spec.tsx`/`nav-item.spec.tsx` (existing) still pass — updated the local nav-dict mocks in `sidebar.spec.tsx`/`app-shell.spec.tsx`/`app-shell-layout.spec.tsx` (TS required the new `identifyPlant` key)
 
 ## Phase 2: Candidate selection component
@@ -36,6 +36,6 @@
 
 - [x] 5.1 `pnpm test` — 1604/1607 green (3 pre-existing, unrelated failures in `app/api/image-proxy/[id]/route.spec.ts`, confirmed untouched by this change)
 - [x] 5.2 `pnpm lint` / `pnpm tsc --noEmit` — clean (fixed one React Compiler lint error — synchronous `setState` in an effect — and one React Doctor warning — array index used as key — during implementation)
-- [x] 5.3 `pnpm build` succeeds, `/[lang]/plants/identify` present in the route manifest
+- [x] 5.3 `pnpm build` succeeds, `/[lang]/identify` present in the route manifest
 - [x] 5.4 `pnpm run build-storybook` succeeds
 - [ ] 5.5 Manual browser pass — not performed in this headless environment; recommend a manual pass before/after merge

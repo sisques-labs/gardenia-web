@@ -57,7 +57,7 @@ identification's photo as a starting point the user can refine or replace.
 ### In scope
 
 - **Sidebar**: new top-level `NAV_ITEMS` entry "Identificar planta" →
-  `/[lang]/plants/identify`, own icon. The existing button on
+  `/[lang]/identify`, own icon. The existing button on
   `plants-list.screen.tsx` stays as a secondary shortcut (low-risk, no
   reason to remove a working entry point while adding the primary one).
 - **Layout redesign** of `identify-plant.screen.tsx`: replace the single
