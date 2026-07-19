@@ -15,6 +15,8 @@ export interface SpeciesComboboxProps extends Omit<React.HTMLAttributes<HTMLDivE
   placeholder?: string;
   noResultsLabel?: string;
   unavailableLabel?: string;
+  /** Seeds the search query on mount when there's no resolved `value` yet — e.g. a name suggested from elsewhere the user can refine or replace. */
+  defaultQuery?: string;
 }
 
 const SpeciesCombobox = ({
@@ -26,10 +28,11 @@ const SpeciesCombobox = ({
   placeholder = 'Search…',
   noResultsLabel = 'No results',
   unavailableLabel = 'Species search is unavailable right now',
+  defaultQuery,
   ...props
 }: SpeciesComboboxProps) => {
   const [open, setOpen] = React.useState(false);
-  const [query, setQuery] = React.useState(value?.scientificName ?? '');
+  const [query, setQuery] = React.useState(value?.scientificName ?? defaultQuery ?? '');
   const listId = React.useId();
   const { data: suggestions, isFetching, isError } = useSpeciesSearch(query);
 

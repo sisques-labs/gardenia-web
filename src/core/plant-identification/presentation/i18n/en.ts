@@ -21,13 +21,12 @@ const dict = {
     title: 'We think this is:',
     confidence: 'Confidence',
     createPlantCta: 'Create plant with this species',
-    viewOtherCandidates: 'See other possibilities',
   },
   noMatch: {
     title: 'We could not identify this plant with confidence',
-    fallbackToManual: 'You can still create the plant manually and search for its species.',
     candidatesTitle: 'Closest matches found',
   },
+  noneMatch: 'None of these are correct',
   error: {
     title: 'Identification is unavailable',
     provider: 'The identification service is temporarily unavailable. Try again in a moment.',

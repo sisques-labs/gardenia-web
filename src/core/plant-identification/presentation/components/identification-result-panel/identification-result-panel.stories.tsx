@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
 import { IdentificationResultPanel } from './identification-result-panel';
 import { getDictionary } from '@/shared/presentation/i18n/get-dictionary';
 import type { PlantIdentification } from '@/core/plant-identification/domain/interfaces/plant-identification.interface';
@@ -32,26 +33,53 @@ const noMatchIdentification: PlantIdentification = {
   createdAt: '2026-07-01T10:00:00Z',
 };
 
+function IdentificationResultPanelDemo({
+  identification,
+  error = null,
+  initialSelectedIndex = null,
+}: {
+  identification: PlantIdentification | null;
+  error?: 'provider' | 'quota' | null;
+  initialSelectedIndex?: number | null;
+}) {
+  const [selectedIndex, setSelectedIndex] = useState<number | null>(initialSelectedIndex);
+  return (
+    <IdentificationResultPanel
+      identification={identification}
+      error={error}
+      dict={dict}
+      selectedIndex={selectedIndex}
+      onSelectCandidate={setSelectedIndex}
+      onConfirm={() => {}}
+      onNoneMatch={() => {}}
+      onRetry={() => {}}
+    />
+  );
+}
+
 const meta = {
   title: 'PlantIdentification/IdentificationResultPanel',
-  component: IdentificationResultPanel,
+  component: IdentificationResultPanelDemo,
   tags: ['autodocs'],
-  args: { dict, onCreatePlant: () => {}, onRetry: () => {} },
-} satisfies Meta<typeof IdentificationResultPanel>;
+} satisfies Meta<typeof IdentificationResultPanelDemo>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Resolved: Story = {
-  args: { identification: resolvedIdentification, error: null },
+  args: { identification: resolvedIdentification, initialSelectedIndex: 0 },
+};
+
+export const ResolvedNothingSelectedYet: Story = {
+  args: { identification: resolvedIdentification },
 };
 
 export const NoMatch: Story = {
-  args: { identification: noMatchIdentification, error: null },
+  args: { identification: noMatchIdentification },
 };
 
 export const NoMatchWithoutCandidates: Story = {
-  args: { identification: { ...noMatchIdentification, candidates: [] }, error: null },
+  args: { identification: { ...noMatchIdentification, candidates: [] } },
 };
 
 export const ProviderError: Story = {

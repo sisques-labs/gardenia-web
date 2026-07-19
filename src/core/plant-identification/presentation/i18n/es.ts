@@ -26,13 +26,12 @@ const dict = {
     title: 'Creemos que es:',
     confidence: 'Confianza',
     createPlantCta: 'Crear planta con esta especie',
-    viewOtherCandidates: 'Ver otras posibilidades',
   },
   noMatch: {
     title: 'No hemos podido identificar esta planta con confianza',
-    fallbackToManual: 'Aún puedes crear la planta manualmente y buscar su especie.',
     candidatesTitle: 'Coincidencias más cercanas encontradas',
   },
+  noneMatch: 'Ninguna de estas es correcta',
   error: {
     title: 'La identificación no está disponible',
     provider: 'El servicio de identificación no está disponible en este momento. Inténtalo de nuevo en un rato.',

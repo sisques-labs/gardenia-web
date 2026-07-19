@@ -9,13 +9,12 @@ const dict = {
     title: 'We think this is:',
     confidence: 'Confidence',
     createPlantCta: 'Create plant with this species',
-    viewOtherCandidates: 'See other possibilities',
   },
   noMatch: {
     title: 'We could not identify this plant with confidence',
-    fallbackToManual: 'You can still create the plant manually and search for its species.',
     candidatesTitle: 'Closest matches found',
   },
+  noneMatch: 'None of these are correct',
   error: {
     title: 'Identification is unavailable',
     provider: 'The identification service is temporarily unavailable. Try again in a moment.',
@@ -47,126 +46,106 @@ const noMatchIdentification: PlantIdentification = {
   createdAt: '2026-07-01T10:00:00Z',
 };
 
+function renderPanel(props: Partial<Parameters<typeof IdentificationResultPanel>[0]> = {}) {
+  return render(
+    <IdentificationResultPanel
+      identification={null}
+      error={null}
+      dict={dict}
+      selectedIndex={null}
+      onSelectCandidate={vi.fn()}
+      onConfirm={vi.fn()}
+      onNoneMatch={vi.fn()}
+      onRetry={vi.fn()}
+      {...props}
+    />,
+  );
+}
+
 describe('IdentificationResultPanel', () => {
   it('renders nothing when there is no identification and no error', () => {
-    const { container } = render(
-      <IdentificationResultPanel identification={null} error={null} dict={dict} onCreatePlant={vi.fn()} onRetry={vi.fn()} />,
-    );
+    const { container } = renderPanel();
 
     expect(container).toBeEmptyDOMElement();
   });
 
   describe('resolved state', () => {
-    it('shows the resolved species name and confidence', () => {
-      render(
-        <IdentificationResultPanel
-          identification={resolvedIdentification}
-          error={null}
-          dict={dict}
-          onCreatePlant={vi.fn()}
-          onRetry={vi.fn()}
-        />,
-      );
+    it('shows every candidate, not just the resolved one', () => {
+      renderPanel({ identification: resolvedIdentification });
 
       expect(screen.getByTestId('identification-result-resolved')).toBeInTheDocument();
       expect(screen.getByText('Monstera deliciosa')).toBeInTheDocument();
-      expect(screen.getByText(/92%/)).toBeInTheDocument();
-    });
-
-    it('calls onCreatePlant when the CTA is clicked', async () => {
-      const onCreatePlant = vi.fn();
-      const user = userEvent.setup();
-      render(
-        <IdentificationResultPanel
-          identification={resolvedIdentification}
-          error={null}
-          dict={dict}
-          onCreatePlant={onCreatePlant}
-          onRetry={vi.fn()}
-        />,
-      );
-
-      await user.click(screen.getByTestId('btn-create-plant-cta'));
-
-      expect(onCreatePlant).toHaveBeenCalledOnce();
-    });
-
-    it('shows a disclosure with the other candidates when there is more than one', async () => {
-      const user = userEvent.setup();
-      render(
-        <IdentificationResultPanel
-          identification={resolvedIdentification}
-          error={null}
-          dict={dict}
-          onCreatePlant={vi.fn()}
-          onRetry={vi.fn()}
-        />,
-      );
-
-      expect(screen.queryByText('Monstera adansonii')).not.toBeInTheDocument();
-      await user.click(screen.getByText(dict.resolved.viewOtherCandidates));
       expect(screen.getByText('Monstera adansonii')).toBeInTheDocument();
     });
 
-    it('does not show the disclosure when there is only one candidate', () => {
-      render(
-        <IdentificationResultPanel
-          identification={{ ...resolvedIdentification, candidates: [resolvedIdentification.candidates[0]] }}
-          error={null}
-          dict={dict}
-          onCreatePlant={vi.fn()}
-          onRetry={vi.fn()}
-        />,
-      );
+    it('calls onSelectCandidate when a candidate is clicked', async () => {
+      const onSelectCandidate = vi.fn();
+      const user = userEvent.setup();
+      renderPanel({ identification: resolvedIdentification, onSelectCandidate });
 
-      expect(screen.queryByText(dict.resolved.viewOtherCandidates)).not.toBeInTheDocument();
+      await user.click(screen.getByTestId('candidate-option-1'));
+
+      expect(onSelectCandidate).toHaveBeenCalledWith(1);
+    });
+
+    it('calls onConfirm when the CTA is clicked with a selection', async () => {
+      const onConfirm = vi.fn();
+      const user = userEvent.setup();
+      renderPanel({ identification: resolvedIdentification, selectedIndex: 0, onConfirm });
+
+      await user.click(screen.getByTestId('btn-confirm-species'));
+
+      expect(onConfirm).toHaveBeenCalledOnce();
+    });
+
+    it('disables the confirm CTA when nothing is selected', () => {
+      renderPanel({ identification: resolvedIdentification, selectedIndex: null });
+
+      expect(screen.getByTestId('btn-confirm-species')).toBeDisabled();
     });
   });
 
   describe('no_match state', () => {
-    it('shows the no-match title and fallback text, with no CTA', () => {
-      render(
-        <IdentificationResultPanel
-          identification={noMatchIdentification}
-          error={null}
-          dict={dict}
-          onCreatePlant={vi.fn()}
-          onRetry={vi.fn()}
-        />,
-      );
+    it('shows the no-match title and every returned candidate, selectable', () => {
+      renderPanel({ identification: noMatchIdentification });
 
       expect(screen.getByTestId('identification-result-no-match')).toBeInTheDocument();
       expect(screen.getByText(dict.noMatch.title)).toBeInTheDocument();
-      expect(screen.getByText(dict.noMatch.fallbackToManual)).toBeInTheDocument();
-      expect(screen.queryByTestId('btn-create-plant-cta')).not.toBeInTheDocument();
-    });
-
-    it('shows any candidates PlantNet found', () => {
-      render(
-        <IdentificationResultPanel
-          identification={noMatchIdentification}
-          error={null}
-          dict={dict}
-          onCreatePlant={vi.fn()}
-          onRetry={vi.fn()}
-        />,
-      );
-
       expect(screen.getByText('Ficus lyrata')).toBeInTheDocument();
+      expect(screen.getByTestId('candidate-option-0')).toBeInTheDocument();
     });
 
-    it('does not show a candidates section when there are none', () => {
-      render(
-        <IdentificationResultPanel
-          identification={{ ...noMatchIdentification, candidates: [] }}
-          error={null}
-          dict={dict}
-          onCreatePlant={vi.fn()}
-          onRetry={vi.fn()}
-        />,
-      );
+    it('allows confirming a candidate even though the identification is unresolved', async () => {
+      const onConfirm = vi.fn();
+      const user = userEvent.setup();
+      renderPanel({ identification: noMatchIdentification, selectedIndex: 0, onConfirm });
 
-      expect(screen.queryByText(dict.noMatch.candidatesTitle)).not.toBeInTheDocument();
+      await user.click(screen.getByTestId('btn-confirm-species'));
+
+      expect(onConfirm).toHaveBeenCalledOnce();
+    });
+
+    it('does not show a candidate list when there are none', () => {
+      renderPanel({ identification: { ...noMatchIdentification, candidates: [] } });
+
+      expect(screen.queryByTestId('candidate-selection-list')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('none-match fallback', () => {
+    it('always shows a "none of these" action, for both statuses', () => {
+      renderPanel({ identification: resolvedIdentification });
+      expect(screen.getByTestId('btn-none-match')).toBeInTheDocument();
+    });
+
+    it('calls onNoneMatch when clicked', async () => {
+      const onNoneMatch = vi.fn();
+      const user = userEvent.setup();
+      renderPanel({ identification: noMatchIdentification, onNoneMatch });
+
+      await user.click(screen.getByTestId('btn-none-match'));
+
+      expect(onNoneMatch).toHaveBeenCalledOnce();
     });
   });
 
@@ -174,9 +153,7 @@ describe('IdentificationResultPanel', () => {
     it('shows the provider-unavailable message, distinct from no_match copy, with a retry action', async () => {
       const onRetry = vi.fn();
       const user = userEvent.setup();
-      render(
-        <IdentificationResultPanel identification={null} error="provider" dict={dict} onCreatePlant={vi.fn()} onRetry={onRetry} />,
-      );
+      renderPanel({ error: 'provider', onRetry });
 
       expect(screen.getByTestId('identification-result-error')).toBeInTheDocument();
       expect(screen.getByText(dict.error.provider)).toBeInTheDocument();
@@ -187,23 +164,13 @@ describe('IdentificationResultPanel', () => {
     });
 
     it('shows the quota message', () => {
-      render(
-        <IdentificationResultPanel identification={null} error="quota" dict={dict} onCreatePlant={vi.fn()} onRetry={vi.fn()} />,
-      );
+      renderPanel({ error: 'quota' });
 
       expect(screen.getByText(dict.error.quota)).toBeInTheDocument();
     });
 
     it('takes priority over a stale identification result', () => {
-      render(
-        <IdentificationResultPanel
-          identification={resolvedIdentification}
-          error="provider"
-          dict={dict}
-          onCreatePlant={vi.fn()}
-          onRetry={vi.fn()}
-        />,
-      );
+      renderPanel({ identification: resolvedIdentification, error: 'provider' });
 
       expect(screen.getByTestId('identification-result-error')).toBeInTheDocument();
       expect(screen.queryByTestId('identification-result-resolved')).not.toBeInTheDocument();
