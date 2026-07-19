@@ -18,7 +18,7 @@ export function CandidateSelectionList({ candidates, selectedIndex, onSelect }: 
         const isSelected = index === selectedIndex;
         return (
           <button
-            key={`${candidate.scientificName}-${index}`}
+            key={candidate.scientificName}
             type="button"
             role="radio"
             aria-checked={isSelected}
