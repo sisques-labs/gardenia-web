@@ -7,5 +7,12 @@ export default async function Page({ params }: { params: Promise<{ lang: string 
   const locale = isLocale(lang) ? lang : DEFAULT_LOCALE;
   const dict = getDictionary(locale);
 
-  return <IdentifyPlantScreen dict={dict.plantIdentification} lang={locale} spaceId={null} />;
+  return (
+    <IdentifyPlantScreen
+      dict={dict.plantIdentification}
+      createPlantDict={dict.plants.create}
+      lang={locale}
+      spaceId={null}
+    />
+  );
 }

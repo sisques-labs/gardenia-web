@@ -5,6 +5,7 @@ import { getDictionary } from '@/shared/presentation/i18n/get-dictionary';
 import type { PlantIdentification } from '@/core/plant-identification/domain/interfaces/plant-identification.interface';
 
 const dict = getDictionary('es').plantIdentification;
+const createPlantDict = getDictionary('es').plants.create;
 
 const recentItems: PlantIdentification[] = [
   {
@@ -44,7 +45,7 @@ const meta = {
   title: 'PlantIdentification/Screens/IdentifyPlant',
   component: IdentifyPlantScreen,
   tags: ['autodocs'],
-  args: { dict, lang: 'es', spaceId: 'space-1' },
+  args: { dict, createPlantDict, lang: 'es', spaceId: 'space-1' },
   decorators: [withSeededQuery({ items: recentItems, total: recentItems.length })],
 } satisfies Meta<typeof IdentifyPlantScreen>;
 
