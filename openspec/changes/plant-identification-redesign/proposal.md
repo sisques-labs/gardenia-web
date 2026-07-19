@@ -21,12 +21,18 @@ Direct product-owner feedback in an agent session: the current design isn't
 good enough to ship as-is, the feature deserves its own sidebar entry, and
 users should be able to pick **any** returned candidate (not just the
 auto-resolved one) to create the plant — searching GBIF manually as a
-fallback when none of PlantNet's candidates are right. The paired
-`gardenia-api` change (`plant-identification-select-candidate`) adds the
-backend capability this depends on: `createPlantFromIdentification` now
-accepts an optional `selectedCandidateRank`, resolving *that* candidate
-against GBIF instead of only the server's auto-pick, and works even when
-`status` is `no_match`.
+fallback when none of PlantNet's candidates are right.
+
+This is entirely achievable with `gardenia-api`'s **existing** contract, no
+backend change needed: `createPlantFromIdentification` already works for
+the server's auto-resolved candidate exactly as it does today, and the
+existing generic "Crear planta" flow (`plants`' `CreatePlantModal` +
+`SpeciesCombobox`, live GBIF search) already creates a plant from any
+scientific name a user picks or searches for. Picking the auto-resolved
+candidate keeps using the existing identification-specific mutation;
+picking any *other* candidate (or searching manually) routes to that
+existing generic flow, pre-filled with the chosen candidate's name and the
+identification's photo as a starting point the user can refine or replace.
 
 ### Success looks like
 
@@ -36,12 +42,13 @@ against GBIF instead of only the server's auto-pick, and works even when
   equally visible, selectable card with its confidence percentage — not one
   candidate promoted above an accordion hiding the rest — regardless of
   whether the server auto-resolved one.
-- Picking any candidate and confirming creates the plant with that species,
-  including when the identification's `status` is `no_match`.
-- If none of the candidates are right, a clearly-offered fallback opens the
-  existing manual "Crear planta" flow (`SpeciesCombobox`, live GBIF search)
-  with the identification's first photo pre-filled, instead of leaving the
-  user with a dead end.
+- Picking the auto-resolved candidate and confirming creates the plant the
+  same way it does today.
+- Picking any other candidate — or searching manually when none fit —
+  opens the existing "Crear planta" form pre-filled with that candidate's
+  name (editable, backed by live GBIF search via `SpeciesCombobox`) and the
+  identification's first photo, including when the identification's
+  `status` is `no_match`.
 
 ---
 
@@ -68,19 +75,16 @@ against GBIF instead of only the server's auto-pick, and works even when
   The server's auto-resolved candidate (when present) is pre-selected, not
   specially styled — this is a legibility fix, not a "trust the server less"
   statement.
-- **Manual GBIF fallback**: a persistent "Ninguna de estas es correcta"
-  option alongside the candidate cards opens the existing `CreatePlantModal`
-  (from `plants`), pre-filled with the identification's first photo URL, so
-  the user can search the full GBIF catalog via the existing
-  `SpeciesCombobox` — reusing what already exists rather than building a new
-  search UI.
-- **Wiring the new API field**: `useCreatePlantFromIdentification`'s
-  mutation input and the underlying GraphQL mutation gain
-  `selectedCandidateRank?: number`; `CreatePlantFromIdentificationModal`
-  passes the user's selected candidate's `rank`.
-- `CreatePlantModal` gains an optional `initialImageUrl` prop (small,
-  additive) so the manual-fallback path can pre-fill the photo without
-  duplicating the modal.
+- **Routing on confirm**: confirming with the auto-resolved candidate still
+  selected calls the existing `createPlantFromIdentification` mutation,
+  unchanged. Confirming with any other candidate selected (or via "Ninguna
+  de estas es correcta") opens the existing `CreatePlantModal`, pre-filled
+  with that candidate's scientific name (or empty, for the manual case) and
+  the identification's first photo URL — the user finishes via the existing
+  GBIF-search-backed manual flow.
+- `CreatePlantModal` gains two optional props, `initialImageUrl` and
+  `initialSpeciesName` (small, additive) so this pre-fill is possible
+  without duplicating the modal.
 
 ### Out of scope (deferred)
 
@@ -91,21 +95,23 @@ against GBIF instead of only the server's auto-pick, and works even when
 - Any change to `dashboard-home` — same reasoning as the original proposal
   (that change is in-flight separately).
 - Multi-select / comparing candidates side-by-side — selection stays
-  single-candidate (radio), matching what the api's `selectedCandidateRank`
-  (a single value) supports.
+  single-candidate (radio).
+- Any `gardenia-api` change — this proposal is scoped entirely to the web
+  app, built on the API's existing, unmodified contract.
 
 ---
 
 ## Approach
 
-Mostly a presentation-layer rework inside the existing
-`src/core/plant-identification/` bounded context — no new domain
-interfaces, no new use-case beyond threading one new optional field through
-the existing `createPlantFromIdentification` mutation call.
-`IdentificationResultPanel` and `CreatePlantFromIdentificationModal` are
-restructured around "the user's current candidate selection" as shared
-local state owned by `IdentifyPlantScreen`, rather than the modal only ever
-knowing about the single already-resolved species. The manual-fallback path
+Purely a presentation-layer rework inside the existing
+`src/core/plant-identification/` bounded context, plus one small additive
+change to `plants`' `CreatePlantModal` — no new domain interfaces, no
+backend change, no new use-case. `IdentificationResultPanel` and the
+create-plant flow are restructured around "the user's current candidate
+selection" as shared local state owned by `IdentifyPlantScreen`. The
+routing decision (existing identification mutation vs. the generic manual
+flow) happens entirely on the client based on whether the current selection
+equals the identification's own auto-resolved candidate. The manual path
 reaches across into `plants`' existing `CreatePlantModal` — a presentation-
 to-presentation reuse across bounded contexts, which this repo's DDD+
 Hexagonal convention doesn't explicitly forbid at the UI layer (unlike the
