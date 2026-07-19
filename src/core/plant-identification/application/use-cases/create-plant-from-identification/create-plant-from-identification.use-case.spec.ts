@@ -4,7 +4,6 @@ import type { IPlantIdentificationsRepository } from '@/core/plant-identificatio
 
 describe('CreatePlantFromIdentificationUseCase', () => {
   const mockRepo: IPlantIdentificationsRepository = {
-    identify: vi.fn(),
     findByCriteria: vi.fn(),
     createPlantFromIdentification: vi.fn().mockResolvedValue({ id: 'plant-1' }),
   };

@@ -15,7 +15,6 @@ const mockIdentification: PlantIdentification = {
 
 describe('GetPlantIdentificationsUseCase', () => {
   const mockRepo: IPlantIdentificationsRepository = {
-    identify: vi.fn(),
     findByCriteria: vi.fn().mockResolvedValue({ items: [mockIdentification], total: 1 }),
     createPlantFromIdentification: vi.fn(),
   };

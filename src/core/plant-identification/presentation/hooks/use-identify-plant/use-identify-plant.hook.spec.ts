@@ -13,8 +13,8 @@ vi.mock('@/core/plant-identification/application/use-cases/identify-plant/identi
   },
 }));
 
-vi.mock('@/core/plant-identification/infrastructure/repositories/graphql/plant-identification.gql.repository', () => ({
-  plantIdentificationGqlRepository: {},
+vi.mock('@/core/plant-identification/infrastructure/repositories/http/plant-identification-http.repository', () => ({
+  plantIdentificationHttpRepository: {},
 }));
 
 vi.mock('@/core/spaces/infrastructure/store/spaces.store', () => ({

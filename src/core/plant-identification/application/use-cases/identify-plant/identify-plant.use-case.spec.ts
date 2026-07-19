@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 import { IdentifyPlantUseCase } from './identify-plant.use-case';
-import type { IPlantIdentificationsRepository } from '@/core/plant-identification/application/ports/plant-identifications.repository.port';
+import type { IPlantIdentificationsHttpRepository } from '@/core/plant-identification/application/ports/plant-identifications-http.repository.port';
 import type { PlantIdentification } from '@/core/plant-identification/domain/interfaces/plant-identification.interface';
 
 const mockIdentification: PlantIdentification = {
@@ -14,10 +14,8 @@ const mockIdentification: PlantIdentification = {
 };
 
 describe('IdentifyPlantUseCase', () => {
-  const mockRepo: IPlantIdentificationsRepository = {
+  const mockRepo: IPlantIdentificationsHttpRepository = {
     identify: vi.fn().mockResolvedValue(mockIdentification),
-    findByCriteria: vi.fn(),
-    createPlantFromIdentification: vi.fn(),
   };
 
   it('delegates to repository.identify and returns the identification', async () => {
