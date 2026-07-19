@@ -1,13 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useCreatePlantFromIdentification } from '@/core/plant-identification/presentation/hooks/use-create-plant-from-identification/use-create-plant-from-identification.hook';
-import {
-  createPlantFromIdentificationSchema,
-  type CreatePlantFromIdentificationFormValues,
-} from '@/core/plant-identification/presentation/schemas/create-plant-from-identification.schema';
+import { useCreatePlantFromIdentificationForm } from '@/core/plant-identification/presentation/hooks/use-create-plant-from-identification-form/use-create-plant-from-identification-form.hook';
 import { FormModal } from '@/shared/presentation/components/ui/form-modal/form-modal';
 import { Input } from '@/shared/presentation/components/ui/input/input';
 import { resolveFieldError } from '@/shared/presentation/utils/resolve-field-error';
@@ -22,21 +16,11 @@ type Props = {
 };
 
 export function CreatePlantFromIdentificationModal({ identification, dict, onClose, onSuccess }: Props) {
-  const { mutate, isPending, error } = useCreatePlantFromIdentification();
+  const { form, onSubmit, isPending, error } = useCreatePlantFromIdentificationForm(identification, onSuccess);
   const {
     register,
-    handleSubmit,
     formState: { errors },
-  } = useForm<CreatePlantFromIdentificationFormValues>({
-    resolver: zodResolver(createPlantFromIdentificationSchema),
-  });
-
-  const onSubmit = handleSubmit(({ name }) => {
-    mutate(
-      { identificationId: identification.id, name },
-      { onSuccess: ({ id }) => onSuccess(id) },
-    );
-  });
+  } = form;
 
   const previewUrl = identification.photos[0]?.url;
 
