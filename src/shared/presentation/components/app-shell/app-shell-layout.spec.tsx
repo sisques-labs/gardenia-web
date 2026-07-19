@@ -27,6 +27,7 @@ const shellDict: AppDict['shell'] = {
     home: 'Home',
     map: 'Map',
     plants: 'Plants',
+    identifyPlant: 'Identify plant',
     calendar: 'Calendar',
     journal: 'Journal',
     harvests: 'Harvests',
