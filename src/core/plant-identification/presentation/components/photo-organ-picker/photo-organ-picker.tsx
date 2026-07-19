@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { ImagePlus, X } from 'lucide-react';
 import { Button } from '@/shared/presentation/components/ui/button/button';
@@ -23,7 +23,13 @@ export interface PhotoOrganPickerPhoto {
 
 type PhotoOrganPickerDict = Pick<
   AppDict['plantIdentification'],
-  'addPhoto' | 'removePhoto' | 'photosHint' | 'maxPhotosReached' | 'organLabel' | 'organ'
+  | 'addPhoto'
+  | 'removePhoto'
+  | 'photosHint'
+  | 'maxPhotosReached'
+  | 'unsupportedFormat'
+  | 'organLabel'
+  | 'organ'
 >;
 
 interface Props {
@@ -35,21 +41,28 @@ interface Props {
 
 const ORGANS: PlantIdentificationOrgan[] = ['leaf', 'flower', 'fruit', 'bark', 'habit', 'other'];
 
+// Everything PlantNet's identify endpoint accepts — it rejects anything else
+// (e.g. webp) with an HTTP 400, so photos are filtered before they ever reach the API.
+const ACCEPTED_MIME_TYPES = ['image/jpeg', 'image/png'];
+
 export function PhotoOrganPicker({ photos, onChange, dict, maxPhotos = 5 }: Props) {
   const inputRef = useRef<HTMLInputElement>(null);
+  const [hasUnsupportedFormat, setHasUnsupportedFormat] = useState(false);
   const atMax = photos.length >= maxPhotos;
 
   function handleFilesSelected(fileList: FileList | null) {
     if (!fileList || fileList.length === 0) return;
     const remaining = Math.max(maxPhotos - photos.length, 0);
-    const newPhotos: PhotoOrganPickerPhoto[] = Array.from(fileList)
-      .slice(0, remaining)
-      .map((file) => ({
-        id: `${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2)}`,
-        file,
-        previewUrl: URL.createObjectURL(file),
-        organ: 'leaf',
-      }));
+    const files = Array.from(fileList);
+    const supportedFiles = files.filter((file) => ACCEPTED_MIME_TYPES.includes(file.type));
+    setHasUnsupportedFormat(supportedFiles.length < files.length);
+
+    const newPhotos: PhotoOrganPickerPhoto[] = supportedFiles.slice(0, remaining).map((file) => ({
+      id: `${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2)}`,
+      file,
+      previewUrl: URL.createObjectURL(file),
+      organ: 'leaf',
+    }));
     if (newPhotos.length > 0) onChange([...photos, ...newPhotos]);
     if (inputRef.current) inputRef.current.value = '';
   }
@@ -67,7 +80,7 @@ export function PhotoOrganPicker({ photos, onChange, dict, maxPhotos = 5 }: Prop
       <input
         ref={inputRef}
         type="file"
-        accept="image/*"
+        accept={ACCEPTED_MIME_TYPES.join(',')}
         multiple
         hidden
         data-testid="photo-organ-picker-input"
@@ -88,6 +101,11 @@ export function PhotoOrganPicker({ photos, onChange, dict, maxPhotos = 5 }: Prop
       {atMax && (
         <p className="text-xs text-ink-3" data-testid="max-photos-reached">
           {dict.maxPhotosReached}
+        </p>
+      )}
+      {hasUnsupportedFormat && (
+        <p className="text-xs text-destructive" data-testid="unsupported-format">
+          {dict.unsupportedFormat}
         </p>
       )}
 

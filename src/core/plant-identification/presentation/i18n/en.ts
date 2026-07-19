@@ -2,8 +2,9 @@ const dict = {
   title: 'Identify a plant',
   addPhoto: 'Add photo',
   removePhoto: 'Remove photo',
-  photosHint: 'Add 1 to 5 photos, then choose which part of the plant each one shows.',
+  photosHint: 'Add 1 to 5 JPG or PNG photos, then choose which part of the plant each one shows.',
   maxPhotosReached: 'You can add up to 5 photos',
+  unsupportedFormat: 'Only JPG and PNG photos are supported — some files were skipped.',
   organLabel: 'Plant part',
   organ: {
     leaf: 'Leaf',

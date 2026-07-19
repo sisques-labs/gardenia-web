@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { PhotoOrganPicker, type PhotoOrganPickerPhoto } from './photo-organ-picker';
@@ -6,8 +6,9 @@ import { PhotoOrganPicker, type PhotoOrganPickerPhoto } from './photo-organ-pick
 const dict = {
   addPhoto: 'Add photo',
   removePhoto: 'Remove photo',
-  photosHint: 'Add 1 to 5 photos, then choose which part of the plant each one shows.',
+  photosHint: 'Add 1 to 5 JPG or PNG photos, then choose which part of the plant each one shows.',
   maxPhotosReached: 'You can add up to 5 photos',
+  unsupportedFormat: 'Only JPG and PNG photos are supported — some files were skipped.',
   organLabel: 'Plant part',
   organ: {
     leaf: 'Leaf',
@@ -112,5 +113,46 @@ describe('PhotoOrganPicker', () => {
 
     const lastCallArg = onChange.mock.calls.at(-1)?.[0] as PhotoOrganPickerPhoto[];
     expect(lastCallArg).toHaveLength(5);
+  });
+
+  // The OS file picker already filters by the input's `accept` attribute, so
+  // `userEvent.upload` (which emulates that) can't exercise a mismatched
+  // file reaching the handler. `fireEvent.change` bypasses that emulation to
+  // cover the defense-in-depth JS check for clients that don't honor `accept`
+  // (drag-and-drop, non-compliant browsers).
+  it('accepts image/jpeg and image/png but skips other formats, e.g. webp', () => {
+    const onChange = vi.fn();
+    render(<PhotoOrganPicker photos={[]} onChange={onChange} dict={dict} />);
+
+    const jpeg = new File(['a'], 'a.jpg', { type: 'image/jpeg' });
+    const webp = new File(['b'], 'b.webp', { type: 'image/webp' });
+    const input = screen.getByTestId('photo-organ-picker-input') as HTMLInputElement;
+    fireEvent.change(input, { target: { files: [jpeg, webp] } });
+
+    expect(onChange).toHaveBeenCalledWith([expect.objectContaining({ file: jpeg })]);
+  });
+
+  it('shows a hint and adds nothing when every selected file has an unsupported format', () => {
+    const onChange = vi.fn();
+    render(<PhotoOrganPicker photos={[]} onChange={onChange} dict={dict} />);
+
+    const webp = new File(['x'], 'x.webp', { type: 'image/webp' });
+    const input = screen.getByTestId('photo-organ-picker-input') as HTMLInputElement;
+    fireEvent.change(input, { target: { files: [webp] } });
+
+    expect(onChange).not.toHaveBeenCalled();
+    expect(screen.getByTestId('unsupported-format')).toBeInTheDocument();
+  });
+
+  it('does not show the unsupported-format hint when every file is accepted', async () => {
+    const onChange = vi.fn();
+    const user = userEvent.setup();
+    render(<PhotoOrganPicker photos={[]} onChange={onChange} dict={dict} />);
+
+    const file = new File(['x'], 'x.png', { type: 'image/png' });
+    const input = screen.getByTestId('photo-organ-picker-input') as HTMLInputElement;
+    await user.upload(input, file);
+
+    expect(screen.queryByTestId('unsupported-format')).not.toBeInTheDocument();
   });
 });

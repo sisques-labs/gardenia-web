@@ -7,8 +7,9 @@ const dict = {
   title: 'Identificar una planta',
   addPhoto: 'Añadir foto',
   removePhoto: 'Quitar foto',
-  photosHint: 'Añade entre 1 y 5 fotos y elige qué parte de la planta muestra cada una.',
+  photosHint: 'Añade entre 1 y 5 fotos en JPG o PNG y elige qué parte de la planta muestra cada una.',
   maxPhotosReached: 'Puedes añadir hasta 5 fotos',
+  unsupportedFormat: 'Solo se admiten fotos en JPG y PNG — se han omitido algunos archivos.',
   organLabel: 'Parte de la planta',
   organ: {
     leaf: 'Hoja',
