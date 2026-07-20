@@ -3,11 +3,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useCreatePlant } from '@/core/plants/presentation/hooks/use-create-plant/use-create-plant.hook';
 import { createPlantSchema, type CreatePlantFormValues } from '@/core/plants/presentation/schemas/create-plant.schema';
 
-export function useCreatePlantForm(spaceId: string | null, onClose: () => void) {
+export function useCreatePlantForm(
+  spaceId: string | null,
+  onClose: () => void,
+  initialValues?: Partial<CreatePlantFormValues>,
+) {
   const { mutate: createPlant, isPending, error } = useCreatePlant(spaceId);
 
   const form = useForm<CreatePlantFormValues>({
     resolver: zodResolver(createPlantSchema),
+    defaultValues: initialValues,
   });
 
   const onSubmit = form.handleSubmit(({ name, imageUrl, species }) => {

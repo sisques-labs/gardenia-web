@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { CreatePlantModal } from "@/core/plants/presentation/components/create-plant-modal/create-plant-modal";
 import { PlantCard } from "@/core/plants/presentation/components/plant-card/plant-card";
 import { usePaginatedPlants } from "@/core/plants/presentation/hooks/use-paginated-plants/use-paginated-plants.hook";
@@ -10,7 +11,9 @@ import { useSpacesStore } from "@/core/spaces/infrastructure/store/spaces.store"
 import { ScreenHeader } from "@/shared/presentation/components/screen-header/screen-header";
 import { Alert } from "@/shared/presentation/components/ui/alert/alert";
 import { Button } from "@/shared/presentation/components/ui/button/button";
+import { buttonVariants } from "@/shared/presentation/components/ui/button/button-variants";
 import { ConfirmDialog } from "@/shared/presentation/components/ui/confirm-dialog/confirm-dialog";
+import { cn } from "@/shared/lib/utils";
 import { FilterBar, type FilterDescriptor } from "@/shared/presentation/components/ui/filter-bar/filter-bar";
 import type { ActiveFilter } from "@/shared/presentation/components/ui/active-filter-chips/active-filter-chips";
 import { PlantsListSkeleton } from "@/core/plants/presentation/components/plants-list-skeleton/plants-list-skeleton";
@@ -28,9 +31,10 @@ type Props = {
   dict: AppDict["plants"];
   lang: string;
   spaceId: string | null;
+  identifyLabel: string;
 };
 
-export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
+export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp, identifyLabel }: Props) {
   const storeSpaceId = useSpacesStore((s) => s.currentSpaceId);
   const spaceId = spaceIdProp ?? storeSpaceId;
   const { page, onPageChange } = useUrlPage();
@@ -69,13 +73,22 @@ export function PlantsListScreen({ dict, lang, spaceId: spaceIdProp }: Props) {
         eyebrow={`${dict.nav} · ${plantCount} ${dict.list.statsPlants} · ${speciesCount} ${dict.list.statsSpecies}`}
         title={dict.list.title}
         actions={
-          <Button
-            size="sm"
-            className="ml-1 bg-forest hover:bg-forest-2 text-white gap-1"
-            onClick={() => setIsCreateOpen(true)}
-          >
-            {dict.list.newPlant}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/${lang}/identify`}
+              data-testid="btn-identify-plant"
+              className={cn(buttonVariants({ variant: "outline", size: "sm" }), "gap-1")}
+            >
+              {identifyLabel}
+            </Link>
+            <Button
+              size="sm"
+              className="ml-1 bg-forest hover:bg-forest-2 text-white gap-1"
+              onClick={() => setIsCreateOpen(true)}
+            >
+              {dict.list.newPlant}
+            </Button>
+          </div>
         }
       />
 
