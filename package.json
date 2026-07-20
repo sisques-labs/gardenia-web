@@ -84,7 +84,7 @@
     "lint-staged": "^17.0.8",
     "storybook": "^10.5.0",
     "tailwindcss": "^4",
-    "typescript": "^5",
+    "typescript": "^7.0.0",
     "vitest": "^4.1.8"
   }
 }
