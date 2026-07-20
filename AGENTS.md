@@ -2,7 +2,7 @@
 
 ## Stack
 
-- Next.js 16 (App Router, Node server mode), React 19, TypeScript strict, pnpm@9.15.4
+- Next.js 16 (App Router, Node server mode), React 19, TypeScript strict, pnpm@10.34.5
 - State: Zustand (in-memory, no persistence except `activeSpaceId`)
 - HTTP: Axios (Bearer token + `X-Space-ID` interceptors, 401 refresh mutex)
 - GraphQL: Apollo Client v4 (`@apollo/client/react`)
