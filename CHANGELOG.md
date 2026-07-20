@@ -1,6 +1,36 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.31.0] - 2026-07-20
+
+### Bug Fixes
+- **plant-identification:** Use scientificName alone as candidate list key (a2a8644)
+- **plant-identification:** Move identify route out from under /plants (ac4a18a)
+- **plant-identification:** Update route references for the moved identify page (f5c35c3)
+
+### Chore
+- **deps:** Update dependency @radix-ui/react-avatar to v1.2.3 (0096a80)
+- **deps:** Update dependency @radix-ui/react-checkbox to v1.3.8 (9cb4e34)
+- **deps:** Update dependency @radix-ui/react-dialog to v1.1.20 (0d1eacc)
+- **deps:** Update dependency @radix-ui/react-label to v2.1.12 (f6e1a5e)
+- **deps:** Update dependency @radix-ui/react-radio-group to v1.4.4 (73aecd6)
+
+### Documentation
+- **openspec:** Propose redesigning plant identification and adding a sidebar entry (1c873ab)
+- **openspec:** Drop the api dependency from plant-identification-redesign (3060158)
+- **openspec:** Mark plant-identification-redesign tasks complete (9100b82)
+
+### Features
+- **shell:** Add Identificar planta to the sidebar navigation (978cb4a)
+- **plant-identification:** Unify candidate list with selectable cards (248faf8)
+- **plant-identification:** Two-region layout and candidate-based routing (821bcf0)
+
+### Refactor
+- **plant-identification:** Split identify() into its own http repository (be6a2dc)
+- **plant-identification:** Extract form logic out of create-plant-from-identification-modal (bf5a80a)
+
+### Testing
+- **plant-identification:** Rename i18n-parity test to .spec.ts (33795a7)
 ## [0.30.7] - 2026-07-17
 
 ### CI
@@ -29,6 +59,9 @@ All notable changes to this project will be documented in this file.
 - Adopt shared Renovate config, remove Dependabot (d614a59)
 ## [0.30.3] - 2026-07-15
 
+### Bug Fixes
+- **plant-identification:** Restrict photo picker to PlantNet-compatible formats (78c1060)
+
 ### Chore
 - **deps:** Bump @radix-ui/react-popover from 1.1.17 to 1.1.19 (0b37f93)
 - **deps:** Bump @radix-ui/react-tabs from 1.1.13 to 1.1.17 (d7e66d9)
@@ -48,11 +81,24 @@ All notable changes to this project will be documented in this file.
 ## [0.30.2] - 2026-07-15
 
 ### Chore
+- **deps:** Bump @radix-ui/react-radio-group from 1.3.8 to 1.4.3 (7205189)
+- **deps:** Bump lucide-react from 1.22.0 to 1.24.0 (ada91a3)
+- **deps:** Bump @radix-ui/react-context-menu from 2.3.1 to 2.3.3 (27d861a)
+- **deps:** Bump @apollo/client from 4.2.0 to 4.2.7 (1f25326)
+- **deps:** Bump react-hook-form from 7.77.0 to 7.81.0 (a220b67)
+- **deps-dev:** Bump @types/node from 26.1.0 to 26.1.1 (cbdf723)
+- **deps:** Downgrade @types/node from 26.1.1 to 26.1.0 and update related dependencies in pnpm-lock.yaml (85e680f)
 - **deps-dev:** Bump @storybook/addon-docs from 10.4.6 to 10.5.0 (5039a7f)
 - **deps-dev:** Bump chromatic from 18.0.0 to 18.0.1 (e001531)
 - **deps:** Bump axios from 1.16.1 to 1.18.1 (95b81d8)
 - **deps-dev:** Bump @tanstack/react-query-devtools (d7425cd)
 - **deps:** Align Storybook packages to 10.5.0 (867e73c)
+
+### Documentation
+- **plant-identification:** Propose photo-based plant identification UI (06575a6)
+
+### Features
+- **plant-identification:** Add photo-based plant identification module (0963b65)
 ## [0.30.1] - 2026-07-13
 
 ### Bug Fixes
@@ -267,15 +313,6 @@ All notable changes to this project will be documented in this file.
 ### CI
 - **chromatic:** Skip visual regression job for dependabot PRs (f36a685)
 - Dispatch gardenia-e2e run after alpha/beta release (838dff7)
-
-### Chore
-- **deps:** Bump @radix-ui/react-radio-group from 1.3.8 to 1.4.3 (7205189)
-- **deps:** Bump lucide-react from 1.22.0 to 1.24.0 (ada91a3)
-- **deps:** Bump @radix-ui/react-context-menu from 2.3.1 to 2.3.3 (27d861a)
-- **deps:** Bump @apollo/client from 4.2.0 to 4.2.7 (1f25326)
-- **deps:** Bump react-hook-form from 7.77.0 to 7.81.0 (a220b67)
-- **deps-dev:** Bump @types/node from 26.1.0 to 26.1.1 (cbdf723)
-- **deps:** Downgrade @types/node from 26.1.1 to 26.1.0 and update related dependencies in pnpm-lock.yaml (85e680f)
 
 ### Documentation
 - **openspec:** Propose care-schedule-web integration change (8d7cf32)
