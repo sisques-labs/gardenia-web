@@ -12,10 +12,16 @@ type Props = {
   spaceId: string | null;
   dict: AppDict['plants']['create'];
   onClose: () => void;
+  /** Pre-fills the image URL field — e.g. when opened from a plant identification's photo. */
+  initialImageUrl?: string;
+  /** Seeds the species search query — e.g. a candidate name suggested elsewhere, refinable/replaceable via live GBIF search. */
+  initialSpeciesName?: string;
 };
 
-export function CreatePlantModal({ spaceId, dict, onClose }: Props) {
-  const { form, onSubmit, isPending, error } = useCreatePlantForm(spaceId, onClose);
+export function CreatePlantModal({ spaceId, dict, onClose, initialImageUrl, initialSpeciesName }: Props) {
+  const { form, onSubmit, isPending, error } = useCreatePlantForm(spaceId, onClose, {
+    imageUrl: initialImageUrl,
+  });
   const {
     register,
     control,
@@ -55,6 +61,7 @@ export function CreatePlantModal({ spaceId, dict, onClose }: Props) {
               placeholder={dict.speciesSearch.placeholder}
               noResultsLabel={dict.speciesSearch.noResults}
               unavailableLabel={dict.speciesSearch.unavailable}
+              defaultQuery={initialSpeciesName}
             />
           )}
         />

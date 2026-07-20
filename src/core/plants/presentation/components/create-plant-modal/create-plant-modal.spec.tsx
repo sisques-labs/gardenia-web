@@ -69,4 +69,25 @@ describe('CreatePlantModal', () => {
       expect.anything(),
     );
   });
+
+  it('pre-fills the image URL field when initialImageUrl is provided', () => {
+    render(
+      <CreatePlantModal spaceId="space-1" dict={dict} onClose={vi.fn()} initialImageUrl="https://example.com/leaf.jpg" />,
+    );
+
+    expect(screen.getByLabelText(dict.imageUrl)).toHaveValue('https://example.com/leaf.jpg');
+  });
+
+  it('pre-fills the species search query when initialSpeciesName is provided', () => {
+    render(<CreatePlantModal spaceId="space-1" dict={dict} onClose={vi.fn()} initialSpeciesName="Monstera deliciosa" />);
+
+    expect(screen.getByLabelText(dict.speciesSearch.label)).toHaveValue('Monstera deliciosa');
+  });
+
+  it('leaves both fields empty when neither initial prop is provided', () => {
+    render(<CreatePlantModal spaceId="space-1" dict={dict} onClose={vi.fn()} />);
+
+    expect(screen.getByLabelText(dict.imageUrl)).toHaveValue('');
+    expect(screen.getByLabelText(dict.speciesSearch.label)).toHaveValue('');
+  });
 });

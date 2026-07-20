@@ -32,8 +32,10 @@ vi.mock('@/core/plants/presentation/components/create-plant-modal/create-plant-m
 }));
 
 vi.mock('next/link', () => ({
-  default: ({ href, children }: { href: string; children: React.ReactNode }) => (
-    <a href={href}>{children}</a>
+  default: ({ href, children, ...props }: React.AnchorHTMLAttributes<HTMLAnchorElement>) => (
+    <a href={href} {...props}>
+      {children}
+    </a>
   ),
 }));
 
@@ -181,7 +183,7 @@ describe('PlantsListScreen', () => {
   it('renders a grid of PlantCards when data exists', () => {
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
 
-    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
 
     expect(screen.getByText('Monstera')).toBeInTheDocument();
     expect(screen.getByText('Pothos')).toBeInTheDocument();
@@ -190,7 +192,7 @@ describe('PlantsListScreen', () => {
   it('renders loading skeleton when loading', () => {
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: undefined, isLoading: true, isError: false } as ReturnType<typeof usePaginatedPlants>);
 
-    const { container } = render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    const { container } = render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
 
     expect(container.querySelector('.animate-pulse')).toBeInTheDocument();
   });
@@ -198,15 +200,26 @@ describe('PlantsListScreen', () => {
   it('renders empty state when no plants', () => {
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated([]), isLoading: false, isError: false } as unknown as ReturnType<typeof usePaginatedPlants>);
 
-    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
 
     expect(screen.getByText('No plants yet')).toBeInTheDocument();
+  });
+
+  it('renders an "Identify plant" entry point linking to the identify route, next to "New plant"', () => {
+    vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated([]), isLoading: false, isError: false } as unknown as ReturnType<typeof usePaginatedPlants>);
+
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
+
+    const identifyLink = screen.getByTestId('btn-identify-plant');
+    expect(identifyLink).toHaveTextContent('Identify plant');
+    expect(identifyLink).toHaveAttribute('href', '/en/identify');
+    expect(screen.getByRole('button', { name: /new plant/i })).toBeInTheDocument();
   });
 
   it('renders "New plant" button as enabled', () => {
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated([]), isLoading: false, isError: false } as unknown as ReturnType<typeof usePaginatedPlants>);
 
-    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
 
     const button = screen.getByRole('button', { name: /new plant/i });
     expect(button).not.toBeDisabled();
@@ -215,7 +228,7 @@ describe('PlantsListScreen', () => {
   it('opens the create modal when "New plant" button is clicked', () => {
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated([]), isLoading: false, isError: false } as unknown as ReturnType<typeof usePaginatedPlants>);
 
-    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
 
     expect(screen.queryByTestId('create-plant-modal')).not.toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: /new plant/i }));
@@ -225,7 +238,7 @@ describe('PlantsListScreen', () => {
   it('closes the create modal when onClose is called', () => {
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated([]), isLoading: false, isError: false } as unknown as ReturnType<typeof usePaginatedPlants>);
 
-    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
 
     fireEvent.click(screen.getByRole('button', { name: /new plant/i }));
     expect(screen.getByTestId('create-plant-modal')).toBeInTheDocument();
@@ -236,7 +249,7 @@ describe('PlantsListScreen', () => {
   it('renders the screen title', () => {
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated([]), isLoading: false, isError: false } as unknown as ReturnType<typeof usePaginatedPlants>);
 
-    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
 
     expect(screen.getByText('Garden Catalog')).toBeInTheDocument();
   });
@@ -244,7 +257,7 @@ describe('PlantsListScreen', () => {
   it('renders "All" filter tab as active and category tabs as disabled', () => {
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
 
-    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
 
     const allTab = screen.getByRole('tab', { name: /^all/i });
     expect(allTab).not.toBeDisabled();
@@ -260,7 +273,7 @@ describe('PlantsListScreen', () => {
     ];
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(plantsWithSpecies), isLoading: false, isError: false, speciesCount: 2 } as ReturnType<typeof usePaginatedPlants>);
 
-    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
 
     expect(screen.getByText(/inventory/i)).toBeInTheDocument();
     expect(screen.getByText(/2 plants/i)).toBeInTheDocument();
@@ -270,7 +283,7 @@ describe('PlantsListScreen', () => {
   it('renders disabled Filters button', () => {
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
 
-    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
 
     const filtersBtn = screen.getByRole('button', { name: /filters/i });
     expect(filtersBtn).toBeDisabled();
@@ -279,7 +292,7 @@ describe('PlantsListScreen', () => {
   it('renders a search input bound to the name filter', () => {
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
 
-    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
 
     const searchInput = screen.getByPlaceholderText('Search plants...');
     expect(searchInput).toBeInTheDocument();
@@ -288,7 +301,7 @@ describe('PlantsListScreen', () => {
   it('shows a removable search chip once a search term is typed', () => {
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
 
-    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
     expect(screen.queryByText(/Search:/)).not.toBeInTheDocument();
 
     const searchInput = screen.getByPlaceholderText('Search plants...');
@@ -303,7 +316,7 @@ describe('PlantsListScreen', () => {
   it('passes the typed search text as a NAME/LIKE filter to usePaginatedPlants after the debounce delay', () => {
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
 
-    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
 
     const searchInput = screen.getByPlaceholderText('Search plants...');
     fireEvent.change(searchInput, { target: { value: 'Rose' } });
@@ -316,7 +329,7 @@ describe('PlantsListScreen', () => {
   it('does not query by the typed search text before the debounce delay elapses', () => {
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
 
-    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
 
     const searchInput = screen.getByPlaceholderText('Search plants...');
     fireEvent.change(searchInput, { target: { value: 'Rose' } });
@@ -328,7 +341,7 @@ describe('PlantsListScreen', () => {
   it('resets to page 1 once the debounced search filter changes', () => {
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
 
-    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
     expect(mockPush).not.toHaveBeenCalled();
 
     const searchInput = screen.getByPlaceholderText('Search plants...');
@@ -341,7 +354,7 @@ describe('PlantsListScreen', () => {
   it('does not reset the page on initial render', () => {
     vi.mocked(usePaginatedPlants).mockReturnValue({ data: paginated(mockPlants), isLoading: false, isError: false } as ReturnType<typeof usePaginatedPlants>);
 
-    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" />);
+    render(<PlantsListScreen dict={dict} lang="en" spaceId="s1" identifyLabel="Identify plant" />);
     act(() => vi.advanceTimersByTime(300));
 
     expect(mockPush).not.toHaveBeenCalled();

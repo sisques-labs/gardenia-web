@@ -22,6 +22,7 @@ const dict = {
     home: 'Inicio',
     map: 'Mapa',
     plants: 'Plantas',
+    identifyPlant: 'Identificar planta',
     calendar: 'Calendario',
     journal: 'Diario',
     harvests: 'Cosechas',
