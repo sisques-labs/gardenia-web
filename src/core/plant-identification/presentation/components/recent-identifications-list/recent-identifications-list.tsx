@@ -23,7 +23,7 @@ export function RecentIdentificationsList({ spaceId, lang, dict }: Props) {
       {items.length === 0 ? (
         <p className="text-xs text-ink-3">{dict.empty}</p>
       ) : (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-3">
           {items.map((identification) => {
             const thumbnail = identification.photos[0]?.url;
             const label =
@@ -35,21 +35,23 @@ export function RecentIdentificationsList({ spaceId, lang, dict }: Props) {
               <li
                 key={identification.id}
                 data-testid={`recent-identification-${identification.id}`}
-                className="flex items-center gap-3 rounded-md border border-rule p-2"
+                className="flex flex-col gap-2 rounded-md border border-rule p-3"
               >
-                {thumbnail ? (
-                  <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded">
-                    <Image src={thumbnail} alt="" fill unoptimized sizes="40px" className="object-cover" />
+                <div className="flex items-center gap-3">
+                  {thumbnail ? (
+                    <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded">
+                      <Image src={thumbnail} alt="" fill unoptimized sizes="48px" className="object-cover" />
+                    </div>
+                  ) : (
+                    <div className="h-12 w-12 shrink-0 rounded bg-paper-2" aria-hidden="true" />
+                  )}
+                  <div className="flex min-w-0 flex-1 flex-col gap-0.5">
+                    <span className="truncate text-sm italic">{label}</span>
+                    <span className="text-xs text-ink-3">{formatShortDate(identification.createdAt, lang)}</span>
                   </div>
-                ) : (
-                  <div className="h-10 w-10 shrink-0 rounded bg-paper-2" aria-hidden="true" />
-                )}
-                <div className="flex min-w-0 flex-1 flex-col gap-0.5">
-                  <span className="truncate text-sm italic">{label}</span>
-                  <span className="text-xs text-ink-3">{formatShortDate(identification.createdAt, lang)}</span>
                 </div>
                 {identification.convertedToPlantId && (
-                  <div className="flex shrink-0 flex-col items-end gap-1">
+                  <div className="flex items-center justify-between gap-2 pl-[60px]">
                     <Badge variant="forest">{dict.convertedBadge}</Badge>
                     <Link
                       href={`/${lang}/plants/${identification.convertedToPlantId}`}
