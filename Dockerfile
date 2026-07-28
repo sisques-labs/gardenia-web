@@ -1,1 +1,29 @@
-IyBzeW50YXg9ZG9ja2VyL2RvY2tlcmZpbGU6MQoKRlJPTSBub2RlOjI0LWJvb2t3b3JtLXNsaW0gQVMgYnVpbGRlcgpFTlYgSFVTS1k9MApSVU4gY29yZXBhY2sgZW5hYmxlICYmIGNvcmVwYWNrIHByZXBhcmUgcG5wbUA5LjE1LjQgLS1hY3RpdmF0ZQpXT1JLRElSIC9hcHAKQ09QWSBwYWNrYWdlLmpzb24gcG5wbS1sb2NrLnlhbWwgLi8KUlVOIHBucG0gaW5zdGFsbCAtLWZyb3plbi1sb2NrZmlsZQpDT1BZIC4gLgpBUkcgTkVYVF9QVUJMSUNfQVBJX1VSTD0vYXBpCkFSRyBORVhUX1BVQkxJQ19HUkFQSFFMX1VSTD0vZ3JhcGhxbApFTlYgTkVYVF9QVUJMSUNfQVBJX1VSTD0kTkVYVF9QVUJMSUNfQVBJX1VSTApFTlYgTkVYVF9QVUJMSUNfR1JBUEhRTF9VUkw9JE5FWFRfUFVCTElDX0dSQVBIUUxfVVJMClJVTiBwbnBtIGJ1aWxkCgpGUk9NIG5vZGU6MjQtYm9va3dvcm0tc2xpbSBBUyBydW5uZXIKRU5WIE5PREVfRU5WPXByb2R1Y3Rpb24KRU5WIFBPUlQ9MzAwMApFTlYgSE9TVE5BTUU9IjAuMC4wLjAiCldPUktESVIgL2FwcApDT1BZIC0tZnJvbT1idWlsZGVyIC0tY2hvd249bm9kZTpub2RlIC9hcHAvLm5leHQvc3RhbmRhbG9uZSAuLwpDT1BZIC0tZnJvbT1idWlsZGVyIC0tY2hvd249bm9kZTpub2RlIC9hcHAvLm5leHQvc3RhdGljIC4vLm5leHQvc3RhdGljCkNPUFkgLS1mcm9tPWJ1aWxkZXIgLS1jaG93bj1ub2RlOm5vZGUgL2FwcC9wdWJsaWMgLi9wdWJsaWMKIyBucG0gaXMgYnVuZGxlZCBpbiB0aGUgYmFzZSBpbWFnZSBidXQgdW51c2VkIGF0IHJ1bnRpbWUgKG9ubHkgYG5vZGUgc2VydmVyLmpzYAojIHJ1bnMgaGVyZSk7IGRyb3BwaW5nIGl0IHJlbW92ZXMgaXRzIGJ1bmRsZWQgdnVsbmVyYWJsZSBgdGFyYCBkZXBlbmRlbmN5LgpSVU4gcm0gLXJmIC91c3IvbG9jYWwvbGliL25vZGVfbW9kdWxlcy9ucG0gL3Vzci9sb2NhbC9iaW4vbnBtIC91c3IvbG9jYWwvYmluL25weApVU0VSIG5vZGUKRVhQT1NFIDMwMDAKQ01EIFsibm9kZSIsICJzZXJ2ZXIuanMiXQo=
+# syntax=docker/dockerfile:1
+
+FROM node:24-bookworm-slim AS builder
+ENV HUSKY=0
+RUN corepack enable && corepack prepare pnpm@9.15.4 --activate
+WORKDIR /app
+COPY package.json pnpm-lock.yaml ./
+RUN pnpm install --frozen-lockfile
+COPY . .
+ARG NEXT_PUBLIC_API_URL=/api
+ARG NEXT_PUBLIC_GRAPHQL_URL=/graphql
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_GRAPHQL_URL=$NEXT_PUBLIC_GRAPHQL_URL
+RUN pnpm build
+
+FROM node:24-bookworm-slim AS runner
+ENV NODE_ENV=production
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+WORKDIR /app
+COPY --from=builder --chown=node:node /app/.next/standalone ./
+COPY --from=builder --chown=node:node /app/.next/static ./.next/static
+COPY --from=builder --chown=node:node /app/public ./public
+# npm is bundled in the base image but unused at runtime (only `node server.js`
+# runs here); dropping it removes its bundled vulnerable `tar` dependency.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
+USER node
+EXPOSE 3000
+CMD ["node", "server.js"]
