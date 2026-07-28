@@ -21,6 +21,9 @@ WORKDIR /app
 COPY --from=builder --chown=node:node /app/.next/standalone ./
 COPY --from=builder --chown=node:node /app/.next/static ./.next/static
 COPY --from=builder --chown=node:node /app/public ./public
+# npm is bundled in the base image but unused at runtime (only `node server.js`
+# runs here); dropping it removes its bundled vulnerable `tar` dependency.
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 USER node
 EXPOSE 3000
 CMD ["node", "server.js"]
