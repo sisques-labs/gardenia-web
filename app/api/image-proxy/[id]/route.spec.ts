@@ -18,7 +18,7 @@ describe('GET /api/image-proxy/[id]', () => {
 
   it('fetches the internal file-content endpoint with a Bearer token and X-Space-ID', async () => {
     const fetchMock = vi.fn().mockResolvedValue(
-      new Response(new Blob(['img-bytes']), {
+      new Response('img-bytes', {
         status: 200,
         headers: { 'content-type': 'image/png' },
       }),
@@ -40,7 +40,7 @@ describe('GET /api/image-proxy/[id]', () => {
 
   it('falls back to localhost:3000 when INTERNAL_API_URL is unset', async () => {
     const fetchMock = vi.fn().mockResolvedValue(
-      new Response(new Blob(['img-bytes']), {
+      new Response('img-bytes', {
         status: 200,
         headers: { 'content-type': 'image/png' },
       }),
@@ -57,7 +57,7 @@ describe('GET /api/image-proxy/[id]', () => {
 
   it('fetches without headers when no token or spaceId are provided', async () => {
     const fetchMock = vi.fn().mockResolvedValue(
-      new Response(new Blob(['img-bytes']), { status: 200, headers: {} }),
+      new Response('img-bytes', { status: 200, headers: {} }),
     );
     vi.stubGlobal('fetch', fetchMock);
 
