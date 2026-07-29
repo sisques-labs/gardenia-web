@@ -1,6 +1,11 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.31.1] - 2026-07-28
+
+### Bug Fixes
+- **docker:** Drop global npm from runner image to clear CVE-2026-59873 (57782c5)
+- **docker:** Correct Dockerfile content (previous commit wrote base64-encoded text) (95b4fd1)
 ## [0.31.0] - 2026-07-20
 
 ### Bug Fixes
