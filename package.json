@@ -9,7 +9,7 @@
     "url": "https://github.com/sisques-labs/gardenia-web.git"
   },
   "version": "0.31.1",
-  "packageManager": "pnpm@9.15.9",
+  "packageManager": "pnpm@11.17.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
@@ -84,7 +84,7 @@
     "lint-staged": "^17.0.8",
     "storybook": "^10.5.0",
     "tailwindcss": "^4",
-    "typescript": "^5",
+    "typescript": "^6.0.3",
     "vitest": "^4.1.8"
   }
 }

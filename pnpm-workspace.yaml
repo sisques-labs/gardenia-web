@@ -1,5 +1,20 @@
 packages:
   - '.'
 
+allowBuilds:
+  core-js-pure: false
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
+
 minimumReleaseAge: 1440
 trustPolicy: no-downgrade
+# Pre-existing transitive deps (unchanged by the pnpm 11 migration, same
+# version/integrity as before) that pnpm 11's new trust-downgrade heuristic
+# flags as "possible package takeover". Verified against the npm registry:
+# legitimate, single/known maintainers, valid signatures. Excluded narrowly
+# by exact version rather than relaxing the policy globally.
+trustPolicyExclude:
+  - chokidar@4.0.3
+  - eslint-import-resolver-typescript@3.10.1
+  - semver@6.3.1
