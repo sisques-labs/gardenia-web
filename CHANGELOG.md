@@ -1,6 +1,23 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.31.2] - 2026-07-30
+
+### Bug Fixes
+- **deps:** Update dependency graphql to v17 (f936f84)
+
+### Chore
+- **deps:** Update dependency @apollo/client to v4.2.8 (19f605e)
+- **deps:** Update dependency @radix-ui/react-avatar to v1.2.6 (ea5b700)
+- **deps:** Update dependency @radix-ui/react-checkbox to v1.3.11 (b40c237)
+- **deps:** Update dependency @radix-ui/react-context-menu to v2.3.7 (6cf81ff)
+- **deps:** Update dependency @radix-ui/react-dialog to v1.1.23 (1fbea9e)
+- **deps:** Update dependency @radix-ui/react-dropdown-menu to v2.1.24 (469903b)
+- **deps:** Update dependency @radix-ui/react-label to v2.1.15 (82d3c61)
+- **deps:** Update dependency @radix-ui/react-popover to v1.1.23 (5996a03)
+- **deps:** Update dependency @radix-ui/react-radio-group to v1.4.7 (be6d2ff)
+- **deps:** Update dependency @radix-ui/react-select to v2.3.7 (06a0fb2)
+- Migrate to pnpm 11 and TypeScript 6 (d7737c7)
 ## [0.31.1] - 2026-07-28
 
 ### Bug Fixes
