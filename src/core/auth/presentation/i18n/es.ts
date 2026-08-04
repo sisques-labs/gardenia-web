@@ -21,7 +21,7 @@ const dict = {
     hidePassword: 'Ocultar',
     forgotPassword: '¿Olvidaste tu contraseña?',
     register: '¿No tienes cuenta? Regístrate',
-    oauthFailed: 'No pudimos iniciarte sesión con ese proveedor. Usá tu correo y contraseña, o probá con otro proveedor.',
+    oauthFailed: 'No pudimos iniciarte sesión con ese proveedor. Usa tu correo y contraseña, o prueba con otro proveedor.',
   },
   callback: {
     finishing: 'Finalizando inicio de sesión…',

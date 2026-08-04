@@ -86,27 +86,27 @@ Risk: low — new file + modifications to existing auth UI only.
 
 ### Phase 2-A: i18n (no dependencies — can start in parallel with 2-B)
 
-- [ ] **T9** — `src/core/auth/presentation/i18n/en.ts`: Add `login.oauthFailed` and `callback.finishing` keys.
+- [x] **T9** — `src/core/auth/presentation/i18n/en.ts`: Add `login.oauthFailed` and `callback.finishing` keys.
   _Satisfies: R3.1, CC2, Spec §3.8_
 
-- [ ] **T10** — `src/core/auth/presentation/i18n/es.ts`: Add same keys in Rioplatense Spanish. TypeScript `satisfies AuthDictTranslated` enforces parity.
+- [x] **T10** — `src/core/auth/presentation/i18n/es.ts`: Add same keys in Rioplatense Spanish. TypeScript `satisfies AuthDictTranslated` enforces parity.
   _Satisfies: R3.1, CC2, Spec §3.8_
 
 ### Phase 2-B: AuthSocial component (RED → GREEN)
 
-- [ ] **T11** — `src/core/auth/presentation/components/auth-social/auth-social.spec.tsx` (REWRITE — RED): Update existing tests.
+- [x] **T11** — `src/core/auth/presentation/components/auth-social/auth-social.spec.tsx` (REWRITE — RED): Update existing tests.
   - DELETE `all buttons are disabled` assertion.
   - KEEP `renders 3 social buttons`.
   - ADD: each button is enabled (`btn.disabled === false`).
   - ADD: clicking GitHub/Apple/Google sets `window.location.href` to the correct OAuth URL (mock `oauthUrl`, spy on `window.location.href`).
   _Satisfies: CC1, R1.1, R2.1, Spec §4.1_
 
-- [ ] **T12** — `src/core/auth/presentation/components/auth-social/auth-social.tsx` (MODIFY — GREEN): Add `'use client'`. Remove `disabled` + `cursor: not-allowed` styling. Add `onClick={() => startOAuth(provider)}` per button using `oauthUrl`.
+- [x] **T12** — `src/core/auth/presentation/components/auth-social/auth-social.tsx` (MODIFY — GREEN): Add `'use client'`. Remove `disabled` + `cursor: not-allowed` styling. Add `onClick={() => startOAuth(provider)}` per button using `oauthUrl`.
   _Satisfies: R1.1, R2.1, Spec §3.5_
 
 ### Phase 2-C: Callback page (RED → GREEN)
 
-- [ ] **T13** — `app/[lang]/(auth)/callback/page.spec.tsx` (NEW — RED): Write tests with mocked `next/navigation`, `refreshTokenOnce`, `doRefresh`, `MeUseCase.me`.
+- [x] **T13** — `app/[lang]/(auth)/callback/page.spec.tsx` (NEW — RED): Write tests with mocked `next/navigation`, `refreshTokenOnce`, `doRefresh`, `MeUseCase.me`.
   - Token + `me()` resolve → `router.replace` called with `returnUrl`.
   - Token + no `returnUrl` → `router.replace('/{lang}/home')`.
   - `refreshTokenOnce` null → `router.replace('/{lang}/login?error=oauth_failed')`.
@@ -114,17 +114,17 @@ Risk: low — new file + modifications to existing auth UI only.
   - StrictMode double-mount → `router.replace` called exactly once.
   _Satisfies: CC1, R1.2, R1.3, R1.4, Spec §4.5_
 
-- [ ] **T14** — `app/[lang]/(auth)/callback/page.tsx` (NEW — GREEN): Implement `CallbackPage` as `'use client'` + `force-dynamic`. `CallbackInner` uses `useEffect` with `ran` ref guard, calls `refreshTokenOnce(doRefresh)` → `meService.me()` → `router.replace(returnUrl ?? /{lang}/home)`, catches to error redirect.
+- [x] **T14** — `app/[lang]/(auth)/callback/page.tsx` (NEW — GREEN): Implement `CallbackPage` as `'use client'` + `force-dynamic`. `CallbackInner` uses `useEffect` with `ran` ref guard, calls `refreshTokenOnce(doRefresh)` → `meService.me()` → `router.replace(returnUrl ?? /{lang}/home)`, catches to error redirect.
   _Satisfies: R1.2, R1.3, R1.4, AD-4, Spec §3.6_
 
 ### Phase 2-D: Login error banner (RED → GREEN)
 
-- [ ] **T15** — `src/core/auth/presentation/screens/login/login.screen.spec.tsx` (EXTEND — RED): Add assertions.
+- [x] **T15** — `src/core/auth/presentation/screens/login/login.screen.spec.tsx` (EXTEND — RED): Add assertions.
   - With `?error=oauth_failed` → `role="alert"` banner renders with `oauthFailed` text.
   - Without `?error` → banner absent.
   _Satisfies: CC1, R1.5, Spec §4.6_
 
-- [ ] **T16** — `src/core/auth/presentation/screens/login/login.screen.tsx` (MODIFY — GREEN): Read `searchParams.get('error') === 'oauth_failed'`. Render `<div role="alert">{dict.oauthFailed}</div>` inside the existing `Suspense` boundary when true.
+- [x] **T16** — `src/core/auth/presentation/screens/login/login.screen.tsx` (MODIFY — GREEN): Read `searchParams.get('error') === 'oauth_failed'`. Render `<div role="alert">{dict.oauthFailed}</div>` inside the existing `Suspense` boundary when true.
   _Satisfies: R1.5, Spec §3.7_
 
 ---
