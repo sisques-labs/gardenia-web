@@ -224,6 +224,46 @@ describe('spaceLink', () => {
 });
 
 // ──────────────────────────────────────────────
+// 1.3b — correlationLink
+// ──────────────────────────────────────────────
+describe('correlationLink', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it('sets an X-Request-Id header with a generated uuid', async () => {
+    const { correlationLink } = await import('./apollo.client');
+    const { link: terminal, captured } = captureContextLink();
+    const chain = ApolloLink.from([correlationLink, terminal]);
+
+    await executeLink(chain);
+
+    expect(captured.headers['X-Request-Id']).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+    );
+  });
+
+  it('generates a different id per operation', async () => {
+    const { correlationLink } = await import('./apollo.client');
+    const ids: string[] = [];
+    const terminal = new ApolloLink((operation) => {
+      ids.push(operation.getContext().correlationId as string);
+      return new Observable<FetchResult>((observer) => {
+        observer.next({ data: { test: true } });
+        observer.complete();
+      });
+    });
+    const chain = ApolloLink.from([correlationLink, terminal]);
+
+    await executeLink(chain);
+    await executeLink(chain);
+
+    expect(ids).toHaveLength(2);
+    expect(ids[0]).not.toBe(ids[1]);
+  });
+});
+
+// ──────────────────────────────────────────────
 // 1.4 — onErrorLink — token refresh + retry
 // ──────────────────────────────────────────────
 describe('onErrorLink', () => {
@@ -460,5 +500,22 @@ describe('loggingLink', () => {
     expect(vi.mocked(logHttpError)).toHaveBeenCalledOnce();
     const [log] = vi.mocked(logHttpError).mock.calls[0];
     expect(log.status).toBeUndefined();
+  });
+
+  it('includes the correlationId set by correlationLink on error', async () => {
+    const { loggingLink, correlationLink } = await import('./apollo.client');
+    const terminal = new ApolloLink(() =>
+      new Observable<FetchResult>((observer) => {
+        observer.error(Object.assign(new Error('Server Error'), { statusCode: 500 }));
+      }),
+    );
+
+    const chain = ApolloLink.from([correlationLink, loggingLink, terminal]);
+    await expect(executeLinkCollect(chain)).rejects.toBeDefined();
+
+    const [log] = vi.mocked(logHttpError).mock.calls[0];
+    expect(log.correlationId).toMatch(
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/,
+    );
   });
 });

@@ -52,6 +52,22 @@ export const spaceLink: ApolloLink = setContext((_, previousContext) => {
   };
 });
 
+// ── correlationLink ─────────────────────────────────────────────────────────
+// Generates a per-operation correlation id, sent as X-Request-Id so it can be
+// cross-referenced against the API's request logs, and stashed on the
+// operation context so loggingLink can attach it to logHttpError.
+export const correlationLink: ApolloLink = setContext((_, previousContext) => {
+  const correlationId = crypto.randomUUID();
+  return {
+    ...previousContext,
+    correlationId,
+    headers: {
+      ...(previousContext.headers ?? {}),
+      'X-Request-Id': correlationId,
+    },
+  };
+});
+
 // ── onErrorLink ─────────────────────────────────────────────────────────────
 // On 401 / UNAUTHENTICATED: refresh once via mutex, retry. On failure: logout.
 // __retried guard prevents infinite loop.
@@ -110,6 +126,9 @@ export const loggingLink: ApolloLink = new ApolloLink((operation, forward) => {
           status: (err as { statusCode?: number }).statusCode,
           url: GRAPHQL_URL,
           durationMs: Date.now() - startTime,
+          correlationId: operation.getContext().correlationId as
+            | string
+            | undefined,
         });
         observer.error(err);
       },
@@ -119,8 +138,8 @@ export const loggingLink: ApolloLink = new ApolloLink((operation, forward) => {
   });
 });
 
-// ── Apollo client — link order: authLink → spaceLink → onErrorLink → loggingLink → httpLink
+// ── Apollo client — link order: correlationLink → authLink → spaceLink → onErrorLink → loggingLink → httpLink
 export const apolloClient = new ApolloClient({
-  link: from([authLink, spaceLink, onErrorLink, loggingLink, httpLink]),
+  link: from([correlationLink, authLink, spaceLink, onErrorLink, loggingLink, httpLink]),
   cache: new InMemoryCache(),
 });
