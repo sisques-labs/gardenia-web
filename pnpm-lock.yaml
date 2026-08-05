@@ -107,7 +107,7 @@ importers:
         version: 10.5.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(esbuild@0.28.1)(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0))(webpack@5.108.4(clean-css@5.3.3)(esbuild@0.28.1)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.19))
       '@storybook/addon-themes':
         specifier: ^10.5.0
-        version: 10.5.2(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))
+        version: 10.5.6(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))
       '@storybook/nextjs':
         specifier: ^10.5.0
         version: 10.5.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(clean-css@5.3.3)(esbuild@0.28.1)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(next@16.2.10(@babel/core@7.29.7(supports-color@8.1.1))(react-dom@19.2.7(react@19.2.7))(react@19.2.7))(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))(supports-color@8.1.1)(type-fest@2.19.0)(typescript@6.0.3)(webpack-hot-middleware@2.26.1)(webpack@5.108.4(clean-css@5.3.3)(esbuild@0.28.1)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.19))
@@ -2428,10 +2428,10 @@ packages:
       '@types/react':
         optional: true
 
-  '@storybook/addon-themes@10.5.2':
-    resolution: {integrity: sha512-XxqGlGFOw8lXhlkxftmq2ifsGeKLM8YePhVzdmG52XCHWN5sPJx9ns4QWOPqSs5669QlKUDo6Ct8c8cN6BmznA==}
+  '@storybook/addon-themes@10.5.6':
+    resolution: {integrity: sha512-fIzu2f6xPh/mtOBUU9TnjSoO3qUIF57AVES9HX4dfhjtbz9lWd+EhNd65nZfmTXxKsS32x/7/aXDTHtuP/ObwQ==}
     peerDependencies:
-      storybook: ^10.5.2
+      storybook: ^10.5.6
 
   '@storybook/builder-webpack5@10.5.2':
     resolution: {integrity: sha512-iFPMPeRCinW5pQJlcQT1EiNv0+eKXuLu/3t53g/xY9cGY0QfQtAMzxf0c2QIeAnJOxu3BWTrkdL3MKDHuDnPwA==}
@@ -8367,7 +8367,7 @@ snapshots:
       - vite
       - webpack
 
-  '@storybook/addon-themes@10.5.2(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))':
+  '@storybook/addon-themes@10.5.6(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))':
     dependencies:
       storybook: 10.5.2(@types/react@19.2.17)(react@19.2.7)
       ts-dedent: 2.3.0
