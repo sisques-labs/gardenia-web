@@ -90,6 +90,14 @@ function getErrorInterceptorHandler(http: any) {
   return handler?.rejected as (error: unknown) => Promise<unknown>;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function getRequestInterceptorHandler(http: any) {
+  const handler = http.interceptors.request.handlers.find((h: unknown) => h !== null);
+  return handler?.fulfilled as (
+    config: InternalAxiosRequestConfig,
+  ) => InternalAxiosRequestConfig | Promise<InternalAxiosRequestConfig>;
+}
+
 // ──────────────────────────────────────────────
 // T7: axios response interceptor tests
 // ──────────────────────────────────────────────
@@ -199,6 +207,73 @@ describe('axios.client — timeout', () => {
   it('bareHttp instance has a timeout set', async () => {
     const { bareHttp } = await import('./axios.client');
     expect(bareHttp.defaults.timeout).toBeGreaterThan(0);
+  });
+});
+
+describe('axios.client — request correlation id', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockSpacesStore();
+  });
+
+  it('sets a generated X-Request-Id header on every outgoing request', async () => {
+    mockAuthStore('tok');
+    const { http } = await import('./axios.client');
+
+    const requestHandler = getRequestInterceptorHandler(http);
+    const config = await requestHandler({
+      url: '/plants',
+      headers: new (await import('axios')).AxiosHeaders(),
+    } as InternalAxiosRequestConfig);
+
+    const requestId = config.headers.get('X-Request-Id');
+    expect(typeof requestId).toBe('string');
+    expect(requestId).toHaveLength(36);
+  });
+
+  it('generates a different id per request', async () => {
+    mockAuthStore('tok');
+    const { http } = await import('./axios.client');
+    const { AxiosHeaders } = await import('axios');
+    const requestHandler = getRequestInterceptorHandler(http);
+
+    const configA = await requestHandler({
+      url: '/plants',
+      headers: new AxiosHeaders(),
+    } as InternalAxiosRequestConfig);
+    const configB = await requestHandler({
+      url: '/plants',
+      headers: new AxiosHeaders(),
+    } as InternalAxiosRequestConfig);
+
+    expect(configA.headers.get('X-Request-Id')).not.toBe(
+      configB.headers.get('X-Request-Id'),
+    );
+  });
+
+  it('includes the correlationId in logHttpError on failure', async () => {
+    mockAuthStore('tok');
+    const { http } = await import('./axios.client');
+    const { AxiosHeaders } = await import('axios');
+    const errorHandler = getErrorInterceptorHandler(http);
+    const requestHandler = getRequestInterceptorHandler(http);
+
+    const config = await requestHandler({
+      url: '/plants',
+      headers: new AxiosHeaders(),
+    } as InternalAxiosRequestConfig);
+
+    const error = {
+      config,
+      response: { status: 500 },
+      isAxiosError: true,
+      message: 'Internal Server Error',
+    };
+
+    await expect(errorHandler(error)).rejects.toBeDefined();
+
+    const [log] = vi.mocked(logHttpError).mock.calls[0];
+    expect(log.correlationId).toBe(config.headers.get('X-Request-Id'));
   });
 });
 
