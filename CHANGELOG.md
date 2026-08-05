@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.31.3] - 2026-08-04
+
+### Chore
+- **openspec:** Housekeeping on stale auth changes + voseo fix (#421) (b2b7af8)
 ## [0.31.2] - 2026-07-30
 
 ### Bug Fixes
