@@ -1,9 +1,11 @@
 name: Chromatic
 
 on:
-  pull_request:
-  push:
-    branches: [main]
+  workflow_dispatch:
+  # Disabled: automatic triggers (pull_request, push) commented out.
+  # pull_request:
+  # push:
+  #   branches: [main]
 
 concurrency:
   group: chromatic-${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
@@ -28,7 +30,7 @@ jobs:
       # Chromatic needs the full git history to determine baselines, so we
       # re-fetch the complete history here after setup has finished.
       - name: Fetch full git history for Chromatic
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 

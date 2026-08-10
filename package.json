@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/sisques-labs/gardenia-web.git"
   },
-  "version": "0.31.3",
+  "version": "0.31.4",
   "packageManager": "pnpm@11.17.0",
   "private": true,
   "scripts": {
@@ -62,14 +62,14 @@
     "zustand": "^5.0.14"
   },
   "devDependencies": {
-    "@storybook/addon-docs": "^10.5.0",
-    "@storybook/addon-themes": "^10.5.0",
-    "@storybook/nextjs": "^10.5.0",
-    "@storybook/react": "^10.5.0",
-    "@tailwindcss/postcss": "^4",
-    "@tanstack/react-query-devtools": "^5.101.2",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@testing-library/react": "^16.3.2",
+    "@storybook/addon-docs": "10.5.2",
+    "@storybook/addon-themes": "10.5.2",
+    "@storybook/nextjs": "10.5.2",
+    "@storybook/react": "10.5.2",
+    "@tailwindcss/postcss": "4.3.3",
+    "@tanstack/react-query-devtools": "5.101.2",
+    "@testing-library/jest-dom": "6.9.1",
+    "@testing-library/react": "16.3.2",
     "@testing-library/user-event": "^14.6.1",
     "@types/node": "^26",
     "@types/react": "^19",

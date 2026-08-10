@@ -1,6 +1,10 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.31.4] - 2026-08-05
+
+### Documentation
+- Bring README architecture and scripts up to date (#424) (a84ced7)
 ## [0.31.3] - 2026-08-04
 
 ### Chore
