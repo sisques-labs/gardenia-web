@@ -1,9 +1,11 @@
 name: Chromatic
 
 on:
-  pull_request:
-  push:
-    branches: [main]
+  workflow_dispatch:
+  # Disabled: automatic triggers (pull_request, push) commented out.
+  # pull_request:
+  # push:
+  #   branches: [main]
 
 concurrency:
   group: chromatic-${{ github.workflow }}-${{ github.event.pull_request.number || github.sha }}
