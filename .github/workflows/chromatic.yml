@@ -30,7 +30,7 @@ jobs:
       # Chromatic needs the full git history to determine baselines, so we
       # re-fetch the complete history here after setup has finished.
       - name: Fetch full git history for Chromatic
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7.0.1
         with:
           fetch-depth: 0
 
