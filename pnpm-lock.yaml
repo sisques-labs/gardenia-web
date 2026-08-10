@@ -115,7 +115,7 @@ importers:
         specifier: ^10.5.0
         version: 10.5.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))(supports-color@8.1.1)(typescript@6.0.3)
       '@tailwindcss/postcss':
-        specifier: ^4
+        specifier: 4.3.3
         version: 4.3.3
       '@tanstack/react-query-devtools':
         specifier: 5.101.2
@@ -8640,7 +8640,7 @@ snapshots:
       '@alloc/quick-lru': 5.2.0
       '@tailwindcss/node': 4.3.3
       '@tailwindcss/oxide': 4.3.3
-      postcss: 8.5.19
+      postcss: 8.5.24
       tailwindcss: 4.3.3
 
   '@tanstack/query-core@5.101.2': {}
@@ -9643,12 +9643,12 @@ snapshots:
 
   css-loader@6.11.0(webpack@5.108.4(clean-css@5.3.3)(esbuild@0.28.1)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.19)):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.5.19)
-      postcss: 8.5.19
-      postcss-modules-extract-imports: 3.1.0(postcss@8.5.19)
-      postcss-modules-local-by-default: 4.2.0(postcss@8.5.19)
-      postcss-modules-scope: 3.2.1(postcss@8.5.19)
-      postcss-modules-values: 4.0.0(postcss@8.5.19)
+      icss-utils: 5.1.0(postcss@8.5.24)
+      postcss: 8.5.24
+      postcss-modules-extract-imports: 3.1.0(postcss@8.5.24)
+      postcss-modules-local-by-default: 4.2.0(postcss@8.5.24)
+      postcss-modules-scope: 3.2.1(postcss@8.5.24)
+      postcss-modules-values: 4.0.0(postcss@8.5.24)
       postcss-value-parser: 4.2.0
       semver: 7.8.5
     optionalDependencies:
@@ -9656,12 +9656,12 @@ snapshots:
 
   css-loader@7.1.4(webpack@5.108.4(clean-css@5.3.3)(esbuild@0.28.1)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.19)):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.5.19)
-      postcss: 8.5.19
-      postcss-modules-extract-imports: 3.1.0(postcss@8.5.19)
-      postcss-modules-local-by-default: 4.2.0(postcss@8.5.19)
-      postcss-modules-scope: 3.2.1(postcss@8.5.19)
-      postcss-modules-values: 4.0.0(postcss@8.5.19)
+      icss-utils: 5.1.0(postcss@8.5.24)
+      postcss: 8.5.24
+      postcss-modules-extract-imports: 3.1.0(postcss@8.5.24)
+      postcss-modules-local-by-default: 4.2.0(postcss@8.5.24)
+      postcss-modules-scope: 3.2.1(postcss@8.5.24)
+      postcss-modules-values: 4.0.0(postcss@8.5.24)
       postcss-value-parser: 4.2.0
       semver: 7.8.5
     optionalDependencies:
@@ -10559,9 +10559,9 @@ snapshots:
 
   husky@9.1.7: {}
 
-  icss-utils@5.1.0(postcss@8.5.19):
+  icss-utils@5.1.0(postcss@8.5.24):
     dependencies:
-      postcss: 8.5.19
+      postcss: 8.5.24
 
   ieee754@1.2.1: {}
 
@@ -11451,26 +11451,26 @@ snapshots:
     transitivePeerDependencies:
       - typescript
 
-  postcss-modules-extract-imports@3.1.0(postcss@8.5.19):
+  postcss-modules-extract-imports@3.1.0(postcss@8.5.24):
     dependencies:
-      postcss: 8.5.19
+      postcss: 8.5.24
 
-  postcss-modules-local-by-default@4.2.0(postcss@8.5.19):
+  postcss-modules-local-by-default@4.2.0(postcss@8.5.24):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.5.19)
-      postcss: 8.5.19
+      icss-utils: 5.1.0(postcss@8.5.24)
+      postcss: 8.5.24
       postcss-selector-parser: 7.1.4
       postcss-value-parser: 4.2.0
 
-  postcss-modules-scope@3.2.1(postcss@8.5.19):
+  postcss-modules-scope@3.2.1(postcss@8.5.24):
     dependencies:
-      postcss: 8.5.19
+      postcss: 8.5.24
       postcss-selector-parser: 7.1.4
 
-  postcss-modules-values@4.0.0(postcss@8.5.19):
+  postcss-modules-values@4.0.0(postcss@8.5.24):
     dependencies:
-      icss-utils: 5.1.0(postcss@8.5.19)
-      postcss: 8.5.19
+      icss-utils: 5.1.0(postcss@8.5.24)
+      postcss: 8.5.24
 
   postcss-selector-parser@7.1.4:
     dependencies:
@@ -11721,7 +11721,7 @@ snapshots:
       adjust-sourcemap-loader: 4.0.0
       convert-source-map: 1.9.0
       loader-utils: 2.0.4
-      postcss: 8.5.19
+      postcss: 8.5.24
       source-map: 0.6.1
 
   resolve@1.22.12:
