@@ -77,7 +77,7 @@
     "@vitejs/plugin-react": "6.0.3",
     "@vitest/coverage-v8": "4.1.10",
     "chromatic": "18.0.1",
-    "eslint": "^9",
+    "eslint": "9.39.5",
     "eslint-config-next": "16.2.10",
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
