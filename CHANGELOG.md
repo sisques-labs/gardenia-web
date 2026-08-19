@@ -1,6 +1,19 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.31.6] - 2026-08-19
+
+### Chore
+- **deps:** Pin dependency @testing-library/user-event to v14.6.1 (#451) (f8fb409)
+- **deps:** Pin dependency @types/node to 26.1.1 (#452) (50ca363)
+- **deps:** Pin dependency @vitejs/plugin-react to v6.0.3 (#453) (fc07dd3)
+- **deps:** Pin dependency @vitest/coverage-v8 to 4.1.10 (#454) (aa7d02f)
+- **deps:** Pin dependency chromatic to 18.0.1 (#455) (25e96d6)
+- **deps:** Pin dependency eslint to 9.39.5 (#456) (42d0b55)
+- **deps:** Pin dependency husky to 9.1.7 (fae2265)
+- **deps:** Pin dependency jsdom to 29.1.1 (#458) (d815086)
+- **deps:** Pin dependency lint-staged to 17.0.8 (#459) (54286a0)
+- **deps:** Pin dependency storybook to 10.5.2 (#460) (ba2f276)
 ## [0.31.5] - 2026-08-10
 
 ### CI
