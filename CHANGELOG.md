@@ -1,6 +1,21 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.31.5] - 2026-08-10
+
+### CI
+- Disable chromatic workflow auto triggers (87c16b0)
+
+### Chore
+- **deps:** Pin actions/checkout action to v7.0.1 (2d686c3)
+- **deps:** Pin dependency @tanstack/react-query-devtools to v5.101.2 (07f1275)
+- **deps:** Pin dependency @testing-library/react to 16.3.2 (105dbb0)
+- **deps:** Pin dependency @testing-library/jest-dom to 6.9.1 (501ba2a)
+- **deps:** Pin dependency @tailwindcss/postcss to 4.3.3 (922327f)
+- **deps:** Pin dependency @storybook/addon-docs to 10.5.2 (e47b87a)
+- **deps:** Pin dependency @storybook/react to 10.5.2 (a45fc69)
+- **deps:** Pin dependency @storybook/nextjs to 10.5.2 (339a83d)
+- **deps:** Pin dependency @storybook/addon-themes to 10.5.2 (025ed15)
 ## [0.31.4] - 2026-08-05
 
 ### Documentation
