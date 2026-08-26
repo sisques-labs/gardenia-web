@@ -1,6 +1,6 @@
 # syntax=docker/dockerfile:1
 
-FROM node:24-bookworm-slim AS builder
+FROM node:24.19.0-bookworm-slim AS builder
 ENV HUSKY=0
 RUN corepack enable && corepack prepare pnpm@11.17.0 --activate
 WORKDIR /app
@@ -13,7 +13,7 @@ ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
 ENV NEXT_PUBLIC_GRAPHQL_URL=$NEXT_PUBLIC_GRAPHQL_URL
 RUN pnpm build
 
-FROM node:24-bookworm-slim AS runner
+FROM node:24.19.0-bookworm-slim AS runner
 ENV NODE_ENV=production
 ENV PORT=3000
 ENV HOSTNAME="0.0.0.0"
