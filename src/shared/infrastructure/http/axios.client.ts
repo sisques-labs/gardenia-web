@@ -8,6 +8,7 @@ import { HTTP_TIMEOUT_MS } from '@/shared/config/env';
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api';
 const AUTH_SKIP = ['/auth/login', '/auth/register'];
 const SPACE_SKIP = '/auth/';
+const REQUEST_ID_HEADER = 'X-Request-Id';
 
 // Bare instance — no interceptors. Used for refresh and post-401 retry.
 export const bareHttp = axios.create({
@@ -38,8 +39,12 @@ http.interceptors.request.use((config) => {
     const spaceId = useSpacesStore.getState().currentSpaceId;
     if (spaceId) config.headers.set('X-Space-ID', spaceId);
   }
+  const correlationId = crypto.randomUUID();
+  config.headers.set(REQUEST_ID_HEADER, correlationId);
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (config as any)._startTime = Date.now();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  (config as any)._correlationId = correlationId;
   return config;
 });
 
@@ -53,6 +58,10 @@ http.interceptors.response.use(
       status: error.response?.status as number | undefined,
       url: originalRequest?.url as string | undefined,
       durationMs: Date.now() - startTime,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      correlationId: (originalRequest as any)?._correlationId as
+        | string
+        | undefined,
     });
 
     if (error.response?.status !== 401 || originalRequest._retry) {

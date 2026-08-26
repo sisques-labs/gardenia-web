@@ -2,6 +2,7 @@ export interface HttpErrorLog {
   status?: number;
   url?: string;
   durationMs: number;
+  correlationId?: string;
 }
 
 export function logHttpError(log: HttpErrorLog): void {
