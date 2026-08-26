@@ -54,7 +54,7 @@ jobs:
           # issue in the changed files, including pre-existing ones.
           fetch-depth: 0
 
-      - uses: millionco/react-doctor@v2
+      - uses: millionco/react-doctor@v2.2.8
         # Common configuration knobs — uncomment any to override the default.
         # Full reference: https://www.react.doctor/ci
         # with:
