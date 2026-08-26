@@ -5,13 +5,19 @@ import type { PlantIdentificationCandidate } from '@/core/plant-identification/d
 
 const CANDIDATES: PlantIdentificationCandidate[] = [
   { scientificName: 'Monstera deliciosa', commonNames: ['Swiss cheese plant'], score: 0.82 },
-  { scientificName: 'Monstera adansonii', commonNames: [], score: 0.11 },
-  { scientificName: 'Epipremnum aureum', commonNames: ['Pothos'], score: 0.04 },
+  { scientificName: 'Monstera adansonii', commonNames: [], score: 0.55 },
+  { scientificName: 'Epipremnum aureum', commonNames: ['Pothos'], score: 0.14 },
 ];
 
-function CandidateSelectionListDemo({ initialSelectedIndex = null }: { initialSelectedIndex?: number | null }) {
+function CandidateSelectionListDemo({
+  candidates = CANDIDATES,
+  initialSelectedIndex = null,
+}: {
+  candidates?: PlantIdentificationCandidate[];
+  initialSelectedIndex?: number | null;
+}) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(initialSelectedIndex);
-  return <CandidateSelectionList candidates={CANDIDATES} selectedIndex={selectedIndex} onSelect={setSelectedIndex} />;
+  return <CandidateSelectionList candidates={candidates} selectedIndex={selectedIndex} onSelect={setSelectedIndex} />;
 }
 
 const meta = {
@@ -31,4 +37,14 @@ export const TopCandidatePreselected: Story = {
 
 export const LowerRankedSelected: Story = {
   args: { initialSelectedIndex: 2 },
+};
+
+export const AllConfidenceTiers: Story = {
+  args: {
+    candidates: [
+      { scientificName: 'Monstera deliciosa', commonNames: ['Swiss cheese plant'], score: 0.85 },
+      { scientificName: 'Monstera adansonii', commonNames: [], score: 0.5 },
+      { scientificName: 'Epipremnum aureum', commonNames: ['Pothos'], score: 0.15 },
+    ],
+  },
 };

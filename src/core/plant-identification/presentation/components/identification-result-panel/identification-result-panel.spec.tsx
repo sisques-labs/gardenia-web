@@ -69,6 +69,12 @@ describe('IdentificationResultPanel', () => {
     expect(container).toBeEmptyDOMElement();
   });
 
+  it('renders each state inside a bounded Card section', () => {
+    renderPanel({ identification: resolvedIdentification });
+
+    expect(screen.getByTestId('identification-result-resolved')).toHaveClass('card');
+  });
+
   describe('resolved state', () => {
     it('shows every candidate, not just the resolved one', () => {
       renderPanel({ identification: resolvedIdentification });

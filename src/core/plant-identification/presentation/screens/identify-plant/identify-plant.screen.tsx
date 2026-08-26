@@ -11,6 +11,7 @@ import { useSpacesStore } from '@/core/spaces/infrastructure/store/spaces.store'
 import { CreatePlantModal } from '@/core/plants/presentation/components/create-plant-modal/create-plant-modal';
 import { ScreenHeader } from '@/shared/presentation/components/screen-header/screen-header';
 import { Button } from '@/shared/presentation/components/ui/button/button';
+import { Card, CardContent } from '@/shared/presentation/components/ui/card/card';
 import type { AppDict } from '@/shared/presentation/i18n/get-dictionary';
 
 type Props = {
@@ -87,18 +88,21 @@ export function IdentifyPlantScreen({ dict, createPlantDict, lang, spaceId: spac
     <div>
       <ScreenHeader title={dict.title} />
 
-      <div className="grid grid-cols-1 gap-8 p-6 lg:grid-cols-2 lg:items-start">
-        <div className="flex flex-col gap-4">
-          <PhotoOrganPicker photos={photos} onChange={setPhotos} dict={dict} maxPhotos={MAX_PHOTOS} />
-          <Button
-            type="button"
-            data-testid="btn-submit-identify"
-            disabled={photos.length === 0 || identifyMutation.isPending}
-            onClick={handleSubmit}
-          >
-            {identifyMutation.isPending ? dict.submitting : dict.submit}
-          </Button>
-        </div>
+      <div className="mx-auto flex max-w-2xl flex-col gap-6 p-4 sm:p-6">
+        <Card>
+          <CardContent className="flex flex-col gap-4 pt-6">
+            <PhotoOrganPicker photos={photos} onChange={setPhotos} dict={dict} maxPhotos={MAX_PHOTOS} />
+            <Button
+              type="button"
+              data-testid="btn-submit-identify"
+              disabled={photos.length === 0 || identifyMutation.isPending}
+              onClick={handleSubmit}
+              className="min-h-11"
+            >
+              {identifyMutation.isPending ? dict.submitting : dict.submit}
+            </Button>
+          </CardContent>
+        </Card>
 
         <IdentificationResultPanel
           identification={identification}
@@ -110,10 +114,12 @@ export function IdentifyPlantScreen({ dict, createPlantDict, lang, spaceId: spac
           onNoneMatch={handleNoneMatch}
           onRetry={handleSubmit}
         />
-      </div>
 
-      <div className="px-6 pb-6">
-        <RecentIdentificationsList spaceId={spaceId} lang={lang} dict={dict.recent} />
+        <Card>
+          <CardContent className="pt-6">
+            <RecentIdentificationsList spaceId={spaceId} lang={lang} dict={dict.recent} />
+          </CardContent>
+        </Card>
       </div>
 
       {openModal === 'identification' && identification && (

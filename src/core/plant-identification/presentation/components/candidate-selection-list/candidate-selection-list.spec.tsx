@@ -11,23 +11,54 @@ const CANDIDATES: PlantIdentificationCandidate[] = [
 ];
 
 describe('CandidateSelectionList', () => {
-  it('renders one option per candidate with its scientific name and rounded percentage', () => {
+  it('renders one option per candidate with its rank, scientific name, and rounded percentage', () => {
     render(<CandidateSelectionList candidates={CANDIDATES} selectedIndex={null} onSelect={vi.fn()} />);
 
+    expect(screen.getByTestId('candidate-option-0')).toHaveTextContent('#1');
     expect(screen.getByTestId('candidate-option-0')).toHaveTextContent('Monstera deliciosa');
     expect(screen.getByTestId('candidate-option-0')).toHaveTextContent('82%');
+    expect(screen.getByTestId('candidate-option-1')).toHaveTextContent('#2');
     expect(screen.getByTestId('candidate-option-1')).toHaveTextContent('Monstera adansonii');
     expect(screen.getByTestId('candidate-option-1')).toHaveTextContent('11%');
+    expect(screen.getByTestId('candidate-option-2')).toHaveTextContent('#3');
     expect(screen.getByTestId('candidate-option-2')).toHaveTextContent('Epipremnum aureum');
     expect(screen.getByTestId('candidate-option-2')).toHaveTextContent('4%');
   });
 
-  it('marks only the selected index as checked', () => {
+  it('renders the first common name when present, and none when absent', () => {
+    render(<CandidateSelectionList candidates={CANDIDATES} selectedIndex={null} onSelect={vi.fn()} />);
+
+    expect(screen.getByTestId('candidate-option-0')).toHaveTextContent('Swiss cheese plant');
+    expect(screen.queryByTestId('candidate-common-name-1')).not.toBeInTheDocument();
+  });
+
+  it.each([
+    [0.85, 'high'],
+    [0.7, 'high'],
+    [0.69, 'medium'],
+    [0.4, 'medium'],
+    [0.39, 'low'],
+    [0.1, 'low'],
+  ])('marks a candidate with score %s as %s confidence', (score, tier) => {
+    render(
+      <CandidateSelectionList
+        candidates={[{ scientificName: 'Test plant', commonNames: [], score }]}
+        selectedIndex={null}
+        onSelect={vi.fn()}
+      />,
+    );
+
+    expect(screen.getByTestId('candidate-confidence-tier-0')).toHaveAttribute('data-tier', tier);
+  });
+
+  it('marks only the selected index as checked, with a visible selected marker', () => {
     render(<CandidateSelectionList candidates={CANDIDATES} selectedIndex={1} onSelect={vi.fn()} />);
 
     expect(screen.getByTestId('candidate-option-0')).toHaveAttribute('aria-checked', 'false');
     expect(screen.getByTestId('candidate-option-1')).toHaveAttribute('aria-checked', 'true');
     expect(screen.getByTestId('candidate-option-2')).toHaveAttribute('aria-checked', 'false');
+    expect(screen.getByTestId('candidate-selected-marker-1')).toBeInTheDocument();
+    expect(screen.queryByTestId('candidate-selected-marker-0')).not.toBeInTheDocument();
   });
 
   it('calls onSelect with the clicked candidate index', async () => {

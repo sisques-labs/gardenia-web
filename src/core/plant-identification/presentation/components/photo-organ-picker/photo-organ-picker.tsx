@@ -89,10 +89,10 @@ export function PhotoOrganPicker({ photos, onChange, dict, maxPhotos = 5 }: Prop
       <Button
         type="button"
         variant="outline"
-        size="sm"
         data-testid="btn-add-photo"
         disabled={atMax}
         onClick={() => inputRef.current?.click()}
+        className="min-h-11 w-full sm:w-auto"
       >
         <ImagePlus className="w-4 h-4" />
         {dict.addPhoto}
@@ -110,12 +110,12 @@ export function PhotoOrganPicker({ photos, onChange, dict, maxPhotos = 5 }: Prop
       )}
 
       {photos.length > 0 && (
-        <ul className="flex flex-col gap-2">
+        <ul className="flex flex-col gap-3">
           {photos.map((photo) => (
             <li
               key={photo.id}
               data-testid={`photo-organ-picker-item-${photo.id}`}
-              className="flex items-center gap-3 rounded-md border border-rule p-2"
+              className="flex items-center gap-3 rounded-md border border-rule p-3"
             >
               <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded">
                 <Image src={photo.previewUrl} alt="" fill unoptimized sizes="56px" className="object-cover" />
@@ -143,7 +143,7 @@ export function PhotoOrganPicker({ photos, onChange, dict, maxPhotos = 5 }: Prop
                 aria-label={dict.removePhoto}
                 data-testid={`btn-remove-photo-${photo.id}`}
                 onClick={() => removePhoto(photo.id)}
-                className="rounded-full p-1 text-ink-3 hover:text-destructive"
+                className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink-3 hover:text-destructive"
               >
                 <X className="h-4 w-4" />
               </button>
