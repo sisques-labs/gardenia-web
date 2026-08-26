@@ -8,7 +8,7 @@
     "type": "git",
     "url": "https://github.com/sisques-labs/gardenia-web.git"
   },
-  "version": "0.31.6",
+  "version": "0.31.7",
   "packageManager": "pnpm@11.17.0",
   "private": true,
   "scripts": {

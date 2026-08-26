@@ -1,6 +1,21 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.31.7] - 2026-08-26
+
+### Bug Fixes
+- **deps:** Pin dependency @apollo/client to 4.2.8 (#469) (00560b2)
+- **deps:** Pin dependency @hookform/resolvers to v5.4.0 (#470) (ff5753c)
+- **deps:** Pin dependency @radix-ui/react-avatar to 1.2.6 (62a3c26)
+- **deps:** Pin dependency @radix-ui/react-checkbox to 1.3.11 (690aa1e)
+- **deps:** Pin dependency @radix-ui/react-context-menu to 2.3.7 (#473) (90470e3)
+
+### Chore
+- **deps:** Pin dependency tailwindcss to 4.3.3 (#464) (95edaf3)
+- **deps:** Pin dependency typescript to 6.0.3 (#465) (ea53f9a)
+- **deps:** Pin dependency vitest to 4.1.10 (#466) (344304c)
+- **deps:** Pin millionco/react-doctor action to v2.2.8 (#467) (0f2de0c)
+- **deps:** Pin node.js (#468) (6999627)
 ## [0.31.6] - 2026-08-19
 
 ### Chore
