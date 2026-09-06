@@ -75,7 +75,7 @@ importers:
         specifier: ^17.0.0
         version: 17.0.2
       lucide-react:
-        specifier: ^1.24.0
+        specifier: 1.25.0
         version: 1.25.0(react@19.2.7)
       next:
         specifier: 16.2.10
