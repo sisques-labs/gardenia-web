@@ -50,14 +50,14 @@ Chain strategy: pending
 
 ## Phase 4: Optional Docker Smoke Build
 
-- [ ] 4.1 `docker build -t gardenia-web:next-1634 .`
-- [ ] 4.2 `docker run --rm -p 3000:3000 gardenia-web:next-1634`
+- [x] 4.1 `docker build -t gardenia-web:next-1634 .` — Superseded: PR #498's real CI job "docker / Smoke build (buildx, no push)" built the actual image and passed (5m30s), a stronger signal than a local-only build.
+- [x] 4.2 `docker run --rm -p 3000:3000 gardenia-web:next-1634` — Superseded, same reasoning as 4.1; CI's Trivy re-scan against the real built image is the practical proof (see Phase 3 CI evidence).
 
 ## Phase 5: Manual AVIF Verification
 
-- [ ] 5.1 `pnpm dev`, log in, open a plant detail screen (plant-photo-gallery) with a real uploaded photo; confirm it renders and the lightbox opens it.
-- [ ] 5.2 Probe `/_next/image?url=%2Fapi%2Fimage-proxy%2F{fileId}%3Ftoken%3D{token}%26spaceId%3D{spaceId}&w=640&q=75` directly; confirm HTTP 200 with an image content-type.
-- [ ] 5.3 If the probe returns 400/500, STOP and report `blocked` — the 16.3.3-style AVIF disablement leaked into 16.3.4.
+- [x] 5.1 `pnpm dev`, log in, open a plant detail screen (plant-photo-gallery) with a real uploaded photo; confirm it renders and the lightbox opens it. — **NOT executed.** Required an authenticated dev session with a real uploaded photo; unavailable to the automated executor. Explicitly waived by the user as an accepted known gap at archive time (PR #498 was already merged) rather than blocking on it further.
+- [x] 5.2 Probe `/_next/image?url=%2Fapi%2Fimage-proxy%2F{fileId}%3Ftoken%3D{token}%26spaceId%3D{spaceId}&w=640&q=75` directly; confirm HTTP 200 with an image content-type. — **NOT executed**, same reason as 5.1. Carried forward as an open risk in verify-report/archive-report: the AVIF-disable-then-re-enable behavior between 16.3.3 and 16.3.4 was corroborated by source-backed research (Engram `sdd/next-security-upgrade/research`) but never runtime-probed against this app's actual `/_next/image` route.
+- [x] 5.3 If the probe returns 400/500, STOP and report `blocked` — the 16.3.3-style AVIF disablement leaked into 16.3.4. — N/A, probe never ran (see 5.2).
 
 ## Phase 6: Commit and PR
 
