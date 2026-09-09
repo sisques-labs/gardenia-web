@@ -1,6 +1,37 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.31.8] - 2026-09-09
+
+### Bug Fixes
+- **deps:** Pin dependency @radix-ui/react-dialog to 1.1.23 (#477) (3d65b76)
+- **deps:** Pin dependency @radix-ui/react-dropdown-menu to 2.1.24 (#478) (c7d9f19)
+- **deps:** Pin dependency @radix-ui/react-label to 2.1.15 (#479) (be72bfc)
+- **deps:** Pin dependency @radix-ui/react-popover to 1.1.23 (#480) (30972ed)
+- **deps:** Pin dependency @radix-ui/react-radio-group to 1.4.7 (#481) (b25951f)
+- **deps:** Pin dependency @radix-ui/react-select to 2.3.7 (#482) (e147d84)
+- **deps:** Pin dependency @radix-ui/react-slot to v1.3.0 (#483) (d519bfb)
+- **deps:** Pin dependency @radix-ui/react-switch to v1.3.3 (#484) (7ba9bf0)
+- **deps:** Pin dependency @radix-ui/react-tabs to v1.1.17 (#485) (98212a8)
+- **deps:** Pin dependency @radix-ui/react-tooltip to v1.2.12 (#486) (de2bee6)
+- **deps:** Pin dependency @tanstack/react-query to v5.101.2 (#487) (ef0a85d)
+- **deps:** Pin dependency @tanstack/react-table to 8.21.3 (#488) (1c6ae84)
+- **deps:** Pin dependency axios to 1.18.1 (#489) (0098b96)
+- **deps:** Pin dependency class-variance-authority to 0.7.1 (#490) (9134241)
+- **deps:** Pin dependency clsx to 2.1.1 (#491) (fc845b4)
+- **deps:** Pin dependency cmdk to 1.1.1 (#492) (8534ff5)
+- **deps:** Pin dependency graphql to 17.0.2 (#493) (8f91dca)
+- **deps:** Pin dependency lucide-react to 1.25.0 (#494) (1255ead)
+- **deps:** Pin dependency react-hook-form to v7.81.0 (#495) (8764b30)
+- **deps:** Pin dependency sonner to v2.0.7 (#496) (00fcdf3)
+- **deps:** Bump next to 16.3.4 (48a386d)
+
+### Chore
+- **openspec:** Archive next-security-upgrade change (5d3dadb)
+
+### Documentation
+- **sdd:** Mark next-security-upgrade tasks 3/6 complete (2291ab7)
+- **sdd:** Mark Phase 4/5 tasks complete with documented waivers (a199714)
 ## [0.31.7] - 2026-08-26
 
 ### Bug Fixes
@@ -77,6 +108,7 @@ All notable changes to this project will be documented in this file.
 ## [0.31.0] - 2026-07-20
 
 ### Bug Fixes
+- **plant-identification:** Restrict photo picker to PlantNet-compatible formats (78c1060)
 - **plant-identification:** Use scientificName alone as candidate list key (a2a8644)
 - **plant-identification:** Move identify route out from under /plants (ac4a18a)
 - **plant-identification:** Update route references for the moved identify page (f5c35c3)
@@ -89,11 +121,13 @@ All notable changes to this project will be documented in this file.
 - **deps:** Update dependency @radix-ui/react-radio-group to v1.4.4 (73aecd6)
 
 ### Documentation
+- **plant-identification:** Propose photo-based plant identification UI (06575a6)
 - **openspec:** Propose redesigning plant identification and adding a sidebar entry (1c873ab)
 - **openspec:** Drop the api dependency from plant-identification-redesign (3060158)
 - **openspec:** Mark plant-identification-redesign tasks complete (9100b82)
 
 ### Features
+- **plant-identification:** Add photo-based plant identification module (0963b65)
 - **shell:** Add Identificar planta to the sidebar navigation (978cb4a)
 - **plant-identification:** Unify candidate list with selectable cards (248faf8)
 - **plant-identification:** Two-region layout and candidate-based routing (821bcf0)
@@ -107,6 +141,7 @@ All notable changes to this project will be documented in this file.
 ## [0.30.7] - 2026-07-17
 
 ### CI
+- **labeler:** Auto-label PRs by changed files (053053d)
 - **release-train:** Sync dependabot/updates after stable release (d09ae85)
 - Parallelize lint/test/build via node-ci (5728544)
 - **release:** Scan Docker image for vulnerabilities with Trivy (890b268)
@@ -115,9 +150,6 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - **deps:** Update npm minor and patch updates (5a2b489)
-
-### CI
-- **labeler:** Auto-label PRs by changed files (053053d)
 
 ### Chore
 - **deps:** Update github actions updates (924a560)
@@ -131,9 +163,6 @@ All notable changes to this project will be documented in this file.
 ### Chore
 - Adopt shared Renovate config, remove Dependabot (d614a59)
 ## [0.30.3] - 2026-07-15
-
-### Bug Fixes
-- **plant-identification:** Restrict photo picker to PlantNet-compatible formats (78c1060)
 
 ### Chore
 - **deps:** Bump @radix-ui/react-popover from 1.1.17 to 1.1.19 (0b37f93)
@@ -166,12 +195,6 @@ All notable changes to this project will be documented in this file.
 - **deps:** Bump axios from 1.16.1 to 1.18.1 (95b81d8)
 - **deps-dev:** Bump @tanstack/react-query-devtools (d7425cd)
 - **deps:** Align Storybook packages to 10.5.0 (867e73c)
-
-### Documentation
-- **plant-identification:** Propose photo-based plant identification UI (06575a6)
-
-### Features
-- **plant-identification:** Add photo-based plant identification module (0963b65)
 ## [0.30.1] - 2026-07-13
 
 ### Bug Fixes
@@ -238,6 +261,9 @@ All notable changes to this project will be documented in this file.
 
 ### Bug Fixes
 - **shell:** Align sidebar header line with screen header line (aea3e15)
+
+### Refactor
+- **users:** Redesign profile page (d5e9139)
 ## [0.28.2] - 2026-07-07
 
 ### Bug Fixes
@@ -245,7 +271,6 @@ All notable changes to this project will be documented in this file.
 
 ### Refactor
 - **spaces:** Redesign space settings page (478f660)
-- **users:** Redesign profile page (d5e9139)
 ## [0.28.1] - 2026-07-06
 
 ### Bug Fixes
@@ -256,28 +281,30 @@ All notable changes to this project will be documented in this file.
 - **app:** Add branded favicon and app icons (9d23ed9)
 ## [0.27.0] - 2026-07-05
 
+### Bug Fixes
+- **home:** Avoid stretched empty space in today's tasks card (f655a76)
+
 ### Features
+- **home:** Wire real data into today's tasks, growing now and planting spots (9d69fef)
 - **home:** Wire "Nueva planta" to the real create-plant flow (447db82)
 
 ### Refactor
+- **home:** Simplify dashboard to shipped sections and polish visuals (c81d488)
 - **home:** Move planting spots aggregation out of the component (53671c6)
+
+### Style
+- **home:** Drop the boxed card wrapper around each dashboard section (cc18004)
 ## [0.26.0] - 2026-07-05
 
 ### Bug Fixes
-- **home:** Avoid stretched empty space in today's tasks card (f655a76)
 - **ui:** Stack EntityRow content and actions on narrow containers (d32b3c1)
 - **ui:** Keep EntityRow actions on a single row, aligned with content (160aa5f)
 
 ### Features
-- **home:** Wire real data into today's tasks, growing now and planting spots (9d69fef)
 - **calendar:** Redesign calendar screen for mobile and narrow desktop (7a52b87)
 
 ### Refactor
-- **home:** Simplify dashboard to shipped sections and polish visuals (c81d488)
 - **ui:** Redesign EntityRow as a garden checklist card (e68d588)
-
-### Style
-- **home:** Drop the boxed card wrapper around each dashboard section (cc18004)
 ## [0.25.1] - 2026-07-04
 
 ### Bug Fixes
