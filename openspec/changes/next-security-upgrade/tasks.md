@@ -61,5 +61,5 @@ Chain strategy: pending
 
 ## Phase 6: Commit and PR
 
-- [ ] 6.1 Single commit: `fix(deps): bump next to 16.3.4` — no AI attribution.
-- [ ] 6.2 Open PR: base `dependabot/updates`, head `fix/next-security-upgrade`, title `fix(deps): bump next to 16.3.4`, body per design.md's "Commit / PR Shape" section.
+- [x] 6.1 Single commit: `fix(deps): bump next to 16.3.4` — no AI attribution. Commit `48a386d` on `fix/next-security-upgrade`.
+- [x] 6.2 Open PR: base `dependabot/updates`, head `fix/next-security-upgrade`, title `fix(deps): bump next to 16.3.4`, body per design.md's "Commit / PR Shape" section. PR #498: https://github.com/sisques-labs/gardenia-web/pull/498
