@@ -103,8 +103,8 @@ importers:
         version: 5.0.14(@types/react@19.2.17)(react@19.2.7)(use-sync-external-store@1.6.0(react@19.2.7))
     devDependencies:
       '@storybook/addon-docs':
-        specifier: 10.5.2
-        version: 10.5.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(esbuild@0.28.1)(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0))(webpack@5.108.4(clean-css@5.3.3)(esbuild@0.28.1)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.24))
+        specifier: 10.6.0
+        version: 10.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))
       '@storybook/addon-themes':
         specifier: 10.5.2
         version: 10.5.2(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))
@@ -2425,11 +2425,11 @@ packages:
   '@standard-schema/utils@0.3.0':
     resolution: {integrity: sha512-e7Mew686owMaPJVNNLs55PUvgz371nKgwsc4vxE49zsODpJEnxgxRo2y/OKrqueavXgZNMDVj3DdHFlaSAeU8g==}
 
-  '@storybook/addon-docs@10.5.2':
-    resolution: {integrity: sha512-MoBANDsh5qEA14U+JaBoQcYsKbayJDDMopigFN0NdVAsZTdBfVIsL7cnjTFBL6ubB3ifb5M0tCXbScpml1KqiQ==}
+  '@storybook/addon-docs@10.6.0':
+    resolution: {integrity: sha512-Fk3rUQWeGyCfL170OkmRp6Ruyv7MHPb/xrKa6YNk7FlGmlVLi5tKzh2T/0J13vWEy8wiu2MV3IBu8iRsaUR+Cw==}
     peerDependencies:
       '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
-      storybook: ^10.5.2
+      storybook: ^10.6.0
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -2452,24 +2452,6 @@ packages:
     resolution: {integrity: sha512-XNzXTJmvAKXpvcrWHDWnIC8jZR4GBgTUH+FF9T5lSmU9ZL46T2wVaJAu2GUXfDLmNwLHZXusbYljbTD7Kswamg==}
     peerDependencies:
       storybook: ^10.5.2
-
-  '@storybook/csf-plugin@10.5.2':
-    resolution: {integrity: sha512-PK/wXiALFf88mt4HmDtiZJ6NRvhExSXEM9uFIN+OIHxGqg7Xbp6MB0SPdhsTbMY9720ahiu/DJx5iIzkidcA3w==}
-    peerDependencies:
-      esbuild: '*'
-      rollup: '*'
-      storybook: ^10.5.2
-      vite: '*'
-      webpack: '*'
-    peerDependenciesMeta:
-      esbuild:
-        optional: true
-      rollup:
-        optional: true
-      vite:
-        optional: true
-      webpack:
-        optional: true
 
   '@storybook/global@5.0.0':
     resolution: {integrity: sha512-FcOqPAXACP0I3oJ/ws6/rrPT9WGhu915Cg8D02a9YxLo0DE9zI+a9A5gRGvmQ09fiWPukqI8ZAEoQEdWUKMQdQ==}
@@ -2525,6 +2507,20 @@ packages:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
       storybook: ^10.5.2
+    peerDependenciesMeta:
+      '@types/react':
+        optional: true
+      '@types/react-dom':
+        optional: true
+
+  '@storybook/react-dom-shim@10.6.0':
+    resolution: {integrity: sha512-ZE0l4xL6d00rKFeJhRDuh0t3r+/2ffhx47lIyaSWrTD5kuM3nDjKDxCIWwX4E3gLV+oNX8E1prXRMuEWJUJwJg==}
+    peerDependencies:
+      '@types/react': ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      '@types/react-dom': ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
+      storybook: ^10.6.0
     peerDependenciesMeta:
       '@types/react':
         optional: true
@@ -8374,24 +8370,20 @@ snapshots:
 
   '@standard-schema/utils@0.3.0': {}
 
-  '@storybook/addon-docs@10.5.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(esbuild@0.28.1)(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0))(webpack@5.108.4(clean-css@5.3.3)(esbuild@0.28.1)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.24))':
+  '@storybook/addon-docs@10.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))':
     dependencies:
       '@mdx-js/react': 3.1.1(@types/react@19.2.17)(react@19.2.7)
-      '@storybook/csf-plugin': 10.5.2(esbuild@0.28.1)(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0))(webpack@5.108.4(clean-css@5.3.3)(esbuild@0.28.1)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.24))
       '@storybook/icons': 2.1.0(react@19.2.7)
-      '@storybook/react-dom-shim': 10.5.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))
+      '@storybook/react-dom-shim': 10.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
       storybook: 10.5.2(@types/react@19.2.17)(react@19.2.7)
       ts-dedent: 2.3.0
+      unplugin: 2.3.11
     optionalDependencies:
       '@types/react': 19.2.17
     transitivePeerDependencies:
       - '@types/react-dom'
-      - esbuild
-      - rollup
-      - vite
-      - webpack
 
   '@storybook/addon-themes@10.5.2(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))':
     dependencies:
@@ -8439,15 +8431,6 @@ snapshots:
     dependencies:
       storybook: 10.5.2(@types/react@19.2.17)(react@19.2.7)
       ts-dedent: 2.3.0
-
-  '@storybook/csf-plugin@10.5.2(esbuild@0.28.1)(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))(vite@8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0))(webpack@5.108.4(clean-css@5.3.3)(esbuild@0.28.1)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.24))':
-    dependencies:
-      storybook: 10.5.2(@types/react@19.2.17)(react@19.2.7)
-      unplugin: 2.3.11
-    optionalDependencies:
-      esbuild: 0.28.1
-      vite: 8.1.5(@types/node@26.1.1)(esbuild@0.28.1)(jiti@2.7.0)(terser@5.49.0)(yaml@2.9.0)
-      webpack: 5.108.4(clean-css@5.3.3)(esbuild@0.28.1)(html-minifier-terser@6.1.0)(lightningcss@1.33.0)(postcss@8.5.24)
 
   '@storybook/global@5.0.0': {}
 
@@ -8572,6 +8555,15 @@ snapshots:
       - supports-color
 
   '@storybook/react-dom-shim@10.5.2(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))':
+    dependencies:
+      react: 19.2.7
+      react-dom: 19.2.7(react@19.2.7)
+      storybook: 10.5.2(@types/react@19.2.17)(react@19.2.7)
+    optionalDependencies:
+      '@types/react': 19.2.17
+      '@types/react-dom': 19.2.3(@types/react@19.2.17)
+
+  '@storybook/react-dom-shim@10.6.0(@types/react-dom@19.2.3(@types/react@19.2.17))(@types/react@19.2.17)(react-dom@19.2.7(react@19.2.7))(react@19.2.7)(storybook@10.5.2(@types/react@19.2.17)(react@19.2.7))':
     dependencies:
       react: 19.2.7
       react-dom: 19.2.7(react@19.2.7)
