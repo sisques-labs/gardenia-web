@@ -1,6 +1,23 @@
 # Changelog
 
 All notable changes to this project will be documented in this file.
+## [0.31.9] - 2026-09-15
+
+### Bug Fixes
+- **deps:** Pin dependency tailwind-merge to v3.6.0 (#503) (9c4105e)
+- **deps:** Pin dependency zod to v4.4.3 (#504) (1e15421)
+- **deps:** Pin dependency zustand to v5.0.14 (#505) (92a31bf)
+- **deps:** Update dependency @radix-ui/react-slot to v1.3.3 (#512) (fa21e1c)
+- **deps:** Update dependency sonner to v2.0.8 (#513) (ba92dc8)
+
+### Chore
+- **deps:** Update dependency @testing-library/user-event to v14.6.7 (#507) (d98a93c)
+- **deps:** Update dependency @testing-library/react to v16.3.3 (#506) (904528a)
+- **deps:** Update dependency @vitest/coverage-v8 to v4.1.11 (#508) (ed3b15a)
+- **deps:** Update dependency eslint-config-next to v16.3.5 (#509) (3f7fdde)
+- **deps:** Update dependency vitest to v4.1.11 (#510) (079e960)
+- **deps:** Update millionco/react-doctor action to v2.2.9 (#511) (faa02f2)
+- **deps:** Update dependency @storybook/nextjs to v10.6.0 (07cc0d9)
 ## [0.31.8] - 2026-09-09
 
 ### Bug Fixes
