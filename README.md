@@ -120,7 +120,7 @@ A 2-stage `Dockerfile` (`node:24-bookworm-slim`) builds with pnpm and runs the N
 2. Commit following [Conventional Commits](https://www.conventionalcommits.org/) — free scope, no AI attribution in commit messages.
 3. Open a PR against `main`, capped at ~400 lines (split into chained PRs if larger).
 
-Pre-commit hooks (Husky + lint-staged) run ESLint on staged TypeScript files automatically. Releases are automated via `release-train.yml` / `release.yml` (git-cliff generates `CHANGELOG.md`).
+Pre-commit hooks (Husky + lint-staged) run ESLint on staged TypeScript files automatically. `trunk-ci-cd.yml` builds and publishes a continuous image on every merge to `main`; `release.yml` promotes a validated digest to a versioned stable release (git-cliff generates `CHANGELOG.md`).
 
 ## License
 

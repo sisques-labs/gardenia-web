@@ -46,9 +46,10 @@ proxy `/api/*` and `/graphql` requests to the API container.
 
 ## Tags
 
-- `latest` — most recent stable release (`main` branch)
+- `latest` — most recent stable release, promoted to prod from `main`
 - `x.y.z` — specific stable release
-- `x.y.z-alpha.n` / `-beta.n` / `-rc.n` — prereleases from `develop`/`staging`
+- `sha-<shortsha>` — continuous build for a single commit on `main`
+- `edge` — most recent continuous build on `main` (not yet promoted to a stable release)
 
 ## Source
 
