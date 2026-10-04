@@ -66,7 +66,7 @@
     "@storybook/addon-docs": "10.6.1",
     "@storybook/addon-themes": "10.6.1",
     "@storybook/nextjs": "10.6.1",
-    "@storybook/react": "10.6.0",
+    "@storybook/react": "10.6.1",
     "@tailwindcss/postcss": "4.3.3",
     "@tanstack/react-query-devtools": "5.104.0",
     "@testing-library/jest-dom": "6.9.1",
